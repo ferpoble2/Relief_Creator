@@ -1,6 +1,6 @@
 """
-File that defines functions that controls the window generation and the 
-OpenGL rendering process.
+File that defines functions that controls the window generation
+and the OpenGL rendering process.
 """
 from settings import HEIGHT
 from settings import WIDTH
@@ -60,7 +60,7 @@ def on_loop():
     # -------------------------------
     my_model.draw()
 
-    # Once the render is done, buffers are swapped, showing only the complete scene.
+    # Once the render is done, buffers are swapped, showing the complete scene.
     glfw.swap_buffers(window)
 
 
