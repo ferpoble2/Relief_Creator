@@ -1,4 +1,6 @@
-"""Python file with all the important constants and global variables of the engine."""
+"""
+Python file with all the important constants and global variables of the engine.
+"""
 
 # Screen settings
 WIDTH = 800
