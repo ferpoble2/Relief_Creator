@@ -27,7 +27,7 @@ def init(window_name: str = "Relieve Creator"):
         sys.exit()
 
     log.info(f"Creating windows of size {WIDTH} x {HEIGHT}.")
-    window = glfw.create_window(
+    render_window = glfw.create_window(
         WIDTH,
         HEIGHT,
         window_name,
@@ -35,11 +35,11 @@ def init(window_name: str = "Relieve Creator"):
         None,
     )
 
-    if not window:
+    if not render_window:
         glfw.terminate()
         sys.exit()
 
-    glfw.make_context_current(window)
+    glfw.make_context_current(render_window)
 
     GL.glClearColor(
         clear_color[0],
@@ -48,16 +48,16 @@ def init(window_name: str = "Relieve Creator"):
         clear_color[3],
     )
 
-    return window
+    return render_window
 
 
-def on_loop(window, on_frame_tasks=None) -> None:
+def on_loop(render_window, on_frame_tasks=None) -> None:
     """
     Function to be called in every frame of he application.
 
     This should be the one who renders the program.
     Args:
-        window: Window to be used in the program.
+        render_window: Window to be used in the program.
         on_frame_tasks: List of functions without parameters to be called in the main loop.
                         These should be the ones who renders the objects and call others routines.
 
@@ -76,7 +76,7 @@ def on_loop(window, on_frame_tasks=None) -> None:
         func()
 
     # Once the render is done, buffers are swapped, showing the complete scene.
-    glfw.swap_buffers(window)
+    glfw.swap_buffers(render_window)
 
 
 if __name__ == "__main__":
