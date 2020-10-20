@@ -1,7 +1,7 @@
 """Model class to manage models in the engine."""
 import OpenGL.GL as GL
-import numpy as np
 import ctypes as ctypes
+import numpy as np
 from OpenGL.GL.shaders import compileShader
 from settings import FLOAT_BYTES
 

@@ -2,8 +2,8 @@
 File that contains the functions to read files in NetCDF4 format.
 """
 import logging as log
-from netCDF4 import Dataset
 import numpy as np
+from netCDF4 import Dataset
 
 
 def read_info(filename: str):
@@ -27,9 +27,9 @@ def read_info(filename: str):
 
 
 if __name__ == "__main__":
-    log.basicConfig(format="%(asctime)s - %(message)s", level=log.INFO)
+    log.basicConfig(format="%(asctime)s - %(message)s", level=log.DEBUG)
 
-    filename = "./test_inputs/IF_60Ma_AHS_ET.nc"
+    filename = "test_inputs/IF_60Ma_AHS_ET.nc"
 
     rootgrp = Dataset(filename, "r", format="NETCDF4")
 

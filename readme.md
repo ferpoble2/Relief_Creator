@@ -1,3 +1,7 @@
+# Relief Creator
+
+Here goes a description of the project...
+
 # Code Guidelines
 
 - Identation must be of four spaces.
