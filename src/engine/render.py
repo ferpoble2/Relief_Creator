@@ -2,15 +2,15 @@
 File that defines functions that controls the window generation
 and the OpenGL rendering process.
 """
+import OpenGL.GL as GL
+import glfw
+import logging as log
+import numpy as np
+import sys
+from model import Model
 from settings import HEIGHT
 from settings import WIDTH
 from settings import clear_color
-import glfw
-import OpenGL.GL as GL
-import sys
-import logging as log
-import numpy as np
-from model import Model
 
 
 def init(window_name="Relieve Creator"):
