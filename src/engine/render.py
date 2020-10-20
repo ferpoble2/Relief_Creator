@@ -13,7 +13,7 @@ from settings import WIDTH
 from settings import clear_color
 
 
-def init(window_name="Relieve Creator"):
+def init(window_name: str = "Relieve Creator") -> None:
     """Initialize OpenGL and glfw for the application.
 
     Args:
@@ -51,7 +51,7 @@ def init(window_name="Relieve Creator"):
     return window
 
 
-def on_loop():
+def on_loop() -> None:
     # Using GLFW to check for input events
     glfw.poll_events()
     GL.glClear(GL.GL_COLOR_BUFFER_BIT)
