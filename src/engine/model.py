@@ -3,7 +3,7 @@ import OpenGL.GL as GL
 import ctypes as ctypes
 import numpy as np
 from OpenGL.GL.shaders import compileShader
-from settings import FLOAT_BYTES
+from src.engine.settings import FLOAT_BYTES
 
 
 class Model:

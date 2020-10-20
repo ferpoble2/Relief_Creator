@@ -7,10 +7,10 @@ import glfw
 import logging as log
 import numpy as np
 import sys
-from model import Model
-from settings import HEIGHT
-from settings import WIDTH
-from settings import clear_color
+from src.engine.model import Model
+from src.engine.settings import HEIGHT
+from src.engine.settings import WIDTH
+from src.engine.settings import clear_color
 
 
 def init(window_name: str = "Relieve Creator") -> None:
