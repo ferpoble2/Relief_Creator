@@ -13,7 +13,7 @@ from src.engine.settings import WIDTH
 from src.engine.settings import clear_color
 
 
-def init(window_name: str = "Relieve Creator") -> None:
+def init(window_name: str = "Relieve Creator"):
     """Initialize OpenGL and glfw for the application.
 
     Args:
@@ -51,14 +51,29 @@ def init(window_name: str = "Relieve Creator") -> None:
     return window
 
 
-def on_loop() -> None:
-    # Using GLFW to check for input events
+def on_loop(window, on_frame_tasks=None) -> None:
+    """
+    Function to be called in every frame of he application.
+
+    This should be the one who renders the program.
+    Args:
+        window: Window to be used in the program.
+        on_frame_tasks: List of functions without parameters to be called in the main loop.
+                        These should be the ones who renders the objects and call others routines.
+
+    Returns: None
+
+    """
+    if on_frame_tasks is None:
+        on_frame_tasks = []
+
     glfw.poll_events()
     GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
     # drawing the model in the screen
     # -------------------------------
-    my_model.draw()
+    for func in on_frame_tasks:
+        func()
 
     # Once the render is done, buffers are swapped, showing the complete scene.
     glfw.swap_buffers(window)
@@ -83,8 +98,10 @@ if __name__ == "__main__":
         "./shaders/vertex_shader.glsl", "./shaders/fragment_shader.glsl"
     )
 
+    log.info(type(window))
+
     log.info("Starting main loop of the app...")
     while not glfw.window_should_close(window):
-        on_loop()
+        on_loop([lambda: my_model.draw()])
 
     glfw.terminate()
