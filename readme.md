@@ -1,6 +1,6 @@
 # Relief Creator
 
-Here goes a description of the project...
+Project for the Titulation...
 
 # Code Guidelines
 
