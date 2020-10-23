@@ -12,10 +12,13 @@ Starts the main program, calling the engine and the logic.
 
 import logging
 import glfw
+import os
 
 from src.engine.render import init
 from src.engine.render import on_loop
+from src.engine.model import Model
 from src.input.NetCDF import read_info
+
 
 def get_logger(log_level: int) -> logging.Logger:
     """
@@ -44,8 +47,13 @@ if __name__ == '__main__':
     window = init("Relief Creator")
 
     logger.debug("Reading information from file.")
+    x, y, z = read_info(os.path.join('input', 'test_inputs', 'IF_60Ma_AHS_ET.nc'))
 
+    model = Model()
 
+    new_grid = model.set_vertices_from_grid(x, y, z)
+
+    logger.debug("Starting main loop.")
     while not glfw.window_should_close(window):
         on_loop(window)
 
