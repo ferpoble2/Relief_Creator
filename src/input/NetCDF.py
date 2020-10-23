@@ -6,24 +6,24 @@ import numpy as np
 from netCDF4 import Dataset
 
 
-def read_info(filename: str):
+def read_info(file_name: str):
     """
     Extract the information of X, Y and Z from a NetCDF4 file.
 
     Args:
-        filename (str): Filename to analize.
+        file_name (str): Filename to analize.
 
     Returns:
         np.array, np.array, np.array: Values of the variables X, Y
                                       and Z in the file.
     """
-    rootgrp = Dataset(filename, "r", format="NETCDF4")
+    root_grp = Dataset(file_name, "r", format="NETCDF4")
 
-    X = np.array(rootgrp.variables["x"])
-    Y = np.array(rootgrp.variables["y"])
-    Z = np.array(rootgrp.variables["z"])
+    x = np.array(root_grp.variables["x"])
+    y = np.array(root_grp.variables["y"])
+    z = np.array(root_grp.variables["z"])
 
-    return X, Y, Z
+    return x, y, z
 
 
 if __name__ == "__main__":

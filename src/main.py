@@ -15,7 +15,7 @@ import glfw
 
 from src.engine.render import init
 from src.engine.render import on_loop
-
+from src.input.NetCDF import read_info
 
 def get_logger(log_level: int) -> logging.Logger:
     """
@@ -40,7 +40,11 @@ if __name__ == '__main__':
     logger = get_logger(logging.DEBUG)
     logger.debug("Starting mock program.")
 
+    logger.debug("Creating windows.")
     window = init("Relief Creator")
+
+    logger.debug("Reading information from file.")
+
 
     while not glfw.window_should_close(window):
         on_loop(window)
