@@ -49,10 +49,6 @@ if __name__ == '__main__':
     logger.debug("Reading information from file.")
     x, y, z = read_info(os.path.join('input', 'test_inputs', 'IF_60Ma_AHS_ET.nc'))
 
-    model = Model()
-
-    new_grid = model.set_vertices_from_grid(x, y, z)
-
     logger.debug("Starting main loop.")
     while not glfw.window_should_close(window):
         on_loop(window)
