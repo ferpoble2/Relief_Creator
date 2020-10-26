@@ -1,5 +1,5 @@
 """
-Class in charge of managing the map in 2d of the earth.
+Class in charge of managing the models of the maps in 2 dimentions.
 """
 
 from src.engine.model.model import Model
