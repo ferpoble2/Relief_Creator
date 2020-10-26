@@ -66,21 +66,6 @@ class Model:
             GL.GL_TRIANGLES, self.indices_size, GL.GL_UNSIGNED_INT, None
         )
 
-    def set_vertices_from_grid(self, x, y, z):
-        """
-        Set the vertices of the model from a grid.
-
-        Args:
-            x: X values of the grid to use.
-            y: Y values of the grid.
-            z: Z values of the grid.
-
-        Returns: None
-
-        """
-        # TODO: Create function to determinate position of the vertex depending of the screen.
-
-
     def set_vertices(self, vertex):
         """Set the vertices buffers inside the model.
 
