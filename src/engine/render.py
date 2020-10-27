@@ -7,7 +7,7 @@ import glfw
 import logging as log
 import numpy as np
 import sys
-from src.engine.model import Model
+from src.engine.model.model import Model
 from src.engine.settings import HEIGHT
 from src.engine.settings import WIDTH
 from src.engine.settings import clear_color
@@ -97,11 +97,12 @@ if __name__ == "__main__":
     my_model.set_shaders(
         "./shaders/vertex_shader.glsl", "./shaders/fragment_shader.glsl"
     )
+    my_model.wireframes = True
 
     log.info(type(window))
 
     log.info("Starting main loop of the app...")
     while not glfw.window_should_close(window):
-        on_loop([lambda: my_model.draw()])
+        on_loop(window, [lambda: my_model.draw()])
 
     glfw.terminate()

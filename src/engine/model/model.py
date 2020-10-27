@@ -11,26 +11,23 @@ class Model:
     Class that is in charge of managing the models of the engine.
     """
 
-    shader_program = None
-
-    position = np.array([0, 0, 0], dtype=np.float32)
-    rotation = np.array([0, 0, 0], dtype=np.float32)
-
-    vao = 0
-    vbo = 0
-    cbo = 0
-    ebo = 0
-
-    indices_size = 0
-
-    draw_mode = GL.GL_TRIANGLES
-
     def __init__(self):
         """Contructor of the model class."""
         self.vao = GL.glGenVertexArrays(1)
         self.vbo = GL.glGenBuffers(1)
         self.cbo = GL.glGenBuffers(1)
         self.ebo = GL.glGenBuffers(1)
+
+        self.shader_program = None
+
+        self.position = np.array([0, 0, 0], dtype=np.float32)
+        self.rotation = np.array([0, 0, 0], dtype=np.float32)
+
+        self.indices_size = 0
+
+        self.draw_mode = GL.GL_TRIANGLES
+
+        self.wireframes = False
 
     def set_shaders(self, vertex_shader, fragment_shader):
         """Set the shaders to use in the model.
@@ -53,6 +50,10 @@ class Model:
     def draw(self):
         """Draw the model on the screen using the current configuration."""
 
+        if self.wireframes:
+            GL.glPolygonMode(GL.GL_FRONT, GL.GL_LINE)
+            GL.glPolygonMode(GL.GL_BACK, GL.GL_LINE)
+
         # select the shader to use
         GL.glUseProgram(self.shader_program)
 
@@ -63,7 +64,7 @@ class Model:
 
         # Render the active element buffer with the active shader program
         GL.glDrawElements(
-            GL.GL_TRIANGLES, self.indices_size, GL.GL_UNSIGNED_INT, None
+            self.draw_mode, self.indices_size, GL.GL_UNSIGNED_INT, None
         )
 
     def set_vertices(self, vertex):
