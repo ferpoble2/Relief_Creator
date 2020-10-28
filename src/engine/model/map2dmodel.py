@@ -94,9 +94,20 @@ class Map2DModel(Model):
         )
 
         indices = []
-        # TODO: Hacer los indices de forma correcta para las triangulaciones.
-        for a in range(len(self.__vertices)):
-            indices.append(a)
+        for row_index in range(len(self.__z)):
+            for col_index in range(len(self.__z[0])):
+
+                # first triangles
+                if col_index < len(self.__z[0]) - 1 and row_index < len(self.__z) - 1:
+                    indices.append(row_index * len(self.__z) + col_index)
+                    indices.append(row_index * len(self.__z) + col_index + 1)
+                    indices.append((row_index + 1) * len(self.__z) + col_index)
+
+                # seconds triangles
+                if col_index > 0 and row_index > 0:
+                    indices.append(row_index * len(self.__z) + col_index)
+                    indices.append((row_index - 1) * len(self.__z) + col_index)
+                    indices.append(row_index * len(self.__z) + col_index - 1)
 
         self.set_indices(np.array(indices, dtype=np.uint32))
         self.set_shaders(
@@ -115,7 +126,8 @@ if __name__ == '__main__':
 
     log.debug("Reading information from file.")
     model = Map2DModel()
-    model.set_vertices_from_grid(X, Y, Z)
+    model.set_vertices_from_grid(X[:100], Y[:100], Z[:100, :100])
+    model.wireframes = False
 
     log.debug("Starting main loop.")
     while not glfw.window_should_close(window):
