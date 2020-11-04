@@ -9,6 +9,9 @@ from src.engine.settings import FLOAT_BYTES
 class Model:
     """
     Class that is in charge of managing the models of the engine.
+
+    Open GL variables:
+        glVertexAttributePointer 0: Vertices of the model.
     """
 
     def __init__(self):
@@ -47,6 +50,14 @@ class Model:
             compileShader(fragment_shader, GL.GL_FRAGMENT_SHADER),
         )
 
+    def update_uniforms(self):
+        """
+        Method called to updated uniforms in the model.
+        Must be implemented in the models.
+        Returns: None
+        """
+        raise NotImplementedError("Method update_uniform not implemented in the model.")
+
     def draw(self):
         """Draw the model on the screen using the current configuration."""
 
@@ -56,6 +67,9 @@ class Model:
 
         # select the shader to use
         GL.glUseProgram(self.shader_program)
+
+        # update the uniforms information
+        self.update_uniforms()
 
         # Binding the proper buffers
         GL.glBindVertexArray(self.vao)
