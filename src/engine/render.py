@@ -48,6 +48,9 @@ def init(window_name: str = "Relieve Creator"):
         clear_color[3],
     )
 
+    # Indicate to openGL about the screen used in glfw to render.
+    GL.glViewport(0, 0, WIDTH, HEIGHT)
+
     return render_window
 
 
