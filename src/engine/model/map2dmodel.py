@@ -17,6 +17,7 @@ from src.engine.settings import FLOAT_BYTES
 from src.engine.data import decimation
 from src.engine.settings import WIDTH
 from src.engine.settings import HEIGHT
+from src.engine.model.tranformations.transformations import ortho
 
 
 def interpolate(value: float, value_min: float, value_max: float, target_min: float = -1,
@@ -70,6 +71,9 @@ class Map2DModel(Model):
         # heigh buffer object
         self.hbo = GL.glGenBuffers(1)
 
+        # projection matriz
+        self.__projection = ortho(-1, 1, -1, 1, -1, 1)
+
     def __print_vertices(self):
         """
         Print the vertices of the model.
@@ -98,10 +102,12 @@ class Map2DModel(Model):
         # get the location
         max_height_location = GL.glGetUniformLocation(self.shader_program, "max_height")
         min_height_location = GL.glGetUniformLocation(self.shader_program, "min_height")
+        projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
 
         # set the value
         GL.glUniform1f(max_height_location, float(self.__max_height))
         GL.glUniform1f(min_height_location, float(self.__min_height))
+        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.__projection)
 
     def set_heigh_buffer(self):
         """
