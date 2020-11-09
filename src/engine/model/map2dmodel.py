@@ -129,7 +129,7 @@ class Map2DModel(Model):
 
         return
 
-    def set_vertices_from_grid(self, x, y, z, quality=2):
+    def set_vertices_from_grid(self, x, y, z, quality=1):
         """
         Set the vertices of the model from a grid.
 
@@ -221,7 +221,7 @@ if __name__ == '__main__':
     model = Map2DModel()
 
     log.debug("Setting vertices from grid")
-    model.set_vertices_from_grid(X, Y, Z)
+    model.set_vertices_from_grid(X, Y, Z, 10)
     model.wireframes = False
 
     log.debug("Starting main loop.")
