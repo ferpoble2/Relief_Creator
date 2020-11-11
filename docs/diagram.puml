@@ -1,0 +1,74 @@
+@startuml
+
+' Variable definition
+!$file = "(F,#ff75ff) File"
+
+' Configuration definition
+title Class Diagram For Reliefe Creator
+set namespaceSeparator .
+
+' Classes definition
+class src.engine.settings << $file >>{
+    + int WIDTH
+    + int HEIGHT
+    + list clear_color
+    + int FLOAT_BYTES
+}
+
+class src.engine.model.Model {
+
+    + vao : int
+    + vbo : int
+    + cbo : int
+    + ebo : int
+    + shader_program : compiled_shader
+    + position : numpy.array[3]
+    + rotation : numpy.array[3]
+    + indices_size: int
+    + draw_mode : GL_DRAW_MODE
+    + wireframes : boolean
+
+    + set_shaders(vertex_shader, fragment_shader)
+    + update_uniforms()
+    + set_vertices(vertex)
+    + set_indices(indices)
+    + draw()
+}
+
+class src.engine.render << $file >>{
+    init() : None
+    on_loop() : None
+}
+
+class src.input.NetCDF <<$file>> {
+    read_info(filename) -> array, array, array
+}
+
+class src.engine.data.decimation <<$file>>{
+    simple_decimation(x, y, z, n_rows, n_cols): array, array, array
+}
+
+class src.engine.model.Map2DModel{
+
+}
+
+class src.engine.model.Map3DModel{
+
+}
+
+
+' herency
+src.engine.model.Map2DModel -> src.engine.model.Model
+src.engine.model.Map3DModel -> src.engine.model.Model
+
+' uses
+src.engine.model.Map2DModel .> src.engine.data.decimation
+src.engine.model.Map2DModel .> src.input.NetCDF
+src.engine.model.Map2DModel .> src.engine.render
+src.engine.model.Map2DModel .> src.engine.settings
+src.engine.model.Map2DModel .> src.engine.model.transformations.transormations
+
+src.engine.model.Model .> src.engine.settings
+
+src.engine.render .>  src.engine.settings
+@enduml
