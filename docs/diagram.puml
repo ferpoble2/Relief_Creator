@@ -7,6 +7,18 @@
 title Class Diagram For Reliefe Creator
 set namespaceSeparator .
 
+' Package hierarchy
+package src {
+    package engine {
+        package model {
+            package transformations {}
+        }
+        package data {}
+    }
+    package input {}
+}
+
+
 ' Classes definition
 class src.engine.settings << $file >>{
     + int WIDTH
@@ -14,6 +26,24 @@ class src.engine.settings << $file >>{
     + list clear_color
     + int FLOAT_BYTES
 }
+
+class src.engine.model.transformations.transformations <<$file>> {
+    + identity() : array
+    + uniformScale(s) : array
+    + scale(sx,sy,sz) : array
+    + rotationX(theta) : array
+    + rotationY(theta) : array
+    + rotationZ(theta) : array
+    + rotationA(theta, axis) : array
+    + translate(tx, ty, tz) : array
+    + shearing(xy, yx, xz, zx, yz, zy) : array
+    + matmul(mats) : array
+    + frustum(left, right, bottom, top, near, far) : array
+    + perspective(fovy, aspect, near, far) : array
+    + ortho(left, right, bottom, top, near, far) : array
+    + lookAt(eye, at, up) : array
+}
+
 
 class src.engine.model.Model {
 
@@ -36,19 +66,39 @@ class src.engine.model.Model {
 }
 
 class src.engine.render << $file >>{
-    init() : None
-    on_loop() : None
+    + init()
+    + on_loop()
 }
 
 class src.input.NetCDF <<$file>> {
-    read_info(filename) -> array, array, array
+    + read_info(filename) -> array, array, array
 }
 
 class src.engine.data.decimation <<$file>>{
-    simple_decimation(x, y, z, n_rows, n_cols): array, array, array
+    + simple_decimation(x, y, z, n_rows, n_cols): array, array, array
+}
+
+class src.engine.utils <<$file>>{
+    + interpolate(value, value_min, value_max, target_min,target_max) : float
 }
 
 class src.engine.model.Map2DModel{
+    - __x : array
+    - __y : array
+    - __z : array
+    - __vertices : list
+    - __indices : list
+    - __height : list
+    - __max_height : float
+    - __min_height : float
+    - __projection : list
+    + hbo : int
+
+    - __print_vertices()
+    - __print_indices()
+    + set_vertices_from_grid(x,y,z,quality)
+    + set_heigh_buffer()
+    + update_uniforms()
 
 }
 
@@ -58,17 +108,16 @@ class src.engine.model.Map3DModel{
 
 
 ' herency
-src.engine.model.Map2DModel -> src.engine.model.Model
-src.engine.model.Map3DModel -> src.engine.model.Model
+src.engine.model.Map2DModel -u-> src.engine.model.Model
+src.engine.model.Map3DModel -u-> src.engine.model.Model
 
 ' uses
-src.engine.model.Map2DModel .> src.engine.data.decimation
-src.engine.model.Map2DModel .> src.input.NetCDF
-src.engine.model.Map2DModel .> src.engine.render
-src.engine.model.Map2DModel .> src.engine.settings
-src.engine.model.Map2DModel .> src.engine.model.transformations.transormations
+src.engine.model.Map2DModel -u.> src.engine.data.decimation
+src.engine.model.Map2DModel -u.> src.engine.settings
+src.engine.model.Map2DModel -u.> src.engine.model.transformations.transformations
+src.engine.model.Map2DModel -u.> src.engine.utils
 
-src.engine.model.Model .> src.engine.settings
+src.engine.model.Model -u.> src.engine.settings
 
-src.engine.render .>  src.engine.settings
+src.engine.render -u.>  src.engine.settings
 @enduml
