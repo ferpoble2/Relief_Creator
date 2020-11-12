@@ -18,7 +18,6 @@ class Model:
         """Contructor of the model class."""
         self.vao = GL.glGenVertexArrays(1)
         self.vbo = GL.glGenBuffers(1)
-        self.cbo = GL.glGenBuffers(1)
         self.ebo = GL.glGenBuffers(1)
 
         self.shader_program = None
@@ -31,6 +30,8 @@ class Model:
         self.draw_mode = GL.GL_TRIANGLES
 
         self.wireframes = False
+
+        self.check_uniform = True
 
     def set_shaders(self, vertex_shader, fragment_shader):
         """Set the shaders to use in the model.
@@ -50,13 +51,14 @@ class Model:
             compileShader(fragment_shader, GL.GL_FRAGMENT_SHADER),
         )
 
-    def update_uniforms(self):
+    def __update_uniforms(self):
         """
         Method called to updated uniforms in the model.
         Must be implemented in the models.
         Returns: None
         """
-        raise NotImplementedError("Method update_uniform not implemented in the model.")
+        if self.check_uniform:
+            raise NotImplementedError("Method update_uniform not implemented in the model.")
 
     def draw(self):
         """Draw the model on the screen using the current configuration."""
@@ -69,7 +71,7 @@ class Model:
         GL.glUseProgram(self.shader_program)
 
         # update the uniforms information
-        self.update_uniforms()
+        self.__update_uniforms()
 
         # Binding the proper buffers
         GL.glBindVertexArray(self.vao)

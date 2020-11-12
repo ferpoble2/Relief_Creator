@@ -74,7 +74,7 @@ class Map2DModel(Model):
         for i in range(int(len(self.__indices) / 3)):
             print(f"I{i}: " + "".join(str(self.__indices[i * 3:(i + 1) * 3])))
 
-    def update_uniforms(self):
+    def __update_uniforms(self):
         """
         Update the uniforms in the model.
 
@@ -91,7 +91,7 @@ class Map2DModel(Model):
         GL.glUniform1f(min_height_location, float(self.__min_height))
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.__projection)
 
-    def set_heigh_buffer(self):
+    def __set_heigh_buffer(self):
         """
         Set the buffer object for the heights to be used in the shaders.
 
@@ -177,7 +177,7 @@ class Map2DModel(Model):
 
         self.set_indices(np.array(self.__indices, dtype=np.uint32))
         self.set_shaders(
-            "../shaders/vertex_shader.glsl", "../shaders/fragment_shader.glsl"
+            "../shaders/model_2d_vertex.glsl", "../shaders/model_2d_fragment.glsl"
         )
 
         # set the height buffer for rendering and store height values
@@ -185,7 +185,7 @@ class Map2DModel(Model):
         self.__max_height = np.nanmax(self.__height)
         self.__min_height = np.nanmin(self.__height)
 
-        self.set_heigh_buffer()
+        self.__set_heigh_buffer()
 
 
 if __name__ == '__main__':
@@ -201,7 +201,7 @@ if __name__ == '__main__':
     model = Map2DModel()
 
     log.debug("Setting vertices from grid")
-    model.set_vertices_from_grid(X, Y, Z, 1)
+    model.set_vertices_from_grid(X, Y, Z, 3)
     model.wireframes = False
 
     log.debug("Starting main loop.")

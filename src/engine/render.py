@@ -90,6 +90,7 @@ if __name__ == "__main__":
 
     log.info("Setting up the model...")
     my_model = Model()
+    my_model.check_uniform = False
     my_model.set_vertices(
         np.array(
             [-0.5, -0.5, 0, 0.5, -0.5, 0, 0.5, 0.5, 0, -0.5, 0.5, 0],
@@ -98,7 +99,7 @@ if __name__ == "__main__":
     )
     my_model.set_indices(np.array([0, 1, 2, 2, 3, 0], dtype=np.uint32))
     my_model.set_shaders(
-        "./shaders/vertex_shader.glsl", "./shaders/fragment_shader.glsl"
+        "./shaders/simple_vertex.glsl", "./shaders/simple_fragment.glsl"
     )
     my_model.wireframes = True
 

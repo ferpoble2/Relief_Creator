@@ -57,9 +57,10 @@ class src.engine.model.Model {
     + indices_size: int
     + draw_mode : GL_DRAW_MODE
     + wireframes : boolean
+    + check_uniform : boolean
 
+    - __update_uniforms()
     + set_shaders(vertex_shader, fragment_shader)
-    + update_uniforms()
     + set_vertices(vertex)
     + set_indices(indices)
     + draw()
@@ -96,10 +97,14 @@ class src.engine.model.Map2DModel{
 
     - __print_vertices()
     - __print_indices()
+    - __set_heigh_buffer()
+    - __update_uniforms()
     + set_vertices_from_grid(x,y,z,quality)
-    + set_heigh_buffer()
-    + update_uniforms()
 
+}
+
+class src.input.CTP <<$file>> {
+    + read_file(filename: str) : dict
 }
 
 class src.engine.model.Map3DModel{
