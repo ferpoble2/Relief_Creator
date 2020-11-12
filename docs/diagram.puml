@@ -115,7 +115,6 @@ src.engine.model.Map3DModel -u-> src.engine.model.Model
 src.engine.model.Map2DModel -u.> src.engine.data.decimation
 src.engine.model.Map2DModel -u.> src.engine.settings
 src.engine.model.Map2DModel -u.> src.engine.model.transformations.transformations
-src.engine.model.Map2DModel -u.> src.engine.utils
 
 src.engine.model.Model -u.> src.engine.settings
 

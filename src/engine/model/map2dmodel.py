@@ -18,7 +18,6 @@ from src.engine.data import decimation
 from src.engine.settings import WIDTH
 from src.engine.settings import HEIGHT
 from src.engine.model.tranformations.transformations import ortho
-from src.engine.utils import interpolate
 
 class Map2DModel(Model):
     """
@@ -202,7 +201,7 @@ if __name__ == '__main__':
     model = Map2DModel()
 
     log.debug("Setting vertices from grid")
-    model.set_vertices_from_grid(X, Y, Z, 4)
+    model.set_vertices_from_grid(X, Y, Z, 1)
     model.wireframes = False
 
     log.debug("Starting main loop.")
