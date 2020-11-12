@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
     log.info("Setting up the model...")
     my_model = Model()
-    my_model.check_uniform = False
+    my_model.update_uniform_values = False
     my_model.set_vertices(
         np.array(
             [-0.5, -0.5, 0, 0.5, -0.5, 0, 0.5, 0.5, 0, -0.5, 0.5, 0],

@@ -57,9 +57,9 @@ class src.engine.model.Model {
     + indices_size: int
     + draw_mode : GL_DRAW_MODE
     + wireframes : boolean
-    + check_uniform : boolean
+    + update_uniform_values : boolean
 
-    - __update_uniforms()
+    ~ _update_uniforms()
     + set_shaders(vertex_shader, fragment_shader)
     + set_vertices(vertex)
     + set_indices(indices)
@@ -98,7 +98,7 @@ class src.engine.model.Map2DModel{
     - __print_vertices()
     - __print_indices()
     - __set_heigh_buffer()
-    - __update_uniforms()
+    ~ _update_uniforms()
     + set_vertices_from_grid(x,y,z,quality)
 
 }

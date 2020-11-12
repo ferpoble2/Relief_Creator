@@ -31,7 +31,7 @@ class Model:
 
         self.wireframes = False
 
-        self.check_uniform = True
+        self.update_uniform_values = True
 
     def set_shaders(self, vertex_shader, fragment_shader):
         """Set the shaders to use in the model.
@@ -51,13 +51,13 @@ class Model:
             compileShader(fragment_shader, GL.GL_FRAGMENT_SHADER),
         )
 
-    def __update_uniforms(self):
+    def _update_uniforms(self):
         """
         Method called to updated uniforms in the model.
         Must be implemented in the models.
         Returns: None
         """
-        if self.check_uniform:
+        if self.update_uniform_values:
             raise NotImplementedError("Method update_uniform not implemented in the model.")
 
     def draw(self):
@@ -71,7 +71,7 @@ class Model:
         GL.glUseProgram(self.shader_program)
 
         # update the uniforms information
-        self.__update_uniforms()
+        self._update_uniforms()
 
         # Binding the proper buffers
         GL.glBindVertexArray(self.vao)

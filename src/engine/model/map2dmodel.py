@@ -74,7 +74,7 @@ class Map2DModel(Model):
         for i in range(int(len(self.__indices) / 3)):
             print(f"I{i}: " + "".join(str(self.__indices[i * 3:(i + 1) * 3])))
 
-    def __update_uniforms(self):
+    def _update_uniforms(self):
         """
         Update the uniforms in the model.
 
