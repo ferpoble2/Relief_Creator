@@ -55,7 +55,7 @@ class Map2DModel(Model):
         self.hbo = GL.glGenBuffers(1)
 
         # projection matriz
-        self.__projection = ortho(-1, 1, -1, 1, -1, 1)
+        self.__projection = ortho(-180, 180, -90, 90, -1, 1)
 
     def __print_vertices(self):
         """
@@ -146,19 +146,11 @@ class Map2DModel(Model):
         # Apply decimation algorithm
         x, y, z = decimation.simple_decimation(x, y, z, int(HEIGHT / quality), int(WIDTH / quality))
 
-        min_x = np.min(x)
-        max_x = np.max(x)
-
-        min_y = np.min(y)
-        max_y = np.max(y)
-
         # Set the vertices in the buffer
         for row_index in range(len(z)):
             for col_index in range(len(z[0])):
-                new_x = interpolate(x[col_index], min_x, max_x)
-                new_y = interpolate(y[row_index], min_y, max_y)
-                self.__vertices.append(new_x)
-                self.__vertices.append(new_y)
+                self.__vertices.append(x[col_index])
+                self.__vertices.append(y[row_index])
                 self.__vertices.append(0)
 
         self.set_vertices(
@@ -210,7 +202,7 @@ if __name__ == '__main__':
     model = Map2DModel()
 
     log.debug("Setting vertices from grid")
-    model.set_vertices_from_grid(X, Y, Z, 10)
+    model.set_vertices_from_grid(X, Y, Z, 4)
     model.wireframes = False
 
     log.debug("Starting main loop.")
