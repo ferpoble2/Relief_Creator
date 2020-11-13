@@ -10,7 +10,7 @@ import sys
 from src.engine.model.model import Model
 from src.engine.settings import HEIGHT
 from src.engine.settings import WIDTH
-from src.engine.settings import clear_color
+from src.engine.settings import CLEAR_COLOR
 
 
 def init(window_name: str = "Relieve Creator"):
@@ -42,10 +42,10 @@ def init(window_name: str = "Relieve Creator"):
     glfw.make_context_current(render_window)
 
     GL.glClearColor(
-        clear_color[0],
-        clear_color[1],
-        clear_color[2],
-        clear_color[3],
+        CLEAR_COLOR[0],
+        CLEAR_COLOR[1],
+        CLEAR_COLOR[2],
+        CLEAR_COLOR[3],
     )
 
     # Indicate to openGL about the screen used in glfw to render.

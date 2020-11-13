@@ -21,10 +21,10 @@ package src {
 
 ' Classes definition
 class src.engine.settings << $file >>{
-    + int WIDTH
-    + int HEIGHT
-    + list clear_color
-    + int FLOAT_BYTES
+    + WIDTH : int
+    + HEIGHT : int
+    + CLEAR_COLOR : list
+    + FLOAT_BYTES : int
 }
 
 class src.engine.model.transformations.transformations <<$file>> {
@@ -79,14 +79,20 @@ class src.engine.data.decimation <<$file>>{
     + simple_decimation(x, y, z, n_rows, n_cols): array, array, array
 }
 
-class src.engine.utils <<$file>>{
+class src.utils <<$file>>{
+    + LOG_LEVEL : int
+    + LOG_FILE_LEVEL : int
     + interpolate(value, value_min, value_max, target_min,target_max) : float
+    + get_logger(log_level, log_file_level, module) : logger
 }
 
 class src.engine.model.Map2DModel{
     - __x : array
     - __y : array
     - __z : array
+    - __color_file : str
+    - __colors : array
+    - __height_limit : array
     - __vertices : list
     - __indices : list
     - __height : list
@@ -99,6 +105,7 @@ class src.engine.model.Map2DModel{
     - __print_indices()
     - __set_heigh_buffer()
     ~ _update_uniforms()
+    + set_color_file(filename)
     + set_vertices_from_grid(x,y,z,quality)
 
 }
@@ -111,6 +118,10 @@ class src.engine.model.Map3DModel{
 
 }
 
+class src.main {
+
+}
+
 
 ' herency
 src.engine.model.Map2DModel -u-> src.engine.model.Model
@@ -120,8 +131,15 @@ src.engine.model.Map3DModel -u-> src.engine.model.Model
 src.engine.model.Map2DModel -u.> src.engine.data.decimation
 src.engine.model.Map2DModel -u.> src.engine.settings
 src.engine.model.Map2DModel -u.> src.engine.model.transformations.transformations
+src.engine.model.Map2DModel -u.> src.input.CTP
+src.engine.model.Map2DModel -u.> src.utils
+
+src.input.CTP -u.> src.utils
 
 src.engine.model.Model -u.> src.engine.settings
 
 src.engine.render -u.>  src.engine.settings
+
+src.main -u.> src.utils
+
 @enduml

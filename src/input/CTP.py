@@ -1,8 +1,9 @@
 """
 File with utils functions to read CPT files. (file wih the information about how to set the colors of the models).
 """
-import logging as log
+from src.utils import get_logger
 
+log = get_logger(module='CTP')
 
 def read_file(filename: str):
     log.debug(f'Reading file {filename}')
@@ -31,24 +32,22 @@ def read_file(filename: str):
 
         # append
         if len(colors) == 0:
-            print('f')
             colors.append({
-                'height': int(values[0]),
+                'height': float(values[0]),
                 'color' : values[1].split('/')
             })
             colors.append({
-                'height': int(values[2]),
+                'height': float(values[2]),
                 'color': values[3].split('/')
             })
         else:
-            print('s')
             colors.pop()
             colors.append({
-                'height': int(values[0]),
+                'height': float(values[0]),
                 'color' : values[1].split('/')
             })
             colors.append({
-                'height': int(values[2]),
+                'height': float(values[2]),
                 'color': values[3].split('/')
             })
 
@@ -56,8 +55,6 @@ def read_file(filename: str):
 
 
 if __name__ == '__main__':
-    log.basicConfig(format="%(asctime)s - %(message)s", level=log.DEBUG)
 
     filename = 'test_colors/Ocean_Land_3.cpt'
     colors = read_file(filename)
-    print(colors)

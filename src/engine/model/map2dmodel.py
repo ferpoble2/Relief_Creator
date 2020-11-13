@@ -6,7 +6,6 @@ from src.engine.model.model import Model
 from src.input.NetCDF import read_info
 
 import OpenGL.GL as GL
-import logging as log
 import glfw
 import numpy as np
 import ctypes as ctypes
@@ -17,7 +16,12 @@ from src.engine.settings import FLOAT_BYTES
 from src.engine.data import decimation
 from src.engine.settings import WIDTH
 from src.engine.settings import HEIGHT
+from src.input.CTP import read_file
 from src.engine.model.tranformations.transformations import ortho
+from src.utils import get_logger
+
+log = get_logger(module='Map2DModel')
+
 
 class Map2DModel(Model):
     """
@@ -34,15 +38,20 @@ class Map2DModel(Model):
         """
         super().__init__()
 
+        # Color file used. (if not color file, then None)
+        self.__color_file = None
+        self.__colors = []
+        self.__height_limit = []
+
         # grid values
         self.__x = None
         self.__y = None
         self.__z = None
 
-        # vertices values
+        # vertices values (used in the buffer)
         self.__vertices = []
 
-        # indices of the model
+        # indices of the model (used in the buffer)
         self.__indices = []
 
         # height values
@@ -91,6 +100,16 @@ class Map2DModel(Model):
         GL.glUniform1f(min_height_location, float(self.__min_height))
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.__projection)
 
+        # set colors if using
+        if self.__color_file is not None:
+            colors_location = GL.glGetUniformLocation(self.shader_program, "colors")
+            heigh_color_location = GL.glGetUniformLocation(self.shader_program, "height_color")
+            length_location = GL.glGetUniformLocation(self.shader_program, "length")
+
+            GL.glUniform3fv(colors_location, len(self.__colors), self.__colors)
+            GL.glUniform1fv(heigh_color_location, len(self.__height_limit), self.__height_limit)
+            GL.glUniform1i(length_location,len(self.__colors))
+
     def __set_heigh_buffer(self):
         """
         Set the buffer object for the heights to be used in the shaders.
@@ -116,6 +135,38 @@ class Map2DModel(Model):
         GL.glEnableVertexAttribArray(1)
 
         return
+
+    def set_color_file(self, filename: str):
+        """
+
+        Args:
+            filename: File to use for the colors.
+
+        Returns: None
+
+        """
+        log.debug('Setting colors from file')
+        if len(self.__vertices) == 0:
+            raise AssertionError('Did you forget to set the vertices? (set_vertices_from_grid)')
+
+        # set the shaders
+        self.set_shaders('../shaders/model_2d_colors_vertex.glsl', '../shaders/model_2d_colors_fragment.glsl')
+        self.__color_file = filename
+
+        file_data = read_file(filename)
+        colors = []
+        height_limit = []
+
+        for element in file_data:
+            colors.append(element['color'])
+            height_limit.append(element['height'])
+
+        # send error in case too many colors are passed
+        if len(colors) > 500:
+            raise BufferError('Shader used does not support more than 500 colors in the file.')
+
+        self.__colors = np.array(colors, dtype=np.float32)
+        self.__height_limit = np.array(height_limit, dtype=np.float32)
 
     def set_vertices_from_grid(self, x, y, z, quality=1):
         """
@@ -176,9 +227,12 @@ class Map2DModel(Model):
                     self.__indices.append(row_index * len(z[0]) + col_index - 1)
 
         self.set_indices(np.array(self.__indices, dtype=np.uint32))
-        self.set_shaders(
-            "../shaders/model_2d_vertex.glsl", "../shaders/model_2d_fragment.glsl"
-        )
+
+        # Only select this shader if there is no shader selected.
+        if self.shader_program is None:
+            self.set_shaders(
+                "../shaders/model_2d_vertex.glsl", "../shaders/model_2d_fragment.glsl"
+            )
 
         # set the height buffer for rendering and store height values
         self.__height = np.array(z).reshape(-1)
@@ -189,9 +243,9 @@ class Map2DModel(Model):
 
 
 if __name__ == '__main__':
-    log.basicConfig(format="%(asctime)s - %(message)s", level=log.DEBUG)
 
     filename = "../../input/test_inputs/IF_60Ma_AHS_ET.nc"
+    color_file = "../../input/test_colors/Ocean_Land_3.cpt"
     X, Y, Z = read_info(filename)
 
     log.debug("Creating windows.")
@@ -202,6 +256,7 @@ if __name__ == '__main__':
 
     log.debug("Setting vertices from grid")
     model.set_vertices_from_grid(X, Y, Z, 3)
+    model.set_color_file(color_file)
     model.wireframes = False
 
     log.debug("Starting main loop.")

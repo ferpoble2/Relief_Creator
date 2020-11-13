@@ -16,31 +16,15 @@ import os
 
 from src.engine.render import init
 from src.engine.render import on_loop
-from src.engine.model import Model
+from src.utils import get_logger
+from src.utils import LOG_LEVEL
 from src.input.NetCDF import read_info
 
-
-def get_logger(log_level: int) -> logging.Logger:
-    """
-    Get the logger of the application to use in the main program.
-    Args:
-        log_level: Level too show in the logs (logging.DEBUG, logging.INFO, ...)
-
-    Returns: Logger to use to makes logs.
-
-    """
-    log = logging.getLogger(__name__)
-    logging.basicConfig(
-        format="%(asctime)s - %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p",
-    )
-    log.setLevel(log_level)
-
-    return log
 
 
 if __name__ == '__main__':
 
-    logger = get_logger(logging.DEBUG)
+    logger = get_logger(LOG_LEVEL)
     logger.debug("Starting mock program.")
 
     logger.debug("Creating windows.")
