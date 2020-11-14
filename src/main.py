@@ -10,31 +10,56 @@ Starts the main program, calling the engine and the logic.
 # TODO: Generate a triangulation from the points
 # TODO: Search for an interfave for the app (IMGUI related)
 
-import logging
 import glfw
-import os
+import imgui
+from imgui.integrations.glfw import GlfwRenderer
 
 from src.engine.render import init
 from src.engine.render import on_loop
+from src.engine.model.map2dmodel import Map2DModel
 from src.utils import get_logger
-from src.utils import LOG_LEVEL
 from src.input.NetCDF import read_info
+from src.engine.GUI.guimanager import GUIManager
 
+log = get_logger(module='MAIN')
 
 
 if __name__ == '__main__':
 
-    logger = get_logger(LOG_LEVEL)
-    logger.debug("Starting mock program.")
+    log.info('Starting Program')
 
-    logger.debug("Creating windows.")
+    filename = "./input/test_inputs/IF_60Ma_AHS_ET.nc"
+    color_file = "./input/test_colors/Ocean_Land_3.cpt"
+    log.debug('Using file %s for terrain.', filename)
+    log.debug('Using file %s for colors.', color_file)
+
+    X, Y, Z = read_info(filename)
+
+    # GLFW CODE
+    # ---------
+    log.debug("Creating windows.")
     window = init("Relief Creator")
 
-    logger.debug("Reading information from file.")
-    x, y, z = read_info(os.path.join('input', 'test_inputs', 'IF_60Ma_AHS_ET.nc'))
+    # GUI CODE
+    # --------
+    log.debug("Loading GUI")
+    gui_manager = GUIManager()
+    gui_manager.initialize(window)
 
-    logger.debug("Starting main loop.")
+    # MODEL CODE
+    # ----------
+    log.debug("Reading information from file.")
+    model = Map2DModel()
+
+    log.debug("Setting vertices from grid.")
+    model.set_vertices_from_grid(X, Y, Z, 3)
+
+    log.debug("Settings colors from file.")
+    model.set_color_file(color_file)
+    model.wireframes = False
+
+    log.debug("Starting main loop.")
     while not glfw.window_should_close(window):
-        on_loop(window)
+        on_loop(window, [lambda: model.draw()], gui_manager)
 
     glfw.terminate()

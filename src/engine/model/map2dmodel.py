@@ -108,7 +108,7 @@ class Map2DModel(Model):
 
             GL.glUniform3fv(colors_location, len(self.__colors), self.__colors)
             GL.glUniform1fv(heigh_color_location, len(self.__height_limit), self.__height_limit)
-            GL.glUniform1i(length_location,len(self.__colors))
+            GL.glUniform1i(length_location, len(self.__colors))
 
     def __set_heigh_buffer(self):
         """
@@ -150,7 +150,8 @@ class Map2DModel(Model):
             raise AssertionError('Did you forget to set the vertices? (set_vertices_from_grid)')
 
         # set the shaders
-        self.set_shaders('../shaders/model_2d_colors_vertex.glsl', '../shaders/model_2d_colors_fragment.glsl')
+        self.set_shaders('./engine/shaders/model_2d_colors_vertex.glsl',
+                         './engine/shaders/model_2d_colors_fragment.glsl')
         self.__color_file = filename
 
         file_data = read_file(filename)
@@ -231,7 +232,7 @@ class Map2DModel(Model):
         # Only select this shader if there is no shader selected.
         if self.shader_program is None:
             self.set_shaders(
-                "../shaders/model_2d_vertex.glsl", "../shaders/model_2d_fragment.glsl"
+                "./engine/shaders/model_2d_vertex.glsl", "./engine/shaders/model_2d_fragment.glsl"
             )
 
         # set the height buffer for rendering and store height values

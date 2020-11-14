@@ -14,12 +14,27 @@ package src {
             package transformations {}
         }
         package data {}
+        package controller {}
+        package GUI {}
     }
     package input {}
 }
 
 
 ' Classes definition
+class src.engine.GUI.frames <<$file>>{
+    + test_window()
+}
+
+class src.engine.GUI.GUIManager{
+    + initialize(window, mode)
+    + debug_mode()
+    + production_mode()
+    + process_input()
+    + draw_components()
+    + render()
+}
+
 class src.engine.settings << $file >>{
     + WIDTH : int
     + HEIGHT : int
@@ -83,7 +98,7 @@ class src.utils <<$file>>{
     + LOG_LEVEL : int
     + LOG_FILE_LEVEL : int
     + interpolate(value, value_min, value_max, target_min,target_max) : float
-    + get_logger(log_level, log_file_level, module) : logger
+    + get_logger(log_level, log_file_level, module, directory) : logger
 }
 
 class src.engine.model.Map2DModel{
@@ -118,9 +133,9 @@ class src.engine.model.Map3DModel{
 
 }
 
-class src.main {
-
-}
+'class src.main <<$file>> {
+'
+'}
 
 
 ' herency
@@ -138,8 +153,17 @@ src.input.CTP -u.> src.utils
 
 src.engine.model.Model -u.> src.engine.settings
 
-src.engine.render -u.>  src.engine.settings
+src.engine.render -u.> src.engine.settings
+src.engine.render .> src.engine.GUI.GUIManager
 
-src.main -u.> src.utils
+' Uncomment to check main file
+'src.main -u.> src.utils
+'src.main -u.> src.engine.render
+'src.main -u.> src.input.NetCDF
+'src.main -u.> src.engine.GUI.GUIManager
+'src.main -u.> src.engine.model.Map2DModel
+
+src.engine.GUI.GUIManager -u.> src.utils
+src.engine.GUI.GUIManager -u.> src.engine.GUI.frames
 
 @enduml

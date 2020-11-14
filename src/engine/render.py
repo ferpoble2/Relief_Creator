@@ -11,6 +11,7 @@ from src.engine.model.model import Model
 from src.engine.settings import HEIGHT
 from src.engine.settings import WIDTH
 from src.engine.settings import CLEAR_COLOR
+from src.engine.GUI.guimanager import GUIManager
 
 
 def init(window_name: str = "Relieve Creator"):
@@ -54,7 +55,7 @@ def init(window_name: str = "Relieve Creator"):
     return render_window
 
 
-def on_loop(render_window, on_frame_tasks=None) -> None:
+def on_loop(render_window=None, on_frame_tasks : list=None, gui : GUIManager =None) -> None:
     """
     Function to be called in every frame of he application.
 
@@ -71,6 +72,7 @@ def on_loop(render_window, on_frame_tasks=None) -> None:
         on_frame_tasks = []
 
     glfw.poll_events()
+    gui.process_input()
     GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
     # drawing the model in the screen
@@ -78,7 +80,10 @@ def on_loop(render_window, on_frame_tasks=None) -> None:
     for func in on_frame_tasks:
         func()
 
+    gui.draw_components()
+
     # Once the render is done, buffers are swapped, showing the complete scene.
+    gui.render()
     glfw.swap_buffers(render_window)
 
 
