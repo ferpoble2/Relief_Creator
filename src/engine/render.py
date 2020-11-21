@@ -5,113 +5,92 @@ and the OpenGL rendering process.
 import OpenGL.GL as GL
 import glfw
 import logging as log
-import numpy as np
 import sys
-from src.engine.model.model import Model
 from src.engine.settings import HEIGHT
 from src.engine.settings import WIDTH
 from src.engine.settings import CLEAR_COLOR
 from src.engine.GUI.guimanager import GUIManager
 
 
-def init(window_name: str = "Relieve Creator"):
-    """Initialize OpenGL and glfw for the application.
+class Render:
 
-    Args:
-        window_name (str, optional): Name of the window created.
-                                     Defaults to "Relieve Creator".
+    def __init__(self):
+        """
+        Constructor od the render.
+        """
+        self.__window = None
+        self.__GUI = None
 
-    Returns:
-        GLFWWindow: Window to use for the rendering process.
-    """
-    if not glfw.init():
-        sys.exit()
+    def init(self, window_name: str = "Relieve Creator", gui: GUIManager = None):
+        """Initialize OpenGL and glfw for the application.
 
-    log.info(f"Creating windows of size {WIDTH} x {HEIGHT}.")
-    render_window = glfw.create_window(
-        WIDTH,
-        HEIGHT,
-        window_name,
-        None,
-        None,
-    )
+        Args:
+            gui: Gui to use to render in the app.
+            window_name (str, optional): Name of the window created.
+                                         Defaults to "Relieve Creator".
 
-    if not render_window:
-        glfw.terminate()
-        sys.exit()
+        Returns:
+            GLFWWindow: Window to use for the rendering process.
+        """
+        if not glfw.init():
+            sys.exit()
 
-    glfw.make_context_current(render_window)
+        # set the gui for the app
+        self.__GUI = gui
 
-    GL.glClearColor(
-        CLEAR_COLOR[0],
-        CLEAR_COLOR[1],
-        CLEAR_COLOR[2],
-        CLEAR_COLOR[3],
-    )
-
-    # Indicate to openGL about the screen used in glfw to render.
-    GL.glViewport(0, 0, WIDTH, HEIGHT)
-
-    return render_window
-
-
-def on_loop(render_window=None, on_frame_tasks : list=None, gui : GUIManager =None) -> None:
-    """
-    Function to be called in every frame of he application.
-
-    This should be the one who renders the program.
-    Args:
-        render_window: Window to be used in the program.
-        on_frame_tasks: List of functions without parameters to be called in the main loop.
-                        These should be the ones who renders the objects and call others routines.
-
-    Returns: None
-
-    """
-    if on_frame_tasks is None:
-        on_frame_tasks = []
-
-    glfw.poll_events()
-    gui.process_input()
-    GL.glClear(GL.GL_COLOR_BUFFER_BIT)
-
-    # drawing the model in the screen
-    # -------------------------------
-    for func in on_frame_tasks:
-        func()
-
-    gui.draw_components()
-
-    # Once the render is done, buffers are swapped, showing the complete scene.
-    gui.render()
-    glfw.swap_buffers(render_window)
-
-
-if __name__ == "__main__":
-    log.basicConfig(level=log.INFO)
-
-    log.info("Initialization of the application...")
-    window = init()
-
-    log.info("Setting up the model...")
-    my_model = Model()
-    my_model.update_uniform_values = False
-    my_model.set_vertices(
-        np.array(
-            [-0.5, -0.5, 0, 0.5, -0.5, 0, 0.5, 0.5, 0, -0.5, 0.5, 0],
-            dtype=np.float32,
+        log.info(f"Creating windows of size {WIDTH} x {HEIGHT}.")
+        self.__window = glfw.create_window(
+            WIDTH,
+            HEIGHT,
+            window_name,
+            None,
+            None,
         )
-    )
-    my_model.set_indices(np.array([0, 1, 2, 2, 3, 0], dtype=np.uint32))
-    my_model.set_shaders(
-        "./shaders/simple_vertex.glsl", "./shaders/simple_fragment.glsl"
-    )
-    my_model.wireframes = True
 
-    log.info(type(window))
+        if not self.__window:
+            glfw.terminate()
+            sys.exit()
 
-    log.info("Starting main loop of the app...")
-    while not glfw.window_should_close(window):
-        on_loop(window, [lambda: my_model.draw()])
+        glfw.make_context_current(self.__window)
 
-    glfw.terminate()
+        GL.glClearColor(
+            CLEAR_COLOR[0],
+            CLEAR_COLOR[1],
+            CLEAR_COLOR[2],
+            CLEAR_COLOR[3],
+        )
+
+        # Indicate to openGL about the screen used in glfw to render.
+        GL.glViewport(0, 0, WIDTH, HEIGHT)
+
+        return self.__window
+
+    def on_loop(self, on_frame_tasks: list = None) -> None:
+        """
+        Function to be called in every frame of he application.
+
+        This should be the one who renders the program.
+        Args:
+            on_frame_tasks: List of functions without parameters to be called in the main loop.
+                            These should be the ones who renders the objects and call others routines.
+
+        Returns: None
+
+        """
+        if on_frame_tasks is None:
+            on_frame_tasks = []
+
+        glfw.poll_events()
+        self.__GUI.process_input()
+        GL.glClear(GL.GL_COLOR_BUFFER_BIT)
+
+        # drawing the model in the screen
+        # -------------------------------
+        for func in on_frame_tasks:
+            func()
+
+        self.__GUI.draw_components()
+
+        # Once the render is done, buffers are swapped, showing the complete scene.
+        self.__GUI.render()
+        glfw.swap_buffers(self.__window)

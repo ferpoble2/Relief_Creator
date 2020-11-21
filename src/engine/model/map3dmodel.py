@@ -1,3 +1,5 @@
+from src.engine.model.model import Model
 
 
-class Map2DModel(Model):
+class Map3DModel(Model):
+    pass

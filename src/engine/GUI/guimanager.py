@@ -6,6 +6,7 @@ from imgui.integrations.glfw import GlfwRenderer
 
 from src.utils import get_logger
 from src.engine.GUI.frames import test_window
+from src.engine.GUI.frames import sample_text
 
 log = get_logger(module='GUIMANAGER')
 
@@ -22,13 +23,15 @@ class GUIManager:
         self.__implementation = None
         self.__glfw_window = None
         self.__component_list = []
+        self.__io = None
+        self.__font = None
 
     def initialize(self, window, mode='debug') -> None:
         """
         Set the initial configurations of the GUI.
         Args:
             window: Window to use to draw the GUI
-            mode: Mode in wich to draw the GUI (debug or production)
+            mode: Mode in which to draw the GUI (debug or production)
 
         Returns: None
 
@@ -37,6 +40,18 @@ class GUIManager:
         imgui.create_context()
         self.__implementation = GlfwRenderer(window)
         self.__glfw_window = window
+
+        # Style options
+        style = imgui.get_style()
+        style.frame_rounding = 12
+        imgui.style_colors_light(style)
+
+        # Font options
+        self.__io = imgui.get_io()
+        self.__font = self.__io.fonts.add_font_from_file_ttf(
+            './engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', 15
+        )
+        self.__implementation.refresh_font_texture()
 
         if mode == 'debug':
             self.debug_mode()
@@ -50,6 +65,7 @@ class GUIManager:
         Returns: None
         """
         self.__component_list.append(test_window)
+        self.__component_list.append(sample_text)
 
     def production_mode(self) -> None:
         """
@@ -71,12 +87,15 @@ class GUIManager:
         Draw the components of the GUI (This dont render them).
         Returns: None
         """
-        for funct in self.__component_list:
-            funct()
+        imgui.new_frame()
+        with imgui.font(self.__font):
+            for func in self.__component_list:
+                func()
+        imgui.end_frame()
 
     def render(self) -> None:
         """
-        Render the GUI (Componentes must be drew first).
+        Render the GUI (Components must be drew first).
         Returns: None
         """
         imgui.render()

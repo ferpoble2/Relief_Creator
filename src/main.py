@@ -8,14 +8,12 @@ Starts the main program, calling the engine and the logic.
 # TODO: Make a program and load a file
 # TODO: Render more tha just a square in the screen
 # TODO: Generate a triangulation from the points
-# TODO: Search for an interfave for the app (IMGUI related)
+# TODO: Search for an interface for the app (IMGUI related)
 
 import glfw
-import imgui
-from imgui.integrations.glfw import GlfwRenderer
 
-from src.engine.render import init
-from src.engine.render import on_loop
+
+from src.engine.render import Render
 from src.engine.model.map2dmodel import Map2DModel
 from src.utils import get_logger
 from src.input.NetCDF import read_info
@@ -35,15 +33,19 @@ if __name__ == '__main__':
 
     X, Y, Z = read_info(filename)
 
+    # Create main components of the engine
+    # ------------------------------------
+    render = Render()
+    gui_manager = GUIManager()
+
     # GLFW CODE
     # ---------
     log.debug("Creating windows.")
-    window = init("Relief Creator")
+    window = render.init("Relief Creator", gui_manager)
 
     # GUI CODE
     # --------
     log.debug("Loading GUI")
-    gui_manager = GUIManager()
     gui_manager.initialize(window)
 
     # MODEL CODE
@@ -60,6 +62,6 @@ if __name__ == '__main__':
 
     log.debug("Starting main loop.")
     while not glfw.window_should_close(window):
-        on_loop(window, [lambda: model.draw()], gui_manager)
+        render.on_loop([lambda: model.draw()])
 
     glfw.terminate()

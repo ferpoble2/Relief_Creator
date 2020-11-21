@@ -1,17 +1,13 @@
 """
-Class in charge of managing the models of the maps in 2 dimentions.
+Class in charge of managing the models of the maps in 2 dimensions.
 """
 
 from src.engine.model.model import Model
-from src.input.NetCDF import read_info
 
 import OpenGL.GL as GL
-import glfw
 import numpy as np
 import ctypes as ctypes
 
-from src.engine.render import init
-from src.engine.render import on_loop
 from src.engine.settings import FLOAT_BYTES
 from src.engine.data import decimation
 from src.engine.settings import WIDTH
@@ -59,10 +55,10 @@ class Map2DModel(Model):
         self.__max_height = None
         self.__min_height = None
 
-        # heigh buffer object
+        # height buffer object
         self.hbo = GL.glGenBuffers(1)
 
-        # projection matriz
+        # projection matrix
         self.__projection = ortho(-180, 180, -90, 90, -1, 1)
 
     def __print_vertices(self):
@@ -103,14 +99,14 @@ class Map2DModel(Model):
         # set colors if using
         if self.__color_file is not None:
             colors_location = GL.glGetUniformLocation(self.shader_program, "colors")
-            heigh_color_location = GL.glGetUniformLocation(self.shader_program, "height_color")
+            height_color_location = GL.glGetUniformLocation(self.shader_program, "height_color")
             length_location = GL.glGetUniformLocation(self.shader_program, "length")
 
             GL.glUniform3fv(colors_location, len(self.__colors), self.__colors)
-            GL.glUniform1fv(heigh_color_location, len(self.__height_limit), self.__height_limit)
+            GL.glUniform1fv(height_color_location, len(self.__height_limit), self.__height_limit)
             GL.glUniform1i(length_location, len(self.__colors))
 
-    def __set_heigh_buffer(self):
+    def __set_height_buffer(self):
         """
         Set the buffer object for the heights to be used in the shaders.
 
@@ -240,28 +236,4 @@ class Map2DModel(Model):
         self.__max_height = np.nanmax(self.__height)
         self.__min_height = np.nanmin(self.__height)
 
-        self.__set_heigh_buffer()
-
-
-if __name__ == '__main__':
-
-    filename = "../../input/test_inputs/IF_60Ma_AHS_ET.nc"
-    color_file = "../../input/test_colors/Ocean_Land_3.cpt"
-    X, Y, Z = read_info(filename)
-
-    log.debug("Creating windows.")
-    window = init("Relief Creator")
-
-    log.debug("Reading information from file.")
-    model = Map2DModel()
-
-    log.debug("Setting vertices from grid")
-    model.set_vertices_from_grid(X, Y, Z, 3)
-    model.set_color_file(color_file)
-    model.wireframes = False
-
-    log.debug("Starting main loop.")
-    while not glfw.window_should_close(window):
-        on_loop(window, [lambda: model.draw()])
-
-    glfw.terminate()
+        self.__set_height_buffer()

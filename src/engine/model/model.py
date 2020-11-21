@@ -15,7 +15,7 @@ class Model:
     """
 
     def __init__(self):
-        """Contructor of the model class."""
+        """Constructor of the model class."""
         self.vao = GL.glGenVertexArrays(1)
         self.vbo = GL.glGenBuffers(1)
         self.ebo = GL.glGenBuffers(1)
@@ -33,14 +33,14 @@ class Model:
 
         self.update_uniform_values = True
 
-    def set_shaders(self, vertex_shader, fragment_shader):
+    def set_shaders(self, vertex_shader: str, fragment_shader: str):
         """Set the shaders to use in the model.
 
         Set the shaders of the model, compiling them and creating a program.
 
         Args:
-            vertex_shader (str): Path to the vertex shader location.
-            fragment_shader (str): Path to the fragment shader location.
+            vertex_shader: Path to the vertex shader location.
+            fragment_shader: Path to the fragment shader location.
         """
 
         vertex_shader = open(vertex_shader, "r").read()
@@ -83,11 +83,11 @@ class Model:
             self.draw_mode, self.indices_size, GL.GL_UNSIGNED_INT, None
         )
 
-    def set_vertices(self, vertex):
+    def set_vertices(self, vertex: np.ndarray):
         """Set the vertices buffers inside the model.
 
         Args:
-            vertex (numpy.ndarray): List of vertices of type np.float32.
+            vertex: List of vertices of type np.float32.
         """
 
         GL.glBindVertexArray(self.vao)
@@ -104,11 +104,11 @@ class Model:
         )
         GL.glEnableVertexAttribArray(0)
 
-    def set_indices(self, indices):
+    def set_indices(self, indices: np.ndarray):
         """Set the vertex indices of the vertices of the model.
 
         Args:
-            indices (numpy.ndarray): Indices to be used in the draw process.
+            indices: Indices to be used in the draw process.
         """
 
         GL.glBindVertexArray(self.vao)
@@ -122,7 +122,7 @@ class Model:
 
         self.indices_size = len(indices)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return the string representing the model object.
 
         Returns:

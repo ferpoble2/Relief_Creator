@@ -24,6 +24,7 @@ package src {
 ' Classes definition
 class src.engine.GUI.frames <<$file>>{
     + test_window()
+    + sample_text()
 }
 
 class src.engine.GUI.GUIManager{
@@ -81,9 +82,11 @@ class src.engine.model.Model {
     + draw()
 }
 
-class src.engine.render << $file >>{
-    + init()
-    + on_loop()
+class src.engine.Render {
+    + __window : GLFWWindow
+    + __gui : GUIManager
+    + init(window_name)
+    + on_loop(on_frame_task)
 }
 
 class src.input.NetCDF <<$file>> {
@@ -153,8 +156,8 @@ src.input.CTP -u.> src.utils
 
 src.engine.model.Model -u.> src.engine.settings
 
-src.engine.render -u.> src.engine.settings
-src.engine.render -l.> src.engine.GUI.GUIManager
+src.engine.Render -u.> src.engine.settings
+src.engine.Render -l.> src.engine.GUI.GUIManager
 
 ' Uncomment to check main file
 'src.main -u.> src.utils

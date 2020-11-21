@@ -1,16 +1,28 @@
 """
 File with utils functions to read CPT files. (file wih the information about how to set the colors of the models).
 """
+from typing import List
+
 from src.utils import get_logger
 
 log = get_logger(module='CTP')
 
-def read_file(filename: str):
-    log.debug(f'Reading file {filename}')
 
-    file = open(filename, 'r')
+def read_file(file_name: str) -> List[dict]:
+    """
+    Read a CTP file and extracts the colors and the limits associated to them
 
-    colors = []
+    Args:
+        file_name: Name of the file to read.
+
+    Returns: Dictionary with the limits and the colors associated.
+
+    """
+    log.debug(f'Reading file {file_name}')
+
+    file = open(file_name, 'r')
+
+    color_pallet = []
     for line in file.readlines():
 
         # dont consider comments
@@ -31,30 +43,29 @@ def read_file(filename: str):
             values.remove('')
 
         # append
-        if len(colors) == 0:
-            colors.append({
+        if len(color_pallet) == 0:
+            color_pallet.append({
                 'height': float(values[0]),
-                'color' : values[1].split('/')
+                'color': values[1].split('/')
             })
-            colors.append({
+            color_pallet.append({
                 'height': float(values[2]),
                 'color': values[3].split('/')
             })
         else:
-            colors.pop()
-            colors.append({
+            color_pallet.pop()
+            color_pallet.append({
                 'height': float(values[0]),
-                'color' : values[1].split('/')
+                'color': values[1].split('/')
             })
-            colors.append({
+            color_pallet.append({
                 'height': float(values[2]),
                 'color': values[3].split('/')
             })
 
-    return colors
+    return color_pallet
 
 
 if __name__ == '__main__':
-
     filename = 'test_colors/Ocean_Land_3.cpt'
     colors = read_file(filename)

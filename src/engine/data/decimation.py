@@ -41,4 +41,3 @@ def simple_decimation(x: np.ndarray, y: np.ndarray, z: np.ndarray, n_rows: int, 
     z = z[::step_y, ::step_x]
 
     return x, y, z
-
