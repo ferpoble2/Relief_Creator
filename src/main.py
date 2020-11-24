@@ -12,15 +12,17 @@ Starts the main program, calling the engine and the logic.
 
 import glfw
 
-
 from src.engine.render import Render
 from src.engine.model.map2dmodel import Map2DModel
 from src.utils import get_logger
 from src.input.NetCDF import read_info
 from src.engine.GUI.guimanager import GUIManager
 
-log = get_logger(module='MAIN')
+from src.engine.GUI.frames.sample_text import SampleText
+from src.engine.GUI.frames.test_window import TestWindow
+from src.engine.GUI.frames.main_menu_bar import MainMenuBar
 
+log = get_logger(module='MAIN')
 
 if __name__ == '__main__':
 
@@ -47,6 +49,13 @@ if __name__ == '__main__':
     # --------
     log.debug("Loading GUI")
     gui_manager.initialize(window)
+    gui_manager.add_frames(
+        [
+            MainMenuBar(gui_manager),
+            TestWindow(),
+            SampleText()
+        ]
+    )
 
     # MODEL CODE
     # ----------

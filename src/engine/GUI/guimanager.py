@@ -5,8 +5,6 @@ import imgui
 from imgui.integrations.glfw import GlfwRenderer
 
 from src.utils import get_logger
-from src.engine.GUI.frames import test_window
-from src.engine.GUI.frames import sample_text
 
 log = get_logger(module='GUIMANAGER')
 
@@ -49,31 +47,36 @@ class GUIManager:
         # Font options
         self.__io = imgui.get_io()
         self.__font = self.__io.fonts.add_font_from_file_ttf(
-            './engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', 15
+            './engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', 18
         )
         self.__implementation.refresh_font_texture()
 
-        if mode == 'debug':
-            self.debug_mode()
-
-        if mode == 'production':
-            self.production_mode()
-
-    def debug_mode(self) -> None:
+    def add_frames(self, component_list: list):
         """
-        Set the gui in debug mode
+        Add frames to render in the application.
+
+        Receive a list of components that must inherit from the Frame class.
+
+        Args:
+            component_list: List of frames to render.
+
         Returns: None
         """
-        self.__component_list.append(test_window)
-        self.__component_list.append(sample_text)
+        for frame in component_list:
+            self.__component_list.append(frame)
 
-    def production_mode(self) -> None:
+    def fix_frame_position(self, value: bool) -> None:
         """
-        Set the GUI in production mode.
+        Set if the windows will be fixed on the screen or if they will be floating.
+
+        Args:
+            value: Boolean indicating if the windows will be fixed or not.
+
         Returns: None
-
         """
-        pass
+        log.debug(f"Changing fixed positions: {value}")
+        for frame in self.__component_list:
+            frame.set_fixed_position(value)
 
     def process_input(self) -> None:
         """
@@ -89,8 +92,8 @@ class GUIManager:
         """
         imgui.new_frame()
         with imgui.font(self.__font):
-            for func in self.__component_list:
-                func()
+            for frame in self.__component_list:
+                frame.render()
         imgui.end_frame()
 
     def render(self) -> None:

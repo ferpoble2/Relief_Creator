@@ -15,22 +15,19 @@ package src {
         }
         package data {}
         package controller {}
-        package GUI {}
+        package GUI {
+            package frames {}
+        }
     }
     package input {}
 }
 
 
 ' Classes definition
-class src.engine.GUI.frames <<$file>>{
-    + test_window()
-    + sample_text()
-}
-
 class src.engine.GUI.GUIManager{
     + initialize(window, mode)
-    + debug_mode()
-    + production_mode()
+    + add_frames(component_list)
+    + fix_frame_position(value)
     + process_input()
     + draw_components()
     + render()
@@ -140,6 +137,28 @@ class src.engine.model.Map3DModel{
 '
 '}
 
+class src.engine.GUI.frames.Frame {
+    ~ _position: list
+    ~ _fixed_position: boolean
+
+    + change_position(new_position)
+    + set_fixed_position(value)
+    + render()
+}
+
+class src.engine.GUI.frames.MainMenuBar {
+    - __GUI_manager : GUIManager
+
+    + render()
+}
+
+class src.engine.GUI.frames.SampleText {
+    + render()
+}
+
+class src.engine.GUI.frames.TestWindow {
+    + render()
+}
 
 ' herency
 src.engine.model.Map2DModel -u-> src.engine.model.Model
@@ -157,7 +176,7 @@ src.input.CTP -u.> src.utils
 src.engine.model.Model -u.> src.engine.settings
 
 src.engine.Render -u.> src.engine.settings
-src.engine.Render -l.> src.engine.GUI.GUIManager
+src.engine.Render -u.> src.engine.GUI.GUIManager
 
 ' Uncomment to check main file
 'src.main -u.> src.utils
@@ -167,6 +186,10 @@ src.engine.Render -l.> src.engine.GUI.GUIManager
 'src.main -u.> src.engine.model.Map2DModel
 
 src.engine.GUI.GUIManager -u.> src.utils
-src.engine.GUI.GUIManager -u.> src.engine.GUI.frames
+src.engine.GUI.GUIManager -u.> src.engine.GUI.frames.Frame
+
+src.engine.GUI.frames.MainMenuBar -u-> src.engine.GUI.frames.Frame
+src.engine.GUI.frames.SampleText -u-> src.engine.GUI.frames.Frame
+src.engine.GUI.frames.TestWindow -u-> src.engine.GUI.frames.Frame
 
 @enduml
