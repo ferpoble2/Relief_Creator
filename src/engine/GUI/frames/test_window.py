@@ -1,6 +1,7 @@
 """
 Test frame for the GUI (default for imgui)
 """
+
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
 import imgui

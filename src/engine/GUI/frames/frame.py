@@ -37,7 +37,7 @@ class Frame:
 
     def render(self) -> None:
         """
-        Method to call to draw the frames.
+        Draw the frames on the screen.
         Returns: None
         """
 

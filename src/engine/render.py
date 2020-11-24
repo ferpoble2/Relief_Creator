@@ -89,7 +89,7 @@ class Render:
         for func in on_frame_tasks:
             func()
 
-        self.__GUI.draw_components()
+        self.__GUI.draw_frames()
 
         # Once the render is done, buffers are swapped, showing the complete scene.
         self.__GUI.render()

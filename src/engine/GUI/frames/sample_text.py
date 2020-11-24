@@ -1,6 +1,7 @@
 """
 Sample frame for the application GUI.
 """
+
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
 import imgui

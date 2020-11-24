@@ -55,11 +55,11 @@ class MainMenuBar(Frame):
 
                 imgui.menu_item('Fix Windows Positions.')
                 if imgui.is_item_clicked():
-                    self.__GUI_manager.fix_frame_position(True)
+                    self.__GUI_manager.fix_frames_position(True)
 
                 imgui.menu_item('Unfix Windows Positions.')
                 if imgui.is_item_clicked():
-                    self.__GUI_manager.fix_frame_position(False)
+                    self.__GUI_manager.fix_frames_position(False)
 
                 imgui.end_menu()
 

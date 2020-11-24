@@ -25,11 +25,17 @@ package src {
 
 ' Classes definition
 class src.engine.GUI.GUIManager{
+    - __implementation: GlfwRenderer
+    - __glfw_window: GLFWWindow
+    - __component_list: list
+    - __io: IMGUI.io
+    - __font: IMGUI.font
+
     + initialize(window, mode)
     + add_frames(component_list)
-    + fix_frame_position(value)
+    + fix_frames_position(value)
     + process_input()
-    + draw_components()
+    + draw_frames()
     + render()
 }
 

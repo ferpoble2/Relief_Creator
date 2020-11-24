@@ -65,7 +65,7 @@ class GUIManager:
         for frame in component_list:
             self.__component_list.append(frame)
 
-    def fix_frame_position(self, value: bool) -> None:
+    def fix_frames_position(self, value: bool) -> None:
         """
         Set if the windows will be fixed on the screen or if they will be floating.
 
@@ -85,7 +85,7 @@ class GUIManager:
         """
         self.__implementation.process_inputs()
 
-    def draw_components(self) -> None:
+    def draw_frames(self) -> None:
         """
         Draw the components of the GUI (This dont render them).
         Returns: None
