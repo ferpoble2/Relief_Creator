@@ -42,6 +42,7 @@ class src.engine.GUI.GUIManager{
 class src.engine.settings << $file >>{
     + WIDTH : int
     + HEIGHT : int
+    + FONT_SIZE : int
     + CLEAR_COLOR : list
     + FLOAT_BYTES : int
 }
@@ -193,6 +194,7 @@ src.engine.Render -u.> src.engine.GUI.GUIManager
 
 src.engine.GUI.GUIManager -u.> src.utils
 src.engine.GUI.GUIManager -u.> src.engine.GUI.frames.Frame
+src.engine.GUI.GUIManager -u.> src.engine.settings
 
 src.engine.GUI.frames.MainMenuBar -u-> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.SampleText -u-> src.engine.GUI.frames.Frame

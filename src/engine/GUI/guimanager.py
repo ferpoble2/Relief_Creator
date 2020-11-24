@@ -3,7 +3,7 @@ File with the class that will manage the state of the GUI.
 """
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
-
+from src.engine.settings import FONT_SIZE
 from src.utils import get_logger
 
 log = get_logger(module='GUIMANAGER')
@@ -47,7 +47,7 @@ class GUIManager:
         # Font options
         self.__io = imgui.get_io()
         self.__font = self.__io.fonts.add_font_from_file_ttf(
-            './engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', 18
+            './engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', FONT_SIZE
         )
         self.__implementation.refresh_font_texture()
 
