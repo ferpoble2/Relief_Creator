@@ -20,6 +20,7 @@ from src.engine.controller.controller import Controller
 
 log = get_logger(module='MAIN')
 
+
 # TODO: ADD this class to the class diagram.
 # TODO: Solve problem in code consistency related to the types in the definitions
 
@@ -32,11 +33,11 @@ class Program:
         """
         Constructor of the program.
         """
-        self.render: Render = Render()
-        self.gui_manager: GUIManager = GUIManager()
+        self.render = Render()
+        self.gui_manager = GUIManager()
         self.window = None
-        self.scene: Scene = Scene()
-        self.controller: Controller = Controller()
+        self.scene = Scene()
+        self.controller = Controller()
 
     def initialize(self) -> None:
         """
