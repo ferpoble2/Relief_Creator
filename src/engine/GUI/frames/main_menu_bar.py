@@ -52,16 +52,17 @@ class MainMenuBar(Frame):
                     log.debug(f"path_model: {path_model}")
                     log.debug(f"path_color_File: {path_color_file}")
 
-                    try:
-                        self.scene.refresh_with_model_2d(path_color_file, path_model)
+                    if path_model is not None and path_color_file is not None:
+                        try:
+                            self.scene.refresh_with_model_2d(path_color_file, path_model)
 
-                    except KeyError:
-                        log.debug("Error reading files or creating models, KEYError")
-                        self.error_file = True
+                        except KeyError:
+                            log.debug("Error reading files or creating models, KEYError")
+                            self.error_file = True
 
-                    except OSError:
-                        log.debug("Error reading files, OSError")
-                        self.error_file = True
+                        except OSError:
+                            log.debug("Error reading files, OSError")
+                            self.error_file = True
 
                 imgui.end_menu()
 

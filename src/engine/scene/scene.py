@@ -91,21 +91,18 @@ class Scene:
 
         """
 
-        if path_model is not None and path_color_file is not None:
-            log.debug("Reading information from file.")
-            X, Y, Z = read_info(path_model)
+        log.debug("Reading information from file.")
+        X, Y, Z = read_info(path_model)
 
-            log.debug("Generating model")
-            model = Map2DModel()
+        log.debug("Generating model")
+        model = Map2DModel()
 
-            log.debug("Setting vertices from grid.")
-            model.set_vertices_from_grid(X, Y, Z, 3)
+        log.debug("Setting vertices from grid.")
+        model.set_vertices_from_grid(X, Y, Z, 3)
 
-            log.debug("Settings colors from file.")
-            model.set_color_file(path_color_file)
-            model.wireframes = False
+        log.debug("Settings colors from file.")
+        model.set_color_file(path_color_file)
+        model.wireframes = False
 
-            # SCENE CODE
-            # ----------
-            self.remove_all_models()
-            self.add_model(model)
+        self.remove_all_models()
+        self.add_model(model)
