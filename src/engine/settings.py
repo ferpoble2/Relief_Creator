@@ -6,6 +6,12 @@ Python file with all the important constants and global variables of the engine.
 WIDTH = 1300
 HEIGHT = 700
 
+# SCENE settings
+SCENE_BEGIN_X = 0
+SCENE_BEGIN_Y = 0
+SCENE_END_X = WIDTH
+SCENE_END_Y = HEIGHT
+
 # GUI settings
 FONT_SIZE = 18
 

@@ -9,6 +9,7 @@ import sys
 from src.engine.settings import HEIGHT
 from src.engine.settings import WIDTH
 from src.engine.settings import CLEAR_COLOR
+from src.engine.settings import SCENE_BEGIN_X, SCENE_BEGIN_Y, SCENE_END_X, SCENE_END_Y
 from src.engine.GUI.guimanager import GUIManager
 
 
@@ -61,7 +62,7 @@ class Render:
         )
 
         # Indicate to openGL about the screen used in glfw to render.
-        GL.glViewport(0, 0, WIDTH, HEIGHT)
+        GL.glViewport(SCENE_BEGIN_X, SCENE_BEGIN_Y, SCENE_END_X, SCENE_END_Y)
 
         return self.__window
 
@@ -80,7 +81,6 @@ class Render:
         if on_frame_tasks is None:
             on_frame_tasks = []
 
-        glfw.poll_events()
         self.__GUI.process_input()
         GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
@@ -94,3 +94,19 @@ class Render:
         # Once the render is done, buffers are swapped, showing the complete scene.
         self.__GUI.render()
         glfw.swap_buffers(self.__window)
+        glfw.poll_events()
+
+    @staticmethod
+    def change_viewport(init_x, init_y, final_x, final_y):
+        """
+        Change the coordinates used in the viewport.
+
+        Args:
+            init_x: Position of the left border of the viewport.
+            init_y: Position of the top border of the viewport.
+            final_x: Position of the right border of the viewport.
+            final_y: Position of the bottom border of the viewport.
+
+        Returns: None
+        """
+        GL.glViewport(init_x, init_y, final_x, final_y)

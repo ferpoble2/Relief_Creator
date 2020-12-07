@@ -24,10 +24,11 @@ void main()
         color = colors[length - 1];
     }
 
-    for (int index = 1; index < length - 1; index++){
+    for (int index = 0; index < length - 1; index++){
         if (height_value > height_color[index] && height_value < height_color[index + 1]){
-            intepolation_height = (height_value - height_color[index-1])/(height_color[index] - height_color[index-1]);
-            color = (colors[index - 1]*(1 - intepolation_height) + colors[index]*(intepolation_height))/255;
+            intepolation_height = (height_value - height_color[index])/(height_color[index+1] - height_color[index]);
+            color = (colors[index]*(1 - intepolation_height) + colors[index + 1]*(intepolation_height))/255;
+            break;
         }
     }
 

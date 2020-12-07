@@ -27,11 +27,12 @@ class Model:
 
         self.indices_size = 0
 
+        self.polygon_mode = GL.GL_FILL
         self.draw_mode = GL.GL_TRIANGLES
 
-        self.wireframes = False
-
         self.update_uniform_values = True
+
+        self.id = ""
 
     def set_shaders(self, vertex_shader: str, fragment_shader: str):
         """Set the shaders to use in the model.
@@ -63,9 +64,8 @@ class Model:
     def draw(self):
         """Draw the model on the screen using the current configuration."""
 
-        if self.wireframes:
-            GL.glPolygonMode(GL.GL_FRONT, GL.GL_LINE)
-            GL.glPolygonMode(GL.GL_BACK, GL.GL_LINE)
+        GL.glPolygonMode(GL.GL_FRONT, self.polygon_mode)
+        GL.glPolygonMode(GL.GL_BACK, self.polygon_mode)
 
         # select the shader to use
         GL.glUseProgram(self.shader_program)
@@ -82,6 +82,9 @@ class Model:
         GL.glDrawElements(
             self.draw_mode, self.indices_size, GL.GL_UNSIGNED_INT, None
         )
+
+        GL.glPolygonMode(GL.GL_FRONT, GL.GL_FILL)
+        GL.glPolygonMode(GL.GL_BACK, GL.GL_FILL)
 
     def set_vertices(self, vertex: np.ndarray):
         """Set the vertices buffers inside the model.

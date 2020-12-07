@@ -19,8 +19,8 @@ def read_info(file_name: str):
     """
     root_grp = Dataset(file_name, "r", format="NETCDF4")
 
-    x = np.array(root_grp.variables["x"])
-    y = np.array(root_grp.variables["y"])
+    x = np.array(root_grp.variables["lon"])
+    y = np.array(root_grp.variables["lat"])
     z = np.array(root_grp.variables["z"])
 
     return x, y, z
@@ -29,7 +29,7 @@ def read_info(file_name: str):
 if __name__ == "__main__":
     log.basicConfig(format="%(asctime)s - %(message)s", level=log.DEBUG)
 
-    filename = "test_inputs/IF_60Ma_AHS_ET.nc"
+    filename = "test_inputs/OF_20Ma_AHS_WORLD_NewAfrica.nc"
 
     rootgrp = Dataset(filename, "r", format="NETCDF4")
 

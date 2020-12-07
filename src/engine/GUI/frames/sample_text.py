@@ -26,11 +26,11 @@ class SampleText(Frame):
         Returns: None
         """
 
-        imgui.begin('test_text')
-        imgui.text("This is a sample text to show iin the guy to test screens.")
-        imgui.bullet_text("This is a bullet text, hope it helps.")
+        imgui.begin('Test Window')
+        imgui.text("Test text to show in the frame.")
+        imgui.bullet_text("This window accepts ballpoints and a lot more features")
 
-        if imgui.button("Open Modal popup"):
+        if imgui.button("Modal Pop-Up Menu"):
             imgui.open_popup("select-popup")
 
         imgui.same_line()
