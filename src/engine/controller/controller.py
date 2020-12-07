@@ -2,6 +2,7 @@
 Controller of the application. Manage all the glfw events that happens in the application.
 """
 import sys
+from typing import Callable
 
 import glfw
 from src.engine.settings import SCENE_BEGIN_X, SCENE_BEGIN_Y
@@ -22,7 +23,7 @@ class Controller:
         """
         self.__render = None
 
-    def init(self, render: Render):
+    def init(self, render: Render) -> None:
         """
         Initialize the Controller component.
 
@@ -34,7 +35,7 @@ class Controller:
         self.__render = render
 
     @staticmethod
-    def get_on_key_callback():
+    def get_on_key_callback() -> Callable:
         """
         Get the callback function to use when a key is pressed.
 
@@ -54,7 +55,7 @@ class Controller:
 
         return on_key
 
-    def get_resize_callback(self):
+    def get_resize_callback(self) -> Callable:
         """
         Get the callback for when the resizing is done.
         Returns: Function to use as a callback.

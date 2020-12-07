@@ -27,8 +27,8 @@ class MainMenuBar(Frame):
             gui_manager: GuiManager of the application.
         """
         super().__init__()
-        self.__GUI_manager: GUIManager = gui_manager
-        self.scene: Scene = scene
+        self.__GUI_manager = gui_manager
+        self.scene = scene
 
         self.fixed_position = True
 

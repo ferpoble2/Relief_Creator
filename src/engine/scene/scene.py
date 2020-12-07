@@ -2,6 +2,7 @@
 File that contain the Scene class. This class is in charge of the management of the models of the scene.
 """
 from typing import List
+import OpenGL.constant as OGLConstant
 
 from src.engine.model.map2dmodel import Map2DModel
 from src.engine.model.model import Model
@@ -61,7 +62,7 @@ class Scene:
 
         self.__model_list.remove(model_to_remove)
 
-    def set_polygon_mode(self, polygon_mode) -> None:
+    def set_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
         Select if the models uses the wireframe mode or not.
         Args:

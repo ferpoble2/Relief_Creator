@@ -22,7 +22,7 @@ class Render:
         self.__window = None
         self.__GUI = None
 
-    def init(self, window_name: str = "Relieve Creator", gui: GUIManager = None):
+    def init(self, window_name: str = "Relieve Creator", gui: GUIManager = None) -> None:
         """Initialize OpenGL and glfw for the application.
 
         Args:
@@ -97,7 +97,7 @@ class Render:
         glfw.poll_events()
 
     @staticmethod
-    def change_viewport(init_x, init_y, final_x, final_y):
+    def change_viewport(init_x: int, init_y: int, final_x: int, final_y: int) -> None:
         """
         Change the coordinates used in the viewport.
 

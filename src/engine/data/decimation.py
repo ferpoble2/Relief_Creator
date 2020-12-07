@@ -5,7 +5,7 @@ File with utils decimation algorithms to apply to 2D data.
 import numpy as np
 
 
-def simple_decimation(x: np.ndarray, y: np.ndarray, z: np.ndarray, n_rows: int, n_cols: int):
+def simple_decimation(x: np.ndarray, y: np.ndarray, z: np.ndarray, n_rows: int, n_cols: int) -> (list, list, list):
     """
     Function to decimate a two dimensional grid in a simple way. Take one element from every column/row with a step
     calculated to reach the final n_rows/n_cols.

@@ -7,7 +7,8 @@ LOG_LEVEL = logging.DEBUG
 LOG_FILE_LEVEL = logging.DEBUG
 
 
-def get_logger(log_level: int = LOG_LEVEL, log_file_level=LOG_FILE_LEVEL, module: str = 'GLOBAL', directory : str = "../logs/") -> logging.Logger:
+def get_logger(log_level: int = LOG_LEVEL, log_file_level: int = LOG_FILE_LEVEL, module: str = 'GLOBAL',
+               directory: str = "../logs/") -> logging.Logger:
     """
     Get the logger of the application to use in the main program.
     Args:
@@ -38,7 +39,7 @@ def get_logger(log_level: int = LOG_LEVEL, log_file_level=LOG_FILE_LEVEL, module
 
 
 def interpolate(value: float, value_min: float, value_max: float, target_min: float = -1,
-                target_max: float = 1):
+                target_max: float = 1) -> float:
     """
 
     Args:

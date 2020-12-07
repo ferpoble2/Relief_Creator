@@ -61,7 +61,7 @@ class Map2DModel(Model):
         # projection matrix
         self.__projection = ortho(-180, 180, -90, 90, -1, 1)
 
-    def __print_vertices(self):
+    def __print_vertices(self) -> None:
         """
         Print the vertices of the model.
         Returns: None
@@ -70,7 +70,7 @@ class Map2DModel(Model):
         for i in range(int(len(self.__vertices) / 3)):
             print(f"P{i}: " + "".join(str(self.__vertices[i * 3:(i + 1) * 3])))
 
-    def __print_indices(self):
+    def __print_indices(self) -> None:
         """
         Print the indices of the model.
         Returns: None
@@ -79,7 +79,7 @@ class Map2DModel(Model):
         for i in range(int(len(self.__indices) / 3)):
             print(f"I{i}: " + "".join(str(self.__indices[i * 3:(i + 1) * 3])))
 
-    def _update_uniforms(self):
+    def _update_uniforms(self) -> None:
         """
         Update the uniforms in the model.
 
@@ -106,7 +106,7 @@ class Map2DModel(Model):
             GL.glUniform1fv(height_color_location, len(self.__height_limit), self.__height_limit)
             GL.glUniform1i(length_location, len(self.__colors))
 
-    def __set_height_buffer(self):
+    def __set_height_buffer(self) -> None:
         """
         Set the buffer object for the heights to be used in the shaders.
 
@@ -132,7 +132,7 @@ class Map2DModel(Model):
 
         return
 
-    def set_color_file(self, filename: str):
+    def set_color_file(self, filename: str) -> None:
         """
 
         Args:
@@ -165,7 +165,7 @@ class Map2DModel(Model):
         self.__colors = np.array(colors, dtype=np.float32)
         self.__height_limit = np.array(height_limit, dtype=np.float32)
 
-    def set_vertices_from_grid(self, x, y, z, quality=1):
+    def set_vertices_from_grid(self, x, y, z, quality=1) -> None:
         """
         Set the vertices of the model from a grid.
 

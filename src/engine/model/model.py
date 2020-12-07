@@ -34,7 +34,7 @@ class Model:
 
         self.id = ""
 
-    def set_shaders(self, vertex_shader: str, fragment_shader: str):
+    def set_shaders(self, vertex_shader: str, fragment_shader: str) -> None:
         """Set the shaders to use in the model.
 
         Set the shaders of the model, compiling them and creating a program.
@@ -52,7 +52,7 @@ class Model:
             compileShader(fragment_shader, GL.GL_FRAGMENT_SHADER),
         )
 
-    def _update_uniforms(self):
+    def _update_uniforms(self) -> None:
         """
         Method called to updated uniforms in the model.
         Must be implemented in the models.
@@ -61,7 +61,7 @@ class Model:
         if self.update_uniform_values:
             raise NotImplementedError("Method update_uniform not implemented in the model.")
 
-    def draw(self):
+    def draw(self) -> None:
         """Draw the model on the screen using the current configuration."""
 
         GL.glPolygonMode(GL.GL_FRONT, self.polygon_mode)
@@ -86,7 +86,7 @@ class Model:
         GL.glPolygonMode(GL.GL_FRONT, GL.GL_FILL)
         GL.glPolygonMode(GL.GL_BACK, GL.GL_FILL)
 
-    def set_vertices(self, vertex: np.ndarray):
+    def set_vertices(self, vertex: np.ndarray) -> None:
         """Set the vertices buffers inside the model.
 
         Args:
@@ -107,7 +107,7 @@ class Model:
         )
         GL.glEnableVertexAttribArray(0)
 
-    def set_indices(self, indices: np.ndarray):
+    def set_indices(self, indices: np.ndarray) -> None:
         """Set the vertex indices of the vertices of the model.
 
         Args:

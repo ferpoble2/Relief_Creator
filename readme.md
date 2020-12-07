@@ -31,4 +31,4 @@ It is recommended to use a virtual environment to install the dependencies: http
 - Lines must be shorter or equal than 100 characters when possible.
 - All files, clases, methods and functions must be documented.
 - When possible, files should contain a small program inside the block `if __name__ == __main__` with an example of the methods and definition in the file.
- 
+- Method and function definitions must have the type of the parameters and the output using `typing` from python.

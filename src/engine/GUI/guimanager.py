@@ -24,7 +24,7 @@ class GUIManager:
         self.__io = None
         self.__font = None
 
-    def initialize(self, window, mode='debug') -> None:
+    def initialize(self, window) -> None:
         """
         Set the initial configurations of the GUI.
         Args:
@@ -51,7 +51,7 @@ class GUIManager:
         )
         self.__implementation.refresh_font_texture()
 
-    def add_frames(self, component_list: list):
+    def add_frames(self, component_list: list) -> None:
         """
         Add frames to render in the application.
 
