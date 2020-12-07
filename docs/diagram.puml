@@ -18,6 +18,7 @@ package src {
         package GUI {
             package frames {}
         }
+        package scene {}
     }
     package input {}
 }
@@ -45,6 +46,10 @@ class src.engine.settings << $file >>{
     + FONT_SIZE : int
     + CLEAR_COLOR : list
     + FLOAT_BYTES : int
+    + SCENE_BEGIN_X : int
+    + SCENE_BEGIN_Y : int
+    + SCENE_END_X : int
+    + SCENE_END_Y : int
 }
 
 class src.engine.model.transformations.transformations <<$file>> {
@@ -76,8 +81,9 @@ class src.engine.model.Model {
     + rotation : numpy.array[3]
     + indices_size: int
     + draw_mode : GL_DRAW_MODE
-    + wireframes : boolean
+    + polygon_mode : GL_POLYGON_MODE
     + update_uniform_values : boolean
+    + id : str
 
     ~ _update_uniforms()
     + set_shaders(vertex_shader, fragment_shader)
@@ -91,6 +97,7 @@ class src.engine.Render {
     + __gui : GUIManager
     + init(window_name)
     + on_loop(on_frame_task)
+    + change_viewport(init_x, init_y, final_x, final_y)
 }
 
 class src.input.NetCDF <<$file>> {
@@ -167,9 +174,30 @@ class src.engine.GUI.frames.TestWindow {
     + render()
 }
 
+class src.engine.controller.Controller {
+    - __render
+    + init(render)
+    + get_on_key_callback()
+    + get_resize_callback()
+}
+
+class src.engine.scene.Scene {
+    - __model_list : list
+    + draw()
+    + add_model(model)
+    + remove_all_models()
+    + remove_model(id_model)
+    + set_polygon_mode(polygon_mode)
+    + refresh_with_model_2d(path_color_file, path_model)
+}
+
 ' herency
 src.engine.model.Map2DModel -u-> src.engine.model.Model
 src.engine.model.Map3DModel -u-> src.engine.model.Model
+
+src.engine.GUI.frames.MainMenuBar -u-> src.engine.GUI.frames.Frame
+src.engine.GUI.frames.SampleText -u-> src.engine.GUI.frames.Frame
+src.engine.GUI.frames.TestWindow -u-> src.engine.GUI.frames.Frame
 
 ' uses
 src.engine.model.Map2DModel -u.> src.engine.data.decimation
@@ -196,8 +224,14 @@ src.engine.GUI.GUIManager -u.> src.utils
 src.engine.GUI.GUIManager -u.> src.engine.GUI.frames.Frame
 src.engine.GUI.GUIManager -u.> src.engine.settings
 
-src.engine.GUI.frames.MainMenuBar -u-> src.engine.GUI.frames.Frame
-src.engine.GUI.frames.SampleText -u-> src.engine.GUI.frames.Frame
-src.engine.GUI.frames.TestWindow -u-> src.engine.GUI.frames.Frame
+src.engine.controller.Controller -u.> src.engine.settings
+src.engine.controller.Controller -u.> src.engine.Render
+src.engine.controller.Controller -u.> src.utils
 
+src.engine.GUI.frames.MainMenuBar -u.> src.engine.scene.Scene
+
+src.engine.scene.Scene -u.> src.engine.model.Map2DModel
+src.engine.scene.Scene -u.> src.engine.model.Model
+src.engine.scene.Scene -u.> src.input.NetCDF
+src.engine.scene.Scene -u.> src.utils
 @enduml
