@@ -46,7 +46,7 @@ class MainMenuBar(Frame):
 
                     if path_model is not None and path_color_file is not None:
                         try:
-                            self.scene.refresh_with_model_2d(path_color_file, path_model)
+                            self._GUI_manager.refresh_scene_with_model_2d(path_color_file, path_model)
 
                         except KeyError:
                             log.debug("Error reading files or creating models, KEYError")
