@@ -2,9 +2,11 @@
 File that contain the Scene class. This class is in charge of the management of the models of the scene.
 """
 import OpenGL.constant as OGLConstant
+import OpenGL.GL as GL
 
 from src.engine.model.map2dmodel import Map2DModel
 from src.engine.model.model import Model
+from src.engine.settings import Settings
 from src.input.NetCDF import read_info
 from src.utils import get_logger
 
@@ -71,6 +73,13 @@ class Scene:
         """
         for model in self.__model_list:
             model.polygon_mode = polygon_mode
+
+    @staticmethod
+    def update_viewport() -> None:
+        """
+        Update the viewport with the new values that exist in the Settings.
+        """
+        GL.glViewport(Settings.SCENE_BEGIN_X, Settings.SCENE_BEGIN_Y, Settings.SCENE_WIDTH_X, Settings.SCENE_HEIGHT_Y)
 
     def refresh_with_model_2d(self, path_color_file: str, path_model: str) -> None:
         """
