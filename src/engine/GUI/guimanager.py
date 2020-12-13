@@ -5,6 +5,9 @@ import imgui
 import OpenGL.constant as OGLConstant
 
 from imgui.integrations.glfw import GlfwRenderer
+
+from src.engine.GUI.frames.main_menu_bar import MainMenuBar
+from src.engine.GUI.frames.sample_text import SampleText
 from src.utils import get_logger
 
 log = get_logger(module='GUIMANAGER')
@@ -117,6 +120,21 @@ class GUIManager:
         """
         imgui.render()
         self.__implementation.render(imgui.get_draw_data())
+
+    def get_frames(self, gui_manager: 'GUIManager'):
+        """
+        Return the frame object to use in the application.
+        Args:
+            gui_manager: GUIManager to use to initialize the frames.
+
+        Returns: list with the frame objects.
+        """
+        return [
+                MainMenuBar(self.gui_manager),
+                # TestWindow(),
+                SampleText(self.gui_manager)
+            ]
+
 
     def are_frame_fixed(self) -> bool:
         """

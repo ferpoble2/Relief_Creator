@@ -8,8 +8,6 @@ from src.engine.render.render import Render
 from src.utils import get_logger
 from src.engine.GUI.guimanager import GUIManager
 
-from src.engine.GUI.frames.sample_text import SampleText
-from src.engine.GUI.frames.main_menu_bar import MainMenuBar
 from src.engine.scene.scene import Scene
 from src.engine.controller.controller import Controller
 from src.engine.settings import Settings
@@ -54,13 +52,7 @@ class Engine:
         # --------
         log.debug("Loading GUI")
         self.gui_manager.initialize(self.window, engine)
-        self.gui_manager.add_frames(
-            [
-                MainMenuBar(self.gui_manager),
-                # TestWindow(),
-                SampleText(self.gui_manager)
-            ]
-        )
+        self.gui_manager.add_frames(self.gui_manager.get_frames(self.gui_manager))
 
         # CONTROLLER CODE
         # ---------------
