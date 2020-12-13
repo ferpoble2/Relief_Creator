@@ -8,12 +8,12 @@ class Frame:
     Class to manager the frame behaviour. New frames must be children of this class.
     """
 
-    def __init__(self):
+    def __init__(self, gui_manager: 'GUIManager'):
         """
         Constructor of the class.
         """
         self._position = [100, 100]
-        self._fixed_position = True
+        self._GUI_manager = gui_manager
 
     def change_position(self, new_position: list) -> None:
         """
@@ -24,16 +24,12 @@ class Frame:
         """
         self._position = new_position
 
-    def set_fixed_position(self, value: bool) -> None:
+    def get_position(self) -> list:
         """
-        Change the state of the fixed position.
-        Args:
-            value:  Value True or False
-
-        Returns: None
-
+        Get the position of the frame.
+        Returns: list with the position of the frame.
         """
-        self._fixed_position = value
+        return self._position
 
     def render(self) -> None:
         """
