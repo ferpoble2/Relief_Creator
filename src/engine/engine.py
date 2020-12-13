@@ -12,6 +12,7 @@ from src.engine.GUI.frames.sample_text import SampleText
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar
 from src.engine.scene.scene import Scene
 from src.engine.controller.controller import Controller
+from src.engine.settings import Settings
 
 log = get_logger(module='PROGRAM')
 
@@ -66,6 +67,36 @@ class Engine:
         self.controller.init(engine)
         glfw.set_key_callback(self.window, self.controller.get_on_key_callback())
         glfw.set_window_size_callback(self.window, self.controller.get_resize_callback())
+
+    @staticmethod
+    def change_height_window(height: int) -> None:
+        """
+        Change the engine settings height for the windows.
+        Args:
+            height: New height
+
+        Returns: None
+        """
+        Settings.HEIGHT = height
+
+    @staticmethod
+    def change_width_window(width: int)->None:
+        """
+        Change the engine settings width for the windows
+        Args:
+            width: New width
+
+        Returns: None
+        """
+        Settings.WIDTH = width
+
+    @staticmethod
+    def update_scene_values()->None:
+        """
+        Update the configuration values related to the scene.
+        Returns: None
+        """
+        Settings.update_scene_values()
 
     def run(self) -> None:
         """

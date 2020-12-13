@@ -5,7 +5,6 @@ import sys
 from typing import Callable
 
 import glfw
-from src.engine.settings import Settings
 from src.utils import get_logger
 
 log = get_logger(module="CONTROLLER")
@@ -22,6 +21,7 @@ class Controller:
         """
         self.__render = None
         self.__scene = None
+        self.__engine = None
 
     def init(self, engine: 'Engine') -> None:
         """
@@ -34,6 +34,7 @@ class Controller:
         """
         self.__render = engine.render
         self.__scene = engine.scene
+        self.__engine = engine
 
     @staticmethod
     def get_on_key_callback() -> Callable:
@@ -64,9 +65,9 @@ class Controller:
 
         def on_resize(window, width, height):
             log.debug(f"Windows resized to {width}x{height}")
-            Settings.HEIGHT = height
-            Settings.WIDTH = width
-            Settings.update_scene_values()
+            self.__engine.change_height_window(height)
+            self.__engine.change_width_window(width)
+            self.__engine.update_scene_values()
             self.__scene.update_viewport()
 
         return on_resize

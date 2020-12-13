@@ -253,7 +253,6 @@ src.engine.Engine <-u.> src.engine.scene.Scene
 
 src.engine.GUI.frames.Frame <-u.> src.engine.GUI.GUIManager
 
-src.engine.controller.Controller -u.> src.engine.settings
 src.engine.controller.Controller -u.> src.utils
 
 src.engine.scene.Scene -u.> src.engine.model.Map2DModel
