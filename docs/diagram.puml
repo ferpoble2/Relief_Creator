@@ -185,8 +185,9 @@ class src.engine.GUI.frames.TestWindow {
 }
 
 class src.engine.controller.Controller {
-    - __render
-    - __scene
+    - __render : Render
+    - __scene : Scene
+    - __engine : Engine
     + init(render)
     + get_on_key_callback()
     + get_resize_callback()
@@ -194,8 +195,10 @@ class src.engine.controller.Controller {
 
 class src.engine.scene.Scene {
     - __model_list : list
+    - __engine : Engine
     + draw()
     + add_model(model)
+    + initialize(engine)
     + remove_all_models()
     + remove_model(id_model)
     + set_polygon_mode(polygon_mode)
@@ -210,6 +213,10 @@ class src.engine.Engine {
     + scene
     + controller
     + initialize(engine)
+    + get_scene_setting_data(): dict
+    + change_height_window(height)
+    + change_width_window(width)
+    + update_scene_values()
     + run()
 
 }
@@ -259,5 +266,4 @@ src.engine.scene.Scene -u.> src.engine.model.Map2DModel
 src.engine.scene.Scene -u.> src.engine.model.Model
 src.engine.scene.Scene -u.> src.input.NetCDF
 src.engine.scene.Scene -u.> src.utils
-src.engine.scene.Scene -u.> src.engine.settings
 @enduml

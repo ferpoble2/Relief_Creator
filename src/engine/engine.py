@@ -68,6 +68,17 @@ class Engine:
         glfw.set_key_callback(self.window, self.controller.get_on_key_callback())
         glfw.set_window_size_callback(self.window, self.controller.get_resize_callback())
 
+        # SCENE CODE
+        # ----------
+        self.scene.initilize(engine)
+
+    @staticmethod
+    def get_scene_setting_data():
+        return {
+            'SCENE_BEGIN_X': Settings.SCENE_BEGIN_X, 'SCENE_BEGIN_Y': Settings.SCENE_BEGIN_Y,
+            'SCENE_WIDTH_X': Settings.SCENE_WIDTH_X, 'SCENE_HEIGHT_Y': Settings.SCENE_HEIGHT_Y
+        }
+
     @staticmethod
     def change_height_window(height: int) -> None:
         """
@@ -80,7 +91,7 @@ class Engine:
         Settings.HEIGHT = height
 
     @staticmethod
-    def change_width_window(width: int)->None:
+    def change_width_window(width: int) -> None:
         """
         Change the engine settings width for the windows
         Args:
@@ -91,7 +102,7 @@ class Engine:
         Settings.WIDTH = width
 
     @staticmethod
-    def update_scene_values()->None:
+    def update_scene_values() -> None:
         """
         Update the configuration values related to the scene.
         Returns: None
