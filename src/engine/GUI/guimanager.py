@@ -5,8 +5,6 @@ import imgui
 import OpenGL.constant as OGLConstant
 
 from imgui.integrations.glfw import GlfwRenderer
-from src.engine.settings import Settings
-# from src.engine.engine import Engine
 from src.utils import get_logger
 
 log = get_logger(module='GUIMANAGER')
@@ -28,6 +26,7 @@ class GUIManager:
         self.__font = None
 
         self.__scene = None
+        self.__engine = None
 
     def initialize(self, window, engine: 'Engine') -> None:
         """
@@ -52,11 +51,12 @@ class GUIManager:
         # Font options
         self.__io = imgui.get_io()
         self.__font = self.__io.fonts.add_font_from_file_ttf(
-            './engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', Settings.FONT_SIZE
+            './engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', engine.get_font_size()
         )
         self.__implementation.refresh_font_texture()
 
         self.__scene = engine.scene
+        self.__engine = engine
 
     def add_frames(self, component_list: list) -> None:
         """
@@ -85,11 +85,11 @@ class GUIManager:
 
         # Settings change depending if the frames are fixed or not
         if value:
-            Settings.fix_frames(True)
+            self.__engine.fix_frames(True)
             self.__scene.update_viewport()
 
         else:
-            Settings.fix_frames(False)
+            self.__engine.fix_frames(False)
             self.__scene.update_viewport()
 
     def process_input(self) -> None:
@@ -118,13 +118,12 @@ class GUIManager:
         imgui.render()
         self.__implementation.render(imgui.get_draw_data())
 
-    @staticmethod
-    def are_frame_fixed() -> bool:
+    def are_frame_fixed(self) -> bool:
         """
         Check if the frames are fixed or not.
         Returns: if frames are fixed or not.
         """
-        return Settings.FIXED_FRAMES
+        return self.__engine.are_frames_fixed()
 
     def refresh_scene_with_model_2d(self, path_color_file: str, path_model: str) -> None:
         """
@@ -139,13 +138,14 @@ class GUIManager:
         """
         self.__scene.refresh_with_model_2d(path_color_file, path_model)
 
-    @staticmethod
-    def get_settings() -> 'Settings':
-        """
-        Return a settings object.
-        Returns: Settings object to ask for parameters.
-        """
-        return Settings()
+    def get_main_menu_bar_height(self):
+        return self.__engine.get_gui_setting_data()['MAIN_MENU_BAR_HEIGHT']
+
+    def get_left_frame_width(self):
+        return self.__engine.get_gui_setting_data()['LEFT_FRAME_WIDTH']
+
+    def get_window_height(self):
+        return self.__engine.get_window_setting_data()['HEIGHT']
 
     def set_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """

@@ -33,6 +33,7 @@ class src.engine.GUI.GUIManager{
     - __io: IMGUI.io
     - __font: IMGUI.font
     - __scene: Scene
+    - __engine: Engine
 
     + initialize(window, mode)
     + add_frames(component_list)
@@ -44,6 +45,9 @@ class src.engine.GUI.GUIManager{
     {static} + are_frame_fixed()
     {static} + get_settings() : Settings
     + set_polygon_mode(polygon_mode)
+    + get_main_menu_bar_height(): int
+    + get_left_frame_width(): int
+    + get_window_height(): int
 }
 
 class src.engine.settings  {
@@ -213,10 +217,15 @@ class src.engine.Engine {
     + scene
     + controller
     + initialize(engine)
-    + get_scene_setting_data(): dict
-    + change_height_window(height)
-    + change_width_window(width)
-    + update_scene_values()
+    {static} + get_scene_setting_data(): dict
+    {static} + change_height_window(height)
+    {static} + change_width_window(width)
+    {static} + get_gui_setting_data(): dict
+    {static} + get_font_size(): int
+    {static} + fix_frames()
+    {static} + are_frames_fixed(): boolean
+    {static} + get_window_setting_data(): dict
+    {static} + update_scene_values()
     + run()
 
 }
@@ -231,12 +240,12 @@ src.engine.GUI.frames.TestWindow -u-|> src.engine.GUI.frames.Frame
 
 ' uses
 src.engine.model.Map2DModel -u.> src.engine.data.decimation
-src.engine.model.Map2DModel -u.> src.engine.settings
+'src.engine.model.Map2DModel -u.> src.engine.settings
 src.engine.model.Map2DModel -u.> src.engine.model.transformations.transformations
 src.engine.model.Map2DModel -u.> src.input.CTP
-src.engine.model.Map2DModel -u.> src.utils
+'src.engine.model.Map2DModel -u.> src.utils
 
-src.input.CTP -u.> src.utils
+'src.input.CTP -u.> src.utils
 
 src.engine.model.Model -u.> src.engine.settings
 
@@ -249,21 +258,21 @@ src.engine.render.Render -u.> src.engine.settings
 'src.main -u.> src.engine.GUI.GUIManager
 'src.main -u.> src.engine.model.Map2DModel
 
-src.engine.GUI.GUIManager -u.> src.utils
-src.engine.GUI.GUIManager -u.> src.engine.settings
+'src.engine.GUI.GUIManager -u.> src.utils
 
 src.engine.Engine <-u.> src.engine.render.Render
-src.engine.Engine -u.> src.utils
+'src.engine.Engine -u.> src.utils
 src.engine.Engine <-u.> src.engine.GUI.GUIManager
 src.engine.Engine <-u.> src.engine.controller.Controller
 src.engine.Engine <-u.> src.engine.scene.Scene
+src.engine.Engine -u.> src.engine.settings
 
 src.engine.GUI.frames.Frame <-u.> src.engine.GUI.GUIManager
 
-src.engine.controller.Controller -u.> src.utils
+'src.engine.controller.Controller -u.> src.utils
 
 src.engine.scene.Scene -u.> src.engine.model.Map2DModel
 src.engine.scene.Scene -u.> src.engine.model.Model
 src.engine.scene.Scene -u.> src.input.NetCDF
-src.engine.scene.Scene -u.> src.utils
+'src.engine.scene.Scene -u.> src.utils
 @enduml

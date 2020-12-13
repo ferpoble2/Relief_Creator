@@ -19,8 +19,7 @@ class SampleText(Frame):
         Constructor of the class.
         """
         super().__init__(gui_manager)
-        self.__settings = self._GUI_manager.get_settings()
-        self.change_position([0, self.__settings.MAIN_MENU_BAR_HEIGHT])
+        self.change_position([0, self._GUI_manager.get_main_menu_bar_height()])
 
     def render(self) -> None:
         """
@@ -47,6 +46,8 @@ class SampleText(Frame):
 
         if self._GUI_manager.are_frame_fixed():
             imgui.set_window_position(self.get_position()[0], self.get_position()[1])
-            imgui.set_window_size(self.__settings.LEFT_FRAME_WIDTH, self.__settings.HEIGHT - self.__settings.MAIN_MENU_BAR_HEIGHT, 0)
+            imgui.set_window_size(self._GUI_manager.get_left_frame_width(),
+                                  self._GUI_manager.get_window_height() - self._GUI_manager.get_main_menu_bar_height(),
+                                  0)
 
         imgui.end()

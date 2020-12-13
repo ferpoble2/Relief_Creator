@@ -80,6 +80,33 @@ class Engine:
         }
 
     @staticmethod
+    def get_gui_setting_data():
+        return {
+            'LEFT_FRAME_WIDTH': Settings.LEFT_FRAME_WIDTH,
+            'TOP_FRAME_HEIGHT': Settings.TOP_FRAME_HEIGHT,
+            'MAIN_MENU_BAR_HEIGHT': Settings.MAIN_MENU_BAR_HEIGHT
+        }
+
+    @staticmethod
+    def get_font_size():
+        return Settings.FONT_SIZE
+
+    @staticmethod
+    def fix_frames(fix: bool) -> None:
+        Settings.fix_frames(fix)
+
+    @staticmethod
+    def are_frames_fixed() -> bool:
+        return Settings.FIXED_FRAMES
+
+    @staticmethod
+    def get_window_setting_data() -> dict:
+        return {
+            'HEIGHT': Settings.HEIGHT,
+            'WIDTH': Settings.WIDTH
+        }
+
+    @staticmethod
     def change_height_window(height: int) -> None:
         """
         Change the engine settings height for the windows.
