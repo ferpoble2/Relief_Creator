@@ -14,11 +14,13 @@ class SampleText(Frame):
     Class that render a sample frame in the application.
     """
 
-    def __init__(self):
+    def __init__(self, gui_manager: 'GUIManager'):
         """
         Constructor of the class.
         """
-        super().__init__()
+        super().__init__(gui_manager)
+        self.__settings = self._GUI_manager.get_settings()
+        self.change_position([0, self.__settings.MAIN_MENU_BAR_HEIGHT])
 
     def render(self) -> None:
         """
@@ -43,7 +45,8 @@ class SampleText(Frame):
             imgui.selectable("Three")
             imgui.end_popup()
 
-        if self._fixed_position:
-            imgui.set_window_position(0, 40)
+        if self._GUI_manager.are_frame_fixed():
+            imgui.set_window_position(self.get_position()[0], self.get_position()[1])
+            imgui.set_window_size(self.__settings.LEFT_FRAME_WIDTH, self.__settings.HEIGHT - self.__settings.MAIN_MENU_BAR_HEIGHT, 0)
 
         imgui.end()
