@@ -14,9 +14,6 @@ from src.utils import get_logger
 log = get_logger(module='ENGINE')
 
 
-# TODO: ADD this class to the class diagram.
-# TODO: Solve problem in code consistency related to the types in the definitions
-
 class Engine:
     """
     Main class of the program, controls and connect every component of the program.

@@ -61,6 +61,7 @@ class MainMenuBar(Frame):
                     path_color_file = easygui.fileopenbox('Select NETCDF file')
                     log.debug(f'Changing CPT to {path_color_file}')
                     log.debug('FEATURE NOT IMPLEMENTED YET')
+                    # TODO: Implement the change of the CPT file and the reload of models.
 
                 imgui.end_menu()
 
