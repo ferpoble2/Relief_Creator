@@ -130,9 +130,9 @@ class GUIManager:
         Returns: list with the frame objects.
         """
         return [
-                MainMenuBar(self.gui_manager),
+                MainMenuBar(gui_manager),
                 # TestWindow(),
-                SampleText(self.gui_manager)
+                SampleText(gui_manager)
             ]
 
 
