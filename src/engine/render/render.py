@@ -6,11 +6,8 @@ import OpenGL.GL as GL
 import glfw
 import logging as log
 import sys
-from src.engine.settings import HEIGHT
-from src.engine.settings import WIDTH
-from src.engine.settings import CLEAR_COLOR
-from src.engine.settings import SCENE_BEGIN_X, SCENE_BEGIN_Y, SCENE_END_X, SCENE_END_Y
-from src.engine.GUI.guimanager import GUIManager
+from src.engine.settings import Settings
+# from src.engine.engine import Engine
 
 
 class Render:
@@ -22,11 +19,11 @@ class Render:
         self.__window = None
         self.__GUI = None
 
-    def init(self, window_name: str = "Relieve Creator", gui: GUIManager = None) -> None:
+    def init(self, window_name: str = "Relieve Creator", engine: 'Engine' = None) -> None:
         """Initialize OpenGL and glfw for the application.
 
         Args:
-            gui: Gui to use to render in the app.
+            engine: Engine to be used in the application.
             window_name (str, optional): Name of the window created.
                                          Defaults to "Relieve Creator".
 
@@ -37,12 +34,12 @@ class Render:
             sys.exit()
 
         # set the gui for the app
-        self.__GUI = gui
+        self.__GUI = engine.gui_manager
 
-        log.info(f"Creating windows of size {WIDTH} x {HEIGHT}.")
+        log.info(f"Creating windows of size {Settings.WIDTH} x {Settings.HEIGHT}.")
         self.__window = glfw.create_window(
-            WIDTH,
-            HEIGHT,
+            Settings.WIDTH,
+            Settings.HEIGHT,
             window_name,
             None,
             None,
@@ -55,14 +52,14 @@ class Render:
         glfw.make_context_current(self.__window)
 
         GL.glClearColor(
-            CLEAR_COLOR[0],
-            CLEAR_COLOR[1],
-            CLEAR_COLOR[2],
-            CLEAR_COLOR[3],
+            Settings.CLEAR_COLOR[0],
+            Settings.CLEAR_COLOR[1],
+            Settings.CLEAR_COLOR[2],
+            Settings.CLEAR_COLOR[3],
         )
 
         # Indicate to openGL about the screen used in glfw to render.
-        GL.glViewport(SCENE_BEGIN_X, SCENE_BEGIN_Y, SCENE_END_X, SCENE_END_Y)
+        GL.glViewport(Settings.SCENE_BEGIN_X, Settings.SCENE_BEGIN_Y, Settings.SCENE_WIDTH_X, Settings.SCENE_HEIGHT_Y)
 
         return self.__window
 
@@ -95,18 +92,3 @@ class Render:
         self.__GUI.render()
         glfw.swap_buffers(self.__window)
         glfw.poll_events()
-
-    @staticmethod
-    def change_viewport(init_x: int, init_y: int, final_x: int, final_y: int) -> None:
-        """
-        Change the coordinates used in the viewport.
-
-        Args:
-            init_x: Position of the left border of the viewport.
-            init_y: Position of the top border of the viewport.
-            final_x: Position of the right border of the viewport.
-            final_y: Position of the bottom border of the viewport.
-
-        Returns: None
-        """
-        GL.glViewport(init_x, init_y, final_x, final_y)
