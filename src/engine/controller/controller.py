@@ -5,7 +5,6 @@ import sys
 from typing import Callable
 
 import glfw
-# from src.engine.engine import Engine
 from src.engine.settings import Settings
 from src.utils import get_logger
 
