@@ -35,6 +35,9 @@ class src.engine.GUI.GUIManager{
     - __scene: Scene
     - __engine: Engine
 
+    {static} + are_frame_fixed()
+    {static} + get_settings() : Settings
+    {static} + get_frames(gui_manager) : list
     + initialize(window, mode)
     + add_frames(component_list)
     + fix_frames_position(value)
@@ -42,8 +45,6 @@ class src.engine.GUI.GUIManager{
     + draw_frames()
     + render()
     + refresh_scene_with_model_2d(path_color_file, path_model)
-    {static} + are_frame_fixed()
-    {static} + get_settings() : Settings
     + set_polygon_mode(polygon_mode)
     + get_main_menu_bar_height(): int
     + get_left_frame_width(): int

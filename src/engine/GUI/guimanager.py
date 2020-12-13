@@ -120,7 +120,8 @@ class GUIManager:
         imgui.render()
         self.__implementation.render(imgui.get_draw_data())
 
-    def get_frames(self, gui_manager: 'GUIManager'):
+    @staticmethod
+    def get_frames(gui_manager: 'GUIManager') -> list:
         """
         Return the frame object to use in the application.
         Args:
@@ -154,13 +155,25 @@ class GUIManager:
         """
         self.__scene.refresh_with_model_2d(path_color_file, path_model)
 
-    def get_main_menu_bar_height(self):
+    def get_main_menu_bar_height(self) -> int:
+        """
+        Get the main menu bar heigh frm the settings.
+        Returns: main_menu_bar height
+        """
         return self.__engine.get_gui_setting_data()['MAIN_MENU_BAR_HEIGHT']
 
-    def get_left_frame_width(self):
+    def get_left_frame_width(self) -> int:
+        """
+        Get the width of the left frame.
+        Returns: width of the left frame
+        """
         return self.__engine.get_gui_setting_data()['LEFT_FRAME_WIDTH']
 
-    def get_window_height(self):
+    def get_window_height(self) -> int:
+        """
+        Get the height of the window.
+        Returns: height of the window
+        """
         return self.__engine.get_window_setting_data()['HEIGHT']
 
     def set_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
