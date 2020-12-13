@@ -4,13 +4,12 @@ File that contains the program class, class that will be the main class of the p
 
 import glfw
 
-from src.engine.render.render import Render
-from src.utils import get_logger
 from src.engine.GUI.guimanager import GUIManager
-
-from src.engine.scene.scene import Scene
 from src.engine.controller.controller import Controller
+from src.engine.render.render import Render
+from src.engine.scene.scene import Scene
 from src.engine.settings import Settings
+from src.utils import get_logger
 
 log = get_logger(module='PROGRAM')
 

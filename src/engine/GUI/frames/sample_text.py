@@ -2,9 +2,10 @@
 Sample frame for the application GUI.
 """
 
+import imgui
+
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
-import imgui
 
 log = get_logger(module="SAMPLE TEXT")
 

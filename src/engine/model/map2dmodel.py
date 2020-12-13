@@ -2,16 +2,16 @@
 Class in charge of managing the models of the maps in 2 dimensions.
 """
 
-from src.engine.model.model import Model
+import ctypes as ctypes
 
 import OpenGL.GL as GL
 import numpy as np
-import ctypes as ctypes
 
-from src.engine.settings import Settings
 from src.engine.data import decimation
-from src.input.CTP import read_file
+from src.engine.model.model import Model
 from src.engine.model.tranformations.transformations import ortho
+from src.engine.settings import Settings
+from src.input.CTP import read_file
 from src.utils import get_logger
 
 log = get_logger(module='Map2DModel')

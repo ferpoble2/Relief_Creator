@@ -5,6 +5,7 @@ import sys
 from typing import Callable
 
 import glfw
+
 from src.utils import get_logger
 
 log = get_logger(module="CONTROLLER")

@@ -1,8 +1,8 @@
 """
 File that contain the Scene class. This class is in charge of the management of the models of the scene.
 """
-import OpenGL.constant as OGLConstant
 import OpenGL.GL as GL
+import OpenGL.constant as OGLConstant
 
 from src.engine.model.map2dmodel import Map2DModel
 from src.engine.model.model import Model

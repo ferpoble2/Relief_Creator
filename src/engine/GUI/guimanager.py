@@ -1,9 +1,8 @@
 """
 File with the class that will manage the state of the GUI.
 """
-import imgui
 import OpenGL.constant as OGLConstant
-
+import imgui
 from imgui.integrations.glfw import GlfwRenderer
 
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar

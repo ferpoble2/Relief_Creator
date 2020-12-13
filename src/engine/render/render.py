@@ -2,10 +2,11 @@
 File that defines functions that controls the window generation
 and the OpenGL rendering process.
 """
-import OpenGL.GL as GL
-import glfw
 import logging as log
 import sys
+
+import OpenGL.GL as GL
+import glfw
 
 
 class Render:

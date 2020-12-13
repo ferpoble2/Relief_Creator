@@ -1,8 +1,10 @@
 """Model class to manage models in the engine."""
-import OpenGL.GL as GL
 import ctypes as ctypes
+
+import OpenGL.GL as GL
 import numpy as np
 from OpenGL.GL.shaders import compileShader
+
 from src.engine.settings import Settings
 
 
