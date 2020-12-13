@@ -130,11 +130,10 @@ class GUIManager:
         Returns: list with the frame objects.
         """
         return [
-                MainMenuBar(gui_manager),
-                # TestWindow(),
-                SampleText(gui_manager)
-            ]
-
+            MainMenuBar(gui_manager),
+            # TestWindow(),
+            SampleText(gui_manager)
+        ]
 
     def are_frame_fixed(self) -> bool:
         """
