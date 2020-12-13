@@ -126,6 +126,19 @@ class GUIManager:
         """
         return Settings.FIXED_FRAMES
 
+    def refresh_scene_with_model_2d(self, path_color_file: str, path_model: str) -> None:
+        """
+        Refresh the scene with the model 2D specified.
+
+        Args:
+            path_color_file: Path to CTP file.
+            path_model: Path to the netCDF with the info of the model
+
+        Returns: None
+
+        """
+        self.__scene.refresh_with_model_2d(path_color_file, path_model)
+
     @staticmethod
     def get_settings() -> 'Settings':
         """
