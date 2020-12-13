@@ -2,8 +2,11 @@
 File with the class that will manage the state of the GUI.
 """
 import imgui
+import OpenGL.constant as OGLConstant
+
 from imgui.integrations.glfw import GlfwRenderer
-from src.engine.settings import FONT_SIZE
+from src.engine.settings import Settings
+# from src.engine.engine import Engine
 from src.utils import get_logger
 
 log = get_logger(module='GUIMANAGER')
@@ -24,12 +27,14 @@ class GUIManager:
         self.__io = None
         self.__font = None
 
-    def initialize(self, window) -> None:
+        self.__scene = None
+
+    def initialize(self, window, engine: 'Engine') -> None:
         """
         Set the initial configurations of the GUI.
         Args:
+            engine: Engine used in the application
             window: Window to use to draw the GUI
-            mode: Mode in which to draw the GUI (debug or production)
 
         Returns: None
 
@@ -47,9 +52,11 @@ class GUIManager:
         # Font options
         self.__io = imgui.get_io()
         self.__font = self.__io.fonts.add_font_from_file_ttf(
-            './engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', FONT_SIZE
+            './engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', Settings.FONT_SIZE
         )
         self.__implementation.refresh_font_texture()
+
+        self.__scene = engine.scene
 
     def add_frames(self, component_list: list) -> None:
         """
@@ -75,8 +82,15 @@ class GUIManager:
         Returns: None
         """
         log.debug(f"Changing fixed positions: {value}")
-        for frame in self.__component_list:
-            frame.set_fixed_position(value)
+
+        # Settings change depending if the frames are fixed or not
+        if value:
+            Settings.fix_frames(True)
+            self.__scene.update_viewport()
+
+        else:
+            Settings.fix_frames(False)
+            self.__scene.update_viewport()
 
     def process_input(self) -> None:
         """
@@ -103,3 +117,30 @@ class GUIManager:
         """
         imgui.render()
         self.__implementation.render(imgui.get_draw_data())
+
+    @staticmethod
+    def are_frame_fixed() -> bool:
+        """
+        Check if the frames are fixed or not.
+        Returns: if frames are fixed or not.
+        """
+        return Settings.FIXED_FRAMES
+
+    @staticmethod
+    def get_settings() -> 'Settings':
+        """
+        Return a settings object.
+        Returns: Settings object to ask for parameters.
+        """
+        return Settings()
+
+    def set_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
+        """
+        Call the scene to change the polygon mode used.
+
+        Args:
+            polygon_mode: Polygon mode to use.
+
+        Returns:
+        """
+        self.__scene.set_polygon_mode(polygon_mode)
