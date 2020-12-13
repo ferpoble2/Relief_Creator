@@ -22,6 +22,7 @@ package src {
         package scene {}
     }
     package input {}
+    package program {}
 }
 
 
@@ -46,6 +47,7 @@ class src.engine.GUI.GUIManager{
     + render()
     + set_polygon_mode(polygon_mode)
     + get_main_menu_bar_height(): int
+    + get_cpt_file(): str
     + get_left_frame_width(): int
     + get_window_height(): int
 }
@@ -212,6 +214,7 @@ class src.engine.scene.Scene {
 
 class src.engine.Engine {
     + controller
+    + get_cpt_file(): str
     + gui_manager
     + render
     + scene
@@ -229,6 +232,16 @@ class src.engine.Engine {
     {static} + get_clear_color(): list
     {static} + get_scene_setting_data(): dict
 
+}
+
+class src.program.Program {
+
+    - __engine: Engine
+    - __CPT_file: str
+
+    + run()
+    + initialize(program)
+    + get_cpt_file()
 }
 
 ' herency
@@ -251,6 +264,7 @@ src.engine.Engine <-d.> src.engine.GUI.GUIManager
 src.engine.Engine <-d.> src.engine.controller.Controller
 src.engine.Engine <-d.> src.engine.scene.Scene
 src.engine.Engine -u.> src.engine.settings
+src.engine.Engine <-l.> src.program.Program
 
 src.engine.GUI.frames.Frame <-u.> src.engine.GUI.GUIManager
 
