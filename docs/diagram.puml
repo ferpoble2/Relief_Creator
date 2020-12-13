@@ -201,14 +201,14 @@ class src.engine.controller.Controller {
 class src.engine.scene.Scene {
     - __model_list : list
     - __engine : Engine
-    + draw()
     + add_model(model)
+    + draw()
     + initialize(engine)
+    + refresh_with_model_2d(path_color_file, path_model)
     + remove_all_models()
     + remove_model(id_model)
     + set_polygon_mode(polygon_mode)
     + update_viewport()
-    + refresh_with_model_2d(path_color_file, path_model)
 }
 
 class src.engine.Engine {
@@ -217,6 +217,8 @@ class src.engine.Engine {
     + render
     + scene
     + window
+    + initialize(engine)
+    + run()
     {static} + change_height_window(height)
     {static} + change_width_window(width)
     {static} + get_gui_setting_data(): dict
@@ -227,8 +229,6 @@ class src.engine.Engine {
     {static} + update_scene_values()
     {static} + get_clear_color(): list
     {static} + get_scene_setting_data(): dict
-    + initialize(engine)
-    + run()
 
 }
 
