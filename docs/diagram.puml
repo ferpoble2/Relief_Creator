@@ -35,16 +35,15 @@ class src.engine.GUI.GUIManager{
     - __scene: Scene
     - __engine: Engine
 
-    {static} + are_frame_fixed()
-    {static} + get_settings() : Settings
     {static} + get_frames(gui_manager) : list
+    + are_frame_fixed()
     + initialize(window, mode)
     + add_frames(component_list)
     + fix_frames_position(value)
     + process_input()
     + draw_frames()
-    + render()
     + refresh_scene_with_model_2d(path_color_file, path_model)
+    + render()
     + set_polygon_mode(polygon_mode)
     + get_main_menu_bar_height(): int
     + get_left_frame_width(): int
@@ -52,20 +51,20 @@ class src.engine.GUI.GUIManager{
 }
 
 class src.engine.settings  {
-    {static} + WIDTH : int
+    {static} + CLEAR_COLOR : list
+    {static} + fix_frames(fix_frames): boolean
+    {static} + FIXEX_FRAMES : boolean
+    {static} + FLOAT_BYTES : int
+    {static} + FONT_SIZE : int
     {static} + HEIGHT : int
     {static} + LEFT_FRAME_WIDTH : int
-    {static} + TOP_FRAME_HEIGHT : int
     {static} + MAIN_MENU_BAR_HEIGHT : int
-    {static} + FONT_SIZE : int
-    {static} + CLEAR_COLOR : list
-    {static} + FLOAT_BYTES : int
     {static} + SCENE_BEGIN_X : int
     {static} + SCENE_BEGIN_Y : int
     {static} + SCENE_END_X : int
     {static} + SCENE_END_Y : int
-    {static} + FIXEX_FRAMES : boolean
-    {static} + fix_frames(fix_frames): boolean
+    {static} + TOP_FRAME_HEIGHT : int
+    {static} + WIDTH : int
     {static} + update_scene_values()
 }
 
