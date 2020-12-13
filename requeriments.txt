@@ -10,6 +10,7 @@ colorama==0.4.4
 cycler==0.10.0
 decorator==4.4.2
 defusedxml==0.6.0
+easygui==0.98.1
 entrypoints==0.3
 glfw==2.0.0
 imgui==1.2.0
