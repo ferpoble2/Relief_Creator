@@ -7,7 +7,6 @@ import glfw
 import logging as log
 import sys
 from src.engine.settings import Settings
-# from src.engine.engine import Engine
 
 
 class Render:
