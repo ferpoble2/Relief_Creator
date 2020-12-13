@@ -125,6 +125,14 @@ class GUIManager:
         """
         return self.__engine.get_window_setting_data()['HEIGHT']
 
+    def get_cpt_file(self) -> str:
+        """
+        Get the CTP file used by the program.
+        Returns: string with the file to use.
+
+        """
+        return self.__engine.get_cpt_file()
+
     def initialize(self, window, engine: 'Engine') -> None:
         """
         Set the initial configurations of the GUI.

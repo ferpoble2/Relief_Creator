@@ -11,7 +11,7 @@ from src.engine.scene.scene import Scene
 from src.engine.settings import Settings
 from src.utils import get_logger
 
-log = get_logger(module='PROGRAM')
+log = get_logger(module='ENGINE')
 
 
 # TODO: ADD this class to the class diagram.
@@ -31,8 +31,9 @@ class Engine:
         self.window = None
         self.scene = Scene()
         self.controller = Controller()
+        self.program = None
 
-    def initialize(self, engine: 'Engine') -> None:
+    def initialize(self, engine: 'Engine', program: 'Program') -> None:
         """
         Initialize the components of the program.
         Returns: None
@@ -41,6 +42,7 @@ class Engine:
             engine: Engine to initialize.
         """
         log.info('Starting Program')
+        self.program = program
 
         # GLFW CODE
         # ---------
@@ -77,7 +79,7 @@ class Engine:
     @staticmethod
     def get_clear_color() -> list:
         """
-        Get the clear color to use.
+        Get the clear color used.
         Returns:list with the clear color
 
         """
@@ -97,12 +99,20 @@ class Engine:
         }
 
     @staticmethod
-    def get_font_size()-> int:
+    def get_font_size() -> int:
         """
         Get the font size to use in the program.
         Returns: font size
         """
         return Settings.FONT_SIZE
+
+    def get_cpt_file(self) -> str:
+        """
+        Get the CTP file currently being used in the program
+        Returns: String with the path to the file
+
+        """
+        return self.program.get_cpt_file()
 
     @staticmethod
     def fix_frames(fix: bool) -> None:
