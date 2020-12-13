@@ -212,13 +212,11 @@ class src.engine.scene.Scene {
 }
 
 class src.engine.Engine {
-    + render
-    + gui_manager
-    + window
-    + scene
     + controller
-    + initialize(engine)
-    {static} + get_scene_setting_data(): dict
+    + gui_manager
+    + render
+    + scene
+    + window
     {static} + change_height_window(height)
     {static} + change_width_window(width)
     {static} + get_gui_setting_data(): dict
@@ -228,6 +226,8 @@ class src.engine.Engine {
     {static} + get_window_setting_data(): dict
     {static} + update_scene_values()
     {static} + get_clear_color(): list
+    {static} + get_scene_setting_data(): dict
+    + initialize(engine)
     + run()
 
 }

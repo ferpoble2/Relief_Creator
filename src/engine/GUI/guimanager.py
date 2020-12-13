@@ -20,6 +20,7 @@ class GUIManager:
     def __init__(self):
         """
         Constructor of the class.
+
         """
         self.__implementation = None
         self.__glfw_window = None
@@ -30,9 +31,104 @@ class GUIManager:
         self.__scene = None
         self.__engine = None
 
+    def add_frames(self, component_list: list) -> None:
+        """
+        Add frames to render in the application.
+
+        Receive a list of components that must inherit from the Frame class.
+
+        Args:
+            component_list: List of frames to render.
+
+        Returns: None
+        """
+        for frame in component_list:
+            self.__component_list.append(frame)
+
+    def are_frame_fixed(self) -> bool:
+        """
+        Check if the frames are fixed or not.
+
+        Returns: if frames are fixed or not.
+        """
+        return self.__engine.are_frames_fixed()
+
+    def draw_frames(self) -> None:
+        """
+        Draw the components of the GUI (This dont render them).
+
+        Returns: None
+        """
+        imgui.new_frame()
+        with imgui.font(self.__font):
+            for frame in self.__component_list:
+                frame.render()
+        imgui.end_frame()
+
+    def fix_frames_position(self, value: bool) -> None:
+        """
+        Set if the windows will be fixed on the screen or if they will be floating.
+
+        Args:
+            value: Boolean indicating if the windows will be fixed or not.
+
+        Returns: None
+        """
+        log.debug(f"Changing fixed positions: {value}")
+
+        # Settings change depending if the frames are fixed or not
+        if value:
+            self.__engine.fix_frames(True)
+            self.__scene.update_viewport()
+
+        else:
+            self.__engine.fix_frames(False)
+            self.__scene.update_viewport()
+
+    @staticmethod
+    def get_frames(gui_manager: 'GUIManager') -> list:
+        """
+        Return the frame object to use in the application.
+
+        Args:
+            gui_manager: GUIManager to use to initialize the frames.
+
+        Returns: list with the frame objects.
+        """
+        return [
+            MainMenuBar(gui_manager),
+            # TestWindow(),
+            SampleText(gui_manager)
+        ]
+
+    def get_left_frame_width(self) -> int:
+        """
+        Get the width of the left frame.
+
+        Returns: width of the left frame
+        """
+        return self.__engine.get_gui_setting_data()['LEFT_FRAME_WIDTH']
+
+    def get_main_menu_bar_height(self) -> int:
+        """
+        Get the main menu bar heigh frm the settings.
+
+        Returns: main_menu_bar height
+        """
+        return self.__engine.get_gui_setting_data()['MAIN_MENU_BAR_HEIGHT']
+
+    def get_window_height(self) -> int:
+        """
+        Get the height of the window.
+
+        Returns: height of the window
+        """
+        return self.__engine.get_window_setting_data()['HEIGHT']
+
     def initialize(self, window, engine: 'Engine') -> None:
         """
         Set the initial configurations of the GUI.
+
         Args:
             engine: Engine used in the application
             window: Window to use to draw the GUI
@@ -60,87 +156,13 @@ class GUIManager:
         self.__scene = engine.scene
         self.__engine = engine
 
-    def add_frames(self, component_list: list) -> None:
-        """
-        Add frames to render in the application.
-
-        Receive a list of components that must inherit from the Frame class.
-
-        Args:
-            component_list: List of frames to render.
-
-        Returns: None
-        """
-        for frame in component_list:
-            self.__component_list.append(frame)
-
-    def fix_frames_position(self, value: bool) -> None:
-        """
-        Set if the windows will be fixed on the screen or if they will be floating.
-
-        Args:
-            value: Boolean indicating if the windows will be fixed or not.
-
-        Returns: None
-        """
-        log.debug(f"Changing fixed positions: {value}")
-
-        # Settings change depending if the frames are fixed or not
-        if value:
-            self.__engine.fix_frames(True)
-            self.__scene.update_viewport()
-
-        else:
-            self.__engine.fix_frames(False)
-            self.__scene.update_viewport()
-
     def process_input(self) -> None:
         """
         Process the input (events) that happened in the GUI.
+
         Returns: None
         """
         self.__implementation.process_inputs()
-
-    def draw_frames(self) -> None:
-        """
-        Draw the components of the GUI (This dont render them).
-        Returns: None
-        """
-        imgui.new_frame()
-        with imgui.font(self.__font):
-            for frame in self.__component_list:
-                frame.render()
-        imgui.end_frame()
-
-    def render(self) -> None:
-        """
-        Render the GUI (Components must be drew first).
-        Returns: None
-        """
-        imgui.render()
-        self.__implementation.render(imgui.get_draw_data())
-
-    @staticmethod
-    def get_frames(gui_manager: 'GUIManager') -> list:
-        """
-        Return the frame object to use in the application.
-        Args:
-            gui_manager: GUIManager to use to initialize the frames.
-
-        Returns: list with the frame objects.
-        """
-        return [
-            MainMenuBar(gui_manager),
-            # TestWindow(),
-            SampleText(gui_manager)
-        ]
-
-    def are_frame_fixed(self) -> bool:
-        """
-        Check if the frames are fixed or not.
-        Returns: if frames are fixed or not.
-        """
-        return self.__engine.are_frames_fixed()
 
     def refresh_scene_with_model_2d(self, path_color_file: str, path_model: str) -> None:
         """
@@ -155,26 +177,14 @@ class GUIManager:
         """
         self.__scene.refresh_with_model_2d(path_color_file, path_model)
 
-    def get_main_menu_bar_height(self) -> int:
+    def render(self) -> None:
         """
-        Get the main menu bar heigh frm the settings.
-        Returns: main_menu_bar height
-        """
-        return self.__engine.get_gui_setting_data()['MAIN_MENU_BAR_HEIGHT']
+        Render the GUI (Components must be drew first).
 
-    def get_left_frame_width(self) -> int:
+        Returns: None
         """
-        Get the width of the left frame.
-        Returns: width of the left frame
-        """
-        return self.__engine.get_gui_setting_data()['LEFT_FRAME_WIDTH']
-
-    def get_window_height(self) -> int:
-        """
-        Get the height of the window.
-        Returns: height of the window
-        """
-        return self.__engine.get_window_setting_data()['HEIGHT']
+        imgui.render()
+        self.__implementation.render(imgui.get_draw_data())
 
     def set_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
