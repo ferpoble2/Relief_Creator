@@ -8,10 +8,8 @@ import OpenGL.GL as GL
 import numpy as np
 import ctypes as ctypes
 
-from src.engine.settings import FLOAT_BYTES
+from src.engine.settings import Settings
 from src.engine.data import decimation
-from src.engine.settings import WIDTH
-from src.engine.settings import HEIGHT
 from src.input.CTP import read_file
 from src.engine.model.tranformations.transformations import ortho
 from src.utils import get_logger
@@ -122,7 +120,7 @@ class Map2DModel(Model):
         GL.glBindVertexArray(self.vao)
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.hbo)
         GL.glBufferData(GL.GL_ARRAY_BUFFER,
-                        len(height) * FLOAT_BYTES,
+                        len(height) * Settings.FLOAT_BYTES,
                         height,
                         GL.GL_STATIC_DRAW)
 
@@ -191,7 +189,7 @@ class Map2DModel(Model):
         self.__z = z
 
         # Apply decimation algorithm
-        x, y, z = decimation.simple_decimation(x, y, z, int(HEIGHT / quality), int(WIDTH / quality))
+        x, y, z = decimation.simple_decimation(x, y, z, int(Settings.HEIGHT / quality), int(Settings.WIDTH / quality))
 
         # Set the vertices in the buffer
         for row_index in range(len(z)):
