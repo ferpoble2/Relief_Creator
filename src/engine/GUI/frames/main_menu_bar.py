@@ -3,8 +3,6 @@ Main menu bar frame in the GUI
 """
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
-from src.engine.GUI.guimanager import GUIManager
-from src.engine.scene.scene import Scene
 
 import imgui
 import OpenGL.GL as GL
@@ -18,20 +16,14 @@ class MainMenuBar(Frame):
     Frame that controls the top menu bar of the application.
     """
 
-    def __init__(self, gui_manager: GUIManager, scene: Scene):
+    def __init__(self, gui_manager: 'GUIManager'):
         """
         Constructor of the class.
 
         Args:
-            scene: Scene of the application.
             gui_manager: GuiManager of the application.
         """
-        super().__init__()
-        self.__GUI_manager = gui_manager
-        self.scene = scene
-
-        self.fixed_position = True
-
+        super().__init__(gui_manager)
         self.error_file = False
 
     def render(self) -> None:
@@ -76,34 +68,32 @@ class MainMenuBar(Frame):
             # third menu dropdown
             if imgui.begin_menu('View'):
 
-                if self.fixed_position:
+                if self._GUI_manager.are_frame_fixed():
                     imgui.menu_item('Unfix Windows Positions')
                     if imgui.is_item_clicked():
-                        self.__GUI_manager.fix_frames_position(False)
-                        self.fixed_position = False
+                        self._GUI_manager.fix_frames_position(False)
 
                 else:
                     imgui.menu_item('Fix Windows Positions')
                     if imgui.is_item_clicked():
-                        self.__GUI_manager.fix_frames_position(True)
-                        self.fixed_position = True
+                        self._GUI_manager.fix_frames_position(True)
 
                 imgui.separator()
 
                 imgui.menu_item('Use points')
                 if imgui.is_item_clicked():
                     log.info("Rendering points")
-                    self.scene.set_polygon_mode(GL.GL_POINT)
+                    self._GUI_manager.set_polygon_mode(GL.GL_POINT)
 
                 imgui.menu_item('Use wireframes')
                 if imgui.is_item_clicked():
                     log.info("Rendering wireframes")
-                    self.scene.set_polygon_mode(GL.GL_LINE)
+                    self._GUI_manager.set_polygon_mode(GL.GL_LINE)
 
                 imgui.menu_item('Fill polygons')
                 if imgui.is_item_clicked():
                     log.info("Rendering filled polygons")
-                    self.scene.set_polygon_mode(GL.GL_FILL)
+                    self._GUI_manager.set_polygon_mode(GL.GL_FILL)
 
                 imgui.end_menu()
 
