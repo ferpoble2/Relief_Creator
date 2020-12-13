@@ -3,7 +3,7 @@ import OpenGL.GL as GL
 import ctypes as ctypes
 import numpy as np
 from OpenGL.GL.shaders import compileShader
-from src.engine.settings import FLOAT_BYTES
+from src.engine.settings import Settings
 
 
 class Model:
@@ -97,7 +97,7 @@ class Model:
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.vbo)
         GL.glBufferData(
             GL.GL_ARRAY_BUFFER,
-            len(vertex) * FLOAT_BYTES,
+            len(vertex) * Settings.FLOAT_BYTES,
             vertex,
             GL.GL_STATIC_DRAW,
         )
@@ -118,7 +118,7 @@ class Model:
         GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, self.ebo)
         GL.glBufferData(
             GL.GL_ELEMENT_ARRAY_BUFFER,
-            len(indices) * FLOAT_BYTES,
+            len(indices) * Settings.FLOAT_BYTES,
             indices,
             GL.GL_STATIC_DRAW,
         )
