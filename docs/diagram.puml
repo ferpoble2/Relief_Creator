@@ -13,6 +13,7 @@ package src {
         package model {
             package transformations {}
         }
+        package render {}
         package data {}
         package controller {}
         package GUI {
@@ -31,6 +32,7 @@ class src.engine.GUI.GUIManager{
     - __component_list: list
     - __io: IMGUI.io
     - __font: IMGUI.font
+    - __scene: Scene
 
     + initialize(window, mode)
     + add_frames(component_list)
@@ -38,18 +40,28 @@ class src.engine.GUI.GUIManager{
     + process_input()
     + draw_frames()
     + render()
+    + refresh_scene_with_model_2d(path_color_file, path_model)
+    {static} + are_frame_fixed()
+    {static} + get_settings() : Settings
+    + set_polygon_mode(polygon_mode)
 }
 
-class src.engine.settings << $file >>{
-    + WIDTH : int
-    + HEIGHT : int
-    + FONT_SIZE : int
-    + CLEAR_COLOR : list
-    + FLOAT_BYTES : int
-    + SCENE_BEGIN_X : int
-    + SCENE_BEGIN_Y : int
-    + SCENE_END_X : int
-    + SCENE_END_Y : int
+class src.engine.settings  {
+    {static} + WIDTH : int
+    {static} + HEIGHT : int
+    {static} + LEFT_FRAME_WIDTH : int
+    {static} + TOP_FRAME_HEIGHT : int
+    {static} + MAIN_MENU_BAR_HEIGHT : int
+    {static} + FONT_SIZE : int
+    {static} + CLEAR_COLOR : list
+    {static} + FLOAT_BYTES : int
+    {static} + SCENE_BEGIN_X : int
+    {static} + SCENE_BEGIN_Y : int
+    {static} + SCENE_END_X : int
+    {static} + SCENE_END_Y : int
+    {static} + FIXEX_FRAMES : boolean
+    {static} + fix_frames(fix_frames): boolean
+    {static} + update_scene_values()
 }
 
 class src.engine.model.transformations.transformations <<$file>> {
@@ -92,12 +104,11 @@ class src.engine.model.Model {
     + draw()
 }
 
-class src.engine.Render {
+class src.engine.render.Render {
     + __window : GLFWWindow
     + __gui : GUIManager
     + init(window_name)
     + on_loop(on_frame_task)
-    + change_viewport(init_x, init_y, final_x, final_y)
 }
 
 class src.input.NetCDF <<$file>> {
@@ -153,20 +164,19 @@ class src.engine.model.Map3DModel{
 
 class src.engine.GUI.frames.Frame {
     ~ _position: list
-    ~ _fixed_position: boolean
+    ~ _GUI_manager: GUIManager
 
     + change_position(new_position)
-    + set_fixed_position(value)
+    + get_position(): list
     + render()
 }
 
 class src.engine.GUI.frames.MainMenuBar {
-    - __GUI_manager : GUIManager
-
     + render()
 }
 
 class src.engine.GUI.frames.SampleText {
+    - __settings: Settings
     + render()
 }
 
@@ -176,6 +186,7 @@ class src.engine.GUI.frames.TestWindow {
 
 class src.engine.controller.Controller {
     - __render
+    - __scene
     + init(render)
     + get_on_key_callback()
     + get_resize_callback()
@@ -188,16 +199,28 @@ class src.engine.scene.Scene {
     + remove_all_models()
     + remove_model(id_model)
     + set_polygon_mode(polygon_mode)
+    + update_viewport()
     + refresh_with_model_2d(path_color_file, path_model)
 }
 
-' herency
-src.engine.model.Map2DModel -u-> src.engine.model.Model
-src.engine.model.Map3DModel -u-> src.engine.model.Model
+class src.engine.Engine {
+    + render
+    + gui_manager
+    + window
+    + scene
+    + controller
+    + initialize(engine)
+    + run()
 
-src.engine.GUI.frames.MainMenuBar -u-> src.engine.GUI.frames.Frame
-src.engine.GUI.frames.SampleText -u-> src.engine.GUI.frames.Frame
-src.engine.GUI.frames.TestWindow -u-> src.engine.GUI.frames.Frame
+}
+
+' herency
+src.engine.model.Map2DModel -u-|> src.engine.model.Model
+src.engine.model.Map3DModel -u-|> src.engine.model.Model
+
+src.engine.GUI.frames.MainMenuBar -u-|> src.engine.GUI.frames.Frame
+src.engine.GUI.frames.SampleText -u-|> src.engine.GUI.frames.Frame
+src.engine.GUI.frames.TestWindow -u-|> src.engine.GUI.frames.Frame
 
 ' uses
 src.engine.model.Map2DModel -u.> src.engine.data.decimation
@@ -210,8 +233,7 @@ src.input.CTP -u.> src.utils
 
 src.engine.model.Model -u.> src.engine.settings
 
-src.engine.Render -u.> src.engine.settings
-src.engine.Render -u.> src.engine.GUI.GUIManager
+src.engine.render.Render -u.> src.engine.settings
 
 ' Uncomment to check main file
 'src.main -u.> src.utils
@@ -221,17 +243,22 @@ src.engine.Render -u.> src.engine.GUI.GUIManager
 'src.main -u.> src.engine.model.Map2DModel
 
 src.engine.GUI.GUIManager -u.> src.utils
-src.engine.GUI.GUIManager -u.> src.engine.GUI.frames.Frame
 src.engine.GUI.GUIManager -u.> src.engine.settings
 
-src.engine.controller.Controller -u.> src.engine.settings
-src.engine.controller.Controller -u.> src.engine.Render
-src.engine.controller.Controller -u.> src.utils
+src.engine.Engine <-u.> src.engine.render.Render
+src.engine.Engine -u.> src.utils
+src.engine.Engine <-u.> src.engine.GUI.GUIManager
+src.engine.Engine <-u.> src.engine.controller.Controller
+src.engine.Engine <-u.> src.engine.scene.Scene
 
-src.engine.GUI.frames.MainMenuBar -u.> src.engine.scene.Scene
+src.engine.GUI.frames.Frame <-u.> src.engine.GUI.GUIManager
+
+src.engine.controller.Controller -u.> src.engine.settings
+src.engine.controller.Controller -u.> src.utils
 
 src.engine.scene.Scene -u.> src.engine.model.Map2DModel
 src.engine.scene.Scene -u.> src.engine.model.Model
 src.engine.scene.Scene -u.> src.input.NetCDF
 src.engine.scene.Scene -u.> src.utils
+src.engine.scene.Scene -u.> src.engine.settings
 @enduml
