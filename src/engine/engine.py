@@ -73,14 +73,32 @@ class Engine:
         self.scene.initilize(engine)
 
     @staticmethod
-    def get_scene_setting_data():
+    def get_scene_setting_data() -> dict:
+        """
+        Get the scene setting data.
+        Returns: dict with the data
+        """
         return {
             'SCENE_BEGIN_X': Settings.SCENE_BEGIN_X, 'SCENE_BEGIN_Y': Settings.SCENE_BEGIN_Y,
             'SCENE_WIDTH_X': Settings.SCENE_WIDTH_X, 'SCENE_HEIGHT_Y': Settings.SCENE_HEIGHT_Y
         }
 
     @staticmethod
-    def get_gui_setting_data():
+    def get_clear_color() -> list:
+        """
+        Get the clear color to use.
+        Returns:list with the clear color
+
+        """
+        return Settings.CLEAR_COLOR
+
+    @staticmethod
+    def get_gui_setting_data() -> dict:
+        """
+        Get the GUI setting data.
+        Returns: dict with the data
+
+        """
         return {
             'LEFT_FRAME_WIDTH': Settings.LEFT_FRAME_WIDTH,
             'TOP_FRAME_HEIGHT': Settings.TOP_FRAME_HEIGHT,
@@ -88,19 +106,38 @@ class Engine:
         }
 
     @staticmethod
-    def get_font_size():
+    def get_font_size()-> int:
+        """
+        Get the font size to use in the program.
+        Returns: font size
+        """
         return Settings.FONT_SIZE
 
     @staticmethod
     def fix_frames(fix: bool) -> None:
+        """
+        Fixes/unfix the frames in the application.
+        Args:
+            fix: boolean indicating if fix or not the frames.
+
+        Returns: None
+        """
         Settings.fix_frames(fix)
 
     @staticmethod
     def are_frames_fixed() -> bool:
+        """
+        Return if the frames are fixed or not in the application.
+        Returns: boolean indicating if the frames are fixed
+        """
         return Settings.FIXED_FRAMES
 
     @staticmethod
     def get_window_setting_data() -> dict:
+        """
+        Get the window setting data.
+        Returns: dict with the data
+        """
         return {
             'HEIGHT': Settings.HEIGHT,
             'WIDTH': Settings.WIDTH

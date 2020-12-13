@@ -226,6 +226,7 @@ class src.engine.Engine {
     {static} + are_frames_fixed(): boolean
     {static} + get_window_setting_data(): dict
     {static} + update_scene_values()
+    {static} + get_clear_color(): list
     + run()
 
 }
@@ -240,39 +241,20 @@ src.engine.GUI.frames.TestWindow -u-|> src.engine.GUI.frames.Frame
 
 ' uses
 src.engine.model.Map2DModel -u.> src.engine.data.decimation
-'src.engine.model.Map2DModel -u.> src.engine.settings
 src.engine.model.Map2DModel -u.> src.engine.model.transformations.transformations
 src.engine.model.Map2DModel -u.> src.input.CTP
-'src.engine.model.Map2DModel -u.> src.utils
-
-'src.input.CTP -u.> src.utils
 
 src.engine.model.Model -u.> src.engine.settings
 
-src.engine.render.Render -u.> src.engine.settings
-
-' Uncomment to check main file
-'src.main -u.> src.utils
-'src.main -u.> src.engine.render
-'src.main -u.> src.input.NetCDF
-'src.main -u.> src.engine.GUI.GUIManager
-'src.main -u.> src.engine.model.Map2DModel
-
-'src.engine.GUI.GUIManager -u.> src.utils
-
-src.engine.Engine <-u.> src.engine.render.Render
-'src.engine.Engine -u.> src.utils
-src.engine.Engine <-u.> src.engine.GUI.GUIManager
-src.engine.Engine <-u.> src.engine.controller.Controller
-src.engine.Engine <-u.> src.engine.scene.Scene
+src.engine.Engine <-d.> src.engine.render.Render
+src.engine.Engine <-d.> src.engine.GUI.GUIManager
+src.engine.Engine <-d.> src.engine.controller.Controller
+src.engine.Engine <-d.> src.engine.scene.Scene
 src.engine.Engine -u.> src.engine.settings
 
 src.engine.GUI.frames.Frame <-u.> src.engine.GUI.GUIManager
 
-'src.engine.controller.Controller -u.> src.utils
-
 src.engine.scene.Scene -u.> src.engine.model.Map2DModel
 src.engine.scene.Scene -u.> src.engine.model.Model
 src.engine.scene.Scene -u.> src.input.NetCDF
-'src.engine.scene.Scene -u.> src.utils
 @enduml

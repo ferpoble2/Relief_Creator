@@ -6,7 +6,6 @@ import OpenGL.GL as GL
 import glfw
 import logging as log
 import sys
-from src.engine.settings import Settings
 
 
 class Render:
@@ -34,11 +33,12 @@ class Render:
 
         # set the gui for the app
         self.__GUI = engine.gui_manager
+        window_data = engine.get_window_setting_data()
 
-        log.info(f"Creating windows of size {Settings.WIDTH} x {Settings.HEIGHT}.")
+        log.info(f"Creating windows of size {window_data['WIDTH']} x {window_data['HEIGHT']}.")
         self.__window = glfw.create_window(
-            Settings.WIDTH,
-            Settings.HEIGHT,
+            window_data['WIDTH'],
+            window_data['HEIGHT'],
             window_name,
             None,
             None,
@@ -50,15 +50,18 @@ class Render:
 
         glfw.make_context_current(self.__window)
 
+        clear_color = engine.get_clear_color()
         GL.glClearColor(
-            Settings.CLEAR_COLOR[0],
-            Settings.CLEAR_COLOR[1],
-            Settings.CLEAR_COLOR[2],
-            Settings.CLEAR_COLOR[3],
+            clear_color[0],
+            clear_color[1],
+            clear_color[2],
+            clear_color[3],
         )
 
         # Indicate to openGL about the screen used in glfw to render.
-        GL.glViewport(Settings.SCENE_BEGIN_X, Settings.SCENE_BEGIN_Y, Settings.SCENE_WIDTH_X, Settings.SCENE_HEIGHT_Y)
+        scene_data = engine.get_scene_setting_data()
+        GL.glViewport(scene_data['SCENE_BEGIN_X'], scene_data['SCENE_BEGIN_Y'], scene_data['SCENE_WIDTH_X'],
+                      scene_data['SCENE_HEIGHT_Y'])
 
         return self.__window
 
