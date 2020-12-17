@@ -82,6 +82,20 @@ class Engine:
         """
         return Settings.CLEAR_COLOR
 
+    def refresh_with_model_2d(self, path_color_file: str, path_model: str, model_id: str = 'main') -> None:
+        """
+        Refresh the scene creating a 2D model with the parameters given.
+
+        Args:
+            model_id: Model id to use in the new model.
+            path_color_file: Path to the color file to use.
+            path_model: Path to the model file (NetCDF) to use.
+
+        Returns: none
+        """
+        self.scene.refresh_with_model_2d(path_color_file, path_model, model_id)
+        self.program.set_model_id(model_id)
+
     @staticmethod
     def get_gui_setting_data() -> dict:
         """

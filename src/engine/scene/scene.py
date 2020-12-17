@@ -92,22 +92,23 @@ class Scene:
         GL.glViewport(scene_data['SCENE_BEGIN_X'], scene_data['SCENE_BEGIN_Y'], scene_data['SCENE_WIDTH_X'],
                       scene_data['SCENE_HEIGHT_Y'])
 
-    def refresh_with_model_2d(self, path_color_file: str, path_model: str) -> None:
+    def refresh_with_model_2d(self, path_color_file: str, path_model: str, model_id: str = 'main') -> 'Model':
         """
         Refresh the scene, removing all the models, and adding the new model specified
         in the input.
 
-        The model added will be added as a 2d model to the program.
+        The model added will be added as a 2d model to the program with the id 'main'.
 
         The model must  be in netCDF format.
 
         The color file must be in CTP format.
 
         Args:
+            model_id: Model ID to use in the model added.
             path_color_file: Path to the CTP file with the colors.
-            path_model: Path to the
+            path_model: Path to the model to use in the application
 
-        Returns:
+        Returns: None
 
         """
 
@@ -123,6 +124,7 @@ class Scene:
         log.debug("Settings colors from file.")
         model.set_color_file(path_color_file)
         model.wireframes = False
+        model.id = model_id
 
         self.remove_all_models()
         self.add_model(model)

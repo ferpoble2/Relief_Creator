@@ -24,6 +24,7 @@ class Program:
         # PROGRAM VARIABLES
         # -----------------
         self.__CPT_file = os.path.join(os.getcwd(), 'input', 'test_colors', 'default.cpt')
+        self.__model_id = None
 
     def initialize(self, program: 'Program') -> None:
         """
@@ -37,6 +38,16 @@ class Program:
         """
         log.debug('Initializing program...')
         self.__engine.initialize(self.__engine, program)
+
+    def set_model_id(self, new_model_id: str):
+        """
+        Set the id of the model used in the application.
+        Args:
+            new_model_id: ID of the new model to use.
+
+        Returns:
+        """
+        self.__model_id = new_model_id
 
     def get_cpt_file(self) -> str:
         """
