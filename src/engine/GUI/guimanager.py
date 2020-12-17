@@ -186,6 +186,18 @@ class GUIManager:
         """
         self.__engine.refresh_with_model_2d(path_color_file, path_model, model_id)
 
+    def change_color_file(self, path_color_file: str) -> None:
+        """
+        Change the color file to the one selected.
+        This change all the models using the color file.
+
+        Args:
+            path_color_file: Path to the color file to use.
+
+        Returns: None
+        """
+        self.__engine.change_color_file(path_color_file)
+
     def render(self) -> None:
         """
         Render the GUI (Components must be drew first).

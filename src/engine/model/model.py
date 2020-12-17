@@ -88,6 +88,17 @@ class Model:
         GL.glPolygonMode(GL.GL_FRONT, GL.GL_FILL)
         GL.glPolygonMode(GL.GL_BACK, GL.GL_FILL)
 
+    def set_color_file(self, color_file: str) -> None:
+        """
+        Update the colors used by the model from the ones in the file.
+
+        Args:
+            color_file: File to be used to get the colors.
+
+        Returns: None
+        """
+        raise NotImplementedError("Method set_color_file not implemented in the model.")
+
     def set_vertices(self, vertex: np.ndarray) -> None:
         """Set the vertices buffers inside the model.
 

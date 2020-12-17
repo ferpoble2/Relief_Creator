@@ -96,6 +96,27 @@ class Engine:
         self.scene.refresh_with_model_2d(path_color_file, path_model, model_id)
         self.program.set_model_id(model_id)
 
+    def change_color_file(self, path_color_file: str) -> None:
+        """
+        Change the color file to the one selected.
+        This change all the models using the color file.
+
+        Args:
+            path_color_file: Path to the color file to use.
+
+        Returns: None
+        """
+        self.program.set_cpt_file(path_color_file)
+        self.scene.update_models_colors()
+
+    def get_CPT_file(self) -> None:
+        """
+        Get the CPT file used by the program.
+
+        Returns: String with the CPT file used.
+        """
+        return self.program.get_cpt_file()
+
     @staticmethod
     def get_gui_setting_data() -> dict:
         """

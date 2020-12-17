@@ -58,10 +58,19 @@ class MainMenuBar(Frame):
 
                 imgui.menu_item('Change CPT file...', 'Ctrl+T', False, True)
                 if imgui.is_item_clicked():
-                    path_color_file = easygui.fileopenbox('Select NETCDF file...')
-                    log.debug(f'Changing CPT to {path_color_file}')
-                    log.debug('FEATURE NOT IMPLEMENTED YET')
-                    # TODO: Implement the change of the CPT file and the reload of models.
+                    path_color_file = easygui.fileopenbox('Select CPT file...')
+                    log.debug(f"path_model: {path_color_file}")
+
+                    try:
+                        self._GUI_manager.change_color_file(path_color_file)
+
+                    except KeyError:
+                        log.debug("Error reading files or creating models, KEYError")
+                        self.error_file = True
+
+                    except OSError:
+                        log.debug("Error reading files, OSError")
+                        self.error_file = True
 
                 imgui.end_menu()
 

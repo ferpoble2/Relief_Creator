@@ -128,3 +128,13 @@ class Scene:
 
         self.remove_all_models()
         self.add_model(model)
+
+    def update_models_colors(self) -> None:
+        """
+        Update the colors of the models reloading the colors from the file used in the program.
+
+        Returns: None
+        """
+        color_file = self.__engine.get_CPT_file()
+        for model in self.__model_list:
+            model.set_color_file(color_file)

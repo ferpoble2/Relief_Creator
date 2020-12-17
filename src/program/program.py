@@ -7,6 +7,7 @@ from src.utils import get_logger
 
 log = get_logger(module='PROGRAM')
 
+
 class Program:
     """
     Class that represents the program and its state.
@@ -57,6 +58,18 @@ class Program:
 
         """
         return self.__CPT_file
+
+    def set_cpt_file(self, new_file: str) -> None:
+        """
+        Changes the CPT file used in the program.
+
+        Args:
+            new_file: New file to use as a CPT file.
+
+        Returns: None
+
+        """
+        self.__CPT_file = new_file
 
     def run(self) -> None:
         """
