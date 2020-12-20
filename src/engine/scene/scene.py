@@ -21,6 +21,9 @@ class Scene:
         self.__model_list = []
         self.__engine = None
 
+        self.__width_viewport = None
+        self.__height_viewport = None
+
     def initilize(self, engine: 'Engine') -> None:
         """
         Initialize the compoent in the engine.
@@ -30,6 +33,16 @@ class Scene:
         Returns: None
         """
         self.__engine = engine
+
+    def update_viewport_variables(self):
+        """
+        Update the viewport variables.
+
+        Returns: None
+        """
+        viewport_data = self.__engine.get_scene_setting_data()
+        self.__width_viewport = viewport_data['SCENE_WIDTH_X']
+        self.__height_viewport = viewport_data['SCENE_HEIGHT_Y']
 
     def draw(self) -> None:
         """
@@ -88,9 +101,29 @@ class Scene:
         """
         Update the viewport with the new values that exist in the Settings.
         """
+        log.debug("Updating viewport")
+        self.update_viewport_variables()
+
         scene_data = self.__engine.get_scene_setting_data()
         GL.glViewport(scene_data['SCENE_BEGIN_X'], scene_data['SCENE_BEGIN_Y'], scene_data['SCENE_WIDTH_X'],
                       scene_data['SCENE_HEIGHT_Y'])
+
+        self.update_models_projection_matrix()
+
+    def update_models_projection_matrix(self) -> None:
+        """
+        Update the projection matrix of the models.
+
+        Returns: None
+        """
+        log.debug("Updating projection matrix of models.")
+        scene_data = self.__engine.get_scene_setting_data()
+
+        for model in self.__model_list:
+            if isinstance(model, Map2DModel):
+                model.calculate_projection_matrix(scene_data, self.__engine.get_zoom_level())
+            else:
+                raise NotImplementedError("Not implemented method to update the projection matrix in this model.")
 
     def refresh_with_model_2d(self, path_color_file: str, path_model: str, model_id: str = 'main') -> 'Model':
         """
@@ -123,6 +156,7 @@ class Scene:
 
         log.debug("Settings colors from file.")
         model.set_color_file(path_color_file)
+        model.calculate_projection_matrix(self.__engine.get_scene_setting_data())
         model.wireframes = False
         model.id = model_id
 

@@ -57,7 +57,7 @@ class Map2DModel(Model):
         self.hbo = GL.glGenBuffers(1)
 
         # projection matrix
-        self.__projection = ortho(-180, 180, -90, 90, -1, 1)
+        self.__projection = None
 
     def __print_vertices(self) -> None:
         """
@@ -129,6 +129,52 @@ class Map2DModel(Model):
         GL.glEnableVertexAttribArray(1)
 
         return
+
+    def calculate_projection_matrix(self, scene_data: dict, zoom_level: float = 1) -> None:
+        """
+        Set the projection matrix to show the model in the scene.
+        Must be called before drawing.
+
+        The projection matrix is in charge of cutting what things fit and what dont fit on the scene.
+
+        Args:
+            scene_data: Height and width of the scene.
+            zoom_level: level of zoom in the scene.
+
+        Returns: None
+        """
+        log.debug("Changing the projection matrix")
+        width = scene_data['SCENE_WIDTH_X']
+        height = scene_data['SCENE_HEIGHT_Y']
+        proportion_panoramic = width / float(height)
+        proportion_portrait = height / float(width)
+
+        min_x = min(self.__x)
+        max_x = max(self.__x)
+        min_y = min(self.__y)
+        max_y = max(self.__y)
+        log.debug(f"Model measures: X: {min_x} - {max_x} Y: {min_y} - {max_y}")
+
+        x_width = max_x - min_x
+        y_height = max_y - min_y
+
+        # CASE PANORAMIC DATA
+        # -------------------
+        if x_width > y_height:
+            calculated_height_viewport = x_width / proportion_panoramic
+            projection_min_y = (max_y + min_y) / 2 - calculated_height_viewport / 2
+            projection_max_y = (max_y + min_y) / 2 + calculated_height_viewport / 2
+
+            self.__projection = ortho(min_x, max_x, projection_min_y, projection_max_y, -1, 1)
+
+        # CASE PORTRAIT DATA
+        # -------------------
+        else:
+            calculated_width_viewport = y_height / proportion_portrait
+            projection_min_x = (max_x + min_x) / 2 - calculated_width_viewport / 2
+            projection_max_x = (max_x + min_x) / 2 + calculated_width_viewport / 2
+
+            self.__projection = ortho(projection_min_x, projection_max_x, min_y, max_y, -1, 1)
 
     def set_color_file(self, filename: str) -> None:
         """

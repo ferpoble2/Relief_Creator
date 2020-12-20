@@ -26,6 +26,7 @@ class Program:
         # -----------------
         self.__CPT_file = os.path.join(os.getcwd(), 'input', 'test_colors', 'default.cpt')
         self.__model_id = None
+        self.__zoom_level = 1
 
     def initialize(self, program: 'Program') -> None:
         """
@@ -70,6 +71,14 @@ class Program:
 
         """
         self.__CPT_file = new_file
+
+    def get_zoom_level(self) -> float:
+        """
+        Get the zoom level currently being used in the program.
+
+        Returns: Zoom level
+        """
+        return self.__zoom_level
 
     def run(self) -> None:
         """

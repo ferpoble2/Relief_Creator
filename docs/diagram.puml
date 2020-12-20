@@ -66,6 +66,7 @@ class src.engine.settings  {
     {static} + SCENE_BEGIN_Y : int
     {static} + SCENE_END_X : int
     {static} + SCENE_END_Y : int
+    {static} + VIEW_MODE : str
     {static} + TOP_FRAME_HEIGHT : int
     {static} + WIDTH : int
     {static} + update_scene_values()
@@ -153,6 +154,7 @@ class src.engine.model.Map2DModel{
     - __print_indices()
     - __set_heigh_buffer()
     ~ _update_uniforms()
+    + calculate_projection_matrix(scene_data, zoom_level)
     + set_color_file(filename)
     + set_vertices_from_grid(x,y,z,quality)
 
@@ -204,8 +206,12 @@ class src.engine.controller.Controller {
 class src.engine.scene.Scene {
     - __model_list : list
     - __engine : Engine
+    - __width_viewport: int
+    - __height_viewport: int
     + add_model(model)
     + draw()
+    + update_viewport_variables()
+    + update_models_projection_matrix()
     + initialize(engine)
     + refresh_with_model_2d(path_color_file, path_model, model_id)
     + remove_all_models()
@@ -225,8 +231,10 @@ class src.engine.Engine {
     + initialize(engine)
     + change_color_file(path_color_file)
     + get_CPT_file()
+    + get_zoom_level(): float
     + refresh_with_model_2d(path_color_file, path_model, model_id)
     + run()
+    {static} + get_view_mode(): str
     {static} + change_height_window(height)
     {static} + change_width_window(width)
     {static} + get_gui_setting_data(): dict
@@ -245,6 +253,7 @@ class src.program.Program {
     - __engine: Engine
     - __CPT_file: str
     - __model_id: str
+    - __zoom_level: float
 
     + run()
     + initialize(program)

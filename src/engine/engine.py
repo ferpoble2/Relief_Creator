@@ -147,6 +147,15 @@ class Engine:
         return self.program.get_cpt_file()
 
     @staticmethod
+    def get_view_mode() -> str:
+        """
+        Get the view mode stored in the settings.
+
+        Returns: View mode
+        """
+        return Settings.VIEW_MODE
+
+    @staticmethod
     def fix_frames(fix: bool) -> None:
         """
         Fixes/unfix the frames in the application.
@@ -205,6 +214,15 @@ class Engine:
         Returns: None
         """
         Settings.update_scene_values()
+
+    def get_zoom_level(self) -> float:
+        """
+        Get the zoom level currently being used in the program.
+
+        Returns: Zoom level
+
+        """
+        return self.program.get_zoom_level()
 
     def run(self) -> None:
         """
