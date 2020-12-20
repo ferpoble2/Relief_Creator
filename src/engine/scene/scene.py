@@ -24,11 +24,11 @@ class Scene:
         self.__width_viewport = None
         self.__height_viewport = None
 
-    def initilize(self, engine: 'Engine') -> None:
+    def initialize(self, engine: 'Engine') -> None:
         """
-        Initialize the compoent in the engine.
+        Initialize the component in the engine.
         Args:
-            engine: Enginte to use
+            engine: Engine to use
 
         Returns: None
         """
@@ -162,6 +162,8 @@ class Scene:
 
         self.remove_all_models()
         self.add_model(model)
+
+        self.__engine.reset_zoom_level()
 
     def update_models_colors(self) -> None:
         """
