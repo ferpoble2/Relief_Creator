@@ -41,6 +41,8 @@ class src.engine.GUI.GUIManager{
     + are_frame_fixed()
     + initialize(window, mode)
     + add_frames(component_list)
+    + add_zoom()
+    + less_zoom()
     + fix_frames_position(value)
     + process_input()
     + draw_frames()
@@ -51,6 +53,11 @@ class src.engine.GUI.GUIManager{
     + get_cpt_file(): str
     + get_left_frame_width(): int
     + get_window_height(): int
+    + get_window_width(): int
+    + get_active_tool(): str
+    + get_zoom_level(): float
+    + get_map_position(): list
+    + get_view_mode(): str
 }
 
 class src.engine.settings  {
@@ -186,7 +193,11 @@ class src.engine.GUI.frames.MainMenuBar {
 }
 
 class src.engine.GUI.frames.SampleText {
-    - __settings: Settings
+    + render()
+}
+
+class src.engine.GUI.frames.Debug {
+    - __height: int
     + render()
 }
 
@@ -234,6 +245,11 @@ class src.engine.Engine {
     + get_zoom_level(): float
     + refresh_with_model_2d(path_color_file, path_model, model_id)
     + run()
+    + reset_zoom_level()
+    + add_zoom()
+    + less_zoom()
+    + get_map_position(): list
+    + get_active_tool(): str
     {static} + get_view_mode(): str
     {static} + change_height_window(height)
     {static} + change_width_window(width)
@@ -254,12 +270,20 @@ class src.program.Program {
     - __CPT_file: str
     - __model_id: str
     - __zoom_level: float
+    - __map_position: list
+    - __active_tool: str
 
     + run()
     + initialize(program)
+    + reset_zoom_level()
+    + add_zoom()
+    + less_zoom()
     + set_cpt_file(new_file)
     + set_model_id(new_model_id)
-    + get_cpt_file()
+    + set_active_tool(new_tool)
+    + get_cpt_file(): str
+    + get_active_tool(): str
+    + get_map_position(): list
 }
 
 ' herency
@@ -269,6 +293,7 @@ src.engine.model.Map3DModel -u-|> src.engine.model.Model
 src.engine.GUI.frames.MainMenuBar -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.SampleText -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.TestWindow -u-|> src.engine.GUI.frames.Frame
+src.engine.GUI.frames.Debug -u-|> src.engine.GUI.frames.Frame
 
 ' uses
 src.engine.model.Map2DModel -u.> src.engine.data.decimation
