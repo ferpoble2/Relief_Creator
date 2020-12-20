@@ -7,6 +7,7 @@ from imgui.integrations.glfw import GlfwRenderer
 
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar
 from src.engine.GUI.frames.sample_text import SampleText
+from src.engine.GUI.frames.debug import Debug
 from src.utils import get_logger
 
 log = get_logger(module='GUIMANAGER')
@@ -98,8 +99,61 @@ class GUIManager:
         return [
             MainMenuBar(gui_manager),
             # TestWindow(),
-            SampleText(gui_manager)
+            SampleText(gui_manager),
+            Debug(gui_manager)
         ]
+
+    def get_window_width(self) -> int:
+        """
+        Get the window width.
+
+        Returns: Window width
+        """
+        data = self.__engine.get_window_setting_data()
+        return data['WIDTH']
+
+    def get_window_height(self) -> int:
+        """
+        Get the window height.
+
+        Returns: Window height
+        """
+        data = self.__engine.get_window_setting_data()
+        return data['HEIGHT']
+
+    def get_active_tool(self) -> str:
+        """
+        Get the active tool being used in the program.
+
+        Returns: Active tool being used.
+
+        """
+        return self.__engine.get_active_tool()
+
+    def get_zoom_level(self) -> float:
+        """
+        Get the zoom level being used in the program.
+
+        Returns: zoom level
+
+        """
+        return self.__engine.get_zoom_level()
+
+    def get_map_position(self) -> list:
+        """
+        The the position of the map in the program.
+
+        Returns: list with the position of the map.
+        """
+        return self.__engine.get_map_position()
+
+    def get_view_mode(self) -> str:
+        """
+        Get the view mode being used in the platform.
+
+        Returns: View mode being used.
+        """
+        return self.__engine.get_view_mode()
 
     def get_left_frame_width(self) -> int:
         """
@@ -185,6 +239,22 @@ class GUIManager:
 
         """
         self.__engine.refresh_with_model_2d(path_color_file, path_model, model_id)
+
+    def add_zoom(self)->None:
+        """
+        Add zoom to the current map being watched.
+
+        Returns: None
+        """
+        self.__engine.add_zoom()
+
+    def less_zoom(self) -> None:
+        """
+        Reduce on 1 the level of zoom.
+
+        Returns: None
+        """
+        self.__engine.less_zoom()
 
     def change_color_file(self, path_color_file: str) -> None:
         """
