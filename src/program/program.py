@@ -43,7 +43,7 @@ class Program:
         log.debug('Initializing program...')
         self.__engine.initialize(self.__engine, program)
 
-    def set_model_id(self, new_model_id: str):
+    def set_model_id(self, new_model_id: str) -> None:
         """
         Set the id of the model used in the application.
         Args:
