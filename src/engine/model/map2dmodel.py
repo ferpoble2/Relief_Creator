@@ -162,19 +162,34 @@ class Map2DModel(Model):
         # -------------------
         if x_width > y_height:
             calculated_height_viewport = x_width / proportion_panoramic
+
             projection_min_y = (max_y + min_y) / 2 - calculated_height_viewport / 2
             projection_max_y = (max_y + min_y) / 2 + calculated_height_viewport / 2
 
-            self.__projection = ortho(min_x, max_x, projection_min_y, projection_max_y, -1, 1)
+            zoom_difference_x = (x_width - (x_width / zoom_level)) / 2
+            zoom_difference_y = (calculated_height_viewport - (calculated_height_viewport / zoom_level)) / 2
+
+            log.debug(f"Calculated height viewport: {calculated_height_viewport}")
+            log.debug(f"Zoom differences: x:{zoom_difference_x} y:{zoom_difference_y}")
+
+            self.__projection = ortho(min_x + zoom_difference_x, max_x - zoom_difference_x,
+                                      projection_min_y + zoom_difference_y,
+                                      projection_max_y - zoom_difference_y, -1, 1)
 
         # CASE PORTRAIT DATA
         # -------------------
         else:
             calculated_width_viewport = y_height / proportion_portrait
+
             projection_min_x = (max_x + min_x) / 2 - calculated_width_viewport / 2
             projection_max_x = (max_x + min_x) / 2 + calculated_width_viewport / 2
 
-            self.__projection = ortho(projection_min_x, projection_max_x, min_y, max_y, -1, 1)
+            zoom_difference_y = (y_height - (y_height / zoom_level)) / 2
+            zoom_difference_x = (calculated_width_viewport - (calculated_width_viewport / zoom_level)) / 2
+
+            self.__projection = ortho(projection_min_x + zoom_difference_x, projection_max_x - zoom_difference_x,
+                                      min_y + zoom_difference_y,
+                                      max_y - zoom_difference_y, -1, 1)
 
     def set_color_file(self, filename: str) -> None:
         """
