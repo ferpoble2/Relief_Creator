@@ -28,10 +28,31 @@ class SampleText(Frame):
         Returns: None
         """
 
-        imgui.begin('Test Window')
-        imgui.text("Test text to show in the frame.")
-        imgui.bullet_text("This window accepts ballpoints and a lot more features")
+        imgui.begin('Tools')
 
+        imgui.text("Visualization Tools")
+        if imgui.button("Zoom in"):
+            log.debug("Pressed button Zoom in")
+            self._GUI_manager.add_zoom()
+
+        imgui.same_line()
+        if imgui.button("Zoom out"):
+            log.debug("Pressed button Zoom out")
+            self._GUI_manager.less_zoom()
+
+        imgui.separator()
+        imgui.text("Editing Tools")
+        if imgui.button("Move Map"):
+            log.debug("Pressed button Move Map")
+
+
+        imgui.separator()
+        imgui.text("Polygon Tools")
+        if imgui.button("Create polygon"):
+            log.debug(f"Pressed button create polygon")
+
+        imgui.separator()
+        imgui.text("Other tools")
         if imgui.button("Modal Pop-Up Menu"):
             imgui.open_popup("select-popup")
 
