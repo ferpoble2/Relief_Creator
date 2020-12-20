@@ -171,14 +171,6 @@ class GUIManager:
         """
         return self.__engine.get_gui_setting_data()['MAIN_MENU_BAR_HEIGHT']
 
-    def get_window_height(self) -> int:
-        """
-        Get the height of the window.
-
-        Returns: height of the window
-        """
-        return self.__engine.get_window_setting_data()['HEIGHT']
-
     def get_cpt_file(self) -> str:
         """
         Get the CTP file used by the program.

@@ -20,7 +20,7 @@ class Debug(Frame):
         Constructor of the class.
         """
         super().__init__(gui_manager)
-        self.__height = 300
+        self.__height = 150
 
         self.change_position(
             [self._GUI_manager.get_left_frame_width(), self._GUI_manager.get_window_height() - self.__height])
