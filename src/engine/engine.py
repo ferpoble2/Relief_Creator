@@ -60,7 +60,7 @@ class Engine:
 
         # SCENE CODE
         # ----------
-        self.scene.initilize(engine)
+        self.scene.initialize(engine)
 
     @staticmethod
     def get_scene_setting_data() -> dict:
@@ -155,6 +155,32 @@ class Engine:
         """
         return Settings.VIEW_MODE
 
+    def reset_zoom_level(self) -> None:
+        """
+        Reset the zoom level of the program.
+
+        Returns: None
+        """
+        self.program.reset_zoom_level()
+
+    def add_zoom(self) -> None:
+        """
+        Add zoom to the current map being watched.
+
+        Returns: None
+        """
+        self.program.add_zoom()
+        self.scene.update_models_projection_matrix()
+
+    def less_zoom(self) -> None:
+        """
+        Reduce on 1 the level of zoom.
+
+        Returns: None
+        """
+        self.program.less_zoom()
+        self.scene.update_models_projection_matrix()
+
     @staticmethod
     def fix_frames(fix: bool) -> None:
         """
@@ -214,6 +240,22 @@ class Engine:
         Returns: None
         """
         Settings.update_scene_values()
+
+    def get_map_position(self) -> list:
+        """
+        Get the map position on the program.
+
+        Returns: List with the position of the map.
+        """
+        return self.program.get_map_position()
+
+    def get_active_tool(self) -> str:
+        """
+        Get the active tool in the program.
+
+        Returns: String with the active tool being used.
+        """
+        return self.program.get_active_tool()
 
     def get_zoom_level(self) -> float:
         """
