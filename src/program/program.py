@@ -27,6 +27,8 @@ class Program:
         self.__CPT_file = os.path.join(os.getcwd(), 'input', 'test_colors', 'default.cpt')
         self.__model_id = None
         self.__zoom_level = 1
+        self.__map_position = [0, 0]
+        self.__active_tool = None
 
     def initialize(self, program: 'Program') -> None:
         """
@@ -51,6 +53,36 @@ class Program:
         """
         self.__model_id = new_model_id
 
+    def set_active_tool(self, new_tool: str) -> None:
+        """
+        Set the active tool in the program.
+
+        Args:
+            new_tool: New tool being used.
+
+        Returns: None
+        """
+        self.__active_tool = new_tool
+
+    def get_active_tool(self) -> str:
+        """
+        Return the active tool being used in the program.
+
+        Returns: String with the tool being used.
+        """
+        return self.__active_tool
+
+    def get_map_position(self) -> list:
+        """
+        Get the position of the map in the program.
+
+        Returns: List with the position of the map.
+        """
+        return self.__map_position
+
+    def set_map_position(self, new_position: list) -> None:
+        self.__map_position = new_position
+
     def get_cpt_file(self) -> str:
         """
         Get the CTP file currently being used by the program.
@@ -71,6 +103,35 @@ class Program:
 
         """
         self.__CPT_file = new_file
+
+    def reset_zoom_level(self) -> None:
+        """
+        Resets the zoom level to 1
+
+        Returns: None
+        """
+        self.__zoom_level = 1
+
+    def add_zoom(self) -> None:
+        """
+        Increase on 1 the level of zoom.
+
+        Returns: None
+        """
+        self.__zoom_level += 1
+        log.debug(f"zoom level: {self.__zoom_level}")
+
+    def less_zoom(self) -> None:
+        """
+        Reduce on 1 the level of zoom.
+        With a minimum of level 0.
+
+        Returns: None
+        """
+        if self.__zoom_level > 1:
+            self.__zoom_level -= 1
+
+        log.debug(f"zoom level: {self.__zoom_level}")
 
     def get_zoom_level(self) -> float:
         """
