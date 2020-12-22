@@ -118,7 +118,10 @@ class Program:
 
         Returns: None
         """
-        self.__zoom_level += 1
+        if self.__zoom_level >= 1:
+            self.__zoom_level += 1
+        else:
+            self.__zoom_level *= 2
         log.debug(f"zoom level: {self.__zoom_level}")
 
     def less_zoom(self) -> None:
@@ -130,7 +133,8 @@ class Program:
         """
         if self.__zoom_level > 1:
             self.__zoom_level -= 1
-
+        else:
+            self.__zoom_level /= 2
         log.debug(f"zoom level: {self.__zoom_level}")
 
     def get_zoom_level(self) -> float:

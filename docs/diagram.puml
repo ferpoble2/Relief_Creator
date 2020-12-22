@@ -155,11 +155,15 @@ class src.engine.model.Map2DModel{
     - __max_height : float
     - __min_height : float
     - __projection : list
+    - __left_coordinate : int
+    - __right_coordinate : int
+    - __top_coordinate : int
+    - __bottom_coordinate : int
     + hbo : int
 
     - __print_vertices()
     - __print_indices()
-    - __set_heigh_buffer()
+    - __set_height_buffer()
     ~ _update_uniforms()
     + calculate_projection_matrix(scene_data, zoom_level)
     + set_color_file(filename)
@@ -192,7 +196,9 @@ class src.engine.GUI.frames.MainMenuBar {
     + render()
 }
 
-class src.engine.GUI.frames.SampleText {
+class src.engine.GUI.frames.Tools {
+    - double_button_margin_width: int
+    - button_margin_width: int
     + render()
 }
 
@@ -291,7 +297,7 @@ src.engine.model.Map2DModel -u-|> src.engine.model.Model
 src.engine.model.Map3DModel -u-|> src.engine.model.Model
 
 src.engine.GUI.frames.MainMenuBar -u-|> src.engine.GUI.frames.Frame
-src.engine.GUI.frames.SampleText -u-|> src.engine.GUI.frames.Frame
+src.engine.GUI.frames.Tools -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.TestWindow -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Debug -u-|> src.engine.GUI.frames.Frame
 

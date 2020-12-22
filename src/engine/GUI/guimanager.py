@@ -6,7 +6,7 @@ import imgui
 from imgui.integrations.glfw import GlfwRenderer
 
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar
-from src.engine.GUI.frames.sample_text import SampleText
+from src.engine.GUI.frames.tools import Tools
 from src.engine.GUI.frames.debug import Debug
 from src.utils import get_logger
 
@@ -99,7 +99,7 @@ class GUIManager:
         return [
             MainMenuBar(gui_manager),
             # TestWindow(),
-            SampleText(gui_manager),
+            Tools(gui_manager),
             Debug(gui_manager)
         ]
 
@@ -197,7 +197,7 @@ class GUIManager:
 
         # Style options
         style = imgui.get_style()
-        style.frame_rounding = 12
+        style.frame_rounding = 5
         imgui.style_colors_light(style)
 
         # Font options
