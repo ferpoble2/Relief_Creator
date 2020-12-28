@@ -7,7 +7,7 @@ import imgui
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
 
-log = get_logger(module="SAMPLE TEXT")
+log = get_logger(module="TOOLS")
 
 
 class Tools(Frame):
