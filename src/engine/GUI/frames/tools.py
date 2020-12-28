@@ -23,6 +23,7 @@ class Tools(Frame):
         self.change_position([0, self._GUI_manager.get_main_menu_bar_height()])
         self.double_button_margin_width = 13
         self.button_margin_width = 17
+        self.slide_bar_quality = 3
 
     def render(self) -> None:
         """
@@ -51,8 +52,11 @@ class Tools(Frame):
             log.debug("-----------------------------------")
             self._GUI_manager.reload_models()
 
-        changed, values = imgui.slider_int("Quality", 3, 1, 10)
+        changed, values = imgui.slider_int("Quality", self.slide_bar_quality, 1, 30)
         if changed:
+            log.debug("Changed slidebar quality")
+            log.debug("------------------------")
+            self.slide_bar_quality = values
             self._GUI_manager.change_quality(values)
 
         imgui.separator()

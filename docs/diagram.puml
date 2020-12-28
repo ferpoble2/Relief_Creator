@@ -42,6 +42,7 @@ class src.engine.GUI.GUIManager{
     + initialize(window, mode)
     + add_frames(component_list)
     + add_zoom()
+    + change_quality(quality)
     + less_zoom()
     + fix_frames_position(value)
     + process_input()
@@ -70,6 +71,7 @@ class src.engine.settings  {
     {static} + HEIGHT : int
     {static} + LEFT_FRAME_WIDTH : int
     {static} + MAIN_MENU_BAR_HEIGHT : int
+    {static} + QUALITY : int
     {static} + SCENE_BEGIN_X : int
     {static} + SCENE_BEGIN_Y : int
     {static} + SCENE_WIDTH_X : int
@@ -258,6 +260,8 @@ class src.engine.Engine {
     + reload_models()
     + change_color_file(path_color_file)
     + get_CPT_file()
+    + change_quality(quality)
+    + get_quality(): int
     + get_zoom_level(): float
     + refresh_with_model_2d(path_color_file, path_model, model_id)
     + run()

@@ -359,8 +359,8 @@ class Map2DModel(Model):
 
         # Generate new list of triangles to add to the model
         # --------------------------------------------------
-        new_indices = self.__generate_index_list(step_x,
-                                                 step_y,
+        new_indices = self.__generate_index_list(step_x + quality,
+                                                 step_y + quality,
                                                  self.__left_coordinate,
                                                  self.__right_coordinate,
                                                  self.__top_coordinate,

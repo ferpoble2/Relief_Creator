@@ -82,6 +82,26 @@ class Engine:
         """
         return Settings.CLEAR_COLOR
 
+    def change_quality(self, quality: int) -> None:
+        """
+        Change the quality used to render the maps.
+
+        Args:
+            quality: Quality to use in the rendering process
+
+        Returns: None
+        """
+        Settings.QUALITY = quality
+
+    @staticmethod
+    def get_quality() -> int:
+        """
+        Get the quality value stored in the settings.
+
+        Returns: Quality setting
+        """
+        return Settings.QUALITY
+
     def refresh_with_model_2d(self, path_color_file: str, path_model: str, model_id: str = 'main') -> None:
         """
         Refresh the scene creating a 2D model with the parameters given.

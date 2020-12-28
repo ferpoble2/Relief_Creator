@@ -104,6 +104,17 @@ class GUIManager:
             Debug(gui_manager)
         ]
 
+    def change_quality(self, quality: int) -> None:
+        """
+        Change the quality used to render the maps.
+
+        Args:
+            quality: Quality to use in the rendering process
+
+        Returns: None
+        """
+        self.__engine.change_quality(quality)
+
     def get_window_width(self) -> int:
         """
         Get the window width.
@@ -233,7 +244,7 @@ class GUIManager:
         """
         self.__engine.refresh_with_model_2d(path_color_file, path_model, model_id)
 
-    def add_zoom(self)->None:
+    def add_zoom(self) -> None:
         """
         Add zoom to the current map being watched.
 

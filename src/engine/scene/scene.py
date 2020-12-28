@@ -79,7 +79,7 @@ class Scene:
         """
         for model in self.__model_list:
             if isinstance(model, Map2DModel):
-                model.recalculate_vertices_from_grid()
+                model.recalculate_vertices_from_grid(quality=self.__engine.get_quality())
             else:
                 raise NotImplementedError("This type of model doesnt have a method to be reloaded.")
 
@@ -164,7 +164,7 @@ class Scene:
         model = Map2DModel()
 
         log.debug("Setting vertices from grid.")
-        model.set_vertices_from_grid(X, Y, Z, 3)
+        model.set_vertices_from_grid(X, Y, Z, self.__engine.get_quality())
 
         log.debug("Settings colors from file.")
         model.set_color_file(path_color_file)
