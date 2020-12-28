@@ -113,8 +113,17 @@ class Engine:
 
         Returns: none
         """
+        self.program.set_loading(True)
         self.scene.refresh_with_model_2d(path_color_file, path_model, model_id)
         self.program.set_model_id(model_id)
+
+    def is_program_loading(self) -> bool:
+        """
+        Return if the program is loading or not.
+
+        Returns: Boolean representing if the program is running or not.
+        """
+        return self.program.is_loading()
 
     def change_color_file(self, path_color_file: str) -> None:
         """

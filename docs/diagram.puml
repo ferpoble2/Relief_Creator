@@ -46,6 +46,7 @@ class src.engine.GUI.GUIManager{
     + less_zoom()
     + fix_frames_position(value)
     + process_input()
+    + is_program_loading(): boolean
     + draw_frames()
     + reload_models()
     + refresh_scene_with_model_2d(path_color_file, path_model, model_id)
@@ -171,7 +172,7 @@ class src.engine.model.Map2DModel{
     - __get_vertex_index(x_pos, y_pos): int
     - __get_index_closest_value(list_to_evaluate, value): int
     - __generate_index_list(step_x, step_y, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): list
-    - __is_triangle_inside_zone(index_triangle, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): bool:
+    - __is_triangle_inside_zone(index_triangle, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): boolean
     - __delete_triangles_inside_zone(left_coordinate, right_coordinate, top_coordinate, bottom_coordinate)
     - recalculate_vertices_from_grid(quality)
     ~ _update_uniforms()
@@ -214,6 +215,10 @@ class src.engine.GUI.frames.Tools {
 
 class src.engine.GUI.frames.Debug {
     - __height: int
+    + render()
+}
+
+class src.engine.GUI.frames.Loading {
     + render()
 }
 
@@ -267,6 +272,7 @@ class src.engine.Engine {
     + run()
     + reset_zoom_level()
     + add_zoom()
+    + is_program_loading(): boolean
     + less_zoom()
     + get_map_position(): list
     + get_active_tool(): str
@@ -292,14 +298,14 @@ class src.program.Program {
     - __zoom_level: float
     - __map_position: list
     - __active_tool: str
-    - __loading: bool
+    - __loading: boolean
 
     + run()
     + initialize(program)
     + reset_zoom_level()
     + add_zoom()
     + less_zoom()
-    + is_loading(): bool
+    + is_loading(): boolean
     + set_loading(is_loading)
     + set_cpt_file(new_file)
     + set_model_id(new_model_id)
@@ -317,6 +323,7 @@ src.engine.GUI.frames.MainMenuBar -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Tools -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.TestWindow -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Debug -u-|> src.engine.GUI.frames.Frame
+src.engine.GUI.frames.Loading -u-|> src.engine.GUI.frames.Frame
 
 ' uses
 src.engine.model.Map2DModel -u.> src.engine.data.decimation

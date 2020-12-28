@@ -8,6 +8,7 @@ from imgui.integrations.glfw import GlfwRenderer
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar
 from src.engine.GUI.frames.tools import Tools
 from src.engine.GUI.frames.debug import Debug
+from src.engine.GUI.frames.loading import Loading
 from src.engine.GUI.frames.test_window import TestWindow
 from src.utils import get_logger
 
@@ -101,8 +102,17 @@ class GUIManager:
             MainMenuBar(gui_manager),
             # TestWindow(gui_manager),
             Tools(gui_manager),
-            Debug(gui_manager)
+            Debug(gui_manager),
+            Loading(gui_manager)
         ]
+
+    def is_program_loading(self) -> bool:
+        """
+        Return if the program is loading or not.
+
+        Returns: Boolean representing if the program is running or not.
+        """
+        return self.__engine.is_program_loading()
 
     def change_quality(self, quality: int) -> None:
         """
