@@ -30,6 +30,8 @@ class Engine:
         self.controller = Controller()
         self.program = None
 
+        self.__pending_task_list = []
+
     def initialize(self, engine: 'Engine', program: 'Program') -> None:
         """
         Initialize the components of the program.
@@ -102,6 +104,59 @@ class Engine:
         """
         return Settings.QUALITY
 
+    def set_task_for_next_frame(self, task: callable) -> None:
+        """
+        Add a task to do in the next frame.
+
+        Args:
+            task: Callable to call in the next frame.
+
+        Returns: None
+        """
+        log.debug("Setting task for next frame")
+        self.__pending_task_list.append({
+            'task': task,
+            'frames': 2  # need to be 2 to really wait one full frame
+        })
+
+    def update_pending_tasks(self) -> None:
+        """
+        Update the pending tasks.
+
+        Subtract one from the frames of the tasks and execute them if the number
+        of frames to wait is zero.
+
+        Returns: None
+        """
+        for task in self.__pending_task_list:
+            log.debug(f"Pending tasks: {self.__pending_task_list}")
+
+            # Subtract one frame from the task
+            task['frames'] -= 1
+
+            # execute it if frames to wait is zero
+            if task['frames'] == 0:
+                task['task']()
+                self.__pending_task_list.remove(task)
+
+    def set_task_with_loading_frame(self, task: callable) -> None:
+        """
+        Set a task to be executed at the end of the next frame. Also configures the loading settiing of
+        the program to show the loading frame on the screen.
+
+        Args:
+            task: Task to be called in while showing a loading frame.
+
+        Returns: None
+        """
+        self.program.set_loading(True)
+
+        def task_loading():
+            task()
+            self.program.set_loading(False)
+
+        self.set_task_for_next_frame(task_loading)
+
     def refresh_with_model_2d(self, path_color_file: str, path_model: str, model_id: str = 'main') -> None:
         """
         Refresh the scene creating a 2D model with the parameters given.
@@ -113,9 +168,12 @@ class Engine:
 
         Returns: none
         """
-        self.program.set_loading(True)
-        self.scene.refresh_with_model_2d(path_color_file, path_model, model_id)
-        self.program.set_model_id(model_id)
+
+        def refresh_model():
+            self.scene.refresh_with_model_2d(path_color_file, path_model, model_id)
+            self.program.set_model_id(model_id)
+
+        self.set_task_with_loading_frame(refresh_model)
 
     def is_program_loading(self) -> bool:
         """
@@ -292,7 +350,7 @@ class Engine:
 
         Returns: None
         """
-        self.scene.reload_models()
+        self.set_task_with_loading_frame(lambda: self.scene.reload_models())
 
     def get_zoom_level(self) -> float:
         """
@@ -310,6 +368,7 @@ class Engine:
         """
         log.debug("Starting main loop.")
         while not glfw.window_should_close(self.window):
+            self.update_pending_tasks()
             self.render.on_loop([lambda: self.scene.draw()])
 
         glfw.terminate()
