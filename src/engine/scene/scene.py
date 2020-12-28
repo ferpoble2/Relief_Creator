@@ -71,6 +71,18 @@ class Scene:
         """
         self.__model_list = []
 
+    def reload_models(self):
+        """
+        Ask the 2D models to reload with the new resolution of the screen.
+
+        Returns: None
+        """
+        for model in self.__model_list:
+            if isinstance(model, Map2DModel):
+                model.recalculate_vertices_from_grid()
+            else:
+                raise NotImplementedError("This type of model doesnt have a method to be reloaded.")
+
     def remove_model(self, id_model: str) -> None:
         """
         Return the model with the specified id.
