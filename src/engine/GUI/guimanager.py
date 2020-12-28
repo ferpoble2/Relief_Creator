@@ -8,6 +8,7 @@ from imgui.integrations.glfw import GlfwRenderer
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar
 from src.engine.GUI.frames.tools import Tools
 from src.engine.GUI.frames.debug import Debug
+from src.engine.GUI.frames.test_window import TestWindow
 from src.utils import get_logger
 
 log = get_logger(module='GUIMANAGER')
@@ -98,7 +99,7 @@ class GUIManager:
         """
         return [
             MainMenuBar(gui_manager),
-            # TestWindow(),
+            # TestWindow(gui_manager),
             Tools(gui_manager),
             Debug(gui_manager)
         ]
@@ -268,6 +269,14 @@ class GUIManager:
         """
         imgui.render()
         self.__implementation.render(imgui.get_draw_data())
+
+    def reload_models(self):
+        """
+        Ask the Scene to reload the models to better the definitions.
+
+        Returns: None
+        """
+        self.__engine.reload_models()
 
     def set_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
