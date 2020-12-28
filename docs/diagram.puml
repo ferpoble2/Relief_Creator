@@ -127,6 +127,7 @@ class src.engine.model.Model {
 class src.engine.render.Render {
     + __window : GLFWWindow
     + __gui : GUIManager
+    + __engine : Engine
     + init(window_name)
     + on_loop(on_frame_task)
 }
@@ -255,12 +256,16 @@ class src.engine.scene.Scene {
 }
 
 class src.engine.Engine {
-    + controller
+    + controller: Controller
     + get_cpt_file(): str
-    + gui_manager
-    + render
-    + scene
-    + window
+    + gui_manager: GUIManager
+    + render: Render
+    + scene: Scene
+    + window: GLFWWindow
+    - __pending_task_list: list
+    + set_task_for_next_frame(task)
+    + update_pending_tasks()
+    + set_task_with_loading_frame(task)
     + initialize(engine)
     + reload_models()
     + change_color_file(path_color_file)
