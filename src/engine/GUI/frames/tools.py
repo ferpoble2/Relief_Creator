@@ -37,22 +37,35 @@ class Tools(Frame):
         imgui.text("Visualization Tools")
         if imgui.button("Zoom in", width=left_frame_width / 2 - self.double_button_margin_width):
             log.debug("Pressed button Zoom in")
+            log.debug("----------------------")
             self._GUI_manager.add_zoom()
 
         imgui.same_line()
         if imgui.button("Zoom out", width=left_frame_width / 2 - self.double_button_margin_width):
             log.debug("Pressed button Zoom out")
+            log.debug("-----------------------")
             self._GUI_manager.less_zoom()
+
+        if imgui.button("Reload map with zoom", width=left_frame_width - self.button_margin_width):
+            log.debug("Pressed Reload map with zoom button")
+            log.debug("-----------------------------------")
+            self._GUI_manager.reload_models()
+
+        changed, values = imgui.slider_int("Quality", 3, 1, 10)
+        if changed:
+            self._GUI_manager.change_quality(values)
 
         imgui.separator()
         imgui.text("Editing Tools")
         if imgui.button("Move Map", width=left_frame_width - self.button_margin_width):
             log.debug("Pressed button Move Map")
+            log.debug("-----------------------")
 
         imgui.separator()
         imgui.text("Polygon Tools")
         if imgui.button("Create polygon", width=left_frame_width - self.button_margin_width):
             log.debug(f"Pressed button create polygon")
+            log.debug("------------------------------")
 
         imgui.separator()
         imgui.text("Other tools")
