@@ -34,12 +34,14 @@ class Debug(Frame):
         position = self._GUI_manager.get_map_position()
         view_mode = self._GUI_manager.get_view_mode()
         active_tool = self._GUI_manager.get_active_tool()
+        loading = self._GUI_manager.is_program_loading()
 
         imgui.begin('Debug')
         imgui.text(f"Zoom level: {zoom_level}")
         imgui.text(f"Map position: {position}")
         imgui.text(f"View mode: {view_mode}")
         imgui.text(f"Active tool: {active_tool}")
+        imgui.text(f"Loading: {loading}")
 
         if self._GUI_manager.are_frame_fixed():
             self.change_position([self.get_position()[0], self._GUI_manager.get_window_height() - self.__height])
