@@ -32,5 +32,7 @@ class Loading(Frame):
 
         if imgui.begin_popup_modal("Loading")[0]:
             imgui.text("Please wait a moment...")
+            if not self._GUI_manager.is_program_loading():
+                imgui.close_current_popup()
             imgui.end_popup()
 
