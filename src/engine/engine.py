@@ -257,6 +257,14 @@ class Engine:
         """
         return self.program.get_active_tool()
 
+    def reload_models(self) -> None:
+        """
+        Ask the Scene to reload the models to better the definitions.
+
+        Returns: None
+        """
+        self.scene.reload_models()
+
     def get_zoom_level(self) -> float:
         """
         Get the zoom level currently being used in the program.
