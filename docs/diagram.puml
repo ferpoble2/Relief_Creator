@@ -46,6 +46,7 @@ class src.engine.GUI.GUIManager{
     + fix_frames_position(value)
     + process_input()
     + draw_frames()
+    + reload_models()
     + refresh_scene_with_model_2d(path_color_file, path_model, model_id)
     + render()
     + set_polygon_mode(polygon_mode)
@@ -71,8 +72,8 @@ class src.engine.settings  {
     {static} + MAIN_MENU_BAR_HEIGHT : int
     {static} + SCENE_BEGIN_X : int
     {static} + SCENE_BEGIN_Y : int
-    {static} + SCENE_END_X : int
-    {static} + SCENE_END_Y : int
+    {static} + SCENE_WIDTH_X : int
+    {static} + SCENE_HEIGHT_Y : int
     {static} + VIEW_MODE : str
     {static} + TOP_FRAME_HEIGHT : int
     {static} + WIDTH : int
@@ -164,6 +165,13 @@ class src.engine.model.Map2DModel{
     - __print_vertices()
     - __print_indices()
     - __set_height_buffer()
+    - __generate_vertices_list(x, y, z, z_value): list
+    - __get_vertex_index(x_pos, y_pos): int
+    - __get_index_closest_value(list_to_evaluate, value): int
+    - __generate_index_list(step_x, step_y, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): list
+    - __is_triangle_inside_zone(index_triangle, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): bool:
+    - __delete_triangles_inside_zone(left_coordinate, right_coordinate, top_coordinate, bottom_coordinate)
+    - recalculate_vertices_from_grid(quality)
     ~ _update_uniforms()
     + calculate_projection_matrix(scene_data, zoom_level)
     + set_color_file(filename)
@@ -232,6 +240,7 @@ class src.engine.scene.Scene {
     + initialize(engine)
     + refresh_with_model_2d(path_color_file, path_model, model_id)
     + remove_all_models()
+    + reload_models()
     + remove_model(id_model)
     + update_models_colors()
     + set_polygon_mode(polygon_mode)
@@ -246,6 +255,7 @@ class src.engine.Engine {
     + scene
     + window
     + initialize(engine)
+    + reload_models()
     + change_color_file(path_color_file)
     + get_CPT_file()
     + get_zoom_level(): float
