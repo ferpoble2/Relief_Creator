@@ -32,9 +32,11 @@ def simple_decimation(x: np.ndarray, y: np.ndarray, z: np.ndarray, n_rows: int, 
 
     if x_len > n_rows:
         step_x = int(x_len / n_cols)
+        step_x = max(step_x, 1)
 
     if y_len > n_cols:
         step_y = int(y_len / n_rows)
+        step_y = max(step_y, 1)
 
     x = x[::step_x]
     y = y[::step_y]
