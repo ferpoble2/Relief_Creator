@@ -21,6 +21,7 @@ class Program:
             engine: Engine to use in the program.
         """
         self.__engine = engine
+        self.__loading = False
 
         # PROGRAM VARIABLES
         # -----------------
@@ -29,6 +30,25 @@ class Program:
         self.__zoom_level = 1
         self.__map_position = [0, 0]
         self.__active_tool = None
+
+    def is_loading(self) -> bool:
+        """
+        Returns if the program is loading something or not.
+
+        Returns: Boolean representing if the program is loading.
+        """
+        return self.__loading
+
+    def set_loading(self, is_loading: bool) -> None:
+        """
+        Set if the program is loading or not.
+
+        Args:
+            is_loading: Bool to change the loading state.
+
+        Returns: None
+        """
+        self.__loading = is_loading
 
     def initialize(self, program: 'Program') -> None:
         """

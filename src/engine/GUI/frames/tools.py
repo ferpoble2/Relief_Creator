@@ -56,6 +56,7 @@ class Tools(Frame):
         if changed:
             log.debug("Changed slidebar quality")
             log.debug("------------------------")
+            log.debug(f"Changed to value {values}")
             self.slide_bar_quality = values
             self._GUI_manager.change_quality(values)
 

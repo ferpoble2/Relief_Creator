@@ -292,12 +292,15 @@ class src.program.Program {
     - __zoom_level: float
     - __map_position: list
     - __active_tool: str
+    - __loading: bool
 
     + run()
     + initialize(program)
     + reset_zoom_level()
     + add_zoom()
     + less_zoom()
+    + is_loading(): bool
+    + set_loading(is_loading)
     + set_cpt_file(new_file)
     + set_model_id(new_model_id)
     + set_active_tool(new_tool)
