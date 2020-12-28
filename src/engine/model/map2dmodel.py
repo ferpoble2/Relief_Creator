@@ -134,6 +134,250 @@ class Map2DModel(Model):
 
         return
 
+    def __generate_vertices_list(self, x: list, y: list, z: list, z_value: int = 0) -> list:
+        """
+        Generate a list of vertices given the data of a 3D grid.
+        The z value of the vertices is set to 0.
+
+        Args:
+            x: X-axis values
+            y: Y-axis values
+            z: Height values
+
+        Returns: List with the vertices.
+        """
+        vertices = []
+        for row_index in range(len(z)):
+            for col_index in range(len(z[0])):
+                vertices.append(x[col_index])
+                vertices.append(y[row_index])
+                vertices.append(z_value)
+        return vertices
+
+    def __get_vertex_index(self, x_pos: int, y_pos: int) -> int:
+        """
+        Get the vertex index in the buffer given the x and y position.
+
+        The positions are given as in a cartesian plane.
+        THe 0,0 exist.
+
+        Args:
+            x_pos: Position X of the vertex
+            y_pos: Position Y of the vertex
+
+        Returns: Index of the vertex in the buffer.
+        """
+        return y_pos * len(self.__x) + x_pos
+
+    def __get_index_closest_value(self, list_to_evaluate: list, value: float) -> int:
+        """
+        Get the index of the closest element in the array to the value.
+
+        Args:
+            list_to_evaluate: List with numeric elements
+            value: Value to search for
+
+        Returns: Index of the closest value in the array.
+        """
+        return np.argmin(np.abs(np.array(list_to_evaluate) - value))
+
+    def __generate_index_list(self,
+                              step_x: int,
+                              step_y: int,
+                              left_coordinate: float = -180,
+                              right_coordinate: float = 180,
+                              top_coordinate: float = 90,
+                              bottom_coordinate: float = -90) -> list:
+        """
+        Generate an index list given an already loaded list of vertices. Method use the list of vertices
+        stored in the self.__vertices variable.
+
+        Vertices are expected to be given as in the output of the __generate_vertices_list method.
+
+        The coordinates values are used to generate the index of just a part of the total of the vertices.
+
+        Args:
+            left_coordinate: Left coordinate to cut the map.
+            right_coordinate: Right coordinate to cut the map.
+            top_coordinate: Top coordinate to cut the map.
+            bottom_coordinate: Bottom coordinate to cut the map.
+            step_x: Number of vertices in the x axis
+            step_y: Number of elements in the y axis
+
+        Returns: List of index
+        """
+
+        indices = []
+        step_x = max(1, step_x)
+        step_y = max(1, step_y)
+
+        # Get the index of the vertices to generate the indexes
+        # -----------------------------------------------------
+        index_minimum_x = self.__get_index_closest_value(self.__x, left_coordinate)
+        index_maximum_x = self.__get_index_closest_value(self.__x, right_coordinate)
+        index_minimum_y = self.__get_index_closest_value(self.__y, bottom_coordinate)
+        index_maximum_y = self.__get_index_closest_value(self.__y, top_coordinate)
+
+        # Sort the result from the calculus
+        # ---------------------------------
+        new_index_minimum_y = min(index_maximum_y, index_minimum_y)
+        new_index_maximum_y = max(index_maximum_y, index_minimum_y)
+        new_index_maximum_x = max(index_maximum_x, index_minimum_x)
+        new_index_minimum_x = min(index_maximum_x, index_minimum_x)
+
+        # Assign the correct values to the variables
+        # ------------------------------------------
+        index_minimum_y = new_index_minimum_y
+        index_maximum_y = new_index_maximum_y
+        index_maximum_x = new_index_maximum_x
+        index_minimum_x = new_index_minimum_x
+
+        log.debug(f"index_minimun_x: {index_minimum_x}")
+        log.debug(f"index_maximum_x: {index_maximum_x}")
+        log.debug(f"index_minimun_y: {index_minimum_y}")
+        log.debug(f"index_maximum_y: {index_maximum_y}")
+        log.debug(f"len x {len(self.__x)}")
+        log.debug(f"len y {len(self.__y)}")
+
+        for row in range(len(self.__y))[index_minimum_y:index_maximum_y + 1:step_y]:
+            for col in range(len(self.__x))[index_minimum_x:index_maximum_x + 1:step_x]:
+                if col + step_x < len(self.__x) and row + step_y < len(self.__y):
+                    indices.append(self.__get_vertex_index(col, row))
+                    indices.append(self.__get_vertex_index(col + step_x, row))
+                    indices.append(self.__get_vertex_index(col, row + step_y))
+
+                    indices.append(self.__get_vertex_index(col + step_x, row))
+                    indices.append(self.__get_vertex_index(col + step_x, row + step_y))
+                    indices.append(self.__get_vertex_index(col, row + step_y))
+
+        return indices
+
+    def __is_triangle_inside_zone(self,
+                                  index_triangle: list,
+                                  left_coordinate: float,
+                                  right_coordinate: float,
+                                  top_coordinate: float,
+                                  bottom_coordinate: float) -> bool:
+        """
+        Checks if a triangle is contained inside a certain zone given their indices.
+
+        Args:
+            index_triangle: Indices of the vertices of the triangle
+            left_coordinate: Left coordinate to check
+            right_coordinate: Right coordinate to check
+            top_coordinate: Top coordinate to check
+            bottom_coordinate: Bottom coordinate to check
+
+        Returns: Boolean indicating if the triangle is contained in the zone.
+        """
+        # Check the vertices given the indices
+        # :::: Remember that vertices are composed of 3 values, thus, we need to
+        # :::: multiply the index value by 3
+        # ---------------------------------------------------------------------
+        for coordinate in index_triangle:
+            if self.__vertices[coordinate * 3] < left_coordinate or \
+                    self.__vertices[coordinate * 3] > right_coordinate or \
+                    self.__vertices[coordinate * 3 + 1] < bottom_coordinate or \
+                    self.__vertices[coordinate * 3 + 1] > top_coordinate:
+                return False
+
+        # Return true if triangle is inside
+        # ---------------------------------
+        return True
+
+    def __delete_triangles_inside_zone(self,
+                                       left_coordinate: float,
+                                       right_coordinate: float,
+                                       top_coordinate: float,
+                                       bottom_coordinate: float) -> None:
+        """
+        Delete all the indices of the the triangles that are inside the zone from the
+        list of indices.
+
+        Args:
+            left_coordinate: Left coordinate to check
+            right_coordinate: Right coordinate to check
+            top_coordinate: Top coordinate to check
+            bottom_coordinate: Bottom coordinate to check
+
+        Returns: None
+        """
+        index_array = np.array(self.__indices)
+        index_array = index_array.reshape((-1, 3))
+        to_delete = []
+
+        # Get the triangles to delete
+        # ---------------------------
+        for index in range(len(index_array)):
+            point = index_array[index]
+            if self.__is_triangle_inside_zone(point, left_coordinate, right_coordinate, top_coordinate,
+                                              bottom_coordinate):
+                to_delete.append(index)
+        log.debug(f"Triangles to delete: {len(to_delete)}")
+
+        # Delete the triangles
+        # --------------------
+        offset = 0
+        to_delete.sort()
+        for index_to_delete in to_delete:
+            self.__indices.pop(index_to_delete * 3 - offset)
+            self.__indices.pop(index_to_delete * 3 - offset)
+            self.__indices.pop(index_to_delete * 3 - offset)
+
+            offset += 3
+
+    def recalculate_vertices_from_grid(self, quality: int = 2) -> None:
+        """
+        Recalculate vertices from grid.
+
+        Recalculate the vertices with a new definition given the zoom level and the borders used in the
+        projection matrix.
+
+        Returns: None
+        """
+        log.debug("Coordinates actually showing on the screen:")
+        log.debug(f"left: {self.__left_coordinate}")
+        log.debug(f"right: {self.__right_coordinate}")
+        log.debug(f"top:{self.__top_coordinate} ")
+        log.debug(f"bottom: {self.__bottom_coordinate}")
+
+        # Calculate the definition to use in the reload
+        # ---------------------------------------------
+        elements_on_screen_x = abs(self.__get_index_closest_value(self.__x, self.__right_coordinate) - \
+                                   self.__get_index_closest_value(self.__x, self.__left_coordinate))
+        elements_on_screen_y = abs(self.__get_index_closest_value(self.__y, self.__top_coordinate) - \
+                                   self.__get_index_closest_value(self.__y, self.__bottom_coordinate))
+
+        log.debug(f"Number of vertices on screen axis X: {elements_on_screen_x}")
+        log.debug(f"Number of vertices on screen axis Y: {elements_on_screen_y}")
+
+        step_x = int(elements_on_screen_x / Settings.SCENE_WIDTH_X) + 2
+        step_y = int(elements_on_screen_y / Settings.SCENE_HEIGHT_Y) + 2
+
+        log.debug(f"Step used to generate index list on x axis {step_x}")
+        log.debug(f"Step used to generate index list on y axis {step_y}")
+
+        # Generate new list of triangles to add to the model
+        # --------------------------------------------------
+        new_indices = self.__generate_index_list(step_x,
+                                                 step_y,
+                                                 self.__left_coordinate,
+                                                 self.__right_coordinate,
+                                                 self.__top_coordinate,
+                                                 self.__bottom_coordinate)
+
+        # Delete old triangles that are in the same place as the new ones
+        # ---------------------------------------------------------------
+        self.__delete_triangles_inside_zone(self.__left_coordinate,
+                                            self.__right_coordinate,
+                                            self.__top_coordinate,
+                                            self.__bottom_coordinate)
+
+        # Set the new indices
+        # -------------------
+        self.__indices += new_indices
+        self.set_indices(np.array(self.__indices, dtype=np.uint32))
+
     def calculate_projection_matrix(self, scene_data: dict, zoom_level: float = 1) -> None:
         """
         Set the projection matrix to show the model in the scene.
@@ -180,7 +424,6 @@ class Map2DModel(Model):
             self.__right_coordinate = max_x - zoom_difference_x
             self.__bottom_coordinate = projection_min_y + zoom_difference_y
             self.__top_coordinate = projection_max_y - zoom_difference_y
-
 
         # CASE PORTRAIT DATA
         # -------------------
@@ -263,16 +506,9 @@ class Map2DModel(Model):
         self.__y = y
         self.__z = z
 
-        # Apply decimation algorithm
-        x, y, z = decimation.simple_decimation(x, y, z, int(Settings.HEIGHT / quality), int(Settings.WIDTH / quality))
-
         # Set the vertices in the buffer
-        for row_index in range(len(z)):
-            for col_index in range(len(z[0])):
-                self.__vertices.append(x[col_index])
-                self.__vertices.append(y[row_index])
-                self.__vertices.append(0)
-
+        log.debug("Loading buffers")
+        self.__vertices = self.__generate_vertices_list(x, y, z)
         self.set_vertices(
             np.array(
                 self.__vertices,
@@ -280,22 +516,9 @@ class Map2DModel(Model):
             )
         )
 
-        # Set the indices in the model buffers
-        for row_index in range(len(z)):
-            for col_index in range(len(z[0])):
-
-                # first triangles
-                if col_index < len(z[0]) - 1 and row_index < len(z) - 1:
-                    self.__indices.append(row_index * len(z[0]) + col_index)
-                    self.__indices.append(row_index * len(z[0]) + col_index + 1)
-                    self.__indices.append((row_index + 1) * len(z[0]) + col_index)
-
-                # seconds triangles
-                if col_index > 0 and row_index > 0:
-                    self.__indices.append(row_index * len(z[0]) + col_index)
-                    self.__indices.append((row_index - 1) * len(z[0]) + col_index)
-                    self.__indices.append(row_index * len(z[0]) + col_index - 1)
-
+        log.debug("Generating Indices")
+        self.__indices = self.__generate_index_list(int(len(self.__x) / Settings.SCENE_WIDTH_X) + quality,
+                                                    int(len(self.__y) / Settings.SCENE_HEIGHT_Y) + quality)
         self.set_indices(np.array(self.__indices, dtype=np.uint32))
 
         # Only select this shader if there is no shader selected.
