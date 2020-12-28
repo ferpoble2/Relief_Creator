@@ -17,6 +17,7 @@ class Render:
         """
         self.__window = None
         self.__GUI = None
+        self.__engine = None
 
     def init(self, window_name: str = "Relieve Creator", engine: 'Engine' = None) -> None:
         """Initialize OpenGL and glfw for the application.
@@ -34,6 +35,7 @@ class Render:
 
         # set the gui for the app
         self.__GUI = engine.gui_manager
+        self.__engine = engine
         window_data = engine.get_window_setting_data()
 
         log.info(f"Creating windows of size {window_data['WIDTH']} x {window_data['HEIGHT']}.")
@@ -84,8 +86,7 @@ class Render:
         self.__GUI.process_input()
         GL.glClear(GL.GL_COLOR_BUFFER_BIT)
 
-        # drawing the model in the screen
-        # -------------------------------
+        # draw models on screen
         for func in on_frame_tasks:
             func()
 
