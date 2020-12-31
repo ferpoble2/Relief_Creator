@@ -46,6 +46,7 @@ class src.engine.GUI.GUIManager{
     + less_zoom()
     + fix_frames_position(value)
     + process_input()
+    + get_quality(): int
     + is_program_loading(): boolean
     + draw_frames()
     + reload_models()
