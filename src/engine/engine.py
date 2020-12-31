@@ -3,6 +3,7 @@ File that contains the program class, class that will be the main class of the p
 """
 
 import glfw
+from threading import Thread
 
 from src.engine.GUI.guimanager import GUIManager
 from src.engine.controller.controller import Controller
@@ -14,6 +15,7 @@ from src.utils import get_logger
 log = get_logger(module='ENGINE')
 
 
+# noinspection PyMethodMayBeStatic
 class Engine:
     """
     Main class of the program, controls and connect every component of the program.
@@ -31,6 +33,7 @@ class Engine:
         self.program = None
 
         self.__pending_task_list = []
+        self.__threads_list = []
 
     def initialize(self, engine: 'Engine', program: 'Program') -> None:
         """
@@ -38,6 +41,7 @@ class Engine:
         Returns: None
 
         Args:
+            program: Program that runs the engine and the application.
             engine: Engine to initialize.
         """
         log.info('Starting Program')
@@ -64,8 +68,7 @@ class Engine:
         # ----------
         self.scene.initialize(engine)
 
-    @staticmethod
-    def get_scene_setting_data() -> dict:
+    def get_scene_setting_data(self) -> dict:
         """
         Get the scene setting data.
         Returns: dict with the data
@@ -75,8 +78,7 @@ class Engine:
             'SCENE_WIDTH_X': Settings.SCENE_WIDTH_X, 'SCENE_HEIGHT_Y': Settings.SCENE_HEIGHT_Y
         }
 
-    @staticmethod
-    def get_clear_color() -> list:
+    def get_clear_color(self) -> list:
         """
         Get the clear color used.
         Returns:list with the clear color
@@ -95,14 +97,34 @@ class Engine:
         """
         Settings.QUALITY = quality
 
-    @staticmethod
-    def get_quality() -> int:
+    def get_quality(self) -> int:
         """
         Get the quality value stored in the settings.
 
         Returns: Quality setting
         """
         return Settings.QUALITY
+
+    def set_thread_task(self, parallel_task, then) -> None:
+        """
+        Add and start a new thread with the current task. At the end of the thread, the then
+        function is called.
+
+        Args:
+            parallel_task: Task to be executed in parallel
+            then: Task to be executed in the main thread after the parallel task
+
+        Returns: None
+        """
+        # Create and start the thread
+        thread = Thread(target=parallel_task)
+        thread.start()
+
+        # Add thread to the list
+        self.__threads_list.append(
+            {'thread': thread,
+             'then_func': then}
+        )
 
     def set_task_for_next_frame(self, task: callable) -> None:
         """
@@ -119,6 +141,23 @@ class Engine:
             'frames': 2  # need to be 2 to really wait one full frame
         })
 
+    def update_threads(self) -> None:
+        """
+        Checks on the threads of the engine, deleting them if they finished and executing the
+        task configured for them after.
+
+        Returns: None
+        """
+        to_delete = []
+        for thread_pair in self.__threads_list:
+            if not thread_pair['thread'].is_alive():
+                to_delete.append(thread_pair)
+                thread_pair['then_func']()
+
+        for thread_ended in to_delete:
+            log.debug("Thread ended")
+            self.__threads_list.remove(thread_ended)
+
     def update_pending_tasks(self) -> None:
         """
         Update the pending tasks.
@@ -128,6 +167,9 @@ class Engine:
 
         Returns: None
         """
+        to_delete = []
+
+        # check on the tasks
         for task in self.__pending_task_list:
             log.debug(f"Pending tasks: {self.__pending_task_list}")
 
@@ -137,11 +179,15 @@ class Engine:
             # execute it if frames to wait is zero
             if task['frames'] == 0:
                 task['task']()
-                self.__pending_task_list.remove(task)
+                to_delete.append(task)
+
+        # delete tasks already executed
+        for task in to_delete:
+            self.__pending_task_list.remove(task)
 
     def set_task_with_loading_frame(self, task: callable) -> None:
         """
-        Set a task to be executed at the end of the next frame. Also configures the loading settiing of
+        Set a task to be executed at the end of the next frame. Also configures the loading setting of
         the program to show the loading frame on the screen.
 
         Args:
@@ -169,11 +215,12 @@ class Engine:
         Returns: none
         """
 
-        def refresh_model():
-            self.scene.refresh_with_model_2d(path_color_file, path_model, model_id)
+        def then_routine():
             self.program.set_model_id(model_id)
+            self.program.set_loading(False)
 
-        self.set_task_with_loading_frame(refresh_model)
+        self.program.set_loading(True)
+        self.scene.refresh_with_model_2d_async(path_color_file, path_model, model_id, then_routine)
 
     def is_program_loading(self) -> bool:
         """
@@ -204,8 +251,7 @@ class Engine:
         """
         return self.program.get_cpt_file()
 
-    @staticmethod
-    def get_gui_setting_data() -> dict:
+    def get_gui_setting_data(self) -> dict:
         """
         Get the GUI setting data.
         Returns: dict with the data
@@ -217,8 +263,7 @@ class Engine:
             'MAIN_MENU_BAR_HEIGHT': Settings.MAIN_MENU_BAR_HEIGHT
         }
 
-    @staticmethod
-    def get_font_size() -> int:
+    def get_font_size(self) -> int:
         """
         Get the font size to use in the program.
         Returns: font size
@@ -233,8 +278,7 @@ class Engine:
         """
         return self.program.get_cpt_file()
 
-    @staticmethod
-    def get_view_mode() -> str:
+    def get_view_mode(self) -> str:
         """
         Get the view mode stored in the settings.
 
@@ -268,8 +312,7 @@ class Engine:
         self.program.less_zoom()
         self.scene.update_models_projection_matrix()
 
-    @staticmethod
-    def fix_frames(fix: bool) -> None:
+    def fix_frames(self, fix: bool) -> None:
         """
         Fixes/unfix the frames in the application.
         Args:
@@ -279,16 +322,14 @@ class Engine:
         """
         Settings.fix_frames(fix)
 
-    @staticmethod
-    def are_frames_fixed() -> bool:
+    def are_frames_fixed(self) -> bool:
         """
         Return if the frames are fixed or not in the application.
         Returns: boolean indicating if the frames are fixed
         """
         return Settings.FIXED_FRAMES
 
-    @staticmethod
-    def get_window_setting_data() -> dict:
+    def get_window_setting_data(self) -> dict:
         """
         Get the window setting data.
         Returns: dict with the data
@@ -298,8 +339,7 @@ class Engine:
             'WIDTH': Settings.WIDTH
         }
 
-    @staticmethod
-    def change_height_window(height: int) -> None:
+    def change_height_window(self, height: int) -> None:
         """
         Change the engine settings height for the windows.
         Args:
@@ -309,8 +349,7 @@ class Engine:
         """
         Settings.HEIGHT = height
 
-    @staticmethod
-    def change_width_window(width: int) -> None:
+    def change_width_window(self, width: int) -> None:
         """
         Change the engine settings width for the windows
         Args:
@@ -320,8 +359,7 @@ class Engine:
         """
         Settings.WIDTH = width
 
-    @staticmethod
-    def update_scene_values() -> None:
+    def update_scene_values(self) -> None:
         """
         Update the configuration values related to the scene.
         Returns: None
@@ -352,6 +390,14 @@ class Engine:
         """
         self.set_task_with_loading_frame(lambda: self.scene.reload_models())
 
+    def get_float_bytes(self) -> int:
+        """
+        Return the number of bytes used to represent a float number in opengl.
+
+        Returns: number of bytes used to represent a float.
+        """
+        return Settings.FLOAT_BYTES
+
     def get_zoom_level(self) -> float:
         """
         Get the zoom level currently being used in the program.
@@ -369,6 +415,7 @@ class Engine:
         log.debug("Starting main loop.")
         while not glfw.window_should_close(self.window):
             self.update_pending_tasks()
+            self.update_threads()
             self.render.on_loop([lambda: self.scene.draw()])
 
         glfw.terminate()

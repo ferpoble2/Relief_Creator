@@ -19,7 +19,7 @@ class Render:
         self.__GUI = None
         self.__engine = None
 
-    def init(self, window_name: str = "Relieve Creator", engine: 'Engine' = None) -> None:
+    def init(self, window_name: str = "Relieve Creator", engine: 'Engine' = None) -> 'GLFWWindow':
         """Initialize OpenGL and glfw for the application.
 
         Args:

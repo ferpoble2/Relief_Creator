@@ -4,8 +4,8 @@ File that contain the Scene class. This class is in charge of the management of 
 import OpenGL.GL as GL
 import OpenGL.constant as OGLConstant
 
-from src.engine.model.map2dmodel import Map2DModel
-from src.engine.model.model import Model
+from src.engine.scene.model.map2dmodel import Map2DModel
+from src.engine.scene.model.model import Model
 from src.input.NetCDF import read_info
 from src.utils import get_logger
 
@@ -137,7 +137,20 @@ class Scene:
             else:
                 raise NotImplementedError("Not implemented method to update the projection matrix in this model.")
 
-    def refresh_with_model_2d(self, path_color_file: str, path_model: str, model_id: str = 'main') -> 'Model':
+    def set_parallel_task(self, parallel_task, then):
+        """
+        Set a parallel task in the engine.
+
+        Args:
+            parallel_task: Task to execute in parallel
+            then: Task to execute after the parallel task
+
+        Returns: None
+        """
+        self.__engine.set_thread_task(parallel_task, then)
+
+    def refresh_with_model_2d_async(self, path_color_file: str, path_model: str, model_id: str = 'main',
+                                    then=lambda: None) -> 'Model':
         """
         Refresh the scene, removing all the models, and adding the new model specified
         in the input.
@@ -149,8 +162,9 @@ class Scene:
         The color file must be in CTP format.
 
         Args:
-            model_id: Model ID to use in the model added.
-            path_color_file: Path to the CTP file with the colors.
+            then: Function to be executed at the end of the async routine
+            model_id: Model ID to use in the model added
+            path_color_file: Path to the CTP file with the colors
             path_model: Path to the model to use in the application
 
         Returns: None
@@ -161,21 +175,42 @@ class Scene:
         X, Y, Z = read_info(path_model)
 
         log.debug("Generating model")
-        model = Map2DModel()
+        model = Map2DModel(self)
+
+        def then_routine():
+            log.debug("Settings colors from file.")
+            model.set_color_file(path_color_file)
+            model.calculate_projection_matrix(self.__engine.get_scene_setting_data())
+            model.wireframes = False
+            model.id = model_id
+
+            self.remove_all_models()
+            self.add_model(model)
+
+            self.__engine.reset_zoom_level()
+
+            # call the then routine
+            then()
 
         log.debug("Setting vertices from grid.")
-        model.set_vertices_from_grid(X, Y, Z, self.__engine.get_quality())
+        model.set_vertices_from_grid_async(X, Y, Z, self.__engine.get_quality(), then_routine)
 
-        log.debug("Settings colors from file.")
-        model.set_color_file(path_color_file)
-        model.calculate_projection_matrix(self.__engine.get_scene_setting_data())
-        model.wireframes = False
-        model.id = model_id
+    def get_float_bytes(self) -> int:
+        """
+        Get the float bytes used in a float to render.
+        Ask the engine for this information (that is stored in the settings).
 
-        self.remove_all_models()
-        self.add_model(model)
+        Returns: Number of bytes used for store float numbers.
+        """
+        return self.__engine.get_float_bytes()
 
-        self.__engine.reset_zoom_level()
+    def get_scene_setting_data(self) -> dict:
+        """
+        Get the scene settings.
+
+        Returns: None
+        """
+        return self.__engine.get_scene_setting_data()
 
     def update_models_colors(self) -> None:
         """

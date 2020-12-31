@@ -10,16 +10,17 @@ set namespaceSeparator .
 ' Package hierarchy
 package src {
     package engine {
-        package model {
-            package transformations {}
-        }
         package render {}
         package data {}
         package controller {}
         package GUI {
             package frames {}
         }
-        package scene {}
+        package scene {
+            package model {
+                package transformations {}
+            }
+        }
     }
     package input {}
     package program {}
@@ -84,7 +85,7 @@ class src.engine.settings  {
     {static} + update_scene_values()
 }
 
-class src.engine.model.transformations.transformations <<$file>> {
+class src.engine.scene.model.transformations.transformations <<$file>> {
     + identity() : array
     + uniformScale(s) : array
     + scale(sx,sy,sz) : array
@@ -102,20 +103,21 @@ class src.engine.model.transformations.transformations <<$file>> {
 }
 
 
-class src.engine.model.Model {
+class src.engine.scene.model.Model {
 
-    + vao : int
-    + vbo : int
-    + cbo : int
-    + ebo : int
-    + shader_program : compiled_shader
-    + position : numpy.array[3]
-    + rotation : numpy.array[3]
+    + vao: int
+    + vbo: int
+    + cbo: int
+    + ebo: int
+    + shader_program: compiled_shader
+    + position: numpy.array[3]
+    + rotation: numpy.array[3]
     + indices_size: int
-    + draw_mode : GL_DRAW_MODE
-    + polygon_mode : GL_POLYGON_MODE
-    + update_uniform_values : boolean
-    + id : str
+    + draw_mode: GL_DRAW_MODE
+    + polygon_mode: GL_POLYGON_MODE
+    + update_uniform_values: boolean
+    + id: str
+    + scene: Scene
 
     ~ _update_uniforms()
     + set_color_file(color_file)
@@ -148,7 +150,7 @@ class src.utils <<$file>>{
     + get_logger(log_level, log_file_level, module, directory) : logger
 }
 
-class src.engine.model.Map2DModel{
+class src.engine.scene.model.Map2DModel{
     - __x : array
     - __y : array
     - __z : array
@@ -180,7 +182,7 @@ class src.engine.model.Map2DModel{
     ~ _update_uniforms()
     + calculate_projection_matrix(scene_data, zoom_level)
     + set_color_file(filename)
-    + set_vertices_from_grid(x,y,z,quality)
+    + set_vertices_from_grid_async(x,y,z,quality, then)
 
 }
 
@@ -188,7 +190,7 @@ class src.input.CTP <<$file>> {
     + read_file(filename: str) : dict
 }
 
-class src.engine.model.Map3DModel{
+class src.engine.scene.model.Map3DModel{
 
 }
 
@@ -265,6 +267,7 @@ class src.engine.Engine {
     + window: GLFWWindow
     - __pending_task_list: list
     + set_task_for_next_frame(task)
+    + set_parallel_task(parallel_task, then)
     + update_pending_tasks()
     + set_task_with_loading_frame(task)
     + initialize(engine)
@@ -274,7 +277,7 @@ class src.engine.Engine {
     + change_quality(quality)
     + get_quality(): int
     + get_zoom_level(): float
-    + refresh_with_model_2d(path_color_file, path_model, model_id)
+    + refresh_with_model_2d_async(path_color_file, path_model, model_id, then)
     + run()
     + reset_zoom_level()
     + add_zoom()
@@ -282,17 +285,22 @@ class src.engine.Engine {
     + less_zoom()
     + get_map_position(): list
     + get_active_tool(): str
-    {static} + get_view_mode(): str
-    {static} + change_height_window(height)
-    {static} + change_width_window(width)
-    {static} + get_gui_setting_data(): dict
-    {static} + get_font_size(): int
-    {static} + fix_frames()
-    {static} + are_frames_fixed(): boolean
-    {static} + get_window_setting_data(): dict
-    {static} + update_scene_values()
-    {static} + get_clear_color(): list
-    {static} + get_scene_setting_data(): dict
+    + get_view_mode(): str
+    + get_float_bytes(): int
+    + get_scene_setting_data(): dict
+    + change_height_window(height)
+    + change_width_window(width)
+    + get_gui_setting_data(): dict
+    + get_font_size(): int
+    + set_thread_task(parallel_task, then)
+    + update_threads()
+    + fix_frames()
+    + get_float_bytes()
+    + are_frames_fixed(): boolean
+    + get_window_setting_data(): dict
+    + update_scene_values()
+    + get_clear_color(): list
+    + get_scene_setting_data(): dict
 
 }
 
@@ -322,8 +330,8 @@ class src.program.Program {
 }
 
 ' herency
-src.engine.model.Map2DModel -u-|> src.engine.model.Model
-src.engine.model.Map3DModel -u-|> src.engine.model.Model
+src.engine.scene.model.Map2DModel -u-|> src.engine.scene.model.Model
+src.engine.scene.model.Map3DModel -u-|> src.engine.scene.model.Model
 
 src.engine.GUI.frames.MainMenuBar -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Tools -u-|> src.engine.GUI.frames.Frame
@@ -332,11 +340,9 @@ src.engine.GUI.frames.Debug -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Loading -u-|> src.engine.GUI.frames.Frame
 
 ' uses
-src.engine.model.Map2DModel -u.> src.engine.data.decimation
-src.engine.model.Map2DModel -u.> src.engine.model.transformations.transformations
-src.engine.model.Map2DModel -u.> src.input.CTP
-
-src.engine.model.Model -u.> src.engine.settings
+src.engine.scene.model.Map2DModel -u.> src.engine.data.decimation
+src.engine.scene.model.Map2DModel -u.> src.engine.scene.model.transformations.transformations
+src.engine.scene.model.Map2DModel -u.> src.input.CTP
 
 src.engine.Engine <-d.> src.engine.render.Render
 src.engine.Engine <-d.> src.engine.GUI.GUIManager
@@ -347,7 +353,6 @@ src.engine.Engine <-l.> src.program.Program
 
 src.engine.GUI.frames.Frame <-u.> src.engine.GUI.GUIManager
 
-src.engine.scene.Scene -u.> src.engine.model.Map2DModel
-src.engine.scene.Scene -u.> src.engine.model.Model
+src.engine.scene.Scene .> src.engine.scene.model.Model
 src.engine.scene.Scene -u.> src.input.NetCDF
 @enduml

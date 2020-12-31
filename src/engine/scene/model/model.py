@@ -5,8 +5,6 @@ import OpenGL.GL as GL
 import numpy as np
 from OpenGL.GL.shaders import compileShader
 
-from src.engine.settings import Settings
-
 
 class Model:
     """
@@ -16,8 +14,14 @@ class Model:
         glVertexAttributePointer 0: Vertices of the model.
     """
 
-    def __init__(self):
-        """Constructor of the model class."""
+    def __init__(self, scene):
+        """Constructor of the model class.
+
+        IMPORTANT: The model is not added to the scene! too add it is necessary to call scene.add_model(model).
+
+        Args:
+            scene: Scene object to use to communicate with the engine.
+        """
         self.vao = GL.glGenVertexArrays(1)
         self.vbo = GL.glGenBuffers(1)
         self.ebo = GL.glGenBuffers(1)
@@ -35,6 +39,8 @@ class Model:
         self.update_uniform_values = True
 
         self.id = ""
+
+        self.scene = scene
 
     def set_shaders(self, vertex_shader: str, fragment_shader: str) -> None:
         """Set the shaders to use in the model.
@@ -110,7 +116,7 @@ class Model:
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.vbo)
         GL.glBufferData(
             GL.GL_ARRAY_BUFFER,
-            len(vertex) * Settings.FLOAT_BYTES,
+            len(vertex) * self.scene.get_float_bytes(),
             vertex,
             GL.GL_STATIC_DRAW,
         )
@@ -131,7 +137,7 @@ class Model:
         GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, self.ebo)
         GL.glBufferData(
             GL.GL_ELEMENT_ARRAY_BUFFER,
-            len(indices) * Settings.FLOAT_BYTES,
+            len(indices) * self.scene.get_float_bytes(),
             indices,
             GL.GL_STATIC_DRAW,
         )

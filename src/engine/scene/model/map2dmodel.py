@@ -7,16 +7,15 @@ import ctypes as ctypes
 import OpenGL.GL as GL
 import numpy as np
 
-from src.engine.data import decimation
-from src.engine.model.model import Model
-from src.engine.model.tranformations.transformations import ortho
-from src.engine.settings import Settings
+from src.engine.scene.model.model import Model
+from src.engine.scene.model.tranformations.transformations import ortho
 from src.input.CTP import read_file
 from src.utils import get_logger
 
 log = get_logger(module='Map2DModel')
 
 
+# noinspection PyMethodMayBeStatic
 class Map2DModel(Model):
     """
     Class that manage all things related to the 2D representation of the maps.
@@ -26,11 +25,11 @@ class Map2DModel(Model):
 
     """
 
-    def __init__(self):
+    def __init__(self, scene=None):
         """
         Constructor of the model class.
         """
-        super().__init__()
+        super().__init__(scene)
 
         # Color file used. (if not color file, then None)
         self.__color_file = None
@@ -124,7 +123,7 @@ class Map2DModel(Model):
         GL.glBindVertexArray(self.vao)
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.hbo)
         GL.glBufferData(GL.GL_ARRAY_BUFFER,
-                        len(height) * Settings.FLOAT_BYTES,
+                        len(height) * self.scene.get_float_bytes(),
                         height,
                         GL.GL_STATIC_DRAW)
 
@@ -169,7 +168,7 @@ class Map2DModel(Model):
         """
         return y_pos * len(self.__x) + x_pos
 
-    def __get_index_closest_value(self, list_to_evaluate: list, value: float) -> int:
+    def __get_index_closest_value(self, list_to_evaluate: list, value: float) -> 'ndarray[int]':
         """
         Get the index of the closest element in the array to the value.
 
@@ -351,8 +350,9 @@ class Map2DModel(Model):
         log.debug(f"Number of vertices on screen axis X: {elements_on_screen_x}")
         log.debug(f"Number of vertices on screen axis Y: {elements_on_screen_y}")
 
-        step_x = int(elements_on_screen_x / Settings.SCENE_WIDTH_X) + 2
-        step_y = int(elements_on_screen_y / Settings.SCENE_HEIGHT_Y) + 2
+        scene_data = self.scene.get_scene_setting_data()
+        step_x = int(elements_on_screen_x / scene_data['SCENE_WIDTH_X']) + 2
+        step_y = int(elements_on_screen_y / scene_data['SCENE_HEIGHT_Y']) + 2
 
         log.debug(f"Step used to generate index list on x axis {step_x}")
         log.debug(f"Step used to generate index list on y axis {step_y}")
@@ -481,7 +481,7 @@ class Map2DModel(Model):
         self.__colors = np.array(colors, dtype=np.float32)
         self.__height_limit = np.array(height_limit, dtype=np.float32)
 
-    def set_vertices_from_grid(self, x, y, z, quality=1) -> None:
+    def set_vertices_from_grid_async(self, x, y, z, quality=1, then=lambda: None) -> None:
         """
         Set the vertices of the model from a grid.
 
@@ -492,6 +492,7 @@ class Map2DModel(Model):
          - Set the height buffer with the height of the vertices.
 
         Args:
+            then: Task too do after the thread execution
             quality: Quality of the grid to render. 1 for max quality, 2 or more for less quality.
             x: X values of the grid to use.
             y: Y values of the grid.
@@ -506,30 +507,45 @@ class Map2DModel(Model):
         self.__y = y
         self.__z = z
 
-        # Set the vertices in the buffer
-        log.debug("Loading buffers")
-        self.__vertices = self.__generate_vertices_list(x, y, z)
-        self.set_vertices(
-            np.array(
-                self.__vertices,
-                dtype=np.float32,
+        def parallel_routine():
+            """
+            Routine to be executed in parallel
+            """
+
+            # Set the vertices in the buffer
+            log.debug("Loading buffers")
+            self.__vertices = self.__generate_vertices_list(x, y, z)
+            log.debug("Generating Indices")
+            scene_data = self.scene.get_scene_setting_data()
+            self.__indices = self.__generate_index_list(int(len(self.__x) / scene_data['SCENE_WIDTH_X']) + quality,
+                                                        int(len(self.__y) / scene_data['SCENE_HEIGHT_Y']) + quality)
+
+        def then_routine():
+            """
+            Routine to be executed after the parallel routine
+            """
+            self.set_vertices(
+                np.array(
+                    self.__vertices,
+                    dtype=np.float32,
+                )
             )
-        )
+            self.set_indices(np.array(self.__indices, dtype=np.uint32))
 
-        log.debug("Generating Indices")
-        self.__indices = self.__generate_index_list(int(len(self.__x) / Settings.SCENE_WIDTH_X) + quality,
-                                                    int(len(self.__y) / Settings.SCENE_HEIGHT_Y) + quality)
-        self.set_indices(np.array(self.__indices, dtype=np.uint32))
+            # Only select this shader if there is no shader selected.
+            if self.shader_program is None:
+                self.set_shaders(
+                    "./engine/shaders/model_2d_vertex.glsl", "./engine/shaders/model_2d_fragment.glsl"
+                )
 
-        # Only select this shader if there is no shader selected.
-        if self.shader_program is None:
-            self.set_shaders(
-                "./engine/shaders/model_2d_vertex.glsl", "./engine/shaders/model_2d_fragment.glsl"
-            )
+            # set the height buffer for rendering and store height values
+            self.__height = np.array(z).reshape(-1)
+            self.__max_height = np.nanmax(self.__height)
+            self.__min_height = np.nanmin(self.__height)
 
-        # set the height buffer for rendering and store height values
-        self.__height = np.array(z).reshape(-1)
-        self.__max_height = np.nanmax(self.__height)
-        self.__min_height = np.nanmin(self.__height)
+            self.__set_height_buffer()
 
-        self.__set_height_buffer()
+            # call the then routine
+            then()
+
+        self.scene.set_parallel_task(parallel_routine, then_routine)
