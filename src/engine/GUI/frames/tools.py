@@ -23,7 +23,7 @@ class Tools(Frame):
         self.change_position([0, self._GUI_manager.get_main_menu_bar_height()])
         self.double_button_margin_width = 13
         self.button_margin_width = 17
-        self.slide_bar_quality = 3
+        self.slide_bar_quality = self._GUI_manager.get_quality()
 
     def render(self) -> None:
         """

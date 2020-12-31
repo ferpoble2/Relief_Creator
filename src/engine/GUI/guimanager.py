@@ -125,6 +125,14 @@ class GUIManager:
         """
         self.__engine.change_quality(quality)
 
+    def get_quality(self) -> int:
+        """
+        Get the render quality used in the engine.
+
+        Returns: Quality used in the engine.
+        """
+        return self.__engine.get_quality()
+
     def get_window_width(self) -> int:
         """
         Get the window width.

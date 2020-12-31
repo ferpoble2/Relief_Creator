@@ -14,7 +14,7 @@ class Settings:
     MAIN_MENU_BAR_HEIGHT = 25
 
     # RENDER SETTINGS
-    QUALITY = 3
+    QUALITY = 25
 
     # SCENE settings
     SCENE_BEGIN_X = LEFT_FRAME_WIDTH
