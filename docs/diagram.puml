@@ -38,31 +38,31 @@ class src.engine.GUI.GUIManager{
     - __engine: Engine
 
     {static} + get_frames(gui_manager) : list
-    + change_color_file(path_color_file)
-    + are_frame_fixed()
-    + initialize(window, mode)
     + add_frames(component_list)
     + add_zoom()
+    + are_frame_fixed()
+    + change_color_file(path_color_file)
     + change_quality(quality)
-    + less_zoom()
-    + fix_frames_position(value)
-    + process_input()
-    + get_quality(): int
-    + is_program_loading(): boolean
     + draw_frames()
-    + reload_models()
-    + refresh_scene_with_model_2d(path_color_file, path_model, model_id)
-    + render()
-    + set_polygon_mode(polygon_mode)
-    + get_main_menu_bar_height(): int
+    + fix_frames_position(value)
+    + get_active_tool(): str
     + get_cpt_file(): str
     + get_left_frame_width(): int
+    + get_main_menu_bar_height(): int
+    + get_map_position(): list
+    + get_quality(): int
+    + get_view_mode(): str
     + get_window_height(): int
     + get_window_width(): int
-    + get_active_tool(): str
     + get_zoom_level(): float
-    + get_map_position(): list
-    + get_view_mode(): str
+    + initialize(window, mode)
+    + is_program_loading(): boolean
+    + less_zoom()
+    + process_input()
+    + refresh_scene_with_model_2d(path_color_file, path_model, model_id)
+    + reload_models()
+    + render()
+    + set_polygon_mode(polygon_mode)
 }
 
 class src.engine.settings  {
@@ -260,47 +260,47 @@ class src.engine.scene.Scene {
 
 class src.engine.Engine {
     + controller: Controller
-    + get_cpt_file(): str
     + gui_manager: GUIManager
     + render: Render
     + scene: Scene
     + window: GLFWWindow
     - __pending_task_list: list
-    + set_task_for_next_frame(task)
-    + set_parallel_task(parallel_task, then)
-    + update_pending_tasks()
-    + set_task_with_loading_frame(task)
-    + initialize(engine)
-    + reload_models()
-    + change_color_file(path_color_file)
-    + get_CPT_file()
-    + change_quality(quality)
-    + get_quality(): int
-    + get_zoom_level(): float
-    + refresh_with_model_2d_async(path_color_file, path_model, model_id, then)
-    + run()
-    + reset_zoom_level()
     + add_zoom()
+    + are_frames_fixed(): boolean
+    + change_color_file(path_color_file)
+    + change_height_window(height)
+    + change_quality(quality)
+    + change_width_window(width)
+    + fix_frames()
+    + get_active_tool(): str
+    + get_clear_color(): list
+    + get_CPT_file()
+    + get_cpt_file(): str
+    + get_float_bytes()
+    + get_float_bytes(): int
+    + get_font_size(): int
+    + get_gui_setting_data(): dict
+    + get_map_position(): list
+    + get_quality(): int
+    + get_scene_setting_data(): dict
+    + get_scene_setting_data(): dict
+    + get_view_mode(): str
+    + get_window_setting_data(): dict
+    + get_zoom_level(): float
+    + initialize(engine)
     + is_program_loading(): boolean
     + less_zoom()
-    + get_map_position(): list
-    + get_active_tool(): str
-    + get_view_mode(): str
-    + get_float_bytes(): int
-    + get_scene_setting_data(): dict
-    + change_height_window(height)
-    + change_width_window(width)
-    + get_gui_setting_data(): dict
-    + get_font_size(): int
+    + refresh_with_model_2d_async(path_color_file, path_model, model_id, then)
+    + reload_models()
+    + reset_zoom_level()
+    + run()
+    + set_parallel_task(parallel_task, then)
+    + set_task_for_next_frame(task)
+    + set_task_with_loading_frame(task)
     + set_thread_task(parallel_task, then)
-    + update_threads()
-    + fix_frames()
-    + get_float_bytes()
-    + are_frames_fixed(): boolean
-    + get_window_setting_data(): dict
+    + update_pending_tasks()
     + update_scene_values()
-    + get_clear_color(): list
-    + get_scene_setting_data(): dict
+    + update_threads()
 
 }
 
@@ -314,19 +314,19 @@ class src.program.Program {
     - __active_tool: str
     - __loading: boolean
 
-    + run()
-    + initialize(program)
-    + reset_zoom_level()
     + add_zoom()
-    + less_zoom()
-    + is_loading(): boolean
-    + set_loading(is_loading)
-    + set_cpt_file(new_file)
-    + set_model_id(new_model_id)
-    + set_active_tool(new_tool)
-    + get_cpt_file(): str
     + get_active_tool(): str
+    + get_cpt_file(): str
     + get_map_position(): list
+    + initialize(program)
+    + is_loading(): boolean
+    + less_zoom()
+    + reset_zoom_level()
+    + run()
+    + set_active_tool(new_tool)
+    + set_cpt_file(new_file)
+    + set_loading(is_loading)
+    + set_model_id(new_model_id)
 }
 
 ' herency
