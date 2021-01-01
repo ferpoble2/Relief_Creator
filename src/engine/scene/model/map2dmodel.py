@@ -325,7 +325,7 @@ class Map2DModel(Model):
 
             offset += 3
 
-    def recalculate_vertices_from_grid(self, quality: int = 2) -> None:
+    def recalculate_vertices_from_grid_async(self, quality: int = 2, then=lambda: None) -> None:
         """
         Recalculate vertices from grid.
 
@@ -333,50 +333,68 @@ class Map2DModel(Model):
         projection matrix.
 
         Returns: None
+
+        Args:
+            then: Routine to execute after the parallel tasks.
+            quality: quality of the rendering process.
         """
-        log.debug("Coordinates actually showing on the screen:")
-        log.debug(f"left: {self.__left_coordinate}")
-        log.debug(f"right: {self.__right_coordinate}")
-        log.debug(f"top:{self.__top_coordinate} ")
-        log.debug(f"bottom: {self.__bottom_coordinate}")
+        new_indices = None
 
-        # Calculate the definition to use in the reload
-        # ---------------------------------------------
-        elements_on_screen_x = abs(self.__get_index_closest_value(self.__x, self.__right_coordinate) - \
-                                   self.__get_index_closest_value(self.__x, self.__left_coordinate))
-        elements_on_screen_y = abs(self.__get_index_closest_value(self.__y, self.__top_coordinate) - \
-                                   self.__get_index_closest_value(self.__y, self.__bottom_coordinate))
+        def parallel_tasks():
+            global new_indices
 
-        log.debug(f"Number of vertices on screen axis X: {elements_on_screen_x}")
-        log.debug(f"Number of vertices on screen axis Y: {elements_on_screen_y}")
+            log.debug("Coordinates actually showing on the screen:")
+            log.debug(f"left: {self.__left_coordinate}")
+            log.debug(f"right: {self.__right_coordinate}")
+            log.debug(f"top:{self.__top_coordinate} ")
+            log.debug(f"bottom: {self.__bottom_coordinate}")
 
-        scene_data = self.scene.get_scene_setting_data()
-        step_x = int(elements_on_screen_x / scene_data['SCENE_WIDTH_X']) + 2
-        step_y = int(elements_on_screen_y / scene_data['SCENE_HEIGHT_Y']) + 2
+            # Calculate the definition to use in the reload
+            # ---------------------------------------------
+            elements_on_screen_x = abs(self.__get_index_closest_value(self.__x, self.__right_coordinate) - \
+                                       self.__get_index_closest_value(self.__x, self.__left_coordinate))
+            elements_on_screen_y = abs(self.__get_index_closest_value(self.__y, self.__top_coordinate) - \
+                                       self.__get_index_closest_value(self.__y, self.__bottom_coordinate))
 
-        log.debug(f"Step used to generate index list on x axis {step_x}")
-        log.debug(f"Step used to generate index list on y axis {step_y}")
+            log.debug(f"Number of vertices on screen axis X: {elements_on_screen_x}")
+            log.debug(f"Number of vertices on screen axis Y: {elements_on_screen_y}")
 
-        # Generate new list of triangles to add to the model
-        # --------------------------------------------------
-        new_indices = self.__generate_index_list(step_x + quality,
-                                                 step_y + quality,
-                                                 self.__left_coordinate,
-                                                 self.__right_coordinate,
-                                                 self.__top_coordinate,
-                                                 self.__bottom_coordinate)
+            scene_data = self.scene.get_scene_setting_data()
+            step_x = int(elements_on_screen_x / scene_data['SCENE_WIDTH_X']) + 2
+            step_y = int(elements_on_screen_y / scene_data['SCENE_HEIGHT_Y']) + 2
 
-        # Delete old triangles that are in the same place as the new ones
-        # ---------------------------------------------------------------
-        self.__delete_triangles_inside_zone(self.__left_coordinate,
-                                            self.__right_coordinate,
-                                            self.__top_coordinate,
-                                            self.__bottom_coordinate)
+            log.debug(f"Step used to generate index list on x axis {step_x}")
+            log.debug(f"Step used to generate index list on y axis {step_y}")
 
-        # Set the new indices
-        # -------------------
-        self.__indices += new_indices
-        self.set_indices(np.array(self.__indices, dtype=np.uint32))
+            # Generate new list of triangles to add to the model
+            # --------------------------------------------------
+            new_indices = self.__generate_index_list(step_x + quality,
+                                                     step_y + quality,
+                                                     self.__left_coordinate,
+                                                     self.__right_coordinate,
+                                                     self.__top_coordinate,
+                                                     self.__bottom_coordinate)
+
+            # Delete old triangles that are in the same place as the new ones
+            # ---------------------------------------------------------------
+            self.__delete_triangles_inside_zone(self.__left_coordinate,
+                                                self.__right_coordinate,
+                                                self.__top_coordinate,
+                                                self.__bottom_coordinate)
+
+        def then_routine():
+            global new_indices
+
+            # Set the new indices
+            # -------------------
+            self.__indices += new_indices
+            self.set_indices(np.array(self.__indices, dtype=np.uint32))
+
+            # call the then routine
+            then()
+
+        self.scene.set_parallel_task(parallel_tasks, then_routine)
+
 
     def calculate_projection_matrix(self, scene_data: dict, zoom_level: float = 1) -> None:
         """

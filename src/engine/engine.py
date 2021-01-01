@@ -292,7 +292,12 @@ class Engine:
 
         Returns: None
         """
-        self.set_task_with_loading_frame(lambda: self.scene.reload_models())
+        self.program.set_loading(True)
+
+        def then_routine():
+            self.program.set_loading(False)
+
+        self.scene.reload_models_async(then_routine)
 
     def reset_zoom_level(self) -> None:
         """

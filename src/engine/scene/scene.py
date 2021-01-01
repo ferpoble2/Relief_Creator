@@ -24,6 +24,10 @@ class Scene:
         self.__width_viewport = None
         self.__height_viewport = None
 
+        # auxiliary variables
+        # -------------------
+        self.__should_execute_then_reload = 0
+
     def initialize(self, engine: 'Engine') -> None:
         """
         Initialize the component in the engine.
@@ -71,15 +75,30 @@ class Scene:
         """
         self.__model_list = []
 
-    def reload_models(self):
+    def reload_models_async(self, then):
         """
         Ask the 2D models to reload with the new resolution of the screen.
 
         Returns: None
+
+        Args:
+            then: Function to be called after all the async routine.
         """
+
+        # set up the then routine that should executes only once.
+        # -------------------------------------------------------
+        self.__should_execute_then_reload = len(self.__model_list)
+
+        def then_routine():
+            self.__should_execute_then_reload -= 1
+
+            if self.__should_execute_then_reload == 0:
+                self.__should_execute_then_reload = len(self.__model_list)
+                then()
+
         for model in self.__model_list:
             if isinstance(model, Map2DModel):
-                model.recalculate_vertices_from_grid(quality=self.__engine.get_quality())
+                model.recalculate_vertices_from_grid_async(quality=self.__engine.get_quality(), then=then_routine)
             else:
                 raise NotImplementedError("This type of model doesnt have a method to be reloaded.")
 

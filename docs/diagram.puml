@@ -178,8 +178,8 @@ class src.engine.scene.model.Map2DModel{
     - __generate_index_list(step_x, step_y, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): list
     - __is_triangle_inside_zone(index_triangle, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): boolean
     - __delete_triangles_inside_zone(left_coordinate, right_coordinate, top_coordinate, bottom_coordinate)
-    - recalculate_vertices_from_grid(quality)
     ~ _update_uniforms()
+    + recalculate_vertices_from_grid_async(quality, then)
     + calculate_projection_matrix(scene_data, zoom_level)
     + set_color_file(filename)
     + set_vertices_from_grid_async(x,y,z,quality, then)
@@ -244,6 +244,7 @@ class src.engine.scene.Scene {
     - __engine : Engine
     - __width_viewport: int
     - __height_viewport: int
+    - __should_execute_then_reload: int
     + add_model(model)
     + draw()
     + update_viewport_variables()
@@ -251,7 +252,7 @@ class src.engine.scene.Scene {
     + initialize(engine)
     + refresh_with_model_2d(path_color_file, path_model, model_id)
     + remove_all_models()
-    + reload_models()
+    + reload_models_async(then)
     + remove_model(id_model)
     + update_models_colors()
     + set_polygon_mode(polygon_mode)
