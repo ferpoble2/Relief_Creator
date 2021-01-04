@@ -15,6 +15,7 @@ from src.utils import get_logger
 log = get_logger(module='GUIMANAGER')
 
 
+# noinspection PyMethodMayBeStatic
 class GUIManager:
     """
     Class to manage all the UI configurations and functions.
@@ -88,8 +89,20 @@ class GUIManager:
             self.__engine.fix_frames(False)
             self.__scene.update_viewport()
 
-    @staticmethod
-    def get_frames(gui_manager: 'GUIManager') -> list:
+    def set_loading_message(self, new_msg: str) -> None:
+        """
+        Set a new loading message in the loading frame.
+
+        Args:
+            new_msg: New message to show in the frame.
+
+        Returns: None
+        """
+        for frame in self.__component_list:
+            if isinstance(frame, Loading):
+                frame.set_loading_message(new_msg)
+
+    def get_frames(self, gui_manager: 'GUIManager') -> list:
         """
         Return the frame object to use in the application.
 
