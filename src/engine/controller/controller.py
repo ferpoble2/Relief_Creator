@@ -66,6 +66,11 @@ class Controller:
 
         def on_resize(window, width, height):
             log.debug(f"Windows resized to {width}x{height}")
+
+            # In case window was minimized, do nothing
+            if width == 0 and height == 0:
+                return
+
             self.__engine.change_height_window(height)
             self.__engine.change_width_window(width)
             self.__engine.update_scene_values()
