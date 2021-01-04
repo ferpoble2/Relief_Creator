@@ -205,7 +205,11 @@ class Engine:
         """
         return {
             'HEIGHT': Settings.HEIGHT,
-            'WIDTH': Settings.WIDTH
+            'WIDTH': Settings.WIDTH,
+            'MAX_WIDTH': Settings.MAX_WIDTH,
+            'MAX_HEIGHT': Settings.MAX_HEIGHT,
+            'MIN_WIDTH': Settings.MIN_WIDTH,
+            'MIN_HEIGHT': Settings.MIN_HEIGHT
         }
 
     def get_zoom_level(self) -> float:
@@ -284,6 +288,7 @@ class Engine:
             self.program.set_loading(False)
 
         self.program.set_loading(True)
+        self.set_loading_message("Please wait a moment...")
         self.scene.refresh_with_model_2d_async(path_color_file, path_model, model_id, then_routine)
 
     def reload_models(self) -> None:
@@ -293,6 +298,7 @@ class Engine:
         Returns: None
         """
         self.program.set_loading(True)
+        self.set_loading_message("Please wait a moment...")
 
         def then_routine():
             self.program.set_loading(False)
@@ -373,6 +379,17 @@ class Engine:
             {'thread': thread,
              'then_func': then}
         )
+
+    def set_loading_message(self, new_msg: str) -> None:
+        """
+        Change the loading message shown on the screen.
+
+        Args:
+            new_msg: New message to show
+
+        Returns: None
+        """
+        self.gui_manager.set_loading_message(new_msg)
 
     def update_pending_tasks(self) -> None:
         """
