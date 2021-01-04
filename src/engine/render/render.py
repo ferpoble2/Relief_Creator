@@ -53,6 +53,13 @@ class Render:
 
         glfw.make_context_current(self.__window)
 
+        window_settings = self.__engine.get_window_setting_data()
+        glfw.set_window_size_limits(self.__window,
+                                    window_settings['MIN_WIDTH'],
+                                    window_settings['MIN_HEIGHT'],
+                                    window_settings['MAX_WIDTH'],
+                                    window_settings['MAX_WIDTH'])
+
         clear_color = engine.get_clear_color()
         GL.glClearColor(
             clear_color[0],
