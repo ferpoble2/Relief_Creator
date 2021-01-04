@@ -23,17 +23,6 @@ class Loading(Frame):
         self.__loading_message = "Please wait a moment..."
         self.__windows_width, self.__windows_height = 300, 100
 
-    def set_loading_message(self, new_msg: str) -> None:
-        """
-        Set a new loading message to show in the frame.
-
-        Args:
-            new_msg: New message to show
-
-        Returns: None
-        """
-        self.__loading_message = new_msg
-
     def render(self) -> None:
         """
         Render the loading text when the program is in a loading state.
@@ -49,3 +38,14 @@ class Loading(Frame):
             if not self._GUI_manager.is_program_loading():
                 imgui.close_current_popup()
             imgui.end_popup()
+
+    def set_loading_message(self, new_msg: str) -> None:
+        """
+        Set a new loading message to show in the frame.
+
+        Args:
+            new_msg: New message to show
+
+        Returns: None
+        """
+        self.__loading_message = new_msg
