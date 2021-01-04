@@ -291,6 +291,17 @@ class GUIManager:
         """
         self.__engine.less_zoom()
 
+    def set_active_tool(self, tool: str) -> None:
+        """
+        Set the active tool on the engine.
+
+        Args:
+            tool: String representing the new tool too be active.
+
+        Returns: None
+        """
+        self.__engine.set_active_tool(tool)
+
     def change_color_file(self, path_color_file: str) -> None:
         """
         Change the color file to the one selected.

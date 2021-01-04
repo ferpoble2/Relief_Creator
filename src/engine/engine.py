@@ -391,6 +391,17 @@ class Engine:
         """
         self.gui_manager.set_loading_message(new_msg)
 
+    def set_active_tool(self, tool: str) -> None:
+        """
+        Set the active tool in the program.
+
+        Args:
+            tool: String representing the new tool.
+
+        Returns: None
+        """
+        self.program.set_active_tool(tool)
+
     def update_pending_tasks(self) -> None:
         """
         Update the pending tasks.

@@ -64,6 +64,7 @@ class src.engine.GUI.GUIManager{
     + render()
     + set_polygon_mode(polygon_mode)
     + set_loading_message(new_msg)
+    + set_active_tool(tool)
 }
 
 class src.engine.settings  {
@@ -309,6 +310,7 @@ class src.engine.Engine {
     + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
     + set_thread_task(parallel_task, then)
+    + set_active_tool(tool)
     + update_pending_tasks()
     + update_scene_values()
     + update_threads()

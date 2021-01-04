@@ -65,6 +65,7 @@ class Tools(Frame):
         if imgui.button("Move Map", width=left_frame_width - self.button_margin_width):
             log.debug("Pressed button Move Map")
             log.debug("-----------------------")
+            self._GUI_manager.set_active_tool('move_map')
 
         imgui.separator()
         imgui.text("Polygon Tools")
