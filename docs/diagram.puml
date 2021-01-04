@@ -63,25 +63,30 @@ class src.engine.GUI.GUIManager{
     + reload_models()
     + render()
     + set_polygon_mode(polygon_mode)
+    + set_loading_message(new_msg)
 }
 
 class src.engine.settings  {
-    {static} + CLEAR_COLOR : list
+    {static} + CLEAR_COLOR: list
     {static} + fix_frames(fix_frames): boolean
-    {static} + FIXEX_FRAMES : boolean
-    {static} + FLOAT_BYTES : int
-    {static} + FONT_SIZE : int
-    {static} + HEIGHT : int
-    {static} + LEFT_FRAME_WIDTH : int
-    {static} + MAIN_MENU_BAR_HEIGHT : int
-    {static} + QUALITY : int
-    {static} + SCENE_BEGIN_X : int
-    {static} + SCENE_BEGIN_Y : int
-    {static} + SCENE_WIDTH_X : int
-    {static} + SCENE_HEIGHT_Y : int
-    {static} + VIEW_MODE : str
-    {static} + TOP_FRAME_HEIGHT : int
-    {static} + WIDTH : int
+    {static} + FIXEX_FRAMES: boolean
+    {static} + FLOAT_BYTES: int
+    {static} + FONT_SIZE: int
+    {static} + HEIGHT: int
+    {static} + LEFT_FRAME_WIDTH: int
+    {static} + MAIN_MENU_BAR_HEIGHT: int
+    {static} + QUALITY: int
+    {static} + SCENE_BEGIN_X: int
+    {static} + SCENE_BEGIN_Y: int
+    {static} + SCENE_WIDTH_X: int
+    {static} + SCENE_HEIGHT_Y: int
+    {static} + VIEW_MODE: str
+    {static} + TOP_FRAME_HEIGHT: int
+    {static} + WIDTH: int
+    {static} + MIN_WIDTH: int
+    {static} + MIN_HEIGHT: int
+    {static} + MAX_WIDTH: int
+    {static} + MAX_HEIGHT: int
     {static} + update_scene_values()
 }
 
@@ -104,7 +109,6 @@ class src.engine.scene.model.transformations.transformations <<$file>> {
 
 
 class src.engine.scene.model.Model {
-
     + vao: int
     + vbo: int
     + cbo: int
@@ -223,7 +227,11 @@ class src.engine.GUI.frames.Debug {
 }
 
 class src.engine.GUI.frames.Loading {
+    - __loading_message: str
+    - __windows_width: int
+    - __windows_height: int
     + render()
+    + set_loading_message(new_msg)
 }
 
 class src.engine.GUI.frames.TestWindow {
@@ -247,16 +255,17 @@ class src.engine.scene.Scene {
     - __should_execute_then_reload: int
     + add_model(model)
     + draw()
-    + update_viewport_variables()
-    + update_models_projection_matrix()
     + initialize(engine)
     + refresh_with_model_2d(path_color_file, path_model, model_id)
-    + remove_all_models()
     + reload_models_async(then)
+    + remove_all_models()
     + remove_model(id_model)
-    + update_models_colors()
+    + set_loading_message(new_msg)
     + set_polygon_mode(polygon_mode)
+    + update_models_colors()
+    + update_models_projection_matrix()
     + update_viewport()
+    + update_viewport_variables()
 }
 
 class src.engine.Engine {
@@ -295,6 +304,7 @@ class src.engine.Engine {
     + reload_models()
     + reset_zoom_level()
     + run()
+    + set_loading_message(new_msg)
     + set_parallel_task(parallel_task, then)
     + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
