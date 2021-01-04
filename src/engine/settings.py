@@ -7,6 +7,10 @@ class Settings:
     # Screen settings
     WIDTH = 1300
     HEIGHT = 700
+    MIN_WIDTH = 800
+    MIN_HEIGHT = 600
+    MAX_WIDTH = 99999
+    MAX_HEIGHT = 99999
 
     # FRAME OPTIONS
     LEFT_FRAME_WIDTH = 300
