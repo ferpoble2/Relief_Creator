@@ -193,6 +193,17 @@ class Scene:
         for model in self.__model_list:
             model.polygon_mode = polygon_mode
 
+    def set_loading_message(self, new_msg: str) -> None:
+        """
+        Change the loading message shown in the loading frame.
+
+        Args:
+            new_msg: New message to show
+
+        Returns: None
+        """
+        self.__engine.set_loading_message(new_msg)
+
     def update_models_colors(self) -> None:
         """
         Update the colors of the models reloading the colors from the file used in the program.
