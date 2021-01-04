@@ -20,6 +20,19 @@ class Loading(Frame):
         Constructor of the class.
         """
         super().__init__(gui_manager)
+        self.__loading_message = "Please wait a moment..."
+        self.__windows_width, self.__windows_height = 300, 100
+
+    def set_loading_message(self, new_msg: str) -> None:
+        """
+        Set a new loading message to show in the frame.
+
+        Args:
+            new_msg: New message to show
+
+        Returns: None
+        """
+        self.__loading_message = new_msg
 
     def render(self) -> None:
         """
@@ -31,8 +44,8 @@ class Loading(Frame):
             imgui.open_popup("Loading")
 
         if imgui.begin_popup_modal("Loading")[0]:
-            imgui.text("Please wait a moment...")
+            imgui.set_window_size(self.__windows_width, self.__windows_height)
+            imgui.text(self.__loading_message)
             if not self._GUI_manager.is_program_loading():
                 imgui.close_current_popup()
             imgui.end_popup()
-
