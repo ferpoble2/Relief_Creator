@@ -25,6 +25,9 @@ class Controller:
         self.__scene = None
         self.__engine = None
 
+        # Auxiliary methods
+        self.__mouse_old_pos = (0, 0)
+
     def init(self, engine: 'Engine') -> None:
         """
         Initialize the Controller component.
@@ -37,6 +40,76 @@ class Controller:
         self.__render = engine.render
         self.__scene = engine.scene
         self.__engine = engine
+
+    def is_inside_scene(self, mouse_x_pos: int, mouse_y_pos: int) -> bool:
+        """
+        Check if the mouse is inside the scene or not.
+
+        Args:
+            mouse_x_pos: X position of the mouse given by glfw
+            mouse_y_pos: Y position of the mouse given by glfw
+
+        Returns: Boolean indicating if mouse is inside the scene
+        """
+        scene_data = self.__engine.get_scene_setting_data()
+        is_inside = True
+
+        # invert the mouse position given by glfw to start at the bottom of the screen
+        mouse_y_pos = self.__engine.get_window_setting_data()['HEIGHT'] - mouse_y_pos
+
+        # check if mouse is inside the scene
+        if mouse_x_pos < scene_data['SCENE_BEGIN_X'] or \
+                mouse_x_pos > scene_data['SCENE_BEGIN_X'] + scene_data['SCENE_WIDTH_X'] or \
+                mouse_y_pos < scene_data['SCENE_BEGIN_Y'] or \
+                mouse_y_pos > scene_data['SCENE_BEGIN_Y'] + scene_data['SCENE_HEIGHT_Y']:
+            is_inside = False
+
+        return is_inside
+
+    def set_mouse_pos(self, new_x: int, new_y: int) -> None:
+        """
+        Change the mouse position.
+
+        Args:
+            new_x: New x coordinate
+            new_y: New y coordinate
+
+        Returns: None
+        """
+        self.__mouse_old_pos = (new_x, new_y)
+
+    def get_cursor_position_callback(self):
+        """
+        Get the mouse movement callback function.
+
+        Returns: Function to use as callback
+        """
+
+        def cursor_position_callback(window, xpos, ypos):
+
+            # check if mouse is inside the scene
+            if self.is_inside_scene(xpos, ypos):
+
+                # check if the mouse button is pressed
+                if glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS:
+                    log.debug(f"Cursor movement: {xpos - self.__mouse_old_pos[0]}, {self.__mouse_old_pos[1] - ypos}")
+
+            self.set_mouse_pos(xpos, ypos)
+
+        return cursor_position_callback
+
+    def get_mouse_button_callback(self):
+        """
+        Get the mouse callback function to use when a mouse button is pressed.
+
+        Returns: Function to use as callback
+        """
+
+        def mouse_button_callback(window, button, action, mods):
+            if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
+                log.debug("Left mouse button pressed")
+
+        return mouse_button_callback
 
     def get_on_key_callback(self) -> Callable:
         """
