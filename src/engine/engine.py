@@ -249,6 +249,8 @@ class Engine:
         self.controller.init(engine)
         glfw.set_key_callback(self.window, self.controller.get_on_key_callback())
         glfw.set_window_size_callback(self.window, self.controller.get_resize_callback())
+        glfw.set_mouse_button_callback(self.window, self.controller.get_mouse_button_callback())
+        glfw.set_cursor_pos_callback(self.window, self.controller.get_cursor_position_callback())
 
         # SCENE CODE
         # ----------
