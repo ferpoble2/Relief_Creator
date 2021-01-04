@@ -11,6 +11,7 @@ from src.utils import get_logger
 log = get_logger(module="CONTROLLER")
 
 
+# noinspection PyMethodMayBeStatic
 class Controller:
     """
     Controller of the engine, controls all things related to the input of the program.
@@ -37,8 +38,7 @@ class Controller:
         self.__scene = engine.scene
         self.__engine = engine
 
-    @staticmethod
-    def get_on_key_callback() -> Callable:
+    def get_on_key_callback(self) -> Callable:
         """
         Get the callback function to use when a key is pressed.
 
