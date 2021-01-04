@@ -240,12 +240,17 @@ class src.engine.GUI.frames.TestWindow {
 }
 
 class src.engine.controller.Controller {
-    - __render : Render
-    - __scene : Scene
-    - __engine : Engine
+    - __render: Render
+    - __scene: Scene
+    - __engine: Engine
+    - __mouse_old_pos: tuple
     + init(render)
-    + get_on_key_callback()
-    + get_resize_callback()
+    + get_on_key_callback(): function
+    + get_resize_callback(): function
+    + get_cursor_position_callback(): function
+    + get_mouse_button_callback(): function
+    + is_inside_scene(mouse_x_pos, mouse_y_pos): boolean
+    + set_mouse_pos(new_x, new_y)
 }
 
 class src.engine.scene.Scene {
