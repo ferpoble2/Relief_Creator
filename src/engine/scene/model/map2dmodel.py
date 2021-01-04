@@ -319,6 +319,8 @@ class Map2DModel(Model):
         offset = 0
         to_delete.sort()
         for index_to_delete in to_delete:
+            self.scene.set_loading_message(f"Deleting triangle {to_delete.index(index_to_delete)} of {len(to_delete)}")
+
             self.__indices.pop(index_to_delete * 3 - offset)
             self.__indices.pop(index_to_delete * 3 - offset)
             self.__indices.pop(index_to_delete * 3 - offset)
@@ -368,6 +370,7 @@ class Map2DModel(Model):
 
             # Generate new list of triangles to add to the model
             # --------------------------------------------------
+            self.scene.set_loading_message("Generating new indices...")
             new_indices = self.__generate_index_list(step_x + quality,
                                                      step_y + quality,
                                                      self.__left_coordinate,
@@ -377,6 +380,7 @@ class Map2DModel(Model):
 
             # Delete old triangles that are in the same place as the new ones
             # ---------------------------------------------------------------
+            self.scene.set_loading_message("Deleting old polygons...")
             self.__delete_triangles_inside_zone(self.__left_coordinate,
                                                 self.__right_coordinate,
                                                 self.__top_coordinate,
@@ -394,7 +398,6 @@ class Map2DModel(Model):
             then()
 
         self.scene.set_parallel_task(parallel_tasks, then_routine)
-
 
     def calculate_projection_matrix(self, scene_data: dict, zoom_level: float = 1) -> None:
         """
@@ -532,11 +535,16 @@ class Map2DModel(Model):
 
             # Set the vertices in the buffer
             log.debug("Loading buffers")
+            self.scene.set_loading_message("Loading vertices...")
             self.__vertices = self.__generate_vertices_list(x, y, z)
+
             log.debug("Generating Indices")
+            self.scene.set_loading_message("Generating polygons...")
             scene_data = self.scene.get_scene_setting_data()
             self.__indices = self.__generate_index_list(int(len(self.__x) / scene_data['SCENE_WIDTH_X']) + quality,
                                                         int(len(self.__y) / scene_data['SCENE_HEIGHT_Y']) + quality)
+
+            self.scene.set_loading_message("Drawing model on screen...")
 
         def then_routine():
             """
