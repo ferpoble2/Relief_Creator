@@ -2,13 +2,14 @@
 File with utils functions for the engine.
 """
 import logging
+import os
 
 LOG_LEVEL = logging.DEBUG
 LOG_FILE_LEVEL = logging.DEBUG
 
 
 def get_logger(log_level: int = LOG_LEVEL, log_file_level: int = LOG_FILE_LEVEL, module: str = 'GLOBAL',
-               directory: str = "../logs/") -> logging.Logger:
+               directory: str = f'{os.getcwd()}/logs') -> logging.Logger:
     """
     Get the logger of the application to use in the main program.
     Args:
@@ -21,7 +22,7 @@ def get_logger(log_level: int = LOG_LEVEL, log_file_level: int = LOG_FILE_LEVEL,
     log.propagate = False
     log.setLevel(log_level)
 
-    fh = logging.FileHandler(f'{directory}{module}.log')
+    fh = logging.FileHandler(f'{directory}/{module}.log')
     fh.setLevel(log_file_level)
 
     ch = logging.StreamHandler()
