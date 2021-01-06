@@ -580,3 +580,22 @@ class Map2DModel(Model):
             then()
 
         self.scene.set_parallel_task(parallel_routine, then_routine)
+
+    def move(self, x_movement: int, y_movement: int) -> None:
+        """
+        Move the model view on the scene changing the projection matrix used.
+
+        Args:
+            x_movement: Movement in the x-axis
+            y_movement: Movement in the y-axis
+
+        Returns: None
+        """
+
+        width_scene = self.scene.get_scene_setting_data()['SCENE_WIDTH_X']
+        height_scene = self.scene.get_scene_setting_data()['SCENE_HEIGHT_Y']
+
+        self.position[0] += (x_movement * (self.__right_coordinate - self.__left_coordinate)) / width_scene
+        self.position[1] += (y_movement * (self.__top_coordinate - self.__bottom_coordinate)) / height_scene
+
+        self.calculate_projection_matrix(self.scene.get_scene_setting_data(), self.scene.get_zoom_level())
