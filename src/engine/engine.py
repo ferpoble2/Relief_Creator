@@ -328,6 +328,18 @@ class Engine:
 
         glfw.terminate()
 
+    def move_scene(self, x_movement: int, y_movement: int) -> None:
+        """
+        Tell the scene to move given the parameters specified.
+
+        Args:
+            x_movement: Movement in the x-axis
+            y_movement: Movement in the y-axis
+
+        Returns: None
+        """
+        self.scene.move_models(x_movement, y_movement)
+
     def set_task_for_next_frame(self, task: callable) -> None:
         """
         Add a task to do in the next frame.
