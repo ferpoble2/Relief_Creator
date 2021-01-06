@@ -92,8 +92,17 @@ class Controller:
 
                 # check if the mouse button is pressed
                 if glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS:
-                    log.debug(f"Cursor movement: {xpos - self.__mouse_old_pos[0]}, {self.__mouse_old_pos[1] - ypos}")
 
+                    # get the active tool being used in the program
+                    active_tool = self.__engine.get_active_tool()
+
+                    # if the active tool is to move a map
+                    if active_tool == 'move_map':
+                        log.debug(
+                            f"Cursor movement: {xpos - self.__mouse_old_pos[0]}, {self.__mouse_old_pos[1] - ypos}")
+                        self.__engine.move_scene(xpos - self.__mouse_old_pos[0], self.__mouse_old_pos[1] - ypos)
+
+            # update the move position at the end
             self.set_mouse_pos(xpos, ypos)
 
         return cursor_position_callback
