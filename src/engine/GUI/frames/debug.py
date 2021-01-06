@@ -20,10 +20,11 @@ class Debug(Frame):
         Constructor of the class.
         """
         super().__init__(gui_manager)
-        self.__height = 150
+        self.___width = 200
+        self.__height = 300
 
         self.change_position(
-            [self._GUI_manager.get_left_frame_width(), self._GUI_manager.get_window_height() - self.__height])
+            [self._GUI_manager.get_window_width() - self.___width, self._GUI_manager.get_window_height() - self.__height])
 
     def render(self) -> None:
         """
@@ -39,14 +40,17 @@ class Debug(Frame):
         imgui.begin('Debug')
         imgui.text(f"Zoom level: {zoom_level}")
         imgui.text(f"Map position: {position}")
+        imgui.separator()
         imgui.text(f"View mode: {view_mode}")
+        imgui.separator()
         imgui.text(f"Active tool: {active_tool}")
+        imgui.separator()
         imgui.text(f"Loading: {loading}")
 
         if self._GUI_manager.are_frame_fixed():
             self.change_position([self.get_position()[0], self._GUI_manager.get_window_height() - self.__height])
             imgui.set_window_position(self.get_position()[0], self.get_position()[1])
-            imgui.set_window_size(self._GUI_manager.get_window_width() - self._GUI_manager.get_left_frame_width(),
+            imgui.set_window_size(self.___width,
                                   self.__height,
                                   0)
 
