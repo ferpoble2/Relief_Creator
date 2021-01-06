@@ -251,3 +251,29 @@ class Scene:
         viewport_data = self.__engine.get_scene_setting_data()
         self.__width_viewport = viewport_data['SCENE_WIDTH_X']
         self.__height_viewport = viewport_data['SCENE_HEIGHT_Y']
+
+    def get_zoom_level(self) -> float:
+        """
+        Get the zoom level used by the program.
+
+        Returns:  Zoom level
+        """
+        return self.__engine.get_zoom_level()
+
+    def move_models(self, x_movement: int, y_movement: int) -> None:
+        """
+        Move the models on the scene.
+
+        Args:
+            x_movement: Movement in the x-axis
+            y_movement: Movement in the y-axis
+
+        Returns: None
+        """
+        log.debug("Moving models")
+
+        for model in self.__model_list:
+            if isinstance(model, Map2DModel):
+                model.move(x_movement, y_movement)
+            else:
+                raise NotImplementedError("Not implemented move method in this model.")
