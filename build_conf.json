@@ -1,0 +1,97 @@
+{
+ "version": "auto-py-to-exe-configuration_v1",
+ "pyinstallerOptions": [
+  {
+   "optionDest": "noconfirm",
+   "value": true
+  },
+  {
+   "optionDest": "filenames",
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/main.py"
+  },
+  {
+   "optionDest": "onefile",
+   "value": false
+  },
+  {
+   "optionDest": "console",
+   "value": true
+  },
+  {
+   "optionDest": "name",
+   "value": "ReliefeCreator"
+  },
+  {
+   "optionDest": "ascii",
+   "value": false
+  },
+  {
+   "optionDest": "clean_build",
+   "value": false
+  },
+  {
+   "optionDest": "strip",
+   "value": false
+  },
+  {
+   "optionDest": "noupx",
+   "value": false
+  },
+  {
+   "optionDest": "uac_admin",
+   "value": false
+  },
+  {
+   "optionDest": "uac_uiaccess",
+   "value": false
+  },
+  {
+   "optionDest": "win_private_assemblies",
+   "value": false
+  },
+  {
+   "optionDest": "win_no_prefer_redirects",
+   "value": false
+  },
+  {
+   "optionDest": "bootloader_ignore_signals",
+   "value": false
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/logs;logs/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/input/test_colors;input/test_colors/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/input/test_inputs;input/test_inputs/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/venv/Lib/site-packages/glfw/glfw3.dll;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/venv/Lib/site-packages/glfw/msvcr110.dll;."
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "cftime"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/engine/GUI/fonts;engine/GUI/fonts"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/engine/shaders;engine/shaders/"
+  }
+ ],
+ "nonPyinstallerOptions": {
+  "increaseRecursionLimit": true,
+  "manualArguments": ""
+ }
+}

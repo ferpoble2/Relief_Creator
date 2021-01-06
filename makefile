@@ -3,4 +3,4 @@ help:
 	@echo "build-executable: Build an executable of the project in the dist folder."
 
 build-executable:
-	pyinstaller --clean ReliefeCreator.spec
+	auto-py-to-exe

@@ -6,6 +6,7 @@ venv/
 dist/
 build/
 .idea/
+output/
 /src/logs/GUIMANAGER.log
 /src/imgui.ini
 /src/logs/LOADING_FRAME.log
