@@ -462,6 +462,11 @@ class Map2DModel(Model):
             self.__bottom_coordinate = min_y + zoom_difference_y
             self.__top_coordinate = max_y - zoom_difference_y
 
+        self.__left_coordinate -= self.position[0]
+        self.__right_coordinate -= self.position[0]
+        self.__top_coordinate -= self.position[1]
+        self.__bottom_coordinate -= self.position[1]
+
         self.__projection = ortho(self.__left_coordinate,
                                   self.__right_coordinate,
                                   self.__bottom_coordinate,
