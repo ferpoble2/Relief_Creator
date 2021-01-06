@@ -4,3 +4,14 @@ src/engine/__pycache__/
 __pycache__/
 venv/
 .idea/
+/logs/GUIMANAGER.log
+/src/imgui.ini
+/logs/LOADING_FRAME.log
+/logs/MAIN.log
+/logs/MAIN MENU BAR.log
+/logs/Map2DModel.log
+/logs/PROGRAM.log
+/logs/SAMPLE TEXT.log
+/logs/SCENE.log
+/logs/TEST WINDOW.log
+/logs/TOOLS.log
