@@ -174,18 +174,19 @@ class src.engine.scene.model.Map2DModel{
     - __bottom_coordinate : int
     + hbo : int
 
-    - __print_vertices()
-    - __print_indices()
-    - __set_height_buffer()
-    - __generate_vertices_list(x, y, z, z_value): list
-    - __get_vertex_index(x_pos, y_pos): int
-    - __get_index_closest_value(list_to_evaluate, value): int
-    - __generate_index_list(step_x, step_y, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): list
-    - __is_triangle_inside_zone(index_triangle, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): boolean
     - __delete_triangles_inside_zone(left_coordinate, right_coordinate, top_coordinate, bottom_coordinate)
+    - __generate_index_list(step_x, step_y, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): list
+    - __generate_vertices_list(x, y, z, z_value): list
+    - __get_index_closest_value(list_to_evaluate, value): int
+    - __get_vertex_index(x_pos, y_pos): int
+    - __is_triangle_inside_zone(index_triangle, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): boolean
+    - __print_indices()
+    - __print_vertices()
+    - __set_height_buffer()
     ~ _update_uniforms()
-    + recalculate_vertices_from_grid_async(quality, then)
     + calculate_projection_matrix(scene_data, zoom_level)
+    + move(x_movement, y_movement)
+    + recalculate_vertices_from_grid_async(quality, then)
     + set_color_file(filename)
     + set_vertices_from_grid_async(x,y,z,quality, then)
 
@@ -254,14 +255,11 @@ class src.engine.controller.Controller {
 }
 
 class src.engine.scene.Scene {
-    - __model_list : list
-    - __engine : Engine
-    - __width_viewport: int
-    - __height_viewport: int
-    - __should_execute_then_reload: int
     + add_model(model)
     + draw()
+    + get_zoom_level(): float
     + initialize(engine)
+    + move_models(x_movement, y_movement)
     + refresh_with_model_2d(path_color_file, path_model, model_id)
     + reload_models_async(then)
     + remove_all_models()
@@ -272,6 +270,11 @@ class src.engine.scene.Scene {
     + update_models_projection_matrix()
     + update_viewport()
     + update_viewport_variables()
+    - __engine : Engine
+    - __height_viewport: int
+    - __model_list : list
+    - __should_execute_then_reload: int
+    - __width_viewport: int
 }
 
 class src.engine.Engine {
@@ -306,16 +309,17 @@ class src.engine.Engine {
     + initialize(engine)
     + is_program_loading(): boolean
     + less_zoom()
+    + move_scene(x_movement, y_movement)
     + refresh_with_model_2d_async(path_color_file, path_model, model_id, then)
     + reload_models()
     + reset_zoom_level()
     + run()
+    + set_active_tool(tool)
     + set_loading_message(new_msg)
     + set_parallel_task(parallel_task, then)
     + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
     + set_thread_task(parallel_task, then)
-    + set_active_tool(tool)
     + update_pending_tasks()
     + update_scene_values()
     + update_threads()
