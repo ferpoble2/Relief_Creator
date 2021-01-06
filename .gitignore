@@ -15,3 +15,8 @@ venv/
 /logs/SCENE.log
 /logs/TEST WINDOW.log
 /logs/TOOLS.log
+/logs/CONTROLLER.log
+/logs/CTP.log
+/logs/DEBUG_FRAME.log
+/logs/ENGINE.log
+/logs/FRAMES.log
