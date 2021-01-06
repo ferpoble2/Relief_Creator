@@ -273,6 +273,18 @@ class Engine:
         self.program.less_zoom()
         self.scene.update_models_projection_matrix()
 
+    def move_scene(self, x_movement: int, y_movement: int) -> None:
+        """
+        Tell the scene to move given the parameters specified.
+
+        Args:
+            x_movement: Movement in the x-axis
+            y_movement: Movement in the y-axis
+
+        Returns: None
+        """
+        self.scene.move_models(x_movement, y_movement)
+
     def refresh_with_model_2d(self, path_color_file: str, path_model: str, model_id: str = 'main') -> None:
         """
         Refresh the scene creating a 2D model with the parameters given.
@@ -328,17 +340,38 @@ class Engine:
 
         glfw.terminate()
 
-    def move_scene(self, x_movement: int, y_movement: int) -> None:
+    def set_active_tool(self, tool: str) -> None:
         """
-        Tell the scene to move given the parameters specified.
+        Set the active tool in the program.
 
         Args:
-            x_movement: Movement in the x-axis
-            y_movement: Movement in the y-axis
+            tool: String representing the new tool.
 
         Returns: None
         """
-        self.scene.move_models(x_movement, y_movement)
+        self.program.set_active_tool(tool)
+
+    def set_loading_message(self, new_msg: str) -> None:
+        """
+        Change the loading message shown on the screen.
+
+        Args:
+            new_msg: New message to show
+
+        Returns: None
+        """
+        self.gui_manager.set_loading_message(new_msg)
+
+    def set_map_position(self, new_position: list) -> None:
+        """
+        Tell the program the new position of the map.
+
+        Args:
+            new_position: New position to use.
+
+        Returns: None
+        """
+        self.program.set_map_position(new_position)
 
     def set_task_for_next_frame(self, task: callable) -> None:
         """
@@ -393,28 +426,6 @@ class Engine:
             {'thread': thread,
              'then_func': then}
         )
-
-    def set_loading_message(self, new_msg: str) -> None:
-        """
-        Change the loading message shown on the screen.
-
-        Args:
-            new_msg: New message to show
-
-        Returns: None
-        """
-        self.gui_manager.set_loading_message(new_msg)
-
-    def set_active_tool(self, tool: str) -> None:
-        """
-        Set the active tool in the program.
-
-        Args:
-            tool: String representing the new tool.
-
-        Returns: None
-        """
-        self.program.set_active_tool(tool)
 
     def update_pending_tasks(self) -> None:
         """

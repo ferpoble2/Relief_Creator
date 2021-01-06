@@ -598,4 +598,8 @@ class Map2DModel(Model):
         self.position[0] += (x_movement * (self.__right_coordinate - self.__left_coordinate)) / width_scene
         self.position[1] += (y_movement * (self.__top_coordinate - self.__bottom_coordinate)) / height_scene
 
+        # tell the program our new position
+        self.scene.set_map_position(self.position)
+
+        # recalculate projection matrix
         self.calculate_projection_matrix(self.scene.get_scene_setting_data(), self.scene.get_zoom_level())

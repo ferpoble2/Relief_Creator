@@ -277,3 +277,14 @@ class Scene:
                 model.move(x_movement, y_movement)
             else:
                 raise NotImplementedError("Not implemented move method in this model.")
+
+    def set_map_position(self, new_position: list)->None:
+        """
+        Tell the engine the new position of the map.
+
+        Args:
+            new_position: New position to use.
+
+        Returns: None
+        """
+        self.__engine.set_map_position(new_position)
