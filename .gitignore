@@ -3,20 +3,22 @@ env/
 src/engine/__pycache__/
 __pycache__/
 venv/
+dist/
+build/
 .idea/
-/logs/GUIMANAGER.log
+/src/logs/GUIMANAGER.log
 /src/imgui.ini
-/logs/LOADING_FRAME.log
-/logs/MAIN.log
-/logs/MAIN MENU BAR.log
-/logs/Map2DModel.log
-/logs/PROGRAM.log
-/logs/SAMPLE TEXT.log
-/logs/SCENE.log
-/logs/TEST WINDOW.log
-/logs/TOOLS.log
-/logs/CONTROLLER.log
-/logs/CTP.log
-/logs/DEBUG_FRAME.log
-/logs/ENGINE.log
-/logs/FRAMES.log
+/src/logs/LOADING_FRAME.log
+/src/logs/MAIN.log
+/src/logs/MAIN MENU BAR.log
+/src/logs/Map2DModel.log
+/src/logs/PROGRAM.log
+/src/logs/SAMPLE TEXT.log
+/src/logs/SCENE.log
+/src/logs/TEST WINDOW.log
+/src/logs/TOOLS.log
+/src/logs/CONTROLLER.log
+/src/logs/CTP.log
+/src/logs/DEBUG_FRAME.log
+/src/logs/ENGINE.log
+/src/logs/FRAMES.log
