@@ -212,6 +212,23 @@ class Engine:
             'MIN_HEIGHT': Settings.MIN_HEIGHT
         }
 
+    def optimize_gpu_memory(self) -> None:
+        """
+        Call the scene to optimize the GPU memory.
+
+        Make an asyncronic call, setting the loading screen.
+
+        Returns: None
+        """
+        log.debug("Optimizing gpu memory")
+        self.program.set_loading(True)
+        self.set_loading_message("Deleting triangles from the memory")
+
+        def then_routine():
+            self.program.set_loading(False)
+
+        self.scene.optimize_gpu_memory_async(then_routine)
+
     def get_zoom_level(self) -> float:
         """
         Get the zoom level currently being used in the program.

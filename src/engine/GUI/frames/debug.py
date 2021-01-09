@@ -3,6 +3,8 @@ Sample frame for the application GUI.
 """
 
 import imgui
+import psutil
+import os
 
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
@@ -24,7 +26,8 @@ class Debug(Frame):
         self.__height = 300
 
         self.change_position(
-            [self._GUI_manager.get_window_width() - self.___width, self._GUI_manager.get_window_height() - self.__height])
+            [self._GUI_manager.get_window_width() - self.___width,
+             self._GUI_manager.get_window_height() - self.__height])
 
     def render(self) -> None:
         """
@@ -36,6 +39,8 @@ class Debug(Frame):
         view_mode = self._GUI_manager.get_view_mode()
         active_tool = self._GUI_manager.get_active_tool()
         loading = self._GUI_manager.is_program_loading()
+        memory_usage_mb = (psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
+        # cpu_percent = psutil.cpu_percent()
 
         imgui.begin('Debug')
         imgui.text(f"Zoom level: {zoom_level}")
@@ -46,6 +51,9 @@ class Debug(Frame):
         imgui.text(f"Active tool: {active_tool}")
         imgui.separator()
         imgui.text(f"Loading: {loading}")
+        imgui.separator()
+        imgui.text(f"RAM used: {memory_usage_mb} MB")
+        # imgui.text(f"CPU usage: {cpu_percent} %")  # This value change a lot in short time (dont give useful infromation)
 
         if self._GUI_manager.are_frame_fixed():
             self.change_position([self.get_position()[0], self._GUI_manager.get_window_height() - self.__height])

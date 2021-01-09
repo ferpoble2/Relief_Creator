@@ -62,6 +62,10 @@ class Map2DModel(Model):
         self.__top_coordinate = None
         self.__bottom_coordinate = None
 
+        # utilities variables
+        self.__triangles_to_delete = []  # triangles overlapped to delete when optimizing memory
+        self.__new_indices = None  # new indices of triangles calculated using parallelism
+
     def __print_vertices(self) -> None:
         """
         Print the vertices of the model.
@@ -261,7 +265,7 @@ class Map2DModel(Model):
         Checks if a triangle is contained inside a certain zone given their indices.
 
         Args:
-            index_triangle: Indices of the vertices of the triangle
+            index_triangle: Indices of the vertices of the triangle. List of 3 elements.
             left_coordinate: Left coordinate to check
             right_coordinate: Right coordinate to check
             top_coordinate: Top coordinate to check
@@ -284,11 +288,11 @@ class Map2DModel(Model):
         # ---------------------------------
         return True
 
-    def __delete_triangles_inside_zone(self,
-                                       left_coordinate: float,
-                                       right_coordinate: float,
-                                       top_coordinate: float,
-                                       bottom_coordinate: float) -> None:
+    def __add_triangles_inside_zone_to_delete_list(self,
+                                                   left_coordinate: float,
+                                                   right_coordinate: float,
+                                                   top_coordinate: float,
+                                                   bottom_coordinate: float) -> None:
         """
         Delete all the indices of the the triangles that are inside the zone from the
         list of indices.
@@ -308,24 +312,15 @@ class Map2DModel(Model):
         # Get the triangles to delete
         # ---------------------------
         for index in range(len(index_array)):
-            point = index_array[index]
-            if self.__is_triangle_inside_zone(point, left_coordinate, right_coordinate, top_coordinate,
+            triangle = index_array[index]
+            if self.__is_triangle_inside_zone(triangle, left_coordinate, right_coordinate, top_coordinate,
                                               bottom_coordinate):
                 to_delete.append(index)
-        log.debug(f"Triangles to delete: {len(to_delete)}")
+        log.debug(f"Triangles to delete added: {len(to_delete)}")
 
-        # Delete the triangles
-        # --------------------
-        offset = 0
-        to_delete.sort()
-        for index_to_delete in to_delete:
-            self.scene.set_loading_message(f"Deleting triangle {to_delete.index(index_to_delete)} of {len(to_delete)}")
-
-            self.__indices.pop(index_to_delete * 3 - offset)
-            self.__indices.pop(index_to_delete * 3 - offset)
-            self.__indices.pop(index_to_delete * 3 - offset)
-
-            offset += 3
+        # Add triangles to delete to the list of the model
+        # ------------------------------------------------
+        self.__triangles_to_delete += to_delete
 
     def recalculate_vertices_from_grid_async(self, quality: int = 2, then=lambda: None) -> None:
         """
@@ -340,11 +335,9 @@ class Map2DModel(Model):
             then: Routine to execute after the parallel tasks.
             quality: quality of the rendering process.
         """
-        new_indices = None
+        self.__new_indices = None
 
         def parallel_tasks():
-            global new_indices
-
             log.debug("Coordinates actually showing on the screen:")
             log.debug(f"left: {self.__left_coordinate}")
             log.debug(f"right: {self.__right_coordinate}")
@@ -371,27 +364,25 @@ class Map2DModel(Model):
             # Generate new list of triangles to add to the model
             # --------------------------------------------------
             self.scene.set_loading_message("Generating new indices...")
-            new_indices = self.__generate_index_list(step_x + quality,
-                                                     step_y + quality,
-                                                     self.__left_coordinate,
-                                                     self.__right_coordinate,
-                                                     self.__top_coordinate,
-                                                     self.__bottom_coordinate)
+            self.__new_indices = self.__generate_index_list(step_x + quality,
+                                                            step_y + quality,
+                                                            self.__left_coordinate,
+                                                            self.__right_coordinate,
+                                                            self.__top_coordinate,
+                                                            self.__bottom_coordinate)
 
             # Delete old triangles that are in the same place as the new ones
             # ---------------------------------------------------------------
-            self.scene.set_loading_message("Deleting old polygons...")
-            self.__delete_triangles_inside_zone(self.__left_coordinate,
-                                                self.__right_coordinate,
-                                                self.__top_coordinate,
-                                                self.__bottom_coordinate)
+            self.scene.set_loading_message("Recalculating triangles...")
+            self.__add_triangles_inside_zone_to_delete_list(self.__left_coordinate,
+                                                            self.__right_coordinate,
+                                                            self.__top_coordinate,
+                                                            self.__bottom_coordinate)
 
         def then_routine():
-            global new_indices
-
             # Set the new indices
             # -------------------
-            self.__indices += new_indices
+            self.__indices += self.__new_indices
             self.set_indices(np.array(self.__indices, dtype=np.uint32))
 
             # call the then routine
@@ -603,3 +594,48 @@ class Map2DModel(Model):
 
         # recalculate projection matrix
         self.calculate_projection_matrix(self.scene.get_scene_setting_data(), self.scene.get_zoom_level())
+
+    def optimize_gpu_memory_async(self, then: callable) -> None:
+        """
+        Optimize the memory allocated in the GPU deleting the triangles stored in the
+        list self.__triangles_to_delete.
+
+        The triangles on the list are the ones that are bellow another triangle rendered after them (this is,
+        the triangles that overlap with other triangles rendered over them).
+
+        Args:
+            then: Routine to execute after the deleting.
+
+        Returns: None
+        """
+        log.debug("Optimizing gpu memory of the model deleting triangles")
+
+        def parallel_routine():
+            # Delete the triangles from the list
+            log.debug("Deleting repeated triangles")
+            self.__triangles_to_delete = list(set(self.__triangles_to_delete))
+
+            log.debug("Generating list of indices")
+            indices_to_delete = []
+            for index_to_delete in self.__triangles_to_delete:
+                indices_to_delete.append(index_to_delete * 3)
+                indices_to_delete.append(index_to_delete * 3 + 1)
+                indices_to_delete.append(index_to_delete * 3 + 2)
+
+            log.debug("Generating mask for the indices")
+            mask = np.ones(len(self.__indices), dtype=bool)
+            mask[indices_to_delete] = False
+
+            log.debug("Applying mask to the indices")
+            arr_indices = np.array(self.__indices)
+            new_indices = arr_indices[mask]
+            self.__indices = list(new_indices)
+
+            self.__triangles_to_delete = []
+
+        def then_routine():
+            # Set the new vertices on the engine
+            self.set_indices(np.array(self.__indices, dtype=np.uint32))
+            then()
+
+        self.scene.set_parallel_task(parallel_task=parallel_routine, then=then_routine)

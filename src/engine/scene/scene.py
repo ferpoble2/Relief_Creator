@@ -27,6 +27,7 @@ class Scene:
         # auxiliary variables
         # -------------------
         self.__should_execute_then_reload = 0
+        self.__should_execute_then_optimize_gpu_memory = 0
 
     def add_model(self, model: Model) -> None:
         """
@@ -137,6 +138,7 @@ class Scene:
 
         def then_routine():
             self.__should_execute_then_reload -= 1
+            self.__should_execute_then_reload = max(self.__should_execute_then_reload, 0)
 
             if self.__should_execute_then_reload == 0:
                 self.__should_execute_then_reload = len(self.__model_list)
@@ -147,6 +149,10 @@ class Scene:
                 model.recalculate_vertices_from_grid_async(quality=self.__engine.get_quality(), then=then_routine)
             else:
                 raise NotImplementedError("This type of model doesnt have a method to be reloaded.")
+
+        # if there is no models, call the then routine doing nothing
+        if len(self.__model_list) == 0:
+            then()
 
     def remove_all_models(self) -> None:
         """
@@ -278,7 +284,7 @@ class Scene:
             else:
                 raise NotImplementedError("Not implemented move method in this model.")
 
-    def set_map_position(self, new_position: list)->None:
+    def set_map_position(self, new_position: list) -> None:
         """
         Tell the engine the new position of the map.
 
@@ -288,3 +294,33 @@ class Scene:
         Returns: None
         """
         self.__engine.set_map_position(new_position)
+
+    def optimize_gpu_memory_async(self, then: callable) -> None:
+        """
+        Optimize the gpu memory of the models.
+
+        Args:
+            then: Routine executed after the parallel routine.
+
+        Returns: None
+        """
+        log.debug("Optimizing gpu memory of models")
+        self.__should_execute_then_optimize_gpu_memory = len(self.__model_list)
+
+        def then_routine():
+            self.__should_execute_then_optimize_gpu_memory -= 1
+            self.__should_execute_then_optimize_gpu_memory = max(0, self.__should_execute_then_optimize_gpu_memory)
+
+            if self.__should_execute_then_optimize_gpu_memory == 0:
+                self.__should_execute_then_optimize_gpu_memory = len(self.__model_list)
+                then()
+
+        for model in self.__model_list:
+            if isinstance(model, Map2DModel):
+                model.optimize_gpu_memory_async(then_routine)
+            else:
+                raise NotImplementedError("Method optimize GPU memory not implemented in this model.")
+
+        # if there is no models, call the then routine doing nothing
+        if len(self.__model_list) == 0:
+            then()

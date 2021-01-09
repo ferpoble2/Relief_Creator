@@ -75,6 +75,10 @@ class Tools(Frame):
 
         imgui.separator()
         imgui.text("Other tools")
+        if imgui.button("Optimize GPU memory", width=left_frame_width - self.button_margin_width):
+            log.debug("Optimize GPU memory button pressed")
+            self._GUI_manager.optimize_gpu_memory()
+
         if imgui.button("Modal Pop-Up Menu", width=left_frame_width - self.button_margin_width):
             imgui.open_popup("select-popup")
 

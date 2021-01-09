@@ -253,6 +253,14 @@ class GUIManager:
         self.__scene = engine.scene
         self.__engine = engine
 
+    def optimize_gpu_memory(self) -> None:
+        """
+        Calls the engine to optimize the memory on the GPU
+
+        Returns: None
+        """
+        self.__engine.optimize_gpu_memory()
+
     def process_input(self) -> None:
         """
         Process the input (events) that happened in the GUI.

@@ -58,13 +58,14 @@ class src.engine.GUI.GUIManager{
     + initialize(window, mode)
     + is_program_loading(): boolean
     + less_zoom()
+    + optimize_gpu_memory()
     + process_input()
     + refresh_scene_with_model_2d(path_color_file, path_model, model_id)
     + reload_models()
     + render()
-    + set_polygon_mode(polygon_mode)
-    + set_loading_message(new_msg)
     + set_active_tool(tool)
+    + set_loading_message(new_msg)
+    + set_polygon_mode(polygon_mode)
 }
 
 class src.engine.settings  {
@@ -156,25 +157,33 @@ class src.utils <<$file>>{
 }
 
 class src.engine.scene.model.Map2DModel{
-    - __x : array
-    - __y : array
-    - __z : array
-    - __color_file : str
-    - __colors : array
-    - __height_limit : array
-    - __vertices : list
-    - __indices : list
-    - __height : list
-    - __max_height : float
-    - __min_height : float
-    - __projection : list
-    - __left_coordinate : int
-    - __right_coordinate : int
-    - __top_coordinate : int
-    - __bottom_coordinate : int
+    - __x: array
+    - __y: array
+    - __z: array
+    - __color_file: str
+    - __colors: array
+    - __height_limit: array
+    - __vertices: list
+    - __indices: list
+    - __height: list
+    - __max_height: float
+    - __min_height: float
+    - __projection: list
+    - __left_coordinate: int
+    - __right_coordinate: int
+    - __top_coordinate: int
+    - __bottom_coordinate: int
+    - __triangles_to_delete: list
+    - __new_indices: list
     + hbo : int
 
-    - __delete_triangles_inside_zone(left_coordinate, right_coordinate, top_coordinate, bottom_coordinate)
+    + calculate_projection_matrix(scene_data, zoom_level)
+    + move(x_movement, y_movement)
+    + optimize_gpu_memory_async(then)
+    + recalculate_vertices_from_grid_async(quality, then)
+    + set_color_file(filename)
+    + set_vertices_from_grid_async(x,y,z,quality, then)
+    - __add_triangles_inside_zone_to_delete_list(left_coordinate, right_coordinate, top_coordinate, bottom_coordinate)
     - __generate_index_list(step_x, step_y, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): list
     - __generate_vertices_list(x, y, z, z_value): list
     - __get_index_closest_value(list_to_evaluate, value): int
@@ -184,11 +193,6 @@ class src.engine.scene.model.Map2DModel{
     - __print_vertices()
     - __set_height_buffer()
     ~ _update_uniforms()
-    + calculate_projection_matrix(scene_data, zoom_level)
-    + move(x_movement, y_movement)
-    + recalculate_vertices_from_grid_async(quality, then)
-    + set_color_file(filename)
-    + set_vertices_from_grid_async(x,y,z,quality, then)
 
 }
 
@@ -260,6 +264,7 @@ class src.engine.scene.Scene {
     + get_zoom_level(): float
     + initialize(engine)
     + move_models(x_movement, y_movement)
+    + optimize_gpu_memory_async(then)
     + refresh_with_model_2d(path_color_file, path_model, model_id)
     + reload_models_async(then)
     + remove_all_models()
@@ -274,6 +279,7 @@ class src.engine.scene.Scene {
     - __engine : Engine
     - __height_viewport: int
     - __model_list : list
+    - __should_execute_then_optimize_gpu_memory: int
     - __should_execute_then_reload: int
     - __width_viewport: int
 }
@@ -311,6 +317,7 @@ class src.engine.Engine {
     + is_program_loading(): boolean
     + less_zoom()
     + move_scene(x_movement, y_movement)
+    + optimize_gpu_memory()
     + refresh_with_model_2d_async(path_color_file, path_model, model_id, then)
     + reload_models()
     + reset_zoom_level()
