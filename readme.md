@@ -34,7 +34,7 @@ settings tab one can import a configuration file, there is where the file `build
 
 After that just press the button at the end of the GUI application to generate the program.
 
-THe program is located in the `output` folder under the name of ReliefeCreator.
+The program is located in the `output` folder under the name of ReliefeCreator.
 
 
 # About the parallel task on the engine
