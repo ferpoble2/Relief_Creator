@@ -325,7 +325,6 @@ class src.engine.Engine {
     + set_active_tool(tool)
     + set_loading_message(new_msg)
     + set_map_position(new_position)
-    + set_parallel_task(parallel_task, then)
     + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
     + set_thread_task(parallel_task, then)
