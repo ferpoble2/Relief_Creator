@@ -80,17 +80,8 @@ class Tools(Frame):
             self._GUI_manager.optimize_gpu_memory()
 
         if imgui.button("Modal Pop-Up Menu", width=left_frame_width - self.button_margin_width):
-            imgui.open_popup("select-popup")
+            self._GUI_manager.set_modal_text("This is a modal", "A very good modal")
 
-        imgui.same_line()
-
-        if imgui.begin_popup_modal("select-popup")[0]:
-            imgui.text("Select an option:")
-            imgui.separator()
-            imgui.selectable("One")
-            imgui.selectable("Two")
-            imgui.selectable("Three")
-            imgui.end_popup()
 
         if self._GUI_manager.are_frame_fixed():
             imgui.set_window_position(self.get_position()[0], self.get_position()[1])

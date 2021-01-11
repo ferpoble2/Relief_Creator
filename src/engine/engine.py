@@ -320,7 +320,17 @@ class Engine:
 
         self.program.set_loading(True)
         self.set_loading_message("Please wait a moment...")
-        self.scene.refresh_with_model_2d_async(path_color_file, path_model, model_id, then_routine)
+
+        try:
+            self.scene.refresh_with_model_2d_async(path_color_file, path_model, model_id, then_routine)
+
+        except OSError:
+            self.program.set_loading(False)
+            raise OSError
+
+        except KeyError:
+            self.program.set_loading(False)
+            raise KeyError
 
     def reload_models(self) -> None:
         """
@@ -422,6 +432,26 @@ class Engine:
             self.program.set_loading(False)
 
         self.set_task_for_next_frame(task_loading)
+
+    def load_netcdf_file_with_dialog(self) -> None:
+        """
+        Open a dialog to load a new netcdf model into the program.
+
+        Returns: None
+        """
+        self.program.load_netcdf_file_with_dialog()
+
+    def set_modal_text(self, title_modal, msg) -> None:
+        """
+        Set a modal in the program.
+
+        Args:
+            title_modal: title of the modal
+            msg: message to show in the modal
+
+        Returns: None
+        """
+        self.gui_manager.set_modal_text(title_modal, msg)
 
     def set_thread_task(self, parallel_task, then) -> None:
         """

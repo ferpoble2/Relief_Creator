@@ -23,3 +23,4 @@ output/
 /src/logs/DEBUG_FRAME.log
 /src/logs/ENGINE.log
 /src/logs/FRAMES.log
+/src/logs/TEXT_MODAL.log

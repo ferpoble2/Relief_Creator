@@ -24,7 +24,6 @@ class MainMenuBar(Frame):
             gui_manager: GuiManager of the application.
         """
         super().__init__(gui_manager)
-        self.error_file = False
 
     def render(self) -> None:
         """
@@ -37,24 +36,17 @@ class MainMenuBar(Frame):
             if imgui.begin_menu('File', True):
                 imgui.menu_item('Open NetCDF file...', 'Ctrl+O', False, True)
                 if imgui.is_item_clicked():
-                    log.info("Open File Dialog")
-                    path_model = easygui.fileopenbox('Select NETCDF file...')
-                    path_color_file = self._GUI_manager.get_cpt_file()
+                    try:
+                        self._GUI_manager.load_netcdf_file_with_dialog()
 
-                    log.debug(f"path_model: {path_model}")
-                    log.debug(f"path_color_File: {path_color_file}")
+                    except KeyError:
+                        log.debug("Error reading files, KeyError")
+                        self._GUI_manager.set_modal_text("Error", "Error reading the selected files (KeyError)")
 
-                    if path_model is not None and path_color_file is not None:
-                        try:
-                            self._GUI_manager.refresh_scene_with_model_2d(path_color_file, path_model)
+                    except OSError:
+                        log.debug("Error reading files, OSError")
+                        self._GUI_manager.set_modal_text("Error", "Error reading the selected files (OSError)")
 
-                        except KeyError:
-                            log.debug("Error reading files or creating models, KEYError")
-                            self.error_file = True
-
-                        except OSError:
-                            log.debug("Error reading files, OSError")
-                            self.error_file = True
 
                 imgui.menu_item('Change CPT file...', 'Ctrl+T', False, True)
                 if imgui.is_item_clicked():
@@ -114,16 +106,3 @@ class MainMenuBar(Frame):
                 imgui.end_menu()
 
             imgui.end_main_menu_bar()
-
-            # Pop-ups windows
-            # ---------------
-            if self.error_file:
-                log.debug("Showing error pop up from reading file.")
-                imgui.open_popup("Input Error")
-                self.error_file = False
-
-            if imgui.begin_popup_modal("Input Error")[0]:
-                imgui.text("Error reading the selected files.")
-                if imgui.button("Accept"):
-                    imgui.close_current_popup()
-                imgui.end_popup()

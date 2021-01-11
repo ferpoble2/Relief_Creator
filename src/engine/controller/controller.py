@@ -27,6 +27,8 @@ class Controller:
 
         # Auxiliary methods
         self.__mouse_old_pos = (0, 0)
+        self.__is_left_ctrl_pressed = False
+        self.__is_left_alt_pressed = False
 
     def init(self, engine: 'Engine') -> None:
         """
@@ -129,14 +131,45 @@ class Controller:
 
         # define the on_key callback
         def on_key(window, key, scancode, action, mods):
-            if action != glfw.PRESS:
-                return
 
-            if key == glfw.KEY_SPACE:
-                log.debug("Pressing Space")
+            # Check what to do if a key is pressed
+            if action == glfw.PRESS:
 
-            elif key == glfw.KEY_ESCAPE:
-                sys.exit()
+                # Do the logic
+                if key == glfw.KEY_LEFT_CONTROL:
+                    log.debug("Left control pressed")
+                    self.__is_left_ctrl_pressed = True
+
+                if key == glfw.KEY_LEFT_ALT:
+                    log.debug("Left alt pressed")
+                    self.__is_left_alt_pressed = True
+
+                # Shortcuts of the platform
+                # -------------------------
+                if key == glfw.KEY_O and self.__is_left_ctrl_pressed:
+                    log.debug("Shortcut open file")
+                    try:
+                        self.__engine.load_netcdf_file_with_dialog()
+
+                    except KeyError:
+                        log.debug("Error reading files, KeyError")
+                        self.__engine.set_modal_text("Error", "Error reading the selected files (KeyError)")
+
+                    except OSError:
+                        log.debug("Error reading files, OSError")
+                        self.__engine.set_modal_text("Error", "Error reading the selected files (OSError)")
+
+            # Check for keys released
+            if action == glfw.RELEASE:
+
+                # Do the logic
+                if key == glfw.KEY_LEFT_CONTROL:
+                    log.debug("Left control released")
+                    self.__is_left_ctrl_pressed = False
+
+                if key == glfw.KEY_LEFT_ALT:
+                    log.debug("Left alt released")
+                    self.__is_left_alt_pressed = False
 
         return on_key
 

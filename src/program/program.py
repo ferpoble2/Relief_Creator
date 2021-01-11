@@ -3,6 +3,7 @@ File that contains the main class of the program.
 """
 
 import os
+import easygui
 from src.utils import get_logger
 
 log = get_logger(module='PROGRAM')
@@ -156,6 +157,22 @@ class Program:
         else:
             self.__zoom_level /= 2
         log.debug(f"zoom level: {self.__zoom_level}")
+
+    def load_netcdf_file_with_dialog(self) -> None:
+        """
+        Open a dialog to load a new netcdf model into the program.
+
+        Returns: None
+        """
+        log.info("Open File Dialog")
+        path_model = easygui.fileopenbox('Select NETCDF file...')
+        path_color_file = self.get_cpt_file()
+
+        log.debug(f"path_model: {path_model}")
+        log.debug(f"path_color_File: {path_color_file}")
+
+        if path_model is not None and path_color_file is not None:
+            self.__engine.refresh_with_model_2d(path_color_file, path_model)
 
     def get_zoom_level(self) -> float:
         """

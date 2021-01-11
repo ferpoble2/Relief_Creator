@@ -58,6 +58,7 @@ class src.engine.GUI.GUIManager{
     + initialize(window, mode)
     + is_program_loading(): boolean
     + less_zoom()
+    + load_netcdf_file_with_dialog()
     + optimize_gpu_memory()
     + process_input()
     + refresh_scene_with_model_2d(path_color_file, path_model, model_id)
@@ -65,6 +66,7 @@ class src.engine.GUI.GUIManager{
     + render()
     + set_active_tool(tool)
     + set_loading_message(new_msg)
+    + set_modal_text(modal_title, msg)
     + set_polygon_mode(polygon_mode)
 }
 
@@ -240,6 +242,19 @@ class src.engine.GUI.frames.Loading {
     + set_loading_message(new_msg)
 }
 
+class src.engine.GUI.frames.TextModal {
+    - __windows_width: int
+    - __windows_height: int
+    - __margin_button: int
+    - __button_height: int
+    - __should_show: boolean
+    - __modal_title: str
+    - __msg: str
+
+    + render()
+    + set_modal_text(modal_title, msg)
+}
+
 class src.engine.GUI.frames.TestWindow {
     + render()
 }
@@ -249,6 +264,8 @@ class src.engine.controller.Controller {
     - __scene: Scene
     - __engine: Engine
     - __mouse_old_pos: tuple
+    - __is_left_ctrl_pressed: boolean
+    - __is_left_alt_pressed: boolean
     + init(render)
     + get_on_key_callback(): function
     + get_resize_callback(): function
@@ -316,6 +333,7 @@ class src.engine.Engine {
     + initialize(engine)
     + is_program_loading(): boolean
     + less_zoom()
+    + load_netcdf_file_with_dialog()
     + move_scene(x_movement, y_movement)
     + optimize_gpu_memory()
     + refresh_with_model_2d_async(path_color_file, path_model, model_id, then)
@@ -325,6 +343,7 @@ class src.engine.Engine {
     + set_active_tool(tool)
     + set_loading_message(new_msg)
     + set_map_position(new_position)
+    + set_modal_text(title_modal, msg)
     + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
     + set_thread_task(parallel_task, then)
@@ -351,6 +370,7 @@ class src.program.Program {
     + initialize(program)
     + is_loading(): boolean
     + less_zoom()
+    + load_netcdf_file_with_dialog()
     + reset_zoom_level()
     + run()
     + set_active_tool(new_tool)
@@ -368,6 +388,7 @@ src.engine.GUI.frames.Tools -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.TestWindow -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Debug -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Loading -u-|> src.engine.GUI.frames.Frame
+src.engine.GUI.frames.TextModal -u-|> src.engine.GUI.frames.Frame
 
 ' uses
 src.engine.scene.model.Map2DModel -u.> src.engine.data.decimation

@@ -9,6 +9,7 @@ from src.engine.GUI.frames.main_menu_bar import MainMenuBar
 from src.engine.GUI.frames.tools import Tools
 from src.engine.GUI.frames.debug import Debug
 from src.engine.GUI.frames.loading import Loading
+from src.engine.GUI.frames.text_modal import TextModal
 from src.engine.GUI.frames.test_window import TestWindow
 from src.utils import get_logger
 
@@ -114,10 +115,30 @@ class GUIManager:
         return [
             MainMenuBar(gui_manager),
             # TestWindow(gui_manager),
+            TextModal(gui_manager),
             Tools(gui_manager),
             Debug(gui_manager),
-            Loading(gui_manager)
+            Loading(gui_manager),
         ]
+
+    def set_modal_text(self, modal_title: str, msg: str) -> None:
+        """
+        Set the text of the modal frame and set it to show in the next frame.
+
+        Returns: None
+
+        Args:
+            modal_title:  title to use in the modal
+            msg: message to show in the modal
+        """
+        log.debug("Setting modal text")
+
+        def task_next_frame():
+            for frame in self.__component_list:
+                if isinstance(frame, TextModal):
+                    frame.set_modal_text(modal_title, msg)
+
+        self.__engine.set_task_for_next_frame(task_next_frame)
 
     def is_program_loading(self) -> bool:
         """
@@ -298,6 +319,14 @@ class GUIManager:
         Returns: None
         """
         self.__engine.less_zoom()
+
+    def load_netcdf_file_with_dialog(self):
+        """
+        Call for the engine to open a dialog text to load a new netcdf file.
+
+        Returns: None
+        """
+        self.__engine.load_netcdf_file_with_dialog()
 
     def set_active_tool(self, tool: str) -> None:
         """

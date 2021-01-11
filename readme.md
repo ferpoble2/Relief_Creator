@@ -11,6 +11,16 @@ in the screen.
 It is developed with the goal of making easier to modify the height of maps, without the necessity of using software or
 tools not developed for that purpose.
 
+# Usage
+
+## How to use the platform
+
+### Shortcuts
+
+This is a list of shortcuts implemented in the program to make the usage of it more fast.
+
+- CTRL + O: Load a netcdf file on the program.
+
 # Instructions for developers
 
 To install the dependencies of the program run the following command in the root folder of the project:
@@ -36,6 +46,11 @@ After that just press the button at the end of the GUI application to generate t
 
 The program is located in the `output` folder under the name of ReliefeCreator.
 
+# Tools
+
+There is a number of tools that form part of the engine, they are stored as strings by the program class. Here is the list of all tools of the program:
+
+- move_map: Tool that is active when moving the 2D map on the engine.
 
 # About the parallel task on the engine
 
