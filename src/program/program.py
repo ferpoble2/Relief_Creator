@@ -123,6 +123,9 @@ class Program:
         Returns: None
 
         """
+        if new_file[-4:].lower() != ".cpt":
+            raise IOError("File is not a cpt file.")
+
         self.__CPT_file = new_file
 
     def reset_zoom_level(self) -> None:
@@ -173,6 +176,18 @@ class Program:
 
         if path_model is not None and path_color_file is not None:
             self.__engine.refresh_with_model_2d(path_color_file, path_model)
+
+    def change_cpt_file_with_dialog(self) -> None:
+        """
+        Change the CPT file, opening a dialog to select the file to use.
+
+        Returns: None
+        """
+        path_color_file = easygui.fileopenbox('Select CPT file...')
+        log.debug(f"path_color_file: {path_color_file}")
+
+        self.set_cpt_file(path_color_file)
+        self.__engine.update_scene_models_colors()
 
     def get_zoom_level(self) -> float:
         """

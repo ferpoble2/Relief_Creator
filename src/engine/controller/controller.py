@@ -122,6 +122,48 @@ class Controller:
 
         return mouse_button_callback
 
+    def change_color_file_with_dialog(self) -> None:
+        """
+        Change the color file opening a dialog to select the file.
+
+        Returns: None
+        """
+        try:
+            self.__engine.change_color_file_with_dialog()
+
+        except KeyError as e:
+            log.exception(f"Error reading files: {e}")
+            self.__engine.set_modal_text("Error", "Error reading color file (KeyError)")
+
+        except IOError as e:
+            log.exception(f"Error reading files: {e}")
+            self.__engine.set_modal_text("Error", "Error reading color file (IOError)")
+
+        except TypeError as e:
+            log.exception(f"Error reading files: {e}")
+            self.__engine.set_modal_text("Error", "Error reading color file (TypeError)")
+
+        except OSError as e:
+            log.exception(f"Error reading files: {e}")
+            self.__engine.set_modal_text("Error", "Error reading color file (OSError)")
+
+    def load_netcdf_file_with_dialog(self) -> None:
+        """
+        Load a netcdf file opening a dialog to select the file.
+
+        Returns: None
+        """
+        try:
+            self.__engine.load_netcdf_file_with_dialog()
+
+        except KeyError as e:
+            log.exception(f"Error reading files, {e}")
+            self.__engine.set_modal_text("Error", "Error reading the selected files (KeyError)")
+
+        except OSError as e:
+            log.exception(f"Error reading files,{e}")
+            self.__engine.set_modal_text("Error", "Error reading the selected files (OSError)")
+
     def get_on_key_callback(self) -> Callable:
         """
         Get the callback function to use when a key is pressed.
@@ -148,16 +190,11 @@ class Controller:
                 # -------------------------
                 if key == glfw.KEY_O and self.__is_left_ctrl_pressed:
                     log.debug("Shortcut open file")
-                    try:
-                        self.__engine.load_netcdf_file_with_dialog()
+                    self.load_netcdf_file_with_dialog()
 
-                    except KeyError:
-                        log.debug("Error reading files, KeyError")
-                        self.__engine.set_modal_text("Error", "Error reading the selected files (KeyError)")
-
-                    except OSError:
-                        log.debug("Error reading files, OSError")
-                        self.__engine.set_modal_text("Error", "Error reading the selected files (OSError)")
+                if key == glfw.KEY_T and self.__is_left_ctrl_pressed:
+                    log.debug("Pressed shortcut to change color file")
+                    self.change_color_file_with_dialog()
 
             # Check for keys released
             if action == glfw.RELEASE:

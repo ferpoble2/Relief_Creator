@@ -51,17 +51,22 @@ class Engine:
         """
         return Settings.FIXED_FRAMES
 
-    def change_color_file(self, path_color_file: str) -> None:
+    def change_color_file_with_dialog(self) -> None:
         """
         Change the color file to the one selected.
         This change all the models using the color file.
 
-        Args:
-            path_color_file: Path to the color file to use.
+        Returns: None
+        """
+        self.program.change_cpt_file_with_dialog()
+
+    def update_scene_models_colors(self):
+        """
+        Update the colors of the models in the scene with the colors that are
+        in the ctp file stored in the program.
 
         Returns: None
         """
-        self.program.set_cpt_file(path_color_file)
         self.scene.update_models_colors()
 
     def change_height_window(self, height: int) -> None:
@@ -324,13 +329,13 @@ class Engine:
         try:
             self.scene.refresh_with_model_2d_async(path_color_file, path_model, model_id, then_routine)
 
-        except OSError:
+        except OSError as e:
             self.program.set_loading(False)
-            raise OSError
+            raise e
 
-        except KeyError:
+        except KeyError as e:
             self.program.set_loading(False)
-            raise KeyError
+            raise e
 
     def reload_models(self) -> None:
         """

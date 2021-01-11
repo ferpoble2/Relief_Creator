@@ -133,12 +133,9 @@ class GUIManager:
         """
         log.debug("Setting modal text")
 
-        def task_next_frame():
-            for frame in self.__component_list:
-                if isinstance(frame, TextModal):
-                    frame.set_modal_text(modal_title, msg)
-
-        self.__engine.set_task_for_next_frame(task_next_frame)
+        for frame in self.__component_list:
+            if isinstance(frame, TextModal):
+                frame.set_modal_text(modal_title, msg)
 
     def is_program_loading(self) -> bool:
         """
@@ -339,17 +336,14 @@ class GUIManager:
         """
         self.__engine.set_active_tool(tool)
 
-    def change_color_file(self, path_color_file: str) -> None:
+    def change_color_file_with_dialog(self) -> None:
         """
         Change the color file to the one selected.
         This change all the models using the color file.
 
-        Args:
-            path_color_file: Path to the color file to use.
-
         Returns: None
         """
-        self.__engine.change_color_file(path_color_file)
+        self.__engine.change_color_file_with_dialog()
 
     def render(self) -> None:
         """

@@ -47,22 +47,27 @@ class MainMenuBar(Frame):
                         log.debug("Error reading files, OSError")
                         self._GUI_manager.set_modal_text("Error", "Error reading the selected files (OSError)")
 
-
                 imgui.menu_item('Change CPT file...', 'Ctrl+T', False, True)
                 if imgui.is_item_clicked():
-                    path_color_file = easygui.fileopenbox('Select CPT file...')
-                    log.debug(f"path_model: {path_color_file}")
 
                     try:
-                        self._GUI_manager.change_color_file(path_color_file)
+                        self._GUI_manager.change_color_file_with_dialog()
 
-                    except KeyError:
-                        log.debug("Error reading files or creating models, KEYError")
-                        self.error_file = True
+                    except KeyError as e:
+                        log.exception(f"Error reading files: {e}")
+                        self._GUI_manager.set_modal_text("Error", "Error reading color file (KeyError)")
 
-                    except OSError:
-                        log.debug("Error reading files, OSError")
-                        self.error_file = True
+                    except IOError as e:
+                        log.exception(f"Error reading files: {e}")
+                        self._GUI_manager.set_modal_text("Error", "Error reading color file (IOError)")
+
+                    except TypeError as e:
+                        log.exception(f"Error reading files: {e}")
+                        self._GUI_manager.set_modal_text("Error", "Error reading color file (TypeError)")
+
+                    except OSError as e:
+                        log.exception(f"Error reading files: {e}")
+                        self._GUI_manager.set_modal_text("Error", "Error reading color file (OSError)")
 
                 imgui.end_menu()
 

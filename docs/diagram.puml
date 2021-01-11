@@ -41,7 +41,7 @@ class src.engine.GUI.GUIManager{
     + add_frames(component_list)
     + add_zoom()
     + are_frame_fixed()
-    + change_color_file(path_color_file)
+    + change_color_file_with_dialog()
     + change_quality(quality)
     + draw_frames()
     + fix_frames_position(value)
@@ -273,6 +273,8 @@ class src.engine.controller.Controller {
     + get_mouse_button_callback(): function
     + is_inside_scene(mouse_x_pos, mouse_y_pos): boolean
     + set_mouse_pos(new_x, new_y)
+    + change_color_file_with_dialog()
+    + load_netcdf_file_with_dialog()
 }
 
 class src.engine.scene.Scene {
@@ -310,10 +312,11 @@ class src.engine.Engine {
     - __pending_task_list: list
     + add_zoom()
     + are_frames_fixed(): boolean
-    + change_color_file(path_color_file)
+    + change_color_file_with_dialog()
     + change_height_window(height)
     + change_quality(quality)
     + change_width_window(width)
+    + update_scene_models_colors()
     + fix_frames()
     + get_active_tool(): str
     + get_clear_color(): list
@@ -364,6 +367,7 @@ class src.program.Program {
     - __loading: boolean
 
     + add_zoom()
+    + change_cpt_file_with_dialog()
     + get_active_tool(): str
     + get_cpt_file(): str
     + get_map_position(): list
