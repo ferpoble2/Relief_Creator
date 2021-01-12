@@ -4,11 +4,10 @@ File with utils functions for the engine.
 import logging
 import os
 
-LOG_LEVEL = logging.DEBUG
-LOG_FILE_LEVEL = logging.DEBUG
+from src.engine.settings import Settings
 
 
-def get_logger(log_level: int = LOG_LEVEL, log_file_level: int = LOG_FILE_LEVEL, module: str = 'GLOBAL',
+def get_logger(log_level: int = Settings.LOG_LEVEL, log_file_level: int = Settings.LOG_FILE_LEVEL, module: str = 'GLOBAL',
                directory: str = f'{os.getcwd()}/logs') -> logging.Logger:
     """
     Get the logger of the application to use in the main program.
@@ -22,19 +21,27 @@ def get_logger(log_level: int = LOG_LEVEL, log_file_level: int = LOG_FILE_LEVEL,
     log.propagate = False
     log.setLevel(log_level)
 
-    fh = logging.FileHandler(f'{directory}/{module}.log')
-    fh.setLevel(log_file_level)
-
-    ch = logging.StreamHandler()
-    ch.setLevel(log_level)
-
     formatter = logging.Formatter(f"%(asctime)s - {module} - %(levelname)s: %(message)s",
                                   datefmt="%m/%d/%Y %I:%M:%S %p")
 
-    fh.setFormatter(formatter)
-    ch.setFormatter(formatter)
+    handlers = []
+    if Settings.LOG_TO_FILE:
+        fh = logging.FileHandler(f'{directory}/{module}.log')
+        fh.setLevel(log_file_level)
+        fh.setFormatter(formatter)
+        handlers.append(fh)
 
-    log.handlers = [ch, fh]
+    if Settings.LOG_TO_CONSOLE:
+        ch = logging.StreamHandler()
+        ch.setLevel(log_level)
+        ch.setFormatter(formatter)
+        handlers.append(ch)
+
+    if Settings.LOG_ONLY_LISTED_MODULES:
+        if module in Settings.LOG_LIST_MODULES:
+            log.handlers = handlers
+    else:
+        log.handlers = handlers
 
     return log
 

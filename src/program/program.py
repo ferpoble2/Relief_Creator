@@ -27,9 +27,15 @@ class Program:
         # PROGRAM VARIABLES
         # -----------------
         self.__CPT_file = os.path.join(os.getcwd(), 'input', 'test_colors', 'default.cpt')
+
+        # Map 2d variables
+        # ----------------
         self.__model_id = None
         self.__zoom_level = 1
         self.__map_position = [0, 0]
+
+        # State variables
+        # -----------------------
         self.__active_tool = None
 
     def is_loading(self) -> bool:

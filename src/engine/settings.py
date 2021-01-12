@@ -1,6 +1,7 @@
 """
 Python file with all the important constants and global variables of the engine.
 """
+import logging
 
 
 class Settings:
@@ -36,6 +37,16 @@ class Settings:
 
     # type settings
     FLOAT_BYTES = 4  # float will be represented by 4 bytes.
+
+    # logging settings
+    LOG_TO_FILE = True
+    LOG_TO_CONSOLE = True
+
+    LOG_LEVEL = logging.DEBUG
+    LOG_FILE_LEVEL = logging.DEBUG
+
+    LOG_ONLY_LISTED_MODULES = False
+    LOG_LIST_MODULES = ['CONTROLLER', 'PROGRAM']
 
     @staticmethod
     def fix_frames(fix_frames: bool) -> None:

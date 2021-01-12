@@ -92,6 +92,12 @@ class src.engine.settings  {
     {static} + MAX_WIDTH: int
     {static} + MAX_HEIGHT: int
     {static} + update_scene_values()
+    {static} + LOG_TO_FILE: boolean
+    {static} + LOG_TO_CONSOLE: boolean
+    {static} + LOG_LEVEL: int
+    {static} + LOG_FILE_LEVEL: int
+    {static} + LOG_ONLY_LISTED_MODULES: boolean
+    {static} + LOG_LIST_MODULES: list
 }
 
 class src.engine.scene.model.transformations.transformations <<$file>> {
@@ -152,8 +158,6 @@ class src.engine.data.decimation <<$file>>{
 }
 
 class src.utils <<$file>>{
-    + LOG_LEVEL : int
-    + LOG_FILE_LEVEL : int
     + interpolate(value, value_min, value_max, target_min,target_max) : float
     + get_logger(log_level, log_file_level, module, directory) : logger
 }
@@ -405,6 +409,8 @@ src.engine.Engine <-d.> src.engine.controller.Controller
 src.engine.Engine <-d.> src.engine.scene.Scene
 src.engine.Engine -u.> src.engine.settings
 src.engine.Engine <-l.> src.program.Program
+
+src.utils .> src.engine.settings
 
 src.engine.GUI.frames.Frame <-u.> src.engine.GUI.GUIManager
 
