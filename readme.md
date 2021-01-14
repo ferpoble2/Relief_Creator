@@ -52,6 +52,29 @@ There is a number of tools that form part of the engine, they are stored as stri
 
 - move_map: Tool that is active when moving the 2D map on the engine.
 
+# Reading NetCDF files
+
+The file `src/input/NetCDF.py` is the one in charge of reading the files in format NetCDF and generate numpy arrays.
+
+To achieve this, the program reads the contents of the file using the NetCDF4 library. That generates a dictionary-like
+object with the data of the file, then, the program search in the dictionary for the keys that have information about
+the latitude, longitude and height.
+
+## How to add more keys to search for in the netcdf files
+
+If at some point, in the moment of loading a file the program hits a KeyError, then is highly probable that the netcdf
+file have keys with another name that the ones the program uses.
+
+At the beginning of the file `src/input/NetCDF.py` there are three variables, `LONGITUDE_KEYS`, `LATITUDE_KEYS` and
+`HEIGHT_KEYS`.
+
+The first is the list of keys that the program will use to get the longitude data from the netcdf files, the second is
+the list of keys that the program will use to get the latitude data and the third is the list of keys that the program 
+will use to get the height data.
+
+To add a new key for the program to use to search for the data, just add a new string with the name of the key at 
+the end of the list that need to be modified.
+
 # About the parallel task on the engine
 
 The engine has implemented two main pipelines to delegate tasks to some time in the future, tasks and parallel tasks.

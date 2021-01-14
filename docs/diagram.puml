@@ -150,7 +150,12 @@ class src.engine.render.Render {
 }
 
 class src.input.NetCDF <<$file>> {
-    + read_info(filename) -> array, array, array
+    + LONGITUDE_KEYS: list
+    + LATITUDE_KEYS: list
+    + HEIGHT_KEYS: list
+
+    + read_info(filename): array, array, array
+    + get_variables_from_grp(grp, key_values): list
 }
 
 class src.engine.data.decimation <<$file>>{
