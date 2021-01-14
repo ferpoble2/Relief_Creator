@@ -4,10 +4,17 @@ File with utils functions for the engine.
 import logging
 import os
 
-from src.engine.settings import Settings
+LOG_TO_FILE = True
+LOG_TO_CONSOLE = True
+
+LOG_LEVEL = logging.DEBUG
+LOG_FILE_LEVEL = logging.DEBUG
+
+LOG_ONLY_LISTED_MODULES = False
+LOG_LIST_MODULES = ['CONTROLLER', 'PROGRAM']
 
 
-def get_logger(log_level: int = Settings.LOG_LEVEL, log_file_level: int = Settings.LOG_FILE_LEVEL, module: str = 'GLOBAL',
+def get_logger(log_level: int = LOG_LEVEL, log_file_level: int = LOG_FILE_LEVEL, module: str = 'GLOBAL',
                directory: str = f'{os.getcwd()}/logs') -> logging.Logger:
     """
     Get the logger of the application to use in the main program.
@@ -25,20 +32,20 @@ def get_logger(log_level: int = Settings.LOG_LEVEL, log_file_level: int = Settin
                                   datefmt="%m/%d/%Y %I:%M:%S %p")
 
     handlers = []
-    if Settings.LOG_TO_FILE:
+    if LOG_TO_FILE:
         fh = logging.FileHandler(f'{directory}/{module}.log')
         fh.setLevel(log_file_level)
         fh.setFormatter(formatter)
         handlers.append(fh)
 
-    if Settings.LOG_TO_CONSOLE:
+    if LOG_TO_CONSOLE:
         ch = logging.StreamHandler()
         ch.setLevel(log_level)
         ch.setFormatter(formatter)
         handlers.append(ch)
 
-    if Settings.LOG_ONLY_LISTED_MODULES:
-        if module in Settings.LOG_LIST_MODULES:
+    if LOG_ONLY_LISTED_MODULES:
+        if module in LOG_LIST_MODULES:
             log.handlers = handlers
     else:
         log.handlers = handlers

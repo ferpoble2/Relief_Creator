@@ -75,7 +75,31 @@ will use to get the height data.
 To add a new key for the program to use to search for the data, just add a new string with the name of the key at 
 the end of the list that need to be modified.
 
-# About the parallel task on the engine
+# About the logging system
+
+The program uses the python `logging` library to generate loggers and then use them to log information about the 
+program.
+
+To keep consistency between the format used to log in the different modules of the program, in the file `src/utils.py`
+is defined the function `get_logger(module='some_module')`, this function generates a `logger` with the correct format 
+to use in the modules.
+
+The rule to follow is to always get the logger from this function and to use as module the name of the file, this way
+the debugging process become easier. 
+
+The loggers generated logs to the standard output (console) but also store the logs in files in the `src/logs/` folder.
+In this folder each module logs to a specific file.
+
+In the file `src/utils.py` are defined the following variables that modify the behaviour of the loggers:
+
+- LOG_TO_FILE: If logging or not to a file
+- LOG_TO_CONSOLE: If logging or not to the console
+- LOG_LEVEL: Log level to use for the logs
+- LOG_FILE_LEVEL: Log level to use to logs in the files
+- LOG_ONLY_LISTED_MODULES: If log only listed modules or log every module
+- LOG_LIST_MODULES: List of modules to log if LOG_ONLY_LISTED_MODULES is true
+
+# About the parallel tasks on the engine
 
 The engine has implemented two main pipelines to delegate tasks to some time in the future, tasks and parallel tasks.
 
