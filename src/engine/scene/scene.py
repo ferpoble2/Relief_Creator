@@ -293,17 +293,6 @@ class Scene:
         for model in self.__model_list:
             model.polygon_mode = polygon_mode
 
-    def set_loading_message(self, new_msg: str) -> None:
-        """
-        Change the loading message shown in the loading frame.
-
-        Args:
-            new_msg: New message to show
-
-        Returns: None
-        """
-        self.__engine.set_loading_message(new_msg)
-
     def update_models_colors(self) -> None:
         """
         Update the colors of the models reloading the colors from the file used in the program.
@@ -351,70 +340,3 @@ class Scene:
         viewport_data = self.__engine.get_scene_setting_data()
         self.__width_viewport = viewport_data['SCENE_WIDTH_X']
         self.__height_viewport = viewport_data['SCENE_HEIGHT_Y']
-
-    def get_zoom_level(self) -> float:
-        """
-        Get the zoom level used by the program.
-
-        Returns:  Zoom level
-        """
-        return self.__engine.get_zoom_level()
-
-    def move_models(self, x_movement: int, y_movement: int) -> None:
-        """
-        Move the models on the scene.
-
-        Args:
-            x_movement: Movement in the x-axis
-            y_movement: Movement in the y-axis
-
-        Returns: None
-        """
-        log.debug("Moving models")
-
-        for model in self.__model_list:
-            if isinstance(model, Map2DModel):
-                model.move(x_movement, y_movement)
-            else:
-                raise NotImplementedError("Not implemented move method in this model.")
-
-    def set_map_position(self, new_position: list) -> None:
-        """
-        Tell the engine the new position of the map.
-
-        Args:
-            new_position: New position to use.
-
-        Returns: None
-        """
-        self.__engine.set_map_position(new_position)
-
-    def optimize_gpu_memory_async(self, then: callable) -> None:
-        """
-        Optimize the gpu memory of the models.
-
-        Args:
-            then: Routine executed after the parallel routine.
-
-        Returns: None
-        """
-        log.debug("Optimizing gpu memory of models")
-        self.__should_execute_then_optimize_gpu_memory = len(self.__model_list)
-
-        def then_routine():
-            self.__should_execute_then_optimize_gpu_memory -= 1
-            self.__should_execute_then_optimize_gpu_memory = max(0, self.__should_execute_then_optimize_gpu_memory)
-
-            if self.__should_execute_then_optimize_gpu_memory == 0:
-                self.__should_execute_then_optimize_gpu_memory = len(self.__model_list)
-                then()
-
-        for model in self.__model_list:
-            if isinstance(model, Map2DModel):
-                model.optimize_gpu_memory_async(then_routine)
-            else:
-                raise NotImplementedError("Method optimize GPU memory not implemented in this model.")
-
-        # if there is no models, call the then routine doing nothing
-        if len(self.__model_list) == 0:
-            then()
