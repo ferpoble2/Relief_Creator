@@ -208,6 +208,20 @@ class src.engine.scene.model.Map2DModel{
 
 }
 
+class src.engine.scene.model.Polygon{
+
+    - __point_list: list
+    - __indices_list: list
+
+    - __str__()
+    + get_id(): str
+    + set_id(new_id)
+    + get_point_list(): list
+    + get_point_number(): int
+    + generate_initial_indices()
+    + add_point(x, y, z)
+}
+
 class src.input.CTP <<$file>> {
     + read_file(filename: str) : dict
 }
@@ -289,6 +303,7 @@ class src.engine.controller.Controller {
 
 class src.engine.scene.Scene {
     + add_model(model)
+    + add_polygon(polygon)
     + draw()
     + get_zoom_level(): float
     + initialize(engine)
@@ -308,6 +323,7 @@ class src.engine.scene.Scene {
     - __engine : Engine
     - __height_viewport: int
     - __model_list : list
+    - __polygon_list: list
     - __should_execute_then_optimize_gpu_memory: int
     - __should_execute_then_reload: int
     - __width_viewport: int
@@ -396,6 +412,7 @@ class src.program.Program {
 ' herency
 src.engine.scene.model.Map2DModel -u-|> src.engine.scene.model.Model
 src.engine.scene.model.Map3DModel -u-|> src.engine.scene.model.Model
+src.engine.scene.model.Polygon -u-|> src.engine.scene.model.Model
 
 src.engine.GUI.frames.MainMenuBar -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Tools -u-|> src.engine.GUI.frames.Frame
