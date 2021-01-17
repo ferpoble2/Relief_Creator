@@ -19,6 +19,7 @@ class Scene:
         Constructor of the class.
         """
         self.__model_list = []
+        self.__polygon_list = []
         self.__engine = None
 
         self.__width_viewport = None
@@ -38,6 +39,18 @@ class Scene:
         Returns: None
         """
         self.__model_list.append(model)
+
+    def add_polygon(self, polygon: 'Polygon') -> None:
+        """
+        Add a new polygon to render on the scene.
+
+        Args:
+            polygon: Polygon to add to the scene
+
+        Returns: None
+        """
+        log.debug("Added polygon to the scene")
+        self.__polygon_list.append(polygon)
 
     def draw(self) -> None:
         """
