@@ -5,6 +5,7 @@ import OpenGL.GL as GL
 import OpenGL.constant as OGLConstant
 
 from src.engine.scene.model.map2dmodel import Map2DModel
+from src.engine.scene.model.polygon import Polygon
 from src.engine.scene.model.model import Model
 from src.input.NetCDF import read_info
 from src.utils import get_logger
@@ -61,6 +62,8 @@ class Scene:
         """
         for model in self.__model_list:
             model.draw()
+        for polygon in self.__polygon_list:
+            polygon.draw()
 
     def get_float_bytes(self) -> int:
         """
