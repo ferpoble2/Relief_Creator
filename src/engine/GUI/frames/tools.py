@@ -72,6 +72,7 @@ class Tools(Frame):
         if imgui.button("Create polygon", width=left_frame_width - self.button_margin_width):
             log.debug(f"Pressed button create polygon")
             log.debug("------------------------------")
+            self._GUI_manager.set_active_tool('create_polygon')
 
         imgui.separator()
         imgui.text("Other tools")
