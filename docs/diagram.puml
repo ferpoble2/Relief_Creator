@@ -29,13 +29,14 @@ package src {
 
 ' Classes definition
 class src.engine.GUI.GUIManager{
-    - __implementation: GlfwRenderer
-    - __glfw_window: GLFWWindow
     - __component_list: list
-    - __io: IMGUI.io
-    - __font: IMGUI.font
-    - __scene: Scene
     - __engine: Engine
+    - __font_bold: IMGUI.font
+    - __font_regular: IMGUI.font
+    - __glfw_window: GLFWWindow
+    - __implementation: GlfwRenderer
+    - __io: IMGUI.io
+    - __scene: Scene
 
     {static} + get_frames(gui_manager) : list
     + add_frames(component_list)
@@ -69,9 +70,11 @@ class src.engine.GUI.GUIManager{
     + render()
     + set_active_polygon(polygon_id)
     + set_active_tool(tool)
+    + set_bold_font()
     + set_loading_message(new_msg)
     + set_modal_text(modal_title, msg)
     + set_polygon_mode(polygon_mode)
+    + set_regular_font()
 }
 
 class src.engine.settings  {
@@ -252,10 +255,17 @@ class src.engine.GUI.frames.MainMenuBar {
 }
 
 class src.engine.GUI.frames.Tools {
-    - double_button_margin_width: int
-    - button_margin_width: int
+    - __button_margin_width: int
+    - __double_button_margin_width: int
+    - __slide_bar_quality: int
+    - __tools_names_dict: dict
     + generate_polygon_list()
     + render()
+    + show_active_tool()
+    + show_editing_tools(left_frame_width)
+    + show_other_tools(left_frame_width)
+    + show_polygon_tools(left_frame_width)
+    + show_visualization_tools(left_frame_width)
 }
 
 class src.engine.GUI.frames.Debug {

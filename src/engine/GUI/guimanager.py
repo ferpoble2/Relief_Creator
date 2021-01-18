@@ -31,7 +31,8 @@ class GUIManager:
         self.__glfw_window = None
         self.__component_list = []
         self.__io = None
-        self.__font = None
+        self.__font_regular = None
+        self.__font_bold = None
 
         self.__scene = None
         self.__engine = None
@@ -65,7 +66,7 @@ class GUIManager:
         Returns: None
         """
         imgui.new_frame()
-        with imgui.font(self.__font):
+        with imgui.font(self.__font_regular):
             for frame in self.__component_list:
                 frame.render()
         imgui.end_frame()
@@ -298,13 +299,34 @@ class GUIManager:
 
         # Font options
         self.__io = imgui.get_io()
-        self.__font = self.__io.fonts.add_font_from_file_ttf(
+        self.__font_regular = self.__io.fonts.add_font_from_file_ttf(
             './engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', engine.get_font_size()
+        )
+        self.__font_bold = self.__io.fonts.add_font_from_file_ttf(
+            './engine/GUI/fonts/open_sans/OpenSans-Bold.ttf', engine.get_font_size()
         )
         self.__implementation.refresh_font_texture()
 
         self.__scene = engine.scene
         self.__engine = engine
+
+    def set_regular_font(self) -> None:
+        """
+        Set the regular font too use in the render.
+
+        Returns: Set the font to bold.
+        """
+        imgui.pop_font()
+        imgui.push_font(self.__font_regular)
+
+    def set_bold_font(self) -> None:
+        """
+        Set a bold font too use in the render.
+
+        Returns: Set the font to bold.
+        """
+        imgui.pop_font()
+        imgui.push_font(self.__font_bold)
 
     def optimize_gpu_memory(self) -> None:
         """
