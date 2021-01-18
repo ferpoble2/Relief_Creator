@@ -56,6 +56,10 @@ class Tools(Frame):
                 log.debug(f"Delete polygon with id: {polygon_id}")
                 self._GUI_manager.delete_polygon_by_id(polygon_id)
 
+                # if the deleted polygon is the active, change the program status no None
+                if active_polygon == polygon_id:
+                    self._GUI_manager.set_active_polygon(None)
+
             # pop the id to continue rendering the others elements
             imgui.pop_id()
 
