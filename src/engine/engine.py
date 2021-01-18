@@ -110,6 +110,41 @@ class Engine:
         """
         Settings.fix_frames(fix)
 
+    def get_polygon_list(self) -> list:
+        """
+        Get the list of polygons currently being used by the program.
+
+        Returns: list of polygons in the program
+        """
+        return self.scene.get_polygon_list()
+
+    def get_active_polygon_id(self) -> str:
+        """
+        Get the id of the active polygon.
+
+        Returns: id of the active polygon
+        """
+        return self.program.get_active_polygon_id()
+
+    def set_active_polygon(self, polygon_id: str) -> None:
+        """
+        Set a new active polygon on the program.
+
+        Args:
+            polygon_id: ID of the polygon
+
+        Returns: None
+        """
+        self.program.set_active_polygon(polygon_id)
+
+    def get_active_model_id(self) -> str:
+        """
+        Returns the active model being used by the program.
+
+        Returns: active model id
+        """
+        return self.program.get_active_model()
+
     def get_active_tool(self) -> str:
         """
         Get the active tool in the program.
@@ -125,14 +160,6 @@ class Engine:
 
         """
         return Settings.CLEAR_COLOR
-
-    def get_CPT_file(self) -> None:
-        """
-        Get the CPT file used by the program.
-
-        Returns: String with the CPT file used.
-        """
-        return self.program.get_cpt_file()
 
     def get_cpt_file(self) -> str:
         """
@@ -320,7 +347,7 @@ class Engine:
         """
 
         def then_routine():
-            self.program.set_model_id(model_id)
+            self.program.set_active_model(model_id)
             self.program.set_loading(False)
 
         self.program.set_loading(True)

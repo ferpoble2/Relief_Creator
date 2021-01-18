@@ -25,6 +25,23 @@ class Tools(Frame):
         self.button_margin_width = 17
         self.slide_bar_quality = self._GUI_manager.get_quality()
 
+    def generate_polygon_list(self) -> None:
+        """
+        Generate the list of polygons to show to the user.
+
+        Returns: None
+        """
+
+        list_polygons = self._GUI_manager.get_polygon_list()
+        active_polygon = self._GUI_manager.get_active_polygon_id()
+
+        for polygon in list_polygons:
+            polygon_id = polygon.get_id()
+            clicked, current_state = imgui.checkbox(polygon_id, True if polygon_id == active_polygon else False)
+
+            if clicked:
+                self._GUI_manager.set_active_polygon(polygon_id)
+
     def render(self) -> None:
         """
         Render the main sample text.
@@ -74,6 +91,8 @@ class Tools(Frame):
             log.debug("------------------------------")
             self._GUI_manager.set_active_tool('create_polygon')
 
+        self.generate_polygon_list()
+
         imgui.separator()
         imgui.text("Other tools")
         if imgui.button("Optimize GPU memory", width=left_frame_width - self.button_margin_width):
@@ -82,7 +101,6 @@ class Tools(Frame):
 
         if imgui.button("Modal Pop-Up Menu", width=left_frame_width - self.button_margin_width):
             self._GUI_manager.set_modal_text("This is a modal", "A very good modal")
-
 
         if self._GUI_manager.are_frame_fixed():
             imgui.set_window_position(self.get_position()[0], self.get_position()[1])

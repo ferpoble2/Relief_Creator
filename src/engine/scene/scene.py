@@ -90,6 +90,14 @@ class Scene:
         """
         return self.__engine.get_zoom_level()
 
+    def get_polygon_list(self) -> list:
+        """
+        Return a list with the polygons being used in the program.
+
+        Returns: list with polygons being used in the program.
+        """
+        return self.__polygon_list
+
     def initialize(self, engine: 'Engine') -> None:
         """
         Initialize the component in the engine.

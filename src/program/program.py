@@ -30,13 +30,14 @@ class Program:
 
         # Map 2d variables
         # ----------------
-        self.__model_id = None
         self.__zoom_level = 1
         self.__map_position = [0, 0]
 
         # State variables
         # -----------------------
+        self.__active_model = None
         self.__active_tool = None
+        self.__active_polygon = None
 
     def is_loading(self) -> bool:
         """
@@ -70,7 +71,7 @@ class Program:
         log.debug('Initializing program...')
         self.__engine.initialize(self.__engine, program)
 
-    def set_model_id(self, new_model_id: str) -> None:
+    def set_active_model(self, new_model_id: str) -> None:
         """
         Set the id of the model used in the application.
         Args:
@@ -78,7 +79,7 @@ class Program:
 
         Returns:
         """
-        self.__model_id = new_model_id
+        self.__active_model = new_model_id
 
     def set_active_tool(self, new_tool: str) -> None:
         """
@@ -90,6 +91,14 @@ class Program:
         Returns: None
         """
         self.__active_tool = new_tool
+
+    def get_active_model(self) -> str:
+        """
+        Get the current model being used by the program.
+
+        Returns: id of the active model
+        """
+        return self.__active_model
 
     def get_active_tool(self) -> str:
         """
@@ -107,7 +116,34 @@ class Program:
         """
         return self.__map_position
 
+    def get_active_polygon_id(self) -> str:
+        """
+        Get the id of the active polygon on the program.
+
+        Returns: Id of the active polygon
+        """
+        return self.__active_polygon
+
+    def set_active_polygon(self, polygon_id: str) -> None:
+        """
+        Set a new active polygon.
+
+        Args:
+            polygon_id: Id of the polygon
+
+        Returns: None
+        """
+        self.__active_polygon = polygon_id
+
     def set_map_position(self, new_position: list) -> None:
+        """
+        Set the position of the map in the program.
+
+        Args:
+            new_position: New position of the map
+
+        Returns: None
+        """
         self.__map_position = new_position
 
     def get_cpt_file(self) -> str:

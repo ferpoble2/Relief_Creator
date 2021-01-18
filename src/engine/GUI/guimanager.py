@@ -156,6 +156,33 @@ class GUIManager:
         """
         self.__engine.change_quality(quality)
 
+    def get_polygon_list(self) -> list:
+        """
+        Get the full list of polygons currently on the program.
+
+        Returns: list with the polygons
+        """
+        return self.__engine.get_polygon_list()
+
+    def get_active_polygon_id(self) -> str:
+        """
+        Get the active polygon id being used by the program.
+
+        Returns:  id of the active polygon
+        """
+        return self.__engine.get_active_polygon_id()
+
+    def set_active_polygon(self, polygon_id: str) -> None:
+        """
+        Set a new active polygon on the program.
+
+        Args:
+            polygon_id: Polygon ID to set as the active polygon.
+
+        Returns: None
+        """
+        self.__engine.set_active_polygon(polygon_id)
+
     def get_quality(self) -> int:
         """
         Get the render quality used in the engine.
@@ -181,6 +208,14 @@ class GUIManager:
         """
         data = self.__engine.get_window_setting_data()
         return data['HEIGHT']
+
+    def get_active_model_id(self) -> str:
+        """
+        Get the active model being used in the program
+
+        Returns: active model id
+        """
+        return self.__engine.get_active_model_id()
 
     def get_active_tool(self) -> str:
         """
