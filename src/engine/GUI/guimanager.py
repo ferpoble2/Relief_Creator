@@ -336,6 +336,25 @@ class GUIManager:
         """
         self.__engine.optimize_gpu_memory()
 
+    def create_new_polygon(self) -> str:
+        """
+        Create a new polygon on the scene
+
+        Returns: the id of the new polygon
+        """
+        return self.__engine.create_new_polygon()
+
+    def delete_polygon_by_id(self, polygon_id: str) -> None:
+        """
+        Delete the polygon with the specified id from the scene
+
+        Args:
+            polygon_id: Id of the polygon to delete
+
+        Returns: None
+        """
+        self.__engine.delete_polygon_by_id(polygon_id)
+
     def process_input(self) -> None:
         """
         Process the input (events) that happened in the GUI.

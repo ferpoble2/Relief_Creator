@@ -378,6 +378,25 @@ class Engine:
 
         self.scene.reload_models_async(then_routine)
 
+    def create_new_polygon(self) -> str:
+        """
+        Create a new polygon on the scene.
+
+        Returns: the id of the new polygon
+        """
+        return self.scene.create_new_polygon()
+
+    def delete_polygon_by_id(self, polygon_id: str) -> None:
+        """
+        Delete the polygon with the specified id from the scene
+
+        Args:
+            polygon_id: Polygon id to use to delete
+
+        Returns: None
+        """
+        self.scene.delete_polygon_by_id(polygon_id)
+
     def reset_zoom_level(self) -> None:
         """
         Reset the zoom level of the program.

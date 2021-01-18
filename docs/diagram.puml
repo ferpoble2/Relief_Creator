@@ -44,6 +44,8 @@ class src.engine.GUI.GUIManager{
     + are_frame_fixed()
     + change_color_file_with_dialog()
     + change_quality(quality)
+    + create_new_polygon(): str
+    + delete_polygon_by_id(polygon_id)
     + draw_frames()
     + fix_frames_position(value)
     + get_active_model_id(): str
@@ -319,6 +321,8 @@ class src.engine.controller.Controller {
 class src.engine.scene.Scene {
     + add_model(model)
     + add_polygon(polygon)
+    + create_new_polygon(): str
+    + delete_polygon_by_id(polygon_id)
     + draw()
     + get_polygon_list(): list
     + get_zoom_level(): float
@@ -339,6 +343,7 @@ class src.engine.scene.Scene {
     - __engine : Engine
     - __height_viewport: int
     - __model_list : list
+    - __polygon_id_count: int
     - __polygon_list: list
     - __should_execute_then_optimize_gpu_memory: int
     - __should_execute_then_reload: int
@@ -358,6 +363,8 @@ class src.engine.Engine {
     + change_height_window(height)
     + change_quality(quality)
     + change_width_window(width)
+    + create_new_polygon(): str
+    + delete_polygon_by_id(polygon_id)
     + fix_frames()
     + get_active_model_id()
     + get_active_polygon_id(): str

@@ -41,8 +41,23 @@ class Tools(Frame):
         active_polygon = self._GUI_manager.get_active_polygon_id()
 
         for polygon in list_polygons:
+            # get the id of the polygon
             polygon_id = polygon.get_id()
+
+            # push id so the buttons doesnt have conflicts with names
+            imgui.push_id(polygon_id)
+
+            # show a checkbox with the id of the polygon and show it market if the polygon is active
             clicked, current_state = imgui.checkbox(polygon_id, True if polygon_id == active_polygon else False)
+
+            # on the same line, show a button to delete the polygon from the program
+            imgui.same_line()
+            if imgui.button("Delete"):
+                log.debug(f"Delete polygon with id: {polygon_id}")
+                self._GUI_manager.delete_polygon_by_id(polygon_id)
+
+            # pop the id to continue rendering the others elements
+            imgui.pop_id()
 
             if clicked:
                 # Change the active polygon to the clicked one
@@ -129,6 +144,9 @@ class Tools(Frame):
             log.debug(f"Pressed button create polygon")
             log.debug("------------------------------")
             self._GUI_manager.set_active_tool('create_polygon')
+            new_polygon_id = self._GUI_manager.create_new_polygon()
+            self._GUI_manager.set_active_polygon(new_polygon_id)
+
         self.generate_polygon_list()
 
     def show_visualization_tools(self, left_frame_width: int) -> None:

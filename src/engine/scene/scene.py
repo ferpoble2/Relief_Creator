@@ -31,6 +31,8 @@ class Scene:
         self.__should_execute_then_reload = 0
         self.__should_execute_then_optimize_gpu_memory = 0
 
+        self.__polygon_id_count = 0
+
     def add_model(self, model: Model) -> None:
         """
         Add a model to the list of models.
@@ -52,6 +54,32 @@ class Scene:
         """
         log.debug("Added polygon to the scene")
         self.__polygon_list.append(polygon)
+        self.__polygon_id_count += 1
+
+    def create_new_polygon(self) -> str:
+        """
+        Create a new polygon and adds it to the list of polygons.
+
+        Returns: id of the created polygon
+        """
+        new_poligon_id = f"Polygon {self.__polygon_id_count}"
+        polygon = Polygon(self, new_poligon_id)
+        self.add_polygon(polygon)
+        return new_poligon_id
+
+    def delete_polygon_by_id(self, polygon_id: str) -> None:
+        """
+        Delete the polygon with the specified id from the scene
+
+        Args:
+            polygon_id: Id to use to delete.
+
+        Returns: None
+        """
+        for polygon in self.__polygon_list:
+            if polygon.get_id() == polygon_id:
+                self.__polygon_list.remove(polygon)
+                break
 
     def draw(self) -> None:
         """
