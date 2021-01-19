@@ -78,31 +78,6 @@ class Scene:
                 new_x, new_y = self.calculate_map_position_from_window(position_x, position_y)
                 polygon.add_point(new_x, new_y)
 
-    def get_active_model_projection_matrix(self) -> 'np.array':
-        """
-        Get the projection matrix from the active model.
-
-        Returns: array with the projection matrix of the active model.
-        """
-        active_model_id = self.__engine.get_active_model_id()
-        for model in self.__model_list:
-            if model.id == active_model_id:
-                return model.get_projection_matrix()
-
-    def get_active_model_showed_limits(self) -> dict:
-        """
-        Get a dictionary with the limits of the coordinates being showed by the current model on the scene.
-
-        Returns: Dictionary with the limits
-        """
-        active_model_id = self.__engine.get_active_model_id()
-        if active_model_id is None:
-            raise AssertionError("There is no active model.")
-
-        for model in self.__model_list:
-            if model.id == active_model_id:
-                return model.get_showed_limits()
-
     def calculate_map_position_from_window(self, position_x, position_y) -> (float, float):
         """
         Calculate the position of a point on the map currently being showed on the screen.
@@ -121,19 +96,13 @@ class Scene:
         x_dist_pixel = position_x - scene_settings['SCENE_BEGIN_X']
         y_dist_pixel = (window_settings['HEIGHT'] - position_y) - scene_settings['SCENE_BEGIN_Y']
 
-        x_pos = map_positions['left'] + (map_positions['right'] - map_positions['left']) * x_dist_pixel / scene_settings['SCENE_WIDTH_X']
-        y_pos = map_positions['bottom'] + (map_positions['top'] - map_positions['bottom']) * y_dist_pixel / scene_settings['SCENE_HEIGHT_Y']
+        x_pos = map_positions['left'] + (map_positions['right'] - map_positions['left']) * x_dist_pixel / \
+                scene_settings['SCENE_WIDTH_X']
+        y_pos = map_positions['bottom'] + (map_positions['top'] - map_positions['bottom']) * y_dist_pixel / \
+                scene_settings['SCENE_HEIGHT_Y']
 
         log.debug(f'Calculated position is: {x_pos} {y_pos}')
         return x_pos, y_pos
-
-    def get_render_settings(self) -> dict:
-        """
-        Return a dictionary with the settings related to the polygons.
-
-        Returns: Dictionary with the settings related to the polygon
-        """
-        return self.__engine.get_render_settings()
 
     def create_new_polygon(self) -> str:
         """
@@ -173,6 +142,31 @@ class Scene:
         for polygon in self.__polygon_list:
             polygon.draw()
 
+    def get_active_model_projection_matrix(self) -> 'np.array':
+        """
+        Get the projection matrix from the active model.
+
+        Returns: array with the projection matrix of the active model.
+        """
+        active_model_id = self.__engine.get_active_model_id()
+        for model in self.__model_list:
+            if model.id == active_model_id:
+                return model.get_projection_matrix()
+
+    def get_active_model_showed_limits(self) -> dict:
+        """
+        Get a dictionary with the limits of the coordinates being showed by the current model on the scene.
+
+        Returns: Dictionary with the limits
+        """
+        active_model_id = self.__engine.get_active_model_id()
+        if active_model_id is None:
+            raise AssertionError("There is no active model.")
+
+        for model in self.__model_list:
+            if model.id == active_model_id:
+                return model.get_showed_limits()
+
     def get_float_bytes(self) -> int:
         """
         Get the float bytes used in a float to render.
@@ -189,6 +183,14 @@ class Scene:
         Returns: list with polygons being used in the program.
         """
         return self.__polygon_list
+
+    def get_render_settings(self) -> dict:
+        """
+        Return a dictionary with the settings related to the polygons.
+
+        Returns: Dictionary with the settings related to the polygon
+        """
+        return self.__engine.get_render_settings()
 
     def get_scene_setting_data(self) -> dict:
         """
