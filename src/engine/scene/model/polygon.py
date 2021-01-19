@@ -23,7 +23,7 @@ class Polygon(Model):
         self.id = id
         self.draw_mode = GL.GL_LINES
 
-        self.update_uniform_values = False
+        self.update_uniform_values = True
 
         # Polygon variables
         # ------------------
@@ -43,6 +43,15 @@ class Polygon(Model):
             string_to_print += "\n"
 
         return string_to_print
+
+    def _update_uniforms(self) -> None:
+        """
+        Update the uniforms values for the model.
+
+        Returns: None
+        """
+        projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
+        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_model_projection_matrix())
 
     def add_point(self, x: float, y: float, z: float = 0.5) -> None:
         """

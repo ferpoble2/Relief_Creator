@@ -229,6 +229,7 @@ class src.engine.scene.model.Polygon{
     - __indices_list: list
 
     - __str__()
+    - _update_uniforms()
     + get_id(): str
     + set_id(new_id)
     + get_point_list(): list

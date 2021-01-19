@@ -112,7 +112,7 @@ class Scene:
         """
         new_poligon_id = f"Polygon {self.__polygon_id_count}"
         polygon = Polygon(self, new_poligon_id)
-        polygon.set_shaders('./engine/shaders/simple_vertex.glsl', './engine/shaders/simple_fragment.glsl')
+        polygon.set_shaders('./engine/shaders/polygon_vertex.glsl', './engine/shaders/polygon_fragment.glsl')
         self.add_polygon(polygon)
         return new_poligon_id
 
