@@ -203,6 +203,8 @@ class src.engine.scene.model.Map2DModel{
     + hbo : int
 
     + calculate_projection_matrix(scene_data, zoom_level)
+    + get_projection_matrix(): array
+    + get_showed_limits(): dict
     + move(x_movement, y_movement)
     + optimize_gpu_memory_async(then)
     + recalculate_vertices_from_grid_async(quality, then)
@@ -325,10 +327,15 @@ class src.engine.controller.Controller {
 class src.engine.scene.Scene {
     + add_model(model)
     + add_polygon(polygon)
+    + add_vertex_to_active_polygon(position_x, position_y)
+    + calculate_map_position_from_window(): (float, float)
     + create_new_polygon(): str
     + delete_polygon_by_id(polygon_id)
     + draw()
+    + get_active_model_projection_matrix(): array
+    + get_active_model_showed_limits(): dict
     + get_polygon_list(): list
+    + get_render_settings(): dict
     + get_zoom_level(): float
     + initialize(engine)
     + move_models(x_movement, y_movement)
@@ -344,6 +351,7 @@ class src.engine.scene.Scene {
     + update_models_projection_matrix()
     + update_viewport()
     + update_viewport_variables()
+    - __3d_model_list: list
     - __engine : Engine
     - __height_viewport: int
     - __model_list : list
@@ -361,6 +369,7 @@ class src.engine.Engine {
     + scene: Scene
     + window: GLFWWindow
     - __pending_task_list: list
+    + add_vertex_to_active_polygon(position_x, position_y)
     + add_zoom()
     + are_frames_fixed(): boolean
     + change_color_file_with_dialog()
@@ -382,7 +391,7 @@ class src.engine.Engine {
     + get_map_position(): list
     + get_polygon_list(): list
     + get_quality(): int
-    + get_scene_setting_data(): dict
+    + get_render_settings()
     + get_scene_setting_data(): dict
     + get_view_mode(): str
     + get_window_setting_data(): dict

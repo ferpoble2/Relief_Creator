@@ -44,6 +44,34 @@ class Engine:
         self.program.add_zoom()
         self.scene.update_models_projection_matrix()
 
+    def add_vertex_to_active_polygon(self, position_x: int, position_y: int) -> None:
+        """
+        Ask the scene to add a vertex in the active polygon of the engine.
+
+        Args:
+            position_x: Position X of the point
+            position_y: Position Y of the point (from top to bottom)
+
+        Returns: None
+        """
+        try:
+            self.scene.add_vertex_to_active_polygon(position_x, position_y)
+        except AssertionError as e:
+            log.debug(e)
+            self.set_modal_text('Error', 'Error creating polygon. \n\nis a model loaded in the program?')
+
+    def get_render_settings(self):
+        """
+        Return a dictionary with the settings related to the render.
+
+        Returns: Dictionary with the render settings
+        """
+        return {
+            "LINE_WIDTH": Settings.LINE_WIDTH,
+            "POLYGON_LINE_WIDTH": Settings.POLYGON_LINE_WIDTH,
+            "QUALITY": Settings.QUALITY
+        }
+
     def are_frames_fixed(self) -> bool:
         """
         Return if the frames are fixed or not in the application.

@@ -84,7 +84,13 @@ class Polygon(Model):
         Set how and when to draw the polygons.
         """
         if self.get_point_number() > 1:
+            render_settings = self.scene.get_render_settings()
+            line_width = render_settings["LINE_WIDTH"]
+            polygon_line_width = render_settings["POLYGON_LINE_WIDTH"]
+
+            GL.glLineWidth(polygon_line_width)
             super().draw()
+            GL.glLineWidth(line_width)
 
     def generate_initial_indices(self) -> None:
         """
