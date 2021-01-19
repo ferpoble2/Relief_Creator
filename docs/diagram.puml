@@ -87,8 +87,12 @@ class src.engine.settings  {
     {static} + FONT_SIZE: int
     {static} + HEIGHT: int
     {static} + LEFT_FRAME_WIDTH: int
+    {static} + TOP_FRAME_HEIGHT: int
+    {static} + BOTTOM_FRAME_HEIGHT: int
     {static} + MAIN_MENU_BAR_HEIGHT: int
     {static} + QUALITY: int
+    {static} + LINE_WIDTH: int
+    {static} + POLYGON_LINE_WIDTH: int
     {static} + SCENE_BEGIN_X: int
     {static} + SCENE_BEGIN_Y: int
     {static} + SCENE_WIDTH_X: int
