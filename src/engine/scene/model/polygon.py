@@ -44,63 +44,6 @@ class Polygon(Model):
 
         return string_to_print
 
-    def get_id(self) -> str:
-        """
-        Get the id of the polygon.
-
-        Returns: Id of the polygon
-        """
-        return self.id
-
-    def set_id(self, new_id: str) -> None:
-        """
-        Set a new id for the polygon.
-
-        Args:
-            new_id: New ID of the polygon.
-
-        Returns: None
-        """
-        self.id = new_id
-
-    def get_point_list(self) -> list:
-        """
-        Get the point list used by the polygon.
-
-        Returns: List with the points to use.
-        """
-        return self.__point_list
-
-    def get_point_number(self) -> int:
-        """
-        Return the number of points of the polygon.
-
-        Returns: Number of points of the polygon.
-        """
-        return int(len(self.__point_list) / 3)
-
-    def draw(self) -> None:
-        """
-        Set how and when to draw the polygons.
-        """
-        if self.get_point_number() > 1:
-            render_settings = self.scene.get_render_settings()
-            line_width = render_settings["LINE_WIDTH"]
-            polygon_line_width = render_settings["POLYGON_LINE_WIDTH"]
-
-            GL.glLineWidth(polygon_line_width)
-            super().draw()
-            GL.glLineWidth(line_width)
-
-    def generate_initial_indices(self) -> None:
-        """
-        Generate the initial configuration of indices on the indices list.
-
-        Returns: None
-        """
-        self.__indices_list.append(0)
-        self.__indices_list.append(1)
-
     def add_point(self, x: float, y: float, z: float = 0.5) -> None:
         """
         Add a new point to the list of points.
@@ -134,3 +77,60 @@ class Polygon(Model):
 
             self.set_vertices(np.array(self.__point_list, dtype=np.float32))
             self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
+
+    def draw(self) -> None:
+        """
+        Set how and when to draw the polygons.
+        """
+        if self.get_point_number() > 1:
+            render_settings = self.scene.get_render_settings()
+            line_width = render_settings["LINE_WIDTH"]
+            polygon_line_width = render_settings["POLYGON_LINE_WIDTH"]
+
+            GL.glLineWidth(polygon_line_width)
+            super().draw()
+            GL.glLineWidth(line_width)
+
+    def generate_initial_indices(self) -> None:
+        """
+        Generate the initial configuration of indices on the indices list.
+
+        Returns: None
+        """
+        self.__indices_list.append(0)
+        self.__indices_list.append(1)
+
+    def get_id(self) -> str:
+        """
+        Get the id of the polygon.
+
+        Returns: Id of the polygon
+        """
+        return self.id
+
+    def get_point_list(self) -> list:
+        """
+        Get the point list used by the polygon.
+
+        Returns: List with the points to use.
+        """
+        return self.__point_list
+
+    def get_point_number(self) -> int:
+        """
+        Return the number of points of the polygon.
+
+        Returns: Number of points of the polygon.
+        """
+        return int(len(self.__point_list) / 3)
+
+    def set_id(self, new_id: str) -> None:
+        """
+        Set a new id for the polygon.
+
+        Args:
+            new_id: New ID of the polygon.
+
+        Returns: None
+        """
+        self.id = new_id
