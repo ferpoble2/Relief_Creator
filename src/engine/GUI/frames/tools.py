@@ -29,6 +29,8 @@ class Tools(Frame):
             'move_map': 'Move Map',
             'create_polygon': 'Create Polygon'
         }
+        self.__color_pick_selected = False
+        self.__color_selected = (1, 1, 0, 1)
 
     def generate_polygon_list(self) -> None:
         """
@@ -52,13 +54,10 @@ class Tools(Frame):
 
             # on the same line, show a button to delete the polygon from the program
             imgui.same_line()
-            if imgui.button("Delete"):
-                log.debug(f"Delete polygon with id: {polygon_id}")
-                self._GUI_manager.delete_polygon_by_id(polygon_id)
+            self.delete_button(active_polygon, polygon_id)
 
-                # if the deleted polygon is the active, change the program status no None
-                if active_polygon == polygon_id:
-                    self._GUI_manager.set_active_polygon(None)
+            imgui.same_line()
+            self.color_button(polygon_id)
 
             # pop the id to continue rendering the others elements
             imgui.pop_id()
@@ -69,6 +68,69 @@ class Tools(Frame):
 
                 # Activate the create_polygon tool when clicked the polygon
                 self._GUI_manager.set_active_tool('create_polygon')
+
+    def delete_button(self, active_polygon: str, polygon_id: str) -> None:
+        """
+        Define a button for the action of deleting a polygon.
+
+        Args:
+            active_polygon: id of the active polygon of the program.
+            polygon_id: id of the polygon to render the button to.
+
+        Returns: None
+        """
+
+        if imgui.button("Delete"):
+            log.debug(f"Delete polygon with id: {polygon_id}")
+            self._GUI_manager.delete_polygon_by_id(polygon_id)
+
+            # if the deleted polygon is the active, change the program status no None
+            if active_polygon == polygon_id:
+                self._GUI_manager.set_active_polygon(None)
+
+    def color_button(self, polygon_id: str) -> None:
+        """
+        Define the modal to show if the color pick is selected.
+
+        Returns: None
+
+        Args:
+            polygon_id: id of the polygon to render the button to
+
+        Returns: None
+        """
+
+        # Generate button to change the color of the polygon
+        # ---------------------------------------------------
+        if imgui.button("Color"):
+            log.debug("Changing color pick selected to true")
+            self._GUI_manager.set_active_tool(None)
+            self.__color_pick_selected = True
+
+        # Define the modal to show
+        # ------------------------
+        if imgui.begin_popup_modal(f'Select a color for {polygon_id}')[0]:
+            imgui.set_window_size(300, -1)
+            imgui.text("Pick a color to use...")
+            color_changed, self.__color_selected = imgui.color_edit4("label", self.__color_selected[0],
+                                                                     self.__color_selected[1],
+                                                                     self.__color_selected[2],
+                                                                     self.__color_selected[3])
+
+            if color_changed:
+                log.debug(f"Changing colors for polygon with id {polygon_id}")
+                # TODO: Implement the workflow for this method
+
+            if imgui.button("Close"):
+                imgui.close_current_popup()
+
+            imgui.end_popup()
+
+        # Open the modal if the condition to show is fulfilled
+        # ----------------------------------------------------
+        if self.__color_pick_selected:
+            imgui.open_popup(f'Select a color for {polygon_id}')
+            self.__color_pick_selected = False
 
     def render(self) -> None:
         """

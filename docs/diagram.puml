@@ -265,9 +265,13 @@ class src.engine.GUI.frames.MainMenuBar {
 
 class src.engine.GUI.frames.Tools {
     - __button_margin_width: int
+    - __color_pick_selected: boolean
+    - __color_selected: (int, int, int, int)
     - __double_button_margin_width: int
     - __slide_bar_quality: int
     - __tools_names_dict: dict
+    + color_button(polygon_id)
+    + delete_button(active_polygon, polygon_id)
     + generate_polygon_list()
     + render()
     + show_active_tool()
