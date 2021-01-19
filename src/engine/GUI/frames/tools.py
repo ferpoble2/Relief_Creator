@@ -29,7 +29,10 @@ class Tools(Frame):
             'move_map': 'Move Map',
             'create_polygon': 'Create Polygon'
         }
-        self.__color_pick_selected = False
+
+        self.__color_pick_window_size_x = 300
+        self.__color_pick_window_size_y = -1
+        self.__color_pick_should_open = False
         self.__color_selected = (1, 1, 0, 1)
 
     def generate_polygon_list(self) -> None:
@@ -105,12 +108,13 @@ class Tools(Frame):
         if imgui.button("Color"):
             log.debug("Changing color pick selected to true")
             self._GUI_manager.set_active_tool(None)
-            self.__color_pick_selected = True
+            self.__color_pick_should_open = True
 
         # Define the modal to show
         # ------------------------
         if imgui.begin_popup_modal(f'Select a color for {polygon_id}')[0]:
-            imgui.set_window_size(300, -1)
+            imgui.set_window_size(self.__color_pick_window_size_x, self.__color_pick_window_size_y)
+
             imgui.text("Pick a color to use...")
             color_changed, self.__color_selected = imgui.color_edit4("label", self.__color_selected[0],
                                                                      self.__color_selected[1],
@@ -128,9 +132,9 @@ class Tools(Frame):
 
         # Open the modal if the condition to show is fulfilled
         # ----------------------------------------------------
-        if self.__color_pick_selected:
+        if self.__color_pick_should_open:
             imgui.open_popup(f'Select a color for {polygon_id}')
-            self.__color_pick_selected = False
+            self.__color_pick_should_open = False
 
     def render(self) -> None:
         """
