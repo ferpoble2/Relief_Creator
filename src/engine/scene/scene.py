@@ -122,6 +122,24 @@ class Scene:
             if polygon.get_id() == polygon_id:
                 polygon.set_line_color(color)
 
+    def change_dot_color_of_polygon(self, polygon_id: str, color: list) -> None:
+        """
+        Change the color of the dots of the polygon with the specified id.
+
+        Only change the color of the dots of the polygon.
+
+        The colors must be defined in the order RGBA and with values between 0 and 1.
+
+        Args:
+            polygon_id: Id of the polygon to change the color.
+            color: List-like object with the colors to use.
+
+        Returns: None
+        """
+        for polygon in self.__polygon_list:
+            if polygon.get_id() == polygon_id:
+                polygon.set_dot_color(color)
+
     def create_new_polygon(self) -> str:
         """
         Create a new polygon and adds it to the list of polygons.

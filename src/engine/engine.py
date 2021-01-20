@@ -35,15 +35,6 @@ class Engine:
         self.__pending_task_list = []
         self.__threads_list = []
 
-    def add_zoom(self) -> None:
-        """
-        Add zoom to the current map being watched.
-
-        Returns: None
-        """
-        self.program.add_zoom()
-        self.scene.update_models_projection_matrix()
-
     def add_vertex_to_active_polygon(self, position_x: int, position_y: int) -> None:
         """
         Ask the scene to add a vertex in the active polygon of the engine.
@@ -60,19 +51,14 @@ class Engine:
             log.debug(e)
             self.set_modal_text('Error', 'Error creating polygon. \n\nis a model loaded in the program?')
 
-    def get_render_settings(self):
+    def add_zoom(self) -> None:
         """
-        Return a dictionary with the settings related to the render.
+        Add zoom to the current map being watched.
 
-        Returns: Dictionary with the render settings
+        Returns: None
         """
-        return {
-            "LINE_WIDTH": Settings.LINE_WIDTH,
-            "POLYGON_LINE_WIDTH": Settings.POLYGON_LINE_WIDTH,
-            "QUALITY": Settings.QUALITY,
-            "DOT_SIZE": Settings.DOT_SIZE,
-            "POLYGON_DOT_SIZE": Settings.POLYGON_DOT_SIZE
-        }
+        self.program.add_zoom()
+        self.scene.update_models_projection_matrix()
 
     def are_frames_fixed(self) -> bool:
         """
@@ -80,6 +66,15 @@ class Engine:
         Returns: boolean indicating if the frames are fixed
         """
         return Settings.FIXED_FRAMES
+
+    def change_color_file_with_dialog(self) -> None:
+        """
+        Change the color file (CPT file) to the one selected.
+        This change all the models using the color file.
+
+        Returns: None
+        """
+        self.program.change_cpt_file_with_dialog()
 
     def change_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
@@ -97,23 +92,21 @@ class Engine:
         """
         self.scene.change_color_of_polygon(polygon_id, color)
 
-    def change_color_file_with_dialog(self) -> None:
+    def change_dot_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
-        Change the color file (CPT file) to the one selected.
-        This change all the models using the color file.
+        Change the color of the dots of the polygon with the specified id.
+
+        Only change the color of the dots of the polygon.
+
+        The colors must be defined in the order RGBA and with values between 0 and 1.
+
+        Args:
+            polygon_id: Id of the polygon to change the color.
+            color: List-like object with the colors to use.
 
         Returns: None
         """
-        self.program.change_cpt_file_with_dialog()
-
-    def update_scene_models_colors(self):
-        """
-        Update the colors of the models in the scene with the colors that are
-        in the ctp file stored in the program.
-
-        Returns: None
-        """
-        self.scene.update_models_colors()
+        self.scene.change_dot_color_of_polygon(polygon_id, color)
 
     def change_height_window(self, height: int) -> None:
         """
@@ -146,6 +139,25 @@ class Engine:
         """
         Settings.WIDTH = width
 
+    def create_new_polygon(self) -> str:
+        """
+        Create a new polygon on the scene.
+
+        Returns: the id of the new polygon
+        """
+        return self.scene.create_new_polygon()
+
+    def delete_polygon_by_id(self, polygon_id: str) -> None:
+        """
+        Delete the polygon with the specified id from the scene
+
+        Args:
+            polygon_id: Polygon id to use to delete
+
+        Returns: None
+        """
+        self.scene.delete_polygon_by_id(polygon_id)
+
     def fix_frames(self, fix: bool) -> None:
         """
         Fixes/unfix the frames in the application.
@@ -156,13 +168,13 @@ class Engine:
         """
         Settings.fix_frames(fix)
 
-    def get_polygon_list(self) -> list:
+    def get_active_model_id(self) -> str:
         """
-        Get the list of polygons currently being used by the program.
+        Returns the active model being used by the program.
 
-        Returns: list of polygons in the program
+        Returns: active model id
         """
-        return self.scene.get_polygon_list()
+        return self.program.get_active_model()
 
     def get_active_polygon_id(self) -> str:
         """
@@ -171,25 +183,6 @@ class Engine:
         Returns: id of the active polygon
         """
         return self.program.get_active_polygon_id()
-
-    def set_active_polygon(self, polygon_id: str) -> None:
-        """
-        Set a new active polygon on the program.
-
-        Args:
-            polygon_id: ID of the polygon
-
-        Returns: None
-        """
-        self.program.set_active_polygon(polygon_id)
-
-    def get_active_model_id(self) -> str:
-        """
-        Returns the active model being used by the program.
-
-        Returns: active model id
-        """
-        return self.program.get_active_model()
 
     def get_active_tool(self) -> str:
         """
@@ -250,6 +243,14 @@ class Engine:
         """
         return self.program.get_map_position()
 
+    def get_polygon_list(self) -> list:
+        """
+        Get the list of polygons currently being used by the program.
+
+        Returns: list of polygons in the program
+        """
+        return self.scene.get_polygon_list()
+
     def get_quality(self) -> int:
         """
         Get the quality value stored in the settings.
@@ -257,6 +258,20 @@ class Engine:
         Returns: Quality setting
         """
         return Settings.QUALITY
+
+    def get_render_settings(self):
+        """
+        Return a dictionary with the settings related to the render.
+
+        Returns: Dictionary with the render settings
+        """
+        return {
+            "LINE_WIDTH": Settings.LINE_WIDTH,
+            "POLYGON_LINE_WIDTH": Settings.POLYGON_LINE_WIDTH,
+            "QUALITY": Settings.QUALITY,
+            "DOT_SIZE": Settings.DOT_SIZE,
+            "POLYGON_DOT_SIZE": Settings.POLYGON_DOT_SIZE
+        }
 
     def get_scene_setting_data(self) -> dict:
         """
@@ -289,23 +304,6 @@ class Engine:
             'MIN_WIDTH': Settings.MIN_WIDTH,
             'MIN_HEIGHT': Settings.MIN_HEIGHT
         }
-
-    def optimize_gpu_memory(self) -> None:
-        """
-        Call the scene to optimize the GPU memory.
-
-        Make an asyncronic call, setting the loading screen.
-
-        Returns: None
-        """
-        log.debug("Optimizing gpu memory")
-        self.program.set_loading(True)
-        self.set_loading_message("Deleting triangles from the memory")
-
-        def then_routine():
-            self.program.set_loading(False)
-
-        self.scene.optimize_gpu_memory_async(then_routine)
 
     def get_zoom_level(self) -> float:
         """
@@ -368,6 +366,14 @@ class Engine:
         self.program.less_zoom()
         self.scene.update_models_projection_matrix()
 
+    def load_netcdf_file_with_dialog(self) -> None:
+        """
+        Open a dialog to load a new netcdf model into the program.
+
+        Returns: None
+        """
+        self.program.load_netcdf_file_with_dialog()
+
     def move_scene(self, x_movement: int, y_movement: int) -> None:
         """
         Tell the scene to move given the parameters specified.
@@ -379,6 +385,23 @@ class Engine:
         Returns: None
         """
         self.scene.move_models(x_movement, y_movement)
+
+    def optimize_gpu_memory(self) -> None:
+        """
+        Call the scene to optimize the GPU memory.
+
+        Make an asyncronic call, setting the loading screen.
+
+        Returns: None
+        """
+        log.debug("Optimizing gpu memory")
+        self.program.set_loading(True)
+        self.set_loading_message("Deleting triangles from the memory")
+
+        def then_routine():
+            self.program.set_loading(False)
+
+        self.scene.optimize_gpu_memory_async(then_routine)
 
     def refresh_with_model_2d(self, path_color_file: str, path_model: str, model_id: str = 'main') -> None:
         """
@@ -424,25 +447,6 @@ class Engine:
 
         self.scene.reload_models_async(then_routine)
 
-    def create_new_polygon(self) -> str:
-        """
-        Create a new polygon on the scene.
-
-        Returns: the id of the new polygon
-        """
-        return self.scene.create_new_polygon()
-
-    def delete_polygon_by_id(self, polygon_id: str) -> None:
-        """
-        Delete the polygon with the specified id from the scene
-
-        Args:
-            polygon_id: Polygon id to use to delete
-
-        Returns: None
-        """
-        self.scene.delete_polygon_by_id(polygon_id)
-
     def reset_zoom_level(self) -> None:
         """
         Reset the zoom level of the program.
@@ -463,6 +467,17 @@ class Engine:
             self.render.on_loop([lambda: self.scene.draw()])
 
         glfw.terminate()
+
+    def set_active_polygon(self, polygon_id: str) -> None:
+        """
+        Set a new active polygon on the program.
+
+        Args:
+            polygon_id: ID of the polygon
+
+        Returns: None
+        """
+        self.program.set_active_polygon(polygon_id)
 
     def set_active_tool(self, tool: str) -> None:
         """
@@ -497,6 +512,18 @@ class Engine:
         """
         self.program.set_map_position(new_position)
 
+    def set_modal_text(self, title_modal, msg) -> None:
+        """
+        Set a modal in the program.
+
+        Args:
+            title_modal: title of the modal
+            msg: message to show in the modal
+
+        Returns: None
+        """
+        self.gui_manager.set_modal_text(title_modal, msg)
+
     def set_task_for_next_frame(self, task: callable) -> None:
         """
         Add a task to do in the next frame.
@@ -529,26 +556,6 @@ class Engine:
             self.program.set_loading(False)
 
         self.set_task_for_next_frame(task_loading)
-
-    def load_netcdf_file_with_dialog(self) -> None:
-        """
-        Open a dialog to load a new netcdf model into the program.
-
-        Returns: None
-        """
-        self.program.load_netcdf_file_with_dialog()
-
-    def set_modal_text(self, title_modal, msg) -> None:
-        """
-        Set a modal in the program.
-
-        Args:
-            title_modal: title of the modal
-            msg: message to show in the modal
-
-        Returns: None
-        """
-        self.gui_manager.set_modal_text(title_modal, msg)
 
     def set_thread_task(self, parallel_task, then) -> None:
         """
@@ -597,6 +604,15 @@ class Engine:
         # delete tasks already executed
         for task in to_delete:
             self.__pending_task_list.remove(task)
+
+    def update_scene_models_colors(self):
+        """
+        Update the colors of the models in the scene with the colors that are
+        in the ctp file stored in the program.
+
+        Returns: None
+        """
+        self.scene.update_models_colors()
 
     def update_scene_values(self) -> None:
         """

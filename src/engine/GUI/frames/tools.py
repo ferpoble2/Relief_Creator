@@ -34,6 +34,7 @@ class Tools(Frame):
         self.__color_pick_window_size_y = -1
         self.__color_pick_should_open = False
         self.__color_selected = (1, 1, 0, 1)
+        self.__dot_color_selected = (1, 0, 0, 1)
 
         # auxiliary variables
         # -------------------
@@ -70,15 +71,27 @@ class Tools(Frame):
         if imgui.begin_popup_modal(f'Select a color for {polygon_id}')[0]:
             imgui.set_window_size(self.__color_pick_window_size_x, self.__color_pick_window_size_y)
 
-            imgui.text("Pick a color to use...")
-            color_changed, self.__color_selected = imgui.color_edit4("label", self.__color_selected[0],
+            imgui.text("Pick a color to use for the lines")
+            color_changed, self.__color_selected = imgui.color_edit4("Lines_color",
+                                                                     self.__color_selected[0],
                                                                      self.__color_selected[1],
                                                                      self.__color_selected[2],
                                                                      self.__color_selected[3])
 
+            imgui.text("Pick a color to use for the dots")
+            dot_color_changed, self.__dot_color_selected = imgui.color_edit4("Dots color",
+                                                                             self.__dot_color_selected[0],
+                                                                             self.__dot_color_selected[1],
+                                                                             self.__dot_color_selected[2],
+                                                                             self.__dot_color_selected[3])
+
             if color_changed:
-                log.debug(f"Changing colors for polygon with id {polygon_id}")
+                log.debug(f"Changing colors of lines of polygon with id {polygon_id}")
                 self._GUI_manager.change_color_of_polygon(polygon_id, self.__color_selected)
+
+            if dot_color_changed:
+                log.debug(f"Changing colors of dots of polygon with id {polygon_id}")
+                self._GUI_manager.change_dot_color_of_polygon(polygon_id, self.__dot_color_selected)
 
             if imgui.button("Close"):
                 # return the normal tool and close the pop up
@@ -229,6 +242,7 @@ class Tools(Frame):
             log.debug("------------------------------")
             self._GUI_manager.set_active_tool('create_polygon')
             new_polygon_id = self._GUI_manager.create_new_polygon()
+            log.debug("Setting polygon as the active polygon")
             self._GUI_manager.set_active_polygon(new_polygon_id)
 
         self.generate_polygon_list()

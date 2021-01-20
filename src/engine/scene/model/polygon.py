@@ -141,19 +141,20 @@ class Polygon(Model):
             super().draw()
             GL.glLineWidth(line_width)
 
-        # get the settings of the points to draw
-        # --------------------------------------
-        render_settings = self.scene.get_render_settings()
-        dot_size = render_settings["DOT_SIZE"]
-        polygon_dot_size = render_settings["POLYGON_DOT_SIZE"]
+        if self.get_point_number() > 0:
+            # get the settings of the points to draw
+            # --------------------------------------
+            render_settings = self.scene.get_render_settings()
+            dot_size = render_settings["DOT_SIZE"]
+            polygon_dot_size = render_settings["POLYGON_DOT_SIZE"]
 
-        # draw the points
-        # ---------------
-        self.draw_mode = GL.GL_POINTS
-        self.__uniform_color = self.__polygon_dot_color
-        GL.glPointSize(polygon_dot_size)
-        super().draw()
-        GL.glPointSize(dot_size)
+            # draw the points
+            # ---------------
+            self.draw_mode = GL.GL_POINTS
+            self.__uniform_color = self.__polygon_dot_color
+            GL.glPointSize(polygon_dot_size)
+            super().draw()
+            GL.glPointSize(dot_size)
 
     def generate_initial_indices(self) -> None:
         """
@@ -187,6 +188,23 @@ class Polygon(Model):
         Returns: Number of points of the polygon.
         """
         return int(len(self.__point_list) / 3)
+
+    def set_dot_color(self, color: list) -> None:
+        """
+        Set the color to draw the dots of the polygon.
+
+        The color must be in a list-like object in the order of RGBA with values between 0 and 1.
+
+        Args:
+            color: Color to be used by the polygon
+
+        Returns: None
+        """
+        log.debug(f"Changing polygon dot color to {color}")
+        self.__polygon_dot_color = (color[0],
+                                    color[1],
+                                    color[2],
+                                    color[3])
 
     def set_id(self, new_id: str) -> None:
         """

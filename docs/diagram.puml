@@ -44,6 +44,7 @@ class src.engine.GUI.GUIManager{
     + are_frame_fixed()
     + change_color_file_with_dialog()
     + change_color_of_polygon(polygon_id, color)
+    + change_dot_color_of_polygon(polygon_id, color)
     + change_quality(quality)
     + create_new_polygon(): str
     + delete_polygon_by_id(polygon_id)
@@ -243,6 +244,7 @@ class src.engine.scene.model.Polygon{
     + get_id(): str
     + get_point_list(): list
     + get_point_number(): int
+    + set_dot_color(color)
     + set_id(new_id)
     + set_line_color(color)
 }
@@ -278,6 +280,7 @@ class src.engine.GUI.frames.Tools {
     - __color_pick_window_size_x: int
     - __color_pick_window_size_y: int
     - __color_selected: (int, int, int, int)
+    - __dot_color_selected: (int, int, int, int)
     - __double_button_margin_width: int
     - __slide_bar_quality: int
     - __tool_before_pop_up: str
@@ -348,6 +351,7 @@ class src.engine.scene.Scene {
     + add_vertex_to_active_polygon(position_x, position_y)
     + calculate_map_position_from_window(): (float, float)
     + change_color_of_polygon(polygon_id, color)
+    + change_dot_color_of_polygon(polygon_id, color)
     + create_new_polygon(): str
     + delete_polygon_by_id(polygon_id)
     + draw()
@@ -370,6 +374,7 @@ class src.engine.scene.Scene {
     + update_models_projection_matrix()
     + update_viewport()
     + update_viewport_variables()
+
     - __3d_model_list: list
     - __engine : Engine
     - __height_viewport: int
@@ -393,6 +398,7 @@ class src.engine.Engine {
     + are_frames_fixed(): boolean
     + change_color_file_with_dialog()
     + change_color_of_polygon(polygon_id, color)
+    + change_dot_color_of_polygon(polygon_id,  color)
     + change_height_window(height)
     + change_quality(quality)
     + change_width_window(width)
