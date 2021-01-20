@@ -28,13 +28,21 @@ class Polygon(Model):
 
         self.update_uniform_values = True
 
+        self.__vertex_shader_file = './engine/shaders/polygon_vertex.glsl'
+        self.__fragment_shader_file = './engine/shaders/polygon_fragment.glsl'
+
         # Polygon variables
         # ------------------
         self.__point_list = []
         self.__indices_list = []
 
         self.__polygon_color = (1, 1, 0, 1)
-        self.__polygon_point_color = (1, 0, 0, 1)
+        self.__polygon_dot_color = (1, 0, 0, 1)
+        self.__uniform_color = None
+
+        # Initialization logic
+        # --------------------
+        self.set_shaders(self.__vertex_shader_file, self.__fragment_shader_file)
 
     def __str__(self):
         """
@@ -56,14 +64,19 @@ class Polygon(Model):
 
         Returns: None
         """
+
+        # update values for the polygon shader
+        # ------------------------------------
         projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
         polygon_color_location = GL.glGetUniformLocation(self.shader_program, "polygon_color")
 
+        # set the color and projection matrix to use
+        # ------------------------------------------
         GL.glUniform4f(polygon_color_location,
-                       self.__polygon_color[0],
-                       self.__polygon_color[1],
-                       self.__polygon_color[2],
-                       self.__polygon_color[3])
+                       self.__uniform_color[0],
+                       self.__uniform_color[1],
+                       self.__uniform_color[2],
+                       self.__uniform_color[3])
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_model_projection_matrix())
 
     def set_line_color(self, color: list) -> None:
@@ -98,6 +111,14 @@ class Polygon(Model):
         self.__point_list.append(y)
         self.__point_list.append(z)
 
+        # in case of one point,  just add the point to the GPU to render it
+        # -----------------------------------------------------------------
+        if self.get_point_number() == 1:
+            self.set_vertices(np.array(self.__point_list, dtype=np.float32))
+            self.set_indices(np.array([0], dtype=np.uint32))
+
+        # in case of more points, reorder them to show a polygon using indices
+        # --------------------------------------------------------------------
         if self.get_point_number() > 1:
 
             # Append the initial indices for the polygon when there is two points
@@ -121,14 +142,35 @@ class Polygon(Model):
         """
         Set how and when to draw the polygons.
         """
+
         if self.get_point_number() > 1:
+            # get the settings of the polygon to draw
+            # ---------------------------------------
             render_settings = self.scene.get_render_settings()
             line_width = render_settings["LINE_WIDTH"]
             polygon_line_width = render_settings["POLYGON_LINE_WIDTH"]
 
+            # draw the polygon
+            # ----------------
+            self.draw_mode = GL.GL_LINES
+            self.__uniform_color = self.__polygon_color
             GL.glLineWidth(polygon_line_width)
             super().draw()
             GL.glLineWidth(line_width)
+
+        # get the settings of the points to draw
+        # --------------------------------------
+        render_settings = self.scene.get_render_settings()
+        dot_size = render_settings["DOT_SIZE"]
+        polygon_dot_size = render_settings["POLYGON_DOT_SIZE"]
+
+        # draw the points
+        # ---------------
+        self.draw_mode = GL.GL_POINTS
+        self.__uniform_color = self.__polygon_dot_color
+        GL.glPointSize(polygon_dot_size)
+        super().draw()
+        GL.glPointSize(dot_size)
 
     def generate_initial_indices(self) -> None:
         """

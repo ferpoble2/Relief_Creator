@@ -22,6 +22,8 @@ class Settings:
     QUALITY = 25
     LINE_WIDTH = 1
     POLYGON_LINE_WIDTH = 2
+    DOT_SIZE = 1
+    POLYGON_DOT_SIZE = 10
 
     # SCENE settings
     SCENE_BEGIN_X = LEFT_FRAME_WIDTH

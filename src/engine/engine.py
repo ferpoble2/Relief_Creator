@@ -69,7 +69,9 @@ class Engine:
         return {
             "LINE_WIDTH": Settings.LINE_WIDTH,
             "POLYGON_LINE_WIDTH": Settings.POLYGON_LINE_WIDTH,
-            "QUALITY": Settings.QUALITY
+            "QUALITY": Settings.QUALITY,
+            "DOT_SIZE": Settings.DOT_SIZE,
+            "POLYGON_DOT_SIZE": Settings.POLYGON_DOT_SIZE
         }
 
     def are_frames_fixed(self) -> bool:

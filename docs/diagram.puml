@@ -94,6 +94,8 @@ class src.engine.settings  {
     {static} + QUALITY: int
     {static} + LINE_WIDTH: int
     {static} + POLYGON_LINE_WIDTH: int
+    {static} + DOT_SIZE: int
+    {static} + POLYGON_DOT_SIZE: int
     {static} + SCENE_BEGIN_X: int
     {static} + SCENE_BEGIN_Y: int
     {static} + SCENE_WIDTH_X: int
@@ -226,10 +228,13 @@ class src.engine.scene.model.Map2DModel{
 
 class src.engine.scene.model.Polygon{
 
-    - __point_list: list
+    - __fragment_shader_file: str
     - __indices_list: list
+    - __point_list: list
     - __polygon_color: tuple
-    - __polygon_point_color: tuple
+    - __polygon_dot_color: tuple
+    - __uniform_color: tuple
+    - __vertex_shader_file: str
 
     - __str__()
     - _update_uniforms()
