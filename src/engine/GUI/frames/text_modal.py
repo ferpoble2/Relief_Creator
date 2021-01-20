@@ -30,6 +30,10 @@ class TextModal(Frame):
         self.__modal_title = "Modal"
         self.__msg = "Sample text for the modal"
 
+        # auxiliary variables
+        # -------------------
+        self.__tool_before_pop_up = None
+
     def render(self) -> None:
         """
         Render a modal with the specified text.
@@ -37,15 +41,27 @@ class TextModal(Frame):
         """
 
         if self.__should_show:
-            imgui.open_popup(self.__modal_title)
+            # stores the active tool and deactivate it
+            # ----------------------------------------
+            self.__tool_before_pop_up = self._GUI_manager.get_active_tool()
+            self._GUI_manager.set_active_tool(None)
 
-        # print(imgui.begin_popup_modal(self.__modal_title))
+            # open the pop up
+            # ---------------
+            imgui.open_popup(self.__modal_title)
+            self.__should_show = False
+
         if imgui.begin_popup_modal(self.__modal_title)[0]:
             imgui.set_window_size(self.__windows_width, -1)
             imgui.text(self.__msg)
 
             if imgui.button("Close", self.__windows_width - self.__margin_button, self.__button_height):
-                self.__should_show = False
+                # return the original tool to the program
+                # ---------------------------------------
+                self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
+
+                # close the pop up
+                # ----------------
                 imgui.close_current_popup()
 
             imgui.end_popup()
