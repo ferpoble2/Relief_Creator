@@ -79,23 +79,6 @@ class Polygon(Model):
                        self.__uniform_color[3])
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_model_projection_matrix())
 
-    def set_line_color(self, color: list) -> None:
-        """
-        Set the color to draw the lines of the polygon.
-
-        The color must be in a list-like object in the order of RGBA with values between 0 and 1.
-
-        Args:
-            color: Color to be used by the polygon
-
-        Returns: None
-        """
-        log.debug(f"Changing polygon color to {color}")
-        self.__polygon_color = (color[0],
-                                color[1],
-                                color[2],
-                                color[3])
-
     def add_point(self, x: float, y: float, z: float = 0.5) -> None:
         """
         Add a new point to the list of points.
@@ -215,3 +198,20 @@ class Polygon(Model):
         Returns: None
         """
         self.id = new_id
+
+    def set_line_color(self, color: list) -> None:
+        """
+        Set the color to draw the lines of the polygon.
+
+        The color must be in a list-like object in the order of RGBA with values between 0 and 1.
+
+        Args:
+            color: Color to be used by the polygon
+
+        Returns: None
+        """
+        log.debug(f"Changing polygon color to {color}")
+        self.__polygon_color = (color[0],
+                                color[1],
+                                color[2],
+                                color[3])
