@@ -43,6 +43,7 @@ class src.engine.GUI.GUIManager{
     + add_zoom()
     + are_frame_fixed()
     + change_color_file_with_dialog()
+    + change_color_of_polygon(polygon_id, color)
     + change_quality(quality)
     + create_new_polygon(): str
     + delete_polygon_by_id(polygon_id)
@@ -227,15 +228,18 @@ class src.engine.scene.model.Polygon{
 
     - __point_list: list
     - __indices_list: list
+    - __polygon_color: tuple
+    - __polygon_point_color: tuple
 
     - __str__()
     - _update_uniforms()
+    + add_point(x, y, z)
+    + generate_initial_indices()
     + get_id(): str
-    + set_id(new_id)
     + get_point_list(): list
     + get_point_number(): int
-    + generate_initial_indices()
-    + add_point(x, y, z)
+    + set_id(new_id)
+    + set_line_color(color)
 }
 
 class src.input.CTP <<$file>> {
@@ -271,7 +275,9 @@ class src.engine.GUI.frames.Tools {
     - __color_selected: (int, int, int, int)
     - __double_button_margin_width: int
     - __slide_bar_quality: int
+    - __tool_before_pop_up: str
     - __tools_names_dict: dict
+
     + color_button(polygon_id)
     + delete_button(active_polygon, polygon_id)
     + generate_polygon_list()
@@ -336,6 +342,7 @@ class src.engine.scene.Scene {
     + add_polygon(polygon)
     + add_vertex_to_active_polygon(position_x, position_y)
     + calculate_map_position_from_window(): (float, float)
+    + change_color_of_polygon(polygon_id, color)
     + create_new_polygon(): str
     + delete_polygon_by_id(polygon_id)
     + draw()
@@ -380,6 +387,7 @@ class src.engine.Engine {
     + add_zoom()
     + are_frames_fixed(): boolean
     + change_color_file_with_dialog()
+    + change_color_of_polygon(polygon_id, color)
     + change_height_window(height)
     + change_quality(quality)
     + change_width_window(width)

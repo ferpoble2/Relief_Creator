@@ -355,6 +355,22 @@ class GUIManager:
         """
         self.__engine.delete_polygon_by_id(polygon_id)
 
+    def change_color_of_polygon(self, polygon_id: str, color: list) -> None:
+        """
+        Change the color of the polygon with the specified id.
+
+        Only change the color of the lines of the polygon.
+
+        The colors must be defined in the order RGBA and with values between 0 and 1.
+
+        Args:
+            polygon_id: Id of the polygon to change the color.
+            color: List-like object with the colors to use.
+
+        Returns: None
+        """
+        self.__engine.change_color_of_polygon(polygon_id, color)
+
     def process_input(self) -> None:
         """
         Process the input (events) that happened in the GUI.

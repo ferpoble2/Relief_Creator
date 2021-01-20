@@ -4,9 +4,12 @@ File containing the class polygon.
 This class stores all the information related to the polygons that can be draw on the screen of the program.
 """
 from src.engine.scene.model.model import Model
+from src.utils import get_logger
 
 import numpy as np
 import OpenGL.GL as GL
+
+log = get_logger(module="SCENE")
 
 
 class Polygon(Model):
@@ -30,6 +33,9 @@ class Polygon(Model):
         self.__point_list = []
         self.__indices_list = []
 
+        self.__polygon_color = (1, 1, 0, 1)
+        self.__polygon_point_color = (1, 0, 0, 1)
+
     def __str__(self):
         """
         Format how polygons are printed on the console.
@@ -51,7 +57,31 @@ class Polygon(Model):
         Returns: None
         """
         projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
+        polygon_color_location = GL.glGetUniformLocation(self.shader_program, "polygon_color")
+
+        GL.glUniform4f(polygon_color_location,
+                       self.__polygon_color[0],
+                       self.__polygon_color[1],
+                       self.__polygon_color[2],
+                       self.__polygon_color[3])
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_model_projection_matrix())
+
+    def set_line_color(self, color: list) -> None:
+        """
+        Set the color to draw the lines of the polygon.
+
+        The color must be in a list-like object in the order of RGBA with values between 0 and 1.
+
+        Args:
+            color: Color to be used by the polygon
+
+        Returns: None
+        """
+        log.debug(f"Changing polygon color to {color}")
+        self.__polygon_color = (color[0],
+                                color[1],
+                                color[2],
+                                color[3])
 
     def add_point(self, x: float, y: float, z: float = 0.5) -> None:
         """

@@ -35,6 +35,10 @@ class Tools(Frame):
         self.__color_pick_should_open = False
         self.__color_selected = (1, 1, 0, 1)
 
+        # auxiliary variables
+        # -------------------
+        self.__tool_before_pop_up = None
+
     def color_button(self, polygon_id: str) -> None:
         """
         Define the modal to show if the color pick is selected.
@@ -51,7 +55,14 @@ class Tools(Frame):
         # ---------------------------------------------------
         if imgui.button("Color"):
             log.debug("Changing color pick selected to true")
+
+            # deactivate the tool and store it to return it later
+            # ---------------------------------------------------
+            self.__tool_before_pop_up = self._GUI_manager.get_active_tool()
             self._GUI_manager.set_active_tool(None)
+
+            # activate the pop up
+            # -------------------
             self.__color_pick_should_open = True
 
         # Define the modal to show
@@ -67,9 +78,12 @@ class Tools(Frame):
 
             if color_changed:
                 log.debug(f"Changing colors for polygon with id {polygon_id}")
-                # TODO: Implement the workflow for this method
+                self._GUI_manager.change_color_of_polygon(polygon_id, self.__color_selected)
 
             if imgui.button("Close"):
+                # return the normal tool and close the pop up
+                # -------------------------------------------
+                self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
                 imgui.close_current_popup()
 
             imgui.end_popup()

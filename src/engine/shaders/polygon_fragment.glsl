@@ -2,7 +2,9 @@
 
 out vec4 outColor;
 
+uniform vec4 polygon_color;
+
 void main()
 {
-    outColor = vec4(1,1,0, 1);
+    outColor = vec4(polygon_color);
 }
