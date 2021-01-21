@@ -55,7 +55,11 @@ class Tools(Frame):
 
         # Generate button to change the color of the polygon
         # ---------------------------------------------------
-        if imgui.button("Color"):
+        if imgui.color_button("Color Button",
+                              self.__color_selected_dict[polygon_id]['polygon'][0],
+                              self.__color_selected_dict[polygon_id]['polygon'][1],
+                              self.__color_selected_dict[polygon_id]['polygon'][2],
+                              self.__color_selected_dict[polygon_id]['polygon'][3]):
             log.debug("Changing color pick selected to true")
 
             # deactivate the tool and store it to return it later
