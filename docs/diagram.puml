@@ -79,7 +79,7 @@ class src.engine.GUI.GUIManager{
     + set_bold_font()
     + set_loading_message(new_msg)
     + set_modal_text(modal_title, msg)
-    + set_polygon_mode(polygon_mode)
+    + set_models_polygon_mode(polygon_mode)
     + set_polygon_name(polygon_id, new_name)
     + set_regular_font()
 }
@@ -209,14 +209,7 @@ class src.engine.scene.model.Map2DModel{
     - __new_indices: list
     + hbo : int
 
-    + calculate_projection_matrix(scene_data, zoom_level)
-    + get_projection_matrix(): array
-    + get_showed_limits(): dict
-    + move(x_movement, y_movement)
-    + optimize_gpu_memory_async(then)
-    + recalculate_vertices_from_grid_async(quality, then)
-    + set_color_file(filename)
-    + set_vertices_from_grid_async(x,y,z,quality, then)
+
     - __add_triangles_inside_zone_to_delete_list(left_coordinate, right_coordinate, top_coordinate, bottom_coordinate)
     - __generate_index_list(step_x, step_y, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): list
     - __generate_vertices_list(x, y, z, z_value): list
@@ -227,6 +220,14 @@ class src.engine.scene.model.Map2DModel{
     - __print_vertices()
     - __set_height_buffer()
     ~ _update_uniforms()
+    + calculate_projection_matrix(scene_data, zoom_level)
+    + get_projection_matrix(): array
+    + get_showed_limits(): dict
+    + move(x_movement, y_movement)
+    + optimize_gpu_memory_async(then)
+    + recalculate_vertices_from_grid_async(quality, then)
+    + set_color_file(filename)
+    + set_vertices_from_grid_async(x,y,z,quality, then)
 
 }
 
@@ -242,7 +243,7 @@ class src.engine.scene.model.Polygon{
     - __vertex_shader_file: str
 
     - __str__()
-    - _update_uniforms()
+    ~ _update_uniforms()
     + add_point(x, y, z)
     + generate_initial_indices()
     + get_id(): str
@@ -297,16 +298,17 @@ class src.engine.GUI.frames.Tools {
     - __tool_before_pop_up: str
     - __tools_names_dict: dict
 
-    + color_button(polygon_id)
-    + delete_button(active_polygon, polygon_id)
-    + generate_polygon_list()
-    + rename_polygon_button(polygon_id)
+
+    - __color_button(polygon_id)
+    - __delete_button(active_polygon, polygon_id)
+    - __generate_polygon_list()
+    - __rename_polygon_button(polygon_id)
+    - __show_active_tool()
+    - __show_editing_tools(left_frame_width)
+    - __show_other_tools(left_frame_width)
+    - __show_polygon_tools(left_frame_width)
+    - __show_visualization_tools(left_frame_width)
     + render()
-    + show_active_tool()
-    + show_editing_tools(left_frame_width)
-    + show_other_tools(left_frame_width)
-    + show_polygon_tools(left_frame_width)
-    + show_visualization_tools(left_frame_width)
 }
 
 class src.engine.GUI.frames.Debug {
@@ -382,7 +384,7 @@ class src.engine.scene.Scene {
     + remove_model(id_model)
     + set_loading_message(new_msg)
     + set_map_position(new_position)
-    + set_polygon_mode(polygon_mode)
+    + set_models_polygon_mode(polygon_mode)
     + set_polygon_name(polygon_id, new_name)
     + update_models_colors()
     + update_models_projection_matrix()
@@ -453,6 +455,7 @@ class src.engine.Engine {
     + set_loading_message(new_msg)
     + set_map_position(new_position)
     + set_modal_text(title_modal, msg)
+    + set_models_polygon_mode(polygon_mode)
     + set_polygon_name(polygon_id, new_name)
     + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
