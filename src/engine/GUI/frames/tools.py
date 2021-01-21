@@ -55,7 +55,7 @@ class Tools(Frame):
 
         # Generate button to change the color of the polygon
         # ---------------------------------------------------
-        if imgui.color_button("Color Button",
+        if imgui.color_button("Color",
                               self.__color_selected_dict[polygon_id]['polygon'][0],
                               self.__color_selected_dict[polygon_id]['polygon'][1],
                               self.__color_selected_dict[polygon_id]['polygon'][2],
@@ -78,14 +78,14 @@ class Tools(Frame):
 
             color_selected_data = self.__color_selected_dict[polygon_id]
 
-            imgui.text("Pick a color to use for the lines")
-            color_changed, color_selected_data['polygon'] = imgui.color_edit4("Lines_color",
+            imgui.text("Pick a color to use for the lines:")
+            color_changed, color_selected_data['polygon'] = imgui.color_edit4("Lines color",
                                                                               color_selected_data['polygon'][0],
                                                                               color_selected_data['polygon'][1],
                                                                               color_selected_data['polygon'][2],
                                                                               color_selected_data['polygon'][3])
 
-            imgui.text("Pick a color to use for the dots")
+            imgui.text("Pick a color to use for the dots:")
             dot_color_changed, color_selected_data['dot'] = imgui.color_edit4("Dots color",
                                                                               color_selected_data['dot'][0],
                                                                               color_selected_data['dot'][1],
