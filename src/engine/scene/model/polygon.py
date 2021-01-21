@@ -40,6 +40,8 @@ class Polygon(Model):
         self.__polygon_dot_color = (1, 0, 0, 1)
         self.__uniform_color = None
 
+        self.__name = self.get_id()
+
         # Initialization logic
         # --------------------
         self.set_shaders(self.__vertex_shader_file, self.__fragment_shader_file)
@@ -173,6 +175,14 @@ class Polygon(Model):
         """
         return self.id
 
+    def get_name(self) -> str:
+        """
+        Get the name of the polygon.
+
+        Returns: Name of the polygon
+        """
+        return self.__name
+
     def get_point_list(self) -> list:
         """
         Get the point list used by the polygon.
@@ -233,3 +243,14 @@ class Polygon(Model):
                                 color[1],
                                 color[2],
                                 color[3])
+
+    def set_name(self, new_name: str) -> None:
+        """
+        Set a new name for the polygon.
+
+        Args:
+            new_name: New name of the polygon
+
+        Returns: None
+        """
+        self.__name = new_name
