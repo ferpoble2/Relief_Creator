@@ -47,7 +47,7 @@ class Tools(Frame):
 
         self.__input_text_value = ''
 
-    def color_button(self, polygon_id: str) -> None:
+    def __color_button(self, polygon_id: str) -> None:
         """
         Define the modal to show if the color pick is selected.
 
@@ -120,7 +120,7 @@ class Tools(Frame):
             imgui.open_popup(f'Select a color for {polygon_id}')
             self.__color_pick_should_open = False
 
-    def delete_button(self, active_polygon: str, polygon_id: str) -> None:
+    def __delete_button(self, active_polygon: str, polygon_id: str) -> None:
         """
         Define a button for the action of deleting a polygon.
 
@@ -139,7 +139,7 @@ class Tools(Frame):
             if active_polygon == polygon_id:
                 self._GUI_manager.set_active_polygon(None)
 
-    def generate_polygon_list(self) -> None:
+    def __generate_polygon_list(self) -> None:
         """
         Generate the list of polygons to show to the user.
 
@@ -158,13 +158,13 @@ class Tools(Frame):
 
             # on the same line, show a button to delete the polygon from the program
             imgui.same_line()
-            self.delete_button(active_polygon, polygon_id)
+            self.__delete_button(active_polygon, polygon_id)
 
             imgui.same_line()
-            self.rename_polygon_button(polygon_id)
+            self.__rename_polygon_button(polygon_id)
 
             imgui.same_line()
-            self.color_button(polygon_id)
+            self.__color_button(polygon_id)
 
             # pop the id to continue rendering the others elements
             imgui.pop_id()
@@ -176,7 +176,7 @@ class Tools(Frame):
                 # Activate the create_polygon tool when clicked the polygon
                 self._GUI_manager.set_active_tool('create_polygon')
 
-    def rename_polygon_button(self, polygon_id: str) -> None:
+    def __rename_polygon_button(self, polygon_id: str) -> None:
         """
         Button to rename the polygon.
 
@@ -229,21 +229,21 @@ class Tools(Frame):
         """
 
         imgui.begin('Tools')
-        self.show_active_tool()
+        self.__show_active_tool()
 
         left_frame_width = self._GUI_manager.get_left_frame_width()
 
         imgui.separator()
-        self.show_visualization_tools(left_frame_width)
+        self.__show_visualization_tools(left_frame_width)
 
         imgui.separator()
-        self.show_editing_tools(left_frame_width)
+        self.__show_editing_tools(left_frame_width)
 
         imgui.separator()
-        self.show_polygon_tools(left_frame_width)
+        self.__show_polygon_tools(left_frame_width)
 
         imgui.separator()
-        self.show_other_tools(left_frame_width)
+        self.__show_other_tools(left_frame_width)
 
         if self._GUI_manager.are_frame_fixed():
             imgui.set_window_position(self.get_position()[0], self.get_position()[1])
@@ -253,7 +253,7 @@ class Tools(Frame):
 
         imgui.end()
 
-    def show_active_tool(self):
+    def __show_active_tool(self):
         """
         Show the active tool in a formatted way to the user.
         """
@@ -261,7 +261,7 @@ class Tools(Frame):
         imgui.text(f"Active tool: {self.__tools_names_dict.get(self._GUI_manager.get_active_tool(), None)}")
         self._GUI_manager.set_regular_font()
 
-    def show_editing_tools(self, left_frame_width: int) -> None:
+    def __show_editing_tools(self, left_frame_width: int) -> None:
         """
         Show the editing tools on the frame.
 
@@ -274,7 +274,7 @@ class Tools(Frame):
             log.debug("-----------------------")
             self._GUI_manager.set_active_tool('move_map')
 
-    def show_other_tools(self, left_frame_width: int) -> None:
+    def __show_other_tools(self, left_frame_width: int) -> None:
         """
         Show the other tools buttons on the frame.
 
@@ -288,7 +288,7 @@ class Tools(Frame):
         if imgui.button("Modal Pop-Up Menu", width=left_frame_width - self.__button_margin_width):
             self._GUI_manager.set_modal_text("This is a modal", "A very good modal")
 
-    def show_polygon_tools(self, left_frame_width: int) -> None:
+    def __show_polygon_tools(self, left_frame_width: int) -> None:
         """
         Show the polygon tools on the frame
 
@@ -320,9 +320,9 @@ class Tools(Frame):
             log.debug("Setting polygon as the active polygon")
             self._GUI_manager.set_active_polygon(new_polygon_id)
 
-        self.generate_polygon_list()
+        self.__generate_polygon_list()
 
-    def show_visualization_tools(self, left_frame_width: int) -> None:
+    def __show_visualization_tools(self, left_frame_width: int) -> None:
         """
         Show the visualization tools on the frame.
 
