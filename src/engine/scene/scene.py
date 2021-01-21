@@ -146,10 +146,14 @@ class Scene:
 
         Returns: id of the created polygon
         """
-        new_poligon_id = f"Polygon {self.__polygon_id_count}"
-        polygon = Polygon(self, new_poligon_id)
+
+        # generate a new id for the polygon
+        new_polygon_id = f"Polygon {self.__polygon_id_count}"
+
+        # create the polygon and return its id
+        polygon = Polygon(self, new_polygon_id)
         self.add_polygon(polygon)
-        return new_poligon_id
+        return new_polygon_id
 
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
@@ -211,13 +215,30 @@ class Scene:
         """
         return self.__engine.get_float_bytes()
 
-    def get_polygon_list(self) -> list:
+    def get_polygon_id_list(self) -> list:
         """
-        Return a list with the polygons being used in the program.
+        Return a list with the ids of the polygons being used in the program.
 
-        Returns: list with polygons being used in the program.
+        Returns: list with polygon ids being used in the program.
         """
-        return self.__polygon_list
+        polygon_ids = []
+        for polygon in self.__polygon_list:
+            polygon_ids.append(polygon.get_id())
+
+        return polygon_ids
+
+    def get_polygon_name(self, polygon_id: str) -> str:
+        """
+        Get the name of a polygon given its id
+
+        Args:
+            polygon_id: Id of the polygon
+
+        Returns: Name of the polygon
+        """
+        for polygon in self.__polygon_list:
+            if polygon.get_id() == polygon_id:
+                return polygon.get_name()
 
     def get_render_settings(self) -> dict:
         """
@@ -435,6 +456,21 @@ class Scene:
         """
         for model in self.__model_list:
             model.polygon_mode = polygon_mode
+
+    def set_polygon_name(self, polygon_id: str, new_name: str) -> None:
+        """
+        Change the name of a polygon.
+
+        Args:
+            polygon_id: Old polygon id
+            new_name: New polygon id
+
+        Returns: None
+        """
+
+        for polygon in self.__polygon_list:
+            if polygon.get_id() == polygon_id:
+                polygon.set_name(new_name)
 
     def update_models_colors(self) -> None:
         """

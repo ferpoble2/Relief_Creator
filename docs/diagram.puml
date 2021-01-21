@@ -54,10 +54,12 @@ class src.engine.GUI.GUIManager{
     + get_active_polygon_id(): str
     + get_active_tool(): str
     + get_cpt_file(): str
+    + get_gui_key_callback(): function
     + get_left_frame_width(): int
     + get_main_menu_bar_height(): int
     + get_map_position(): list
-    + get_polygon_list(): list
+    + get_polygon_id_list(): list
+    + get_polygon_name(polygon_id): str
     + get_quality(): int
     + get_view_mode(): str
     + get_window_height(): int
@@ -78,6 +80,7 @@ class src.engine.GUI.GUIManager{
     + set_loading_message(new_msg)
     + set_modal_text(modal_title, msg)
     + set_polygon_mode(polygon_mode)
+    + set_polygon_name(polygon_id, new_name)
     + set_regular_font()
 }
 
@@ -231,6 +234,7 @@ class src.engine.scene.model.Polygon{
 
     - __fragment_shader_file: str
     - __indices_list: list
+    - __name: str
     - __point_list: list
     - __polygon_color: tuple
     - __polygon_dot_color: tuple
@@ -242,11 +246,13 @@ class src.engine.scene.model.Polygon{
     + add_point(x, y, z)
     + generate_initial_indices()
     + get_id(): str
+    + get_name(): str
     + get_point_list(): list
     + get_point_number(): int
     + set_dot_color(color)
     + set_id(new_id)
     + set_line_color(color)
+    + set_name(new_name)
 }
 
 class src.input.CTP <<$file>> {
@@ -283,6 +289,10 @@ class src.engine.GUI.frames.Tools {
     - __color_selected_dict: dict
     - __dot_color_selected_default: (int, int, int, int)
     - __double_button_margin_width: int
+    - __input_text_value: str
+    - __rename_padding_x: int
+    - __rename_size_x: int
+    - __rename_size_y: int
     - __slide_bar_quality: int
     - __tool_before_pop_up: str
     - __tools_names_dict: dict
@@ -290,6 +300,7 @@ class src.engine.GUI.frames.Tools {
     + color_button(polygon_id)
     + delete_button(active_polygon, polygon_id)
     + generate_polygon_list()
+    + rename_polygon_button(polygon_id)
     + render()
     + show_active_tool()
     + show_editing_tools(left_frame_width)
@@ -358,7 +369,8 @@ class src.engine.scene.Scene {
     + draw()
     + get_active_model_projection_matrix(): array
     + get_active_model_showed_limits(): dict
-    + get_polygon_list(): list
+    + get_polygon_id_list(): list
+    + get_polygon_name(polygon_id): str
     + get_render_settings(): dict
     + get_zoom_level(): float
     + initialize(engine)
@@ -371,6 +383,7 @@ class src.engine.scene.Scene {
     + set_loading_message(new_msg)
     + set_map_position(new_position)
     + set_polygon_mode(polygon_mode)
+    + set_polygon_name(polygon_id, new_name)
     + update_models_colors()
     + update_models_projection_matrix()
     + update_viewport()
@@ -414,9 +427,11 @@ class src.engine.Engine {
     + get_float_bytes()
     + get_float_bytes(): int
     + get_font_size(): int
+    + get_gui_key_callback(): function
     + get_gui_setting_data(): dict
     + get_map_position(): list
-    + get_polygon_list(): list
+    + get_polygon_id_list(): list
+    + get_polygon_name(polygon_id): str
     + get_quality(): int
     + get_render_settings()
     + get_scene_setting_data(): dict
@@ -438,6 +453,7 @@ class src.engine.Engine {
     + set_loading_message(new_msg)
     + set_map_position(new_position)
     + set_modal_text(title_modal, msg)
+    + set_polygon_name(polygon_id, new_name)
     + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
     + set_thread_task(parallel_task, then)

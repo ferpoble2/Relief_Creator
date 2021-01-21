@@ -211,6 +211,9 @@ class Controller:
                     log.debug("Left alt released")
                     self.__is_left_alt_pressed = False
 
+            # call the others callbacks defined in the program.
+            self.__engine.get_gui_key_callback()(window, key, scancode, action, mods)
+
         return on_key
 
     def get_resize_callback(self) -> Callable:

@@ -36,10 +36,16 @@ class Tools(Frame):
         self.__color_selected_default = (1, 1, 0, 1)
         self.__dot_color_selected_default = (1, 0, 0, 1)
 
+        self.__rename_size_x = 300
+        self.__rename_size_y = -1
+        self.__rename_padding_x = 20
+
         # auxiliary variables
         # -------------------
         self.__tool_before_pop_up = None
         self.__color_selected_dict = {}
+
+        self.__input_text_value = ''
 
     def color_button(self, polygon_id: str) -> None:
         """
@@ -140,22 +146,22 @@ class Tools(Frame):
         Returns: None
         """
 
-        list_polygons = self._GUI_manager.get_polygon_list()
+        list_polygons_ids = self._GUI_manager.get_polygon_id_list()
         active_polygon = self._GUI_manager.get_active_polygon_id()
 
-        for polygon in list_polygons:
-            # get the id of the polygon
-            polygon_id = polygon.get_id()
-
+        for polygon_id in list_polygons_ids:
             # push id so the buttons doesnt have conflicts with names
             imgui.push_id(polygon_id)
 
             # show a checkbox with the id of the polygon and show it market if the polygon is active
-            clicked, current_state = imgui.checkbox(polygon_id, True if polygon_id == active_polygon else False)
+            clicked, current_state = imgui.checkbox(self._GUI_manager.get_polygon_name(polygon_id), True if polygon_id == active_polygon else False)
 
             # on the same line, show a button to delete the polygon from the program
             imgui.same_line()
             self.delete_button(active_polygon, polygon_id)
+
+            imgui.same_line()
+            self.rename_polygon_button(polygon_id)
 
             imgui.same_line()
             self.color_button(polygon_id)
@@ -169,6 +175,52 @@ class Tools(Frame):
 
                 # Activate the create_polygon tool when clicked the polygon
                 self._GUI_manager.set_active_tool('create_polygon')
+
+    def rename_polygon_button(self, polygon_id: str) -> None:
+        """
+        Button to rename the polygon.
+
+        Args:
+            polygon_id: Id of the polygon to rename.
+
+        Returns: None
+        """
+        if imgui.button('Rename'):
+            log.debug("Rename Button")
+
+            # set the name of the polygon as initial text
+            self.__input_text_value = self._GUI_manager.get_polygon_name(polygon_id)
+
+            # store active tool to return it after
+            self.__tool_before_pop_up = self._GUI_manager.get_active_tool()
+            self._GUI_manager.set_active_tool(None)
+
+            # open the pop up
+            imgui.open_popup(f'Rename {polygon_id}')
+
+        if imgui.begin_popup_modal(f'Rename {polygon_id}')[0]:
+
+            # resize the window
+            imgui.set_window_size(self.__rename_size_x, self.__rename_size_y)
+
+            # write a text for the user
+            imgui.text("Write the new name of the polygon:")
+
+            # open the text input box
+            changed, self.__input_text_value = imgui.input_text('New Name', self.__input_text_value, 15)
+            self._GUI_manager.set_polygon_name(polygon_id, str(self.__input_text_value))
+
+            # close the pop up
+            if imgui.button("Save and close", self.__rename_size_x - self.__rename_padding_x):
+                # return the active tool
+                self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
+
+                # reset the input text
+                self.__input_text_value = ''
+
+                imgui.close_current_popup()
+
+            imgui.end_popup()
 
     def render(self) -> None:
         """

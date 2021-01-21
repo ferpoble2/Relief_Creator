@@ -223,6 +223,14 @@ class Engine:
         """
         return Settings.FONT_SIZE
 
+    def get_gui_key_callback(self) -> callable:
+        """
+        Get the key callback used by the gui
+
+        Returns: Function used as the key callback in the gui
+        """
+        return self.gui_manager.get_gui_key_callback()
+
     def get_gui_setting_data(self) -> dict:
         """
         Get the GUI setting data.
@@ -243,13 +251,24 @@ class Engine:
         """
         return self.program.get_map_position()
 
-    def get_polygon_list(self) -> list:
+    def get_polygon_id_list(self) -> list:
         """
-        Get the list of polygons currently being used by the program.
+        Get the full list of polygon ids currently being used on the program.
 
         Returns: list of polygons in the program
         """
-        return self.scene.get_polygon_list()
+        return self.scene.get_polygon_id_list()
+
+    def get_polygon_name(self, polygon_id: str) -> str:
+        """
+        Get the name of a polygon given its id
+
+        Args:
+            polygon_id: Id of the polygon
+
+        Returns: Name of the polygon
+        """
+        return self.scene.get_polygon_name(polygon_id)
 
     def get_quality(self) -> int:
         """
@@ -523,6 +542,18 @@ class Engine:
         Returns: None
         """
         self.gui_manager.set_modal_text(title_modal, msg)
+
+    def set_polygon_name(self, polygon_id: str, new_name: str) -> None:
+        """
+        Change the name of a polygon.
+
+        Args:
+            polygon_id: Old polygon id
+            new_name: New polygon id
+
+        Returns: None
+        """
+        self.scene.set_polygon_name(polygon_id, new_name)
 
     def set_task_for_next_frame(self, task: callable) -> None:
         """
