@@ -446,9 +446,10 @@ class Scene:
         """
         self.__engine.set_thread_task(parallel_task, then)
 
-    def set_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
+    def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
         Select if the models uses the wireframe mode or not.
+
         Args:
             polygon_mode: OpenGL polygon mode to draw the model.
 

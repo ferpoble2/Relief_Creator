@@ -480,16 +480,16 @@ class GUIManager:
             if isinstance(frame, TextModal):
                 frame.set_modal_text(modal_title, msg)
 
-    def set_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
+    def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
-        Call the scene to change the polygon mode used.
+        Call the scene to change the polygon mode used by the models.
 
         Args:
             polygon_mode: Polygon mode to use.
 
         Returns:
         """
-        self.__scene.set_polygon_mode(polygon_mode)
+        self.__engine.set_models_polygon_mode(polygon_mode)
 
     def set_polygon_name(self, polygon_id: str, new_name: str) -> None:
         """

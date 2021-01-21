@@ -96,17 +96,17 @@ class MainMenuBar(Frame):
                 imgui.menu_item('Use points')
                 if imgui.is_item_clicked():
                     log.info("Rendering points")
-                    self._GUI_manager.set_polygon_mode(GL.GL_POINT)
+                    self._GUI_manager.set_models_polygon_mode(GL.GL_POINT)
 
                 imgui.menu_item('Use wireframes')
                 if imgui.is_item_clicked():
                     log.info("Rendering wireframes")
-                    self._GUI_manager.set_polygon_mode(GL.GL_LINE)
+                    self._GUI_manager.set_models_polygon_mode(GL.GL_LINE)
 
                 imgui.menu_item('Fill polygons')
                 if imgui.is_item_clicked():
                     log.info("Rendering filled polygons")
-                    self._GUI_manager.set_polygon_mode(GL.GL_FILL)
+                    self._GUI_manager.set_models_polygon_mode(GL.GL_FILL)
 
                 imgui.end_menu()
 

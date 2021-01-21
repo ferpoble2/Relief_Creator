@@ -118,6 +118,17 @@ class Engine:
         """
         Settings.HEIGHT = height
 
+    def set_models_polygon_mode(self, polygon_mode: 'OGLConstant.IntConstant') -> None:
+        """
+        Call the scene to change the polygon mode used by the models.
+
+        Args:
+            polygon_mode: Polygon mode to use.
+
+        Returns:
+        """
+        self.scene.set_models_polygon_mode(polygon_mode)
+
     def change_quality(self, quality: int) -> None:
         """
         Change the quality used to render the maps.
