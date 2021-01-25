@@ -34,7 +34,7 @@ class Tools(Frame):
         self.__color_pick_window_size_y = -1
         self.__color_pick_should_open = False
         self.__color_selected_default = (1, 1, 0, 1)
-        self.__dot_color_selected_default = (1, 0, 0, 1)
+        self.__dot_color_selected_default = (1, 1, 0, 1)
 
         self.__rename_size_x = 300
         self.__rename_size_y = -1
