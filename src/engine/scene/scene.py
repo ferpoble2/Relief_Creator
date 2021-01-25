@@ -206,6 +206,14 @@ class Scene:
             if model.id == active_model_id:
                 return model.get_showed_limits()
 
+    def get_active_polygon_id(self) -> str:
+        """
+        Get the id of the active polygon on the program.
+
+        Returns: the id of the active polygon.
+        """
+        return self.__engine.get_active_polygon_id()
+
     def get_float_bytes(self) -> int:
         """
         Get the float bytes used in a float to render.
@@ -434,18 +442,6 @@ class Scene:
         """
         self.__engine.set_map_position(new_position)
 
-    def set_parallel_task(self, parallel_task, then):
-        """
-        Set a parallel task in the engine.
-
-        Args:
-            parallel_task: Task to execute in parallel
-            then: Task to execute after the parallel task
-
-        Returns: None
-        """
-        self.__engine.set_thread_task(parallel_task, then)
-
     def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
         Select if the models uses the wireframe mode or not.
@@ -457,6 +453,18 @@ class Scene:
         """
         for model in self.__model_list:
             model.polygon_mode = polygon_mode
+
+    def set_parallel_task(self, parallel_task, then):
+        """
+        Set a parallel task in the engine.
+
+        Args:
+            parallel_task: Task to execute in parallel
+            then: Task to execute after the parallel task
+
+        Returns: None
+        """
+        self.__engine.set_thread_task(parallel_task, then)
 
     def set_polygon_name(self, polygon_id: str, new_name: str) -> None:
         """
