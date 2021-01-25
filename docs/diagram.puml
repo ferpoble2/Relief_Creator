@@ -136,7 +136,6 @@ class src.engine.scene.model.transformations.transformations <<$file>> {
 class src.engine.scene.model.Model {
     + vao: int
     + vbo: int
-    + cbo: int
     + ebo: int
     + shader_program: compiled_shader
     + position: numpy.array[3]
