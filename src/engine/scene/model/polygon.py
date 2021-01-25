@@ -38,6 +38,7 @@ class Polygon(Model):
         self.__indices_list = []
 
         self.__polygon_line_color = (1, 1, 0, 1)
+        self.__polygon_selected_border_color = (0, 0, 0, 1)
 
         self.__name = self.get_id()
 
@@ -138,7 +139,7 @@ class Polygon(Model):
                 old_color = self.__polygon_line_color
 
                 # change the color and width of the line to draw
-                self.__polygon_line_color = (0, 0, 0, 1)
+                self.__polygon_line_color = self.__polygon_selected_border_color
                 GL.glLineWidth(active_polygon_line_width)
                 super().draw()
 
