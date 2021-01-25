@@ -100,6 +100,7 @@ class src.engine.settings  {
     {static} + POLYGON_LINE_WIDTH: int
     {static} + DOT_SIZE: int
     {static} + POLYGON_DOT_SIZE: int
+    {static} + ACTIVE_POLYGON_LINE_WIDTH: int
     {static} + SCENE_BEGIN_X: int
     {static} + SCENE_BEGIN_Y: int
     {static} + SCENE_WIDTH_X: int
@@ -231,16 +232,38 @@ class src.engine.scene.model.Map2DModel{
 
 }
 
+class src.engine.scene.model.Points{
+
+    - __color_list: list
+    - __first_point_color: tuple
+    - __fragment_shader_file: str
+    - __indices_list: list
+    - __last_point_color: tuple
+    - __normal_color: tuple
+    - __point_list: list
+    - __vertex_shader_file: str
+    + cbo: int
+
+    + add_point(x, y, z)
+    + get_first_point_color(): tuple
+    + get_last_point_color(): tuple
+    + get_normal_color(): tuple
+    + get_point_list(): list
+    + set_color_buffer(colors)
+    + set_first_point_color(new_color)
+    + set_last_point_color(new_color)
+    + set_normal_color(new_color)
+}
+
 class src.engine.scene.model.Polygon{
 
     - __fragment_shader_file: str
     - __indices_list: list
     - __name: str
     - __point_list: list
-    - __polygon_color: tuple
-    - __polygon_dot_color: tuple
-    - __uniform_color: tuple
+    - __polygon_line_color: tuple
     - __vertex_shader_file: str
+    - __point_model: Points
 
     - __str__()
     ~ _update_uniforms()
@@ -371,6 +394,7 @@ class src.engine.scene.Scene {
     + draw()
     + get_active_model_projection_matrix(): array
     + get_active_model_showed_limits(): dict
+    + get_active_polygon_id(): str
     + get_polygon_id_list(): list
     + get_polygon_name(polygon_id): str
     + get_render_settings(): dict
@@ -502,6 +526,8 @@ class src.program.Program {
 src.engine.scene.model.Map2DModel -u-|> src.engine.scene.model.Model
 src.engine.scene.model.Map3DModel -u-|> src.engine.scene.model.Model
 src.engine.scene.model.Polygon -u-|> src.engine.scene.model.Model
+src.engine.scene.model.Points -u-|> src.engine.scene.model.Model
+src.engine.scene.model.Polygon .> src.engine.scene.model.Points
 
 src.engine.GUI.frames.Debug -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Loading -u-|> src.engine.GUI.frames.Frame
