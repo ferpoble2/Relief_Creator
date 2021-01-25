@@ -17,13 +17,13 @@ class Polygon(Model):
     Class in charge of the polygons of the program.
     """
 
-    def __init__(self, scene, id):
+    def __init__(self, scene, id_polygon):
         """
         Constructor of the class.
         """
         super().__init__(scene)
 
-        self.id = id
+        self.id = id_polygon
         self.draw_mode = GL.GL_LINES
 
         self.update_uniform_values = True
