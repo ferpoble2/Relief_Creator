@@ -300,7 +300,8 @@ class Engine:
             "POLYGON_LINE_WIDTH": Settings.POLYGON_LINE_WIDTH,
             "QUALITY": Settings.QUALITY,
             "DOT_SIZE": Settings.DOT_SIZE,
-            "POLYGON_DOT_SIZE": Settings.POLYGON_DOT_SIZE
+            "POLYGON_DOT_SIZE": Settings.POLYGON_DOT_SIZE,
+            "ACTIVE_POLYGON_LINE_WIDTH": Settings.ACTIVE_POLYGON_LINE_WIDTH
         }
 
     def get_scene_setting_data(self) -> dict:

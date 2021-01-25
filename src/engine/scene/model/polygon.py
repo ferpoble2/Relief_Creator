@@ -5,6 +5,7 @@ This class stores all the information related to the polygons that can be draw o
 """
 from src.engine.scene.model.model import Model
 from src.utils import get_logger
+from src.engine.scene.model.points import Points
 
 import numpy as np
 import OpenGL.GL as GL
@@ -36,11 +37,11 @@ class Polygon(Model):
         self.__point_list = []
         self.__indices_list = []
 
-        self.__polygon_color = (1, 1, 0, 1)
-        self.__polygon_dot_color = (1, 0, 0, 1)
-        self.__uniform_color = None
+        self.__polygon_line_color = (1, 1, 0, 1)
 
         self.__name = self.get_id()
+
+        self.__point_model = Points(scene)  # model to use to draw the points
 
         # Initialization logic
         # --------------------
@@ -75,10 +76,10 @@ class Polygon(Model):
         # set the color and projection matrix to use
         # ------------------------------------------
         GL.glUniform4f(polygon_color_location,
-                       self.__uniform_color[0],
-                       self.__uniform_color[1],
-                       self.__uniform_color[2],
-                       self.__uniform_color[3])
+                       self.__polygon_line_color[0],
+                       self.__polygon_line_color[1],
+                       self.__polygon_line_color[2],
+                       self.__polygon_line_color[3])
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_model_projection_matrix())
 
     def add_point(self, x: float, y: float, z: float = 0.5) -> None:
@@ -96,14 +97,9 @@ class Polygon(Model):
         self.__point_list.append(y)
         self.__point_list.append(z)
 
-        # in case of one point,  just add the point to the GPU to render it
-        # -----------------------------------------------------------------
-        if self.get_point_number() == 1:
-            self.set_vertices(np.array(self.__point_list, dtype=np.float32))
-            self.set_indices(np.array([0], dtype=np.uint32))
+        self.__point_model.add_point(x, y, z)
 
-        # in case of more points, reorder them to show a polygon using indices
-        # --------------------------------------------------------------------
+        # polygon is only complete when there is more than one point
         if self.get_point_number() > 1:
 
             # Append the initial indices for the polygon when there is two points
@@ -134,29 +130,28 @@ class Polygon(Model):
             render_settings = self.scene.get_render_settings()
             line_width = render_settings["LINE_WIDTH"]
             polygon_line_width = render_settings["POLYGON_LINE_WIDTH"]
+            active_polygon_line_width = render_settings["ACTIVE_POLYGON_LINE_WIDTH"]
+
+            # if the polygon is the active one, then draw an extra border
+            if self.scene.get_active_polygon_id() == self.id:
+                # store the old color
+                old_color = self.__polygon_line_color
+
+                # change the color and width of the line to draw
+                self.__polygon_line_color = (0, 0, 0, 1)
+                GL.glLineWidth(active_polygon_line_width)
+                super().draw()
+
+                # return the original color
+                self.__polygon_line_color = old_color
 
             # draw the polygon
-            # ----------------
-            self.draw_mode = GL.GL_LINES
-            self.__uniform_color = self.__polygon_color
             GL.glLineWidth(polygon_line_width)
             super().draw()
             GL.glLineWidth(line_width)
 
-        if self.get_point_number() > 0:
-            # get the settings of the points to draw
-            # --------------------------------------
-            render_settings = self.scene.get_render_settings()
-            dot_size = render_settings["DOT_SIZE"]
-            polygon_dot_size = render_settings["POLYGON_DOT_SIZE"]
-
-            # draw the points
-            # ---------------
-            self.draw_mode = GL.GL_POINTS
-            self.__uniform_color = self.__polygon_dot_color
-            GL.glPointSize(polygon_dot_size)
-            super().draw()
-            GL.glPointSize(dot_size)
+        # draw the points over the screen
+        self.__point_model.draw()
 
     def generate_initial_indices(self) -> None:
         """
@@ -211,10 +206,7 @@ class Polygon(Model):
         Returns: None
         """
         log.debug(f"Changing polygon dot color to {color}")
-        self.__polygon_dot_color = (color[0],
-                                    color[1],
-                                    color[2],
-                                    color[3])
+        self.__point_model.set_normal_color(tuple(color))
 
     def set_id(self, new_id: str) -> None:
         """
@@ -239,10 +231,10 @@ class Polygon(Model):
         Returns: None
         """
         log.debug(f"Changing polygon color to {color}")
-        self.__polygon_color = (color[0],
-                                color[1],
-                                color[2],
-                                color[3])
+        self.__polygon_line_color = (color[0],
+                                     color[1],
+                                     color[2],
+                                     color[3])
 
     def set_name(self, new_name: str) -> None:
         """
