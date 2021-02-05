@@ -199,6 +199,10 @@ class Controller:
                     log.debug("Pressed shortcut to change color file")
                     self.change_color_file_with_dialog()
 
+                if key == glfw.KEY_M:
+                    log.debug("Pressed shortcut to move map")
+                    self.__engine.set_active_tool('move_map')
+
             # Check for keys released
             if action == glfw.RELEASE:
 
