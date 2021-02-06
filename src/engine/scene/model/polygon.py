@@ -276,6 +276,7 @@ class Polygon(Model):
 
         # debug the new polygon
         log.debug(self)
+
     def set_dot_color(self, color: list) -> None:
         """
         Set the color to draw the dots of the polygon.
@@ -328,4 +329,3 @@ class Polygon(Model):
         Returns: None
         """
         self.__name = new_name
-
