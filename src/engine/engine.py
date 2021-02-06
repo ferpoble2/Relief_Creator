@@ -638,6 +638,8 @@ class Engine:
             # ask for the active polygon and call the scene to remove the points
             if self.get_active_polygon_id() is not None:
                 self.scene.remove_last_point_from_active_polygon()
+            else:
+                log.debug('Active polygon is None. Nothing to undo.')
 
         else:
             log.debug(f'Tool {active_tool} has no undo action defined.')
