@@ -20,6 +20,7 @@ tools not developed for that purpose.
 This is a list of shortcuts implemented in the program to make the usage of it more fast.
 
 - CTRL + O: Load a netcdf file on the program.
+- M: Change to `Move Map` tool.
 
 # Instructions for developers
 
