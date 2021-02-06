@@ -243,11 +243,16 @@ class src.engine.scene.model.Points{
     - __vertex_shader_file: str
     + cbo: int
 
+    - __add_color_to_color_list(color)
+    - __remove_last_color_from_color_list()
+    - __remove_last_point_from_point_list()
+    - __str__()
     + add_point(x, y, z)
     + get_first_point_color(): tuple
     + get_last_point_color(): tuple
     + get_normal_color(): tuple
     + get_point_list(): list
+    + remove_last_added_point()
     + set_color_buffer(colors)
     + set_first_point_color(new_color)
     + set_last_point_color(new_color)
@@ -264,6 +269,9 @@ class src.engine.scene.model.Polygon{
     - __vertex_shader_file: str
     - __point_model: Points
 
+    - __add_line_between_first_and_last_point_to_indices_list()
+    - __remove_last_added_line_from_indices_list()
+    - __remove_last_point_from_point_list()
     - __str__()
     ~ _update_uniforms()
     + add_point(x, y, z)
@@ -272,6 +280,7 @@ class src.engine.scene.model.Polygon{
     + get_name(): str
     + get_point_list(): list
     + get_point_number(): int
+    + remove_last_added_point()
     + set_dot_color(color)
     + set_id(new_id)
     + set_line_color(color)
@@ -404,6 +413,7 @@ class src.engine.scene.Scene {
     + refresh_with_model_2d(path_color_file, path_model, model_id)
     + reload_models_async(then)
     + remove_all_models()
+    + remove_last_point_from_active_polygon()
     + remove_model(id_model)
     + set_loading_message(new_msg)
     + set_map_position(new_position)
@@ -483,6 +493,7 @@ class src.engine.Engine {
     + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
     + set_thread_task(parallel_task, then)
+    + undo_action()
     + update_pending_tasks()
     + update_scene_models_colors()
     + update_scene_values()

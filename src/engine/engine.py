@@ -621,6 +621,27 @@ class Engine:
              'then_func': then}
         )
 
+    def undo_action(self) -> None:
+        """
+        Undo the most recent action made in the program.
+
+        It is dependant of the active tool being used in the program.
+
+        Returns: None
+        """
+        active_tool = self.get_active_tool()
+
+        if active_tool == 'create_polygon':
+            # remove the last point from the active polygon if there is an active polygon.
+            log.debug('Undoing actions for tool create_polygon.')
+
+            # ask for the active polygon and call the scene to remove the points
+            if self.get_active_polygon_id() is not None:
+                self.scene.remove_last_point_from_active_polygon()
+
+        else:
+            log.debug(f'Tool {active_tool} has no undo action defined.')
+
     def update_pending_tasks(self) -> None:
         """
         Update the pending tasks.

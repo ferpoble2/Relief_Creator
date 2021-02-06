@@ -405,6 +405,28 @@ class Scene:
         """
         self.__model_list = []
 
+    def remove_last_point_from_active_polygon(self) -> None:
+        """
+        Remove the last point added from the active polygon.
+
+        Raise error if there is not active polygon.
+        Raise error if active polygon is not in the list of the scene.
+
+        Returns: None
+        """
+        polygon_id = self.__engine.get_active_polygon_id()
+
+        if polygon_id is None:
+            raise AssertionError('There is no active polygon.')
+
+        log.debug(f'Removing last point from polygon {polygon_id}')
+        for polygon in self.__polygon_list:
+            if polygon_id == polygon.get_id():
+                polygon.remove_last_added_point()
+                return
+
+        raise AssertionError('Active polygon is not in the list of polygons')
+
     def remove_model(self, id_model: str) -> None:
         """
         Return the model with the specified id.

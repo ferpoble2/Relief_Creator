@@ -10,13 +10,30 @@ import numpy as np
 import OpenGL.GL as GL
 import ctypes as ctypes
 
-log = get_logger(module="Points")
+log = get_logger(module="POINTS")
 
 
 class Points(Model):
     """
     Class in charge of the modeling of points in the program.
     """
+
+    def __add_color_to_color_list(self, color: tuple) -> None:
+        """
+        Add a color to the color list.
+
+        Args:
+            color: New color to add (must have 4 elements)
+
+        Returns: None
+        """
+        if len(color) < 4:
+            raise AssertionError("Trying to add a color with fewer than 4 components.")
+
+        self.__color_list.append(color[0])
+        self.__color_list.append(color[1])
+        self.__color_list.append(color[2])
+        self.__color_list.append(color[3])
 
     def __init__(self, scene):
         """
@@ -40,6 +57,49 @@ class Points(Model):
         self.__last_point_color = (0, 0, 1, 1)  # RGBA
 
         self.set_shaders(self.__vertex_shader_file, self.__fragment_shader_file)
+
+    def __remove_last_color_from_color_list(self) -> None:
+        """
+        Remove the last color from the color list.
+
+        Returns: None
+        """
+        if len(self.__color_list) >= 4:
+            self.__color_list.pop()
+            self.__color_list.pop()
+            self.__color_list.pop()
+            self.__color_list.pop()
+
+    def __remove_last_point_from_point_list(self) -> None:
+        """
+        Remove the last point from the list of points.
+
+        Returns: None
+        """
+        if len(self.__point_list) >= 3:
+            self.__point_list.pop()
+            self.__point_list.pop()
+            self.__point_list.pop()
+
+    def __str__(self) -> str:
+        """
+        Return the string representing the object.
+
+        Returns: string representing the object.
+        """
+        string_to_print = f"Points model data:\n"
+
+        points = np.array(self.__point_list).reshape((-1, 3))
+        colors = np.array(self.__color_list).reshape((-1, 4))
+        for index in range(len(points)):
+            string_to_print += f"Index: {index} - coordinates: {points[index]} - color: {colors[index]}"
+            string_to_print += "\n"
+
+        string_to_print += f"\nIndices list: {self.__indices_list}"
+        string_to_print += f"\nPoint list: {self.__point_list}"
+        string_to_print += f"\nColor list: {self.__color_list}"
+
+        return string_to_print
 
     def _update_uniforms(self) -> None:
         """
@@ -76,36 +136,24 @@ class Points(Model):
 
         # update  the color buffer
         if len(self.__color_list) / 4 == 0:
-            self.__color_list.append(self.__first_point_color[0])
-            self.__color_list.append(self.__first_point_color[1])
-            self.__color_list.append(self.__first_point_color[2])
-            self.__color_list.append(self.__first_point_color[3])
+            self.__add_color_to_color_list(self.__first_point_color)
 
         elif len(self.__color_list) / 4 == 1:
-            self.__color_list.append(self.__last_point_color[0])
-            self.__color_list.append(self.__last_point_color[1])
-            self.__color_list.append(self.__last_point_color[2])
-            self.__color_list.append(self.__last_point_color[3])
+            self.__add_color_to_color_list(self.__last_point_color)
 
         else:
-            self.__color_list.pop()
-            self.__color_list.pop()
-            self.__color_list.pop()
-            self.__color_list.pop()
-            self.__color_list.append(self.__normal_color[0])
-            self.__color_list.append(self.__normal_color[1])
-            self.__color_list.append(self.__normal_color[2])
-            self.__color_list.append(self.__normal_color[3])
-            self.__color_list.append(self.__last_point_color[0])
-            self.__color_list.append(self.__last_point_color[1])
-            self.__color_list.append(self.__last_point_color[2])
-            self.__color_list.append(self.__last_point_color[3])
+            self.__remove_last_color_from_color_list()
+            self.__add_color_to_color_list(self.__normal_color)
+            self.__add_color_to_color_list(self.__last_point_color)
 
         self.set_color_buffer(np.array(self.__color_list, dtype=np.float32))
 
         # update the indices buffer
         self.__indices_list.append(len(self.__point_list) / 3 - 1)
         self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
+
+        # debug the information of the point
+        log.debug(self)
 
     def draw(self) -> None:
         """
@@ -157,6 +205,40 @@ class Points(Model):
         Returns: Point list
         """
         return self.__point_list
+
+    def remove_last_added_point(self) -> None:
+        """
+        Remove the last added point to the list of points.
+
+        This update the buffers in the GPU
+
+        Returns: None
+        """
+
+        # only works when there is one point or more
+        if len(self.__point_list) / 3 > 0:
+
+            # remove the last point
+            self.__remove_last_point_from_point_list()
+
+            # remove the index representing the old last point
+            if len(self.__indices_list) > 0:
+                self.__indices_list.pop()
+
+            # remove the color of the removed point and change the color of the new last point
+            self.__remove_last_color_from_color_list()
+
+            # only change color if there is more than one point in the list
+            if len(self.__point_list) / 3 > 1:
+                self.__remove_last_color_from_color_list()
+                self.__add_color_to_color_list(self.__last_point_color)
+
+            # update the buffers on the GPU
+            self.set_vertices(np.array(self.__point_list, dtype=np.float32))
+            self.set_color_buffer(np.array(self.__color_list, dtype=np.float32))
+            self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
+
+        log.debug(self)
 
     def set_color_buffer(self, colors: np.ndarray) -> None:
         """

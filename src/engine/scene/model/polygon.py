@@ -10,7 +10,7 @@ from src.engine.scene.model.points import Points
 import numpy as np
 import OpenGL.GL as GL
 
-log = get_logger(module="SCENE")
+log = get_logger(module="POLYGON")
 
 
 class Polygon(Model):
@@ -34,8 +34,8 @@ class Polygon(Model):
 
         # Polygon variables
         # ------------------
-        self.__point_list = []
-        self.__indices_list = []
+        self.__point_list = []  # [p1.x, p1.y, p1.z, p2.x, p2.y, ...]
+        self.__indices_list = []  # [l1.begin, l1.end, l2.begin, l2.end, ...]
 
         self.__polygon_line_color = (1, 1, 0, 1)
         self.__polygon_selected_border_color = (0, 0, 0, 1)
@@ -48,17 +48,57 @@ class Polygon(Model):
         # --------------------
         self.set_shaders(self.__vertex_shader_file, self.__fragment_shader_file)
 
+    def __add_line_between_first_and_last_point_to_indices_list(self) -> None:
+        """
+        This method generate a line that connects the last and the first point in the point list.
+
+        This method only updates the indices list.
+
+        Returns: None
+        """
+        self.__indices_list.append(self.get_point_number() - 1)
+        self.__indices_list.append(0)
+
+    def __remove_last_added_line_from_indices_list(self) -> None:
+        """
+        Remove the last added line from the indices list.
+
+        This method does not connect the polygon, only deletes the last line from the list.
+
+        Returns: None
+        """
+        if len(self.__indices_list) >= 2:
+            self.__indices_list.pop()
+            self.__indices_list.pop()
+
+    def __remove_last_point_from_point_list(self) -> None:
+        """
+        Remove the last point from the list of points.
+
+        Does not remove the points from the points model, only from the list.
+
+        Returns: None
+        """
+        if len(self.__point_list) >= 3:
+            self.__point_list.pop()
+            self.__point_list.pop()
+            self.__point_list.pop()
+
     def __str__(self):
         """
         Format how polygons are printed on the console.
 
         Returns: String representing the polygon.
         """
-        string_to_print = ""
+        string_to_print = f"Polygon with id {self.get_id()}:\n"
+
         points = np.array(self.__point_list).reshape((-1, 3))
         for index in range(len(points)):
             string_to_print += f"Index: {index} - {points[index]}"
             string_to_print += "\n"
+
+        string_to_print += f"\nIndices list: {self.__indices_list}"
+        string_to_print += f"\nPoint list: {self.__point_list}"
 
         return string_to_print
 
@@ -119,6 +159,9 @@ class Polygon(Model):
 
             self.set_vertices(np.array(self.__point_list, dtype=np.float32))
             self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
+
+        # debug the information of the point
+        log.debug(self)
 
     def draw(self) -> None:
         """
@@ -195,6 +238,44 @@ class Polygon(Model):
         """
         return int(len(self.__point_list) / 3)
 
+    def remove_last_added_point(self) -> None:
+        """
+        Remove the last point added to the polygon.
+
+        Does nothing if there is no points.
+
+        Returns: None
+        """
+        # only works when there is points in the model
+        if self.get_point_number() > 0:
+
+            # remove the last point from the list
+            self.__remove_last_point_from_point_list()
+
+            # delete the line connecting the old last point and the first point
+            # does nothing if there is no lines (case only one point in the polygon)
+            self.__remove_last_added_line_from_indices_list()
+
+            # normal case: delete the line connecting the new last point with the old last point and connect the new
+            # last point to the first point
+            if self.get_point_number() >= 2:
+                self.__remove_last_added_line_from_indices_list()
+                self.__add_line_between_first_and_last_point_to_indices_list()
+
+            # border case (only one point remain): remove the line connecting the new last point to the old last point
+            # and do not add a new one
+            if self.get_point_number() == 1:
+                self.__remove_last_added_line_from_indices_list()
+
+            # update the points model
+            self.__point_model.remove_last_added_point()
+
+            # update the changes to the GPU
+            self.set_vertices(np.array(self.__point_list, dtype=np.float32))
+            self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
+
+        # debug the new polygon
+        log.debug(self)
     def set_dot_color(self, color: list) -> None:
         """
         Set the color to draw the dots of the polygon.
@@ -247,3 +328,4 @@ class Polygon(Model):
         Returns: None
         """
         self.__name = new_name
+

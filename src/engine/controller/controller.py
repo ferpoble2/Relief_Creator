@@ -203,6 +203,12 @@ class Controller:
                     log.debug("Pressed shortcut to move map")
                     self.__engine.set_active_tool('move_map')
 
+                if key == glfw.KEY_Z:
+
+                    if self.__is_left_ctrl_pressed:
+                        log.debug("Pressed ctrl+z")
+                        self.__engine.undo_action()
+
             # Check for keys released
             if action == glfw.RELEASE:
 
