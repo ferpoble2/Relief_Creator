@@ -34,7 +34,6 @@ class GUIManager:
         self.__font_regular = None
         self.__font_bold = None
 
-        self.__scene = None
         self.__engine = None
 
     def add_frames(self, component_list: list) -> None:
@@ -164,11 +163,11 @@ class GUIManager:
         # Settings change depending if the frames are fixed or not
         if value:
             self.__engine.fix_frames(True)
-            self.__scene.update_viewport()
+            self.__engine.update_scene_viewport()
 
         else:
             self.__engine.fix_frames(False)
-            self.__scene.update_viewport()
+            self.__engine.update_scene_viewport()
 
     def get_active_model_id(self) -> str:
         """
@@ -346,7 +345,6 @@ class GUIManager:
         )
         self.__implementation.refresh_font_texture()
 
-        self.__scene = engine.scene
         self.__engine = engine
 
     def is_program_loading(self) -> bool:
