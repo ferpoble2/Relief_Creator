@@ -48,8 +48,8 @@ class Engine:
         try:
             self.scene.add_vertex_to_active_polygon(position_x, position_y)
         except AssertionError as e:
-            log.debug(e)
-            self.set_modal_text('Error', 'Error creating polygon. \n\nis a model loaded in the program?')
+            log.error(e)
+            self.set_modal_text('Error', f'Error creating polygon. \n\n{e}')
 
     def add_zoom(self) -> None:
         """
@@ -663,6 +663,12 @@ class Engine:
         Returns: None
         """
         Settings.update_scene_values()
+
+    def update_scene_viewport(self) -> None:
+        """
+        Update the scene viewport with the new values that exist in the Settings.
+        """
+        self.scene.update_viewport()
 
     def update_threads(self) -> None:
         """
