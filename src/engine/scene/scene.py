@@ -487,7 +487,7 @@ class Scene:
 
         Returns: None
         """
-        color_file = self.__engine.get_CPT_file()
+        color_file = self.__engine.get_cpt_file()
         for model in self.__model_list:
             model.set_color_file(color_file)
 
