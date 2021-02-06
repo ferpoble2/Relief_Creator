@@ -133,6 +133,8 @@ class Tools(Frame):
 
         if imgui.button("Delete"):
             log.debug(f"Delete polygon with id: {polygon_id}")
+
+            # delete the polygon from the program
             self._GUI_manager.delete_polygon_by_id(polygon_id)
 
             # if the deleted polygon is the active, change the program status no None
