@@ -486,8 +486,8 @@ class src.engine.Engine {
     + update_pending_tasks()
     + update_scene_models_colors()
     + update_scene_values()
+    + update_scene_viewport()
     + update_threads()
-
 }
 
 class src.program.Program {
@@ -526,7 +526,7 @@ src.engine.scene.model.Map2DModel -u-|> src.engine.scene.model.Model
 src.engine.scene.model.Map3DModel -u-|> src.engine.scene.model.Model
 src.engine.scene.model.Polygon -u-|> src.engine.scene.model.Model
 src.engine.scene.model.Points -u-|> src.engine.scene.model.Model
-src.engine.scene.model.Polygon .> src.engine.scene.model.Points
+src.engine.scene.model.Points -l--o src.engine.scene.model.Polygon
 
 src.engine.GUI.frames.Debug -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Loading -u-|> src.engine.GUI.frames.Frame
