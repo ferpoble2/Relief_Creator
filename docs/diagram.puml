@@ -309,6 +309,9 @@ class src.engine.GUI.frames.Frame {
 }
 
 class src.engine.GUI.frames.MainMenuBar {
+    - __edit_menu()
+    - __file_menu()
+    - __view_menu()
     + render()
 }
 

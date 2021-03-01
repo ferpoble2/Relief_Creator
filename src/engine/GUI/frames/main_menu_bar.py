@@ -6,7 +6,6 @@ from src.utils import get_logger
 
 import imgui
 import OpenGL.GL as GL
-import easygui
 
 log = get_logger(module="MAIN MENU BAR")
 
@@ -33,81 +32,100 @@ class MainMenuBar(Frame):
 
         if imgui.begin_main_menu_bar():
             # first menu dropdown
-            if imgui.begin_menu('File', True):
-                imgui.menu_item('Open NetCDF file...', 'Ctrl+O', False, True)
-                if imgui.is_item_clicked():
-                    try:
-                        self._GUI_manager.load_netcdf_file_with_dialog()
-
-                    except KeyError:
-                        log.debug("Error reading files, KeyError")
-                        self._GUI_manager.set_modal_text("Error", "Error reading the selected files (KeyError)")
-
-                    except OSError:
-                        log.debug("Error reading files, OSError")
-                        self._GUI_manager.set_modal_text("Error", "Error reading the selected files (OSError)")
-
-                imgui.menu_item('Change CPT file...', 'Ctrl+T', False, True)
-                if imgui.is_item_clicked():
-
-                    try:
-                        self._GUI_manager.change_color_file_with_dialog()
-
-                    except KeyError as e:
-                        log.exception(f"Error reading files: {e}")
-                        self._GUI_manager.set_modal_text("Error", "Error reading color file (KeyError)")
-
-                    except IOError as e:
-                        log.exception(f"Error reading files: {e}")
-                        self._GUI_manager.set_modal_text("Error", "Error reading color file (IOError)")
-
-                    except TypeError as e:
-                        log.exception(f"Error reading files: {e}")
-                        self._GUI_manager.set_modal_text("Error", "Error reading color file (TypeError)")
-
-                    except OSError as e:
-                        log.exception(f"Error reading files: {e}")
-                        self._GUI_manager.set_modal_text("Error", "Error reading color file (OSError)")
-
-                imgui.end_menu()
+            self.__file_menu()
 
             # second menu dropdown
-            if imgui.begin_menu('Edit', True):
-                imgui.menu_item('Zoom In', None, False, True)
-                imgui.menu_item('Zoom Out', None, False, True)
-
-                imgui.end_menu()
+            self.__edit_menu()
 
             # third menu dropdown
-            if imgui.begin_menu('View'):
-
-                if self._GUI_manager.are_frame_fixed():
-                    imgui.menu_item('Unfix Windows Positions')
-                    if imgui.is_item_clicked():
-                        self._GUI_manager.fix_frames_position(False)
-
-                else:
-                    imgui.menu_item('Fix Windows Positions')
-                    if imgui.is_item_clicked():
-                        self._GUI_manager.fix_frames_position(True)
-
-                imgui.separator()
-
-                imgui.menu_item('Use points')
-                if imgui.is_item_clicked():
-                    log.info("Rendering points")
-                    self._GUI_manager.set_models_polygon_mode(GL.GL_POINT)
-
-                imgui.menu_item('Use wireframes')
-                if imgui.is_item_clicked():
-                    log.info("Rendering wireframes")
-                    self._GUI_manager.set_models_polygon_mode(GL.GL_LINE)
-
-                imgui.menu_item('Fill polygons')
-                if imgui.is_item_clicked():
-                    log.info("Rendering filled polygons")
-                    self._GUI_manager.set_models_polygon_mode(GL.GL_FILL)
-
-                imgui.end_menu()
+            self.__view_menu()
 
             imgui.end_main_menu_bar()
+
+    def __file_menu(self):
+        """
+        Options that appear on the File option of the main menu bar.
+        """
+        if imgui.begin_menu('File', True):
+            imgui.menu_item('Open NetCDF file...', 'Ctrl+O', False, True)
+            if imgui.is_item_clicked():
+                try:
+                    self._GUI_manager.load_netcdf_file_with_dialog()
+
+                except KeyError:
+                    log.debug("Error reading files, KeyError")
+                    self._GUI_manager.set_modal_text("Error", "Error reading the selected files (KeyError)")
+
+                except OSError:
+                    log.debug("Error reading files, OSError")
+                    self._GUI_manager.set_modal_text("Error", "Error reading the selected files (OSError)")
+
+            imgui.menu_item('Change CPT file...', 'Ctrl+T', False, True)
+            if imgui.is_item_clicked():
+
+                try:
+                    self._GUI_manager.change_color_file_with_dialog()
+
+                except KeyError as e:
+                    log.exception(f"Error reading files: {e}")
+                    self._GUI_manager.set_modal_text("Error", "Error reading color file (KeyError)")
+
+                except IOError as e:
+                    log.exception(f"Error reading files: {e}")
+                    self._GUI_manager.set_modal_text("Error", "Error reading color file (IOError)")
+
+                except TypeError as e:
+                    log.exception(f"Error reading files: {e}")
+                    self._GUI_manager.set_modal_text("Error", "Error reading color file (TypeError)")
+
+            imgui.end_menu()
+
+    def __view_menu(self):
+        """
+        Options that appear on the View option from the main menu bar
+        """
+        if imgui.begin_menu('View'):
+
+            if self._GUI_manager.are_frame_fixed():
+                imgui.menu_item('Unfix Windows Positions')
+                if imgui.is_item_clicked():
+                    self._GUI_manager.fix_frames_position(False)
+
+            else:
+                imgui.menu_item('Fix Windows Positions')
+                if imgui.is_item_clicked():
+                    self._GUI_manager.fix_frames_position(True)
+
+            imgui.separator()
+
+            imgui.menu_item('Use points')
+            if imgui.is_item_clicked():
+                log.info("Rendering points")
+                self._GUI_manager.set_models_polygon_mode(GL.GL_POINT)
+
+            imgui.menu_item('Use wireframes')
+            if imgui.is_item_clicked():
+                log.info("Rendering wireframes")
+                self._GUI_manager.set_models_polygon_mode(GL.GL_LINE)
+
+            imgui.menu_item('Fill polygons')
+            if imgui.is_item_clicked():
+                log.info("Rendering filled polygons")
+                self._GUI_manager.set_models_polygon_mode(GL.GL_FILL)
+
+            imgui.end_menu()
+
+    def __edit_menu(self):
+        """
+        Options that appear when opening the Edit option from the main menu bar.
+        """
+        if imgui.begin_menu('Edit', True):
+            imgui.menu_item('Undo', 'CTRL+Z', False, True)
+            if imgui.is_item_clicked():
+                self._GUI_manager.undo_action()
+
+            imgui.separator()
+            imgui.menu_item('Zoom In', None, False, True)
+            imgui.menu_item('Zoom Out', None, False, True)
+
+            imgui.end_menu()

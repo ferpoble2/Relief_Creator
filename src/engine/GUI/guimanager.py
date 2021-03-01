@@ -509,3 +509,11 @@ class GUIManager:
         """
         imgui.pop_font()
         imgui.push_font(self.__font_regular)
+
+    def undo_action(self) -> None:
+        """
+        Call the engine to undo the most recent action made on the program.
+
+        Returns: None
+        """
+        self.__engine.undo_action()
