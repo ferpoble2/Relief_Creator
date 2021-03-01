@@ -477,6 +477,7 @@ class src.engine.Engine {
     + get_window_setting_data(): dict
     + get_zoom_level(): float
     + initialize(engine)
+    + is_polygon_planar(polygon_id)
     + is_program_loading(): boolean
     + less_zoom()
     + load_netcdf_file_with_dialog()

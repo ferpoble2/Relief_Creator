@@ -118,17 +118,6 @@ class Engine:
         """
         Settings.HEIGHT = height
 
-    def set_models_polygon_mode(self, polygon_mode: 'OGLConstant.IntConstant') -> None:
-        """
-        Call the scene to change the polygon mode used by the models.
-
-        Args:
-            polygon_mode: Polygon mode to use.
-
-        Returns:
-        """
-        self.scene.set_models_polygon_mode(polygon_mode)
-
     def change_quality(self, quality: int) -> None:
         """
         Change the quality used to render the maps.
@@ -380,6 +369,17 @@ class Engine:
         # ----------
         self.scene.initialize(engine)
 
+    def is_polygon_planar(self, polygon_id: str) -> bool:
+        """
+        Ask to the scene if the polygon is planar or not.
+
+        Args:
+            polygon_id: Id of the polygon
+
+        Returns: Boolean indicating if the polygon is planar or not
+        """
+        return self.scene.is_polygon_planar(polygon_id)
+
     def is_program_loading(self) -> bool:
         """
         Return if the program is loading or not.
@@ -554,6 +554,17 @@ class Engine:
         Returns: None
         """
         self.gui_manager.set_modal_text(title_modal, msg)
+
+    def set_models_polygon_mode(self, polygon_mode: 'OGLConstant.IntConstant') -> None:
+        """
+        Call the scene to change the polygon mode used by the models.
+
+        Args:
+            polygon_mode: Polygon mode to use.
+
+        Returns:
+        """
+        self.scene.set_models_polygon_mode(polygon_mode)
 
     def set_polygon_name(self, polygon_id: str, new_name: str) -> None:
         """
