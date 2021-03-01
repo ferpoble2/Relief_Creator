@@ -347,6 +347,18 @@ class GUIManager:
 
         self.__engine = engine
 
+    def is_polygon_planar(self, polygon_id: str) -> bool:
+        """
+        Ask the engine if the polygon with the specified id is planar or not.
+
+        Args:
+            polygon_id: Id of the polygon.
+
+        Returns: Boolean indicating if the polygon is planar or not.
+        """
+
+        return self.__engine.is_polygon_planar(polygon_id)
+
     def is_program_loading(self) -> bool:
         """
         Return if the program is loading or not.
