@@ -285,6 +285,23 @@ class src.engine.scene.model.Polygon{
     + update_last_line(remove_last_line)
 }
 
+class src.engine.scene.model.Lines{
+    - __border_color: tuple
+    - __fragment_shader_file: str
+    - __indices_list: list
+    - __line_color: tuple
+    - __point_list: list
+    - __use_border: boolean
+    - __vertex_shader_file: str
+
+    + add_line(first_point, second_point)
+    + get_number_of_points(): int
+    + remove_last_added_line()
+    + set_line_color(color)
+    + set_use_borders(value)
+
+}
+
 class src.input.CTP <<$file>> {
     + read_file(filename: str) : dict
 }
