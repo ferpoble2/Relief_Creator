@@ -6,9 +6,12 @@ This class stores all the information related to the polygons that can be draw o
 from src.engine.scene.model.model import Model
 from src.utils import get_logger
 from src.engine.scene.model.points import Points
+from src.engine.scene.model.lines import Lines
 
 import numpy as np
 import OpenGL.GL as GL
+from shapely.geometry import LineString
+from shapely.geometry import Point as ShapelyPoint
 
 log = get_logger(module="POLYGON")
 
@@ -17,6 +20,68 @@ class Polygon(Model):
     """
     Class in charge of the polygons of the program.
     """
+
+    def __check_intersection(self, line_x_1: float, line_y_1: float, line_x_2: float, line_y_2: float) -> bool:
+        """
+        Check if the line intersect with the other lines already in the polygon.
+
+        If the intersection happens either at the beginning of the line or the end, and in only one point,
+        then the intersection is not considered.
+
+        Returns: Boolean indicating if the segments intersects with each other.
+
+        Args:
+            line_x_1: x axis of the beginning of the line
+            line_y_1: y axis of the beginning of the line
+            line_x_2: x axis of the end of the line
+            line_y_2: y axis of the end of the line
+        """
+
+        # do nothing if there is no lines
+        if self.get_point_number() < 3:
+            log.debug('Not enough points to check collision with other lines.')
+            return False
+
+        # arrange the points
+        points = np.array(self.get_point_list())
+        points = points.reshape((-1, 3))
+
+        # generate the new line
+        new_line = LineString([(line_x_1, line_y_1), (line_x_2, line_y_2)])
+
+        # generate the segments
+        segments = []
+        for point_ind in range(len(points)):
+
+            if point_ind == len(points) - 1:
+                segments.append(LineString([(points[point_ind][0], points[point_ind][1]),
+                                            (points[0][0], points[0][1])]))
+
+            else:
+                segments.append(LineString([(points[point_ind][0], points[point_ind][1]),
+                                            (points[point_ind + 1][0], points[point_ind + 1][1])]))
+
+        # check if the line intersect the segments
+        for segment in segments:
+
+            # check if intersects
+            if segment.intersects(new_line):
+                intersection = segment.intersection(new_line)
+
+                # if the intersection is in only one point, then check the point.
+                if isinstance(intersection, ShapelyPoint):
+                    segment_points = list(segment.coords)
+                    intersection_point = list(intersection.coords)
+
+                    if intersection_point[0] == segment_points[0] or intersection_point[0] == segment_points[1]:
+                        continue
+                    else:
+                        return True
+
+                else:
+                    return True
+
+        return False
 
     def __init__(self, scene, id_polygon):
         """
@@ -27,62 +92,15 @@ class Polygon(Model):
         self.id = id_polygon
         self.draw_mode = GL.GL_LINES
 
-        self.update_uniform_values = True
-
-        self.__vertex_shader_file = './engine/shaders/polygon_vertex.glsl'
-        self.__fragment_shader_file = './engine/shaders/polygon_fragment.glsl'
-
-        # Polygon variables
-        # ------------------
-        self.__point_list = []  # [p1.x, p1.y, p1.z, p2.x, p2.y, ...]
-        self.__indices_list = []  # [l1.begin, l1.end, l2.begin, l2.end, ...]
-
-        self.__polygon_line_color = (1, 1, 0, 1)
-        self.__polygon_selected_border_color = (0, 0, 0, 1)
+        self.update_uniform_values = False
 
         self.__name = self.get_id()
 
         self.__point_model = Points(scene)  # model to use to draw the points
+        self.__lines_model = Lines(scene)  # model to use to draw the lines
+        self.__last_line_model = Lines(scene)  # model to use to render the last line of the polygon
 
-        # Initialization logic
-        # --------------------
-        self.set_shaders(self.__vertex_shader_file, self.__fragment_shader_file)
-
-    def __add_line_between_first_and_last_point_to_indices_list(self) -> None:
-        """
-        This method generate a line that connects the last and the first point in the point list.
-
-        This method only updates the indices list.
-
-        Returns: None
-        """
-        self.__indices_list.append(self.get_point_number() - 1)
-        self.__indices_list.append(0)
-
-    def __remove_last_added_line_from_indices_list(self) -> None:
-        """
-        Remove the last added line from the indices list.
-
-        This method does not connect the polygon, only deletes the last line from the list.
-
-        Returns: None
-        """
-        if len(self.__indices_list) >= 2:
-            self.__indices_list.pop()
-            self.__indices_list.pop()
-
-    def __remove_last_point_from_point_list(self) -> None:
-        """
-        Remove the last point from the list of points.
-
-        Does not remove the points from the points model, only from the list.
-
-        Returns: None
-        """
-        if len(self.__point_list) >= 3:
-            self.__point_list.pop()
-            self.__point_list.pop()
-            self.__point_list.pop()
+        self.__is_planar = True
 
     def __str__(self):
         """
@@ -90,38 +108,7 @@ class Polygon(Model):
 
         Returns: String representing the polygon.
         """
-        string_to_print = f"Polygon with id {self.get_id()}:\n"
-
-        points = np.array(self.__point_list).reshape((-1, 3))
-        for index in range(len(points)):
-            string_to_print += f"Index: {index} - {points[index]}"
-            string_to_print += "\n"
-
-        string_to_print += f"\nIndices list: {self.__indices_list}"
-        string_to_print += f"\nPoint list: {self.__point_list}"
-
-        return string_to_print
-
-    def _update_uniforms(self) -> None:
-        """
-        Update the uniforms values for the model.
-
-        Returns: None
-        """
-
-        # update values for the polygon shader
-        # ------------------------------------
-        projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
-        polygon_color_location = GL.glGetUniformLocation(self.shader_program, "polygon_color")
-
-        # set the color and projection matrix to use
-        # ------------------------------------------
-        GL.glUniform4f(polygon_color_location,
-                       self.__polygon_line_color[0],
-                       self.__polygon_line_color[1],
-                       self.__polygon_line_color[2],
-                       self.__polygon_line_color[3])
-        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_model_projection_matrix())
+        return f"Points model: {self.__point_model}\nLines model: {self.__lines_model}"
 
     def add_point(self, x: float, y: float, z: float = 0.5) -> None:
         """
@@ -134,77 +121,76 @@ class Polygon(Model):
 
         Returns: None
         """
-        self.__point_list.append(x)
-        self.__point_list.append(y)
-        self.__point_list.append(z)
 
+        # check if lines intersect
+        if self.get_point_number() > 2:
+            point_list = self.get_point_list()
+
+            # do not let the creation of lines that intersect
+            if self.__check_intersection(x, y, point_list[-3], point_list[-2]):
+                self.scene.set_modal_text('Error', "Line intersect another one")
+                return
+
+            # if the completion line intersect, then change the state of the polygon.
+            if self.__check_intersection(x, y, point_list[0], point_list[1]):
+                self.__is_planar = False
+            else:
+                self.__is_planar = True
+
+        # add points to the point model
         self.__point_model.add_point(x, y, z)
 
-        # polygon is only complete when there is more than one point
+        # list of points
+        point_list = self.get_point_list()
+
+        # draw line only if there is more than one point
         if self.get_point_number() > 1:
+            self.__lines_model.add_line((point_list[-6], point_list[-5], point_list[-4]),
+                                        (point_list[-3], point_list[-2], point_list[-1]))
 
-            # Append the initial indices for the polygon when there is two points
-            if len(self.__indices_list) == 0:
-                self.generate_initial_indices()
+        # if there is 3 points, just add a new line connecting the polygon
+        if self.get_point_number() == 3:
+            self.update_last_line(False)
 
-            # change the last vertex to point to the new vertex
-            self.__indices_list.pop()
-            self.__indices_list.pop()
-            self.__indices_list.append(self.get_point_number() - 2)
-            self.__indices_list.append(self.get_point_number() - 1)
+        # if there is more than 3 points, then delete the line and add a new one
+        if self.get_point_number() > 3:
+            self.update_last_line()
 
-            # make the last vertex to point to the first
-            self.__indices_list.append(self.get_point_number() - 1)
-            self.__indices_list.append(0)
+    def update_last_line(self, remove_last_line: bool = True) -> None:
+        """
+        Update the last line of the polygon.
 
-            self.set_vertices(np.array(self.__point_list, dtype=np.float32))
-            self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
+        Args:
+            remove_last_line: True to remove the last line from the line model, False to just add a new line to the model
 
-        # debug the information of the point
-        log.debug(self)
+        Returns: None
+        """
+
+        # remove the last line if exist
+        point_list = self.get_point_list()
+        if remove_last_line:
+            self.__last_line_model.remove_last_added_line()
+
+        # add a new line
+        self.__last_line_model.add_line((point_list[-3], point_list[-2], point_list[-1]),
+                                        (point_list[0], point_list[1], point_list[2]))
 
     def draw(self) -> None:
         """
         Set how and when to draw the polygons.
         """
 
-        if self.get_point_number() > 1:
-            # get the settings of the polygon to draw
-            # ---------------------------------------
-            render_settings = self.scene.get_render_settings()
-            line_width = render_settings["LINE_WIDTH"]
-            polygon_line_width = render_settings["POLYGON_LINE_WIDTH"]
-            active_polygon_line_width = render_settings["ACTIVE_POLYGON_LINE_WIDTH"]
+        # draw the components on the screen
+        if self.scene.get_active_polygon_id() == self.id:
+            self.__lines_model.set_use_borders(True)
+            self.__last_line_model.set_use_borders(True)
+        else:
+            self.__lines_model.set_use_borders(False)
+            self.__last_line_model.set_use_borders(False)
 
-            # if the polygon is the active one, then draw an extra border
-            if self.scene.get_active_polygon_id() == self.id:
-                # store the old color
-                old_color = self.__polygon_line_color
-
-                # change the color and width of the line to draw
-                self.__polygon_line_color = self.__polygon_selected_border_color
-                GL.glLineWidth(active_polygon_line_width)
-                super().draw()
-
-                # return the original color
-                self.__polygon_line_color = old_color
-
-            # draw the polygon
-            GL.glLineWidth(polygon_line_width)
-            super().draw()
-            GL.glLineWidth(line_width)
-
-        # draw the points over the screen
+        self.__lines_model.draw()
+        self.__last_line_model.draw()
         self.__point_model.draw()
-
-    def generate_initial_indices(self) -> None:
-        """
-        Generate the initial configuration of indices on the indices list.
-
-        Returns: None
-        """
-        self.__indices_list.append(0)
-        self.__indices_list.append(1)
 
     def get_id(self) -> str:
         """
@@ -224,11 +210,11 @@ class Polygon(Model):
 
     def get_point_list(self) -> list:
         """
-        Get the point list used by the polygon.
+        Get the list of points.
 
-        Returns: List with the points to use.
+        Returns: List of points
         """
-        return self.__point_list
+        return self.__point_model.get_point_list()
 
     def get_point_number(self) -> int:
         """
@@ -236,7 +222,16 @@ class Polygon(Model):
 
         Returns: Number of points of the polygon.
         """
-        return int(len(self.__point_list) / 3)
+        # return int(len(self.__point_list) / 3)
+        return int(len(self.get_point_list()) / 3)
+
+    def is_planar(self) -> bool:
+        """
+        Check if the polygon is planar or not
+
+        Returns: Boolean indicating if the polygon is planar or not.
+        """
+        return self.__is_planar
 
     def remove_last_added_point(self) -> None:
         """
@@ -246,36 +241,16 @@ class Polygon(Model):
 
         Returns: None
         """
+
         # only works when there is points in the model
         if self.get_point_number() > 0:
-
-            # remove the last point from the list
-            self.__remove_last_point_from_point_list()
-
-            # delete the line connecting the old last point and the first point
-            # does nothing if there is no lines (case only one point in the polygon)
-            self.__remove_last_added_line_from_indices_list()
-
-            # normal case: delete the line connecting the new last point with the old last point and connect the new
-            # last point to the first point
-            if self.get_point_number() >= 2:
-                self.__remove_last_added_line_from_indices_list()
-                self.__add_line_between_first_and_last_point_to_indices_list()
-
-            # border case (only one point remain): remove the line connecting the new last point to the old last point
-            # and do not add a new one
-            if self.get_point_number() == 1:
-                self.__remove_last_added_line_from_indices_list()
-
-            # update the points model
             self.__point_model.remove_last_added_point()
+            self.__lines_model.remove_last_added_line()
 
-            # update the changes to the GPU
-            self.set_vertices(np.array(self.__point_list, dtype=np.float32))
-            self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
-
-        # debug the new polygon
-        log.debug(self)
+            if self.get_point_number() < 3:
+                self.__last_line_model.remove_last_added_line()
+            else:
+                self.update_last_line()
 
     def set_dot_color(self, color: list) -> None:
         """
@@ -314,10 +289,8 @@ class Polygon(Model):
         Returns: None
         """
         log.debug(f"Changing polygon color to {color}")
-        self.__polygon_line_color = (color[0],
-                                     color[1],
-                                     color[2],
-                                     color[3])
+        self.__lines_model.set_line_color(color)
+        self.__last_line_model.set_line_color(color)
 
     def set_name(self, new_name: str) -> None:
         """

@@ -262,30 +262,27 @@ class src.engine.scene.model.Points{
 
 class src.engine.scene.model.Polygon{
 
-    - __fragment_shader_file: str
-    - __indices_list: list
+    - __last_line_model: Lines
+    - __lines_model: Lines
     - __name: str
-    - __point_list: list
-    - __polygon_line_color: tuple
-    - __vertex_shader_file: str
     - __point_model: Points
 
-    - __add_line_between_first_and_last_point_to_indices_list()
-    - __remove_last_added_line_from_indices_list()
-    - __remove_last_point_from_point_list()
+
+    + __check_intersection(line_x_1, line_y_1, line_x_2, line_y_2): boolean
     - __str__()
     ~ _update_uniforms()
     + add_point(x, y, z)
-    + generate_initial_indices()
     + get_id(): str
     + get_name(): str
     + get_point_list(): list
     + get_point_number(): int
+    + is_planar()
     + remove_last_added_point()
     + set_dot_color(color)
     + set_id(new_id)
     + set_line_color(color)
     + set_name(new_name)
+    + update_last_line(remove_last_line)
 }
 
 class src.input.CTP <<$file>> {
