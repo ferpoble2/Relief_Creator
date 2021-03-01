@@ -168,6 +168,10 @@ class Tools(Frame):
             imgui.same_line()
             self.__color_button(polygon_id)
 
+            if not self._GUI_manager.is_polygon_planar(polygon_id):
+                imgui.same_line()
+                imgui.text("Not planar")
+
             # pop the id to continue rendering the others elements
             imgui.pop_id()
 
