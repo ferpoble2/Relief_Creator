@@ -282,6 +282,21 @@ class Scene:
         """
         self.__engine = engine
 
+    def is_polygon_planar(self, polygon_id: str) -> bool:
+        """
+        Check if the polygon is planar or not.
+
+        Return None if polygon is not in the list of polygons.
+
+        Args:
+            polygon_id: Polygon id to check
+
+        Returns: boolean indicating if the polygon is planar or not
+        """
+        for polygon in self.__polygon_list:
+            if polygon.get_id() == polygon_id:
+                return polygon.is_planar()
+
     def move_models(self, x_movement: int, y_movement: int) -> None:
         """
         Move the models on the scene.
@@ -463,6 +478,14 @@ class Scene:
         Returns: None
         """
         self.__engine.set_map_position(new_position)
+
+    def set_modal_text(self, title_modal: str, msg: str) -> None:
+        """
+        Calls the engine to set a modal text on the screen.
+
+        Returns: None
+        """
+        self.__engine.set_modal_text(title_modal, msg)
 
     def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
