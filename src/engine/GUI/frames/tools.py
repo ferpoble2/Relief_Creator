@@ -188,6 +188,17 @@ class Tools(Frame):
                 self._GUI_manager.set_active_tool('create_polygon')
 
     def __actions_button(self, active_polygon, polygon_id) -> None:
+        """
+        Generate the button [Actions] in the tools windows.
+
+        The button contains a list of actions to do in the polygon specified.
+        
+        Args:
+            active_polygon: active polygon on the engine
+            polygon_id: id of the polygon to render the button
+
+        Returns: None
+        """
 
         # configure the button to use to open the actions on the polygon
         if imgui.button("Actions"):
