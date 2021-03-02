@@ -46,6 +46,7 @@ class Tools(Frame):
         self.__color_selected_dict = {}
 
         self.__input_text_value = ''
+        self.__opened_action_popup_dict = {}
 
     def __color_button(self, polygon_id: str) -> None:
         """
@@ -120,7 +121,7 @@ class Tools(Frame):
             imgui.open_popup(f'Select a color for {polygon_id}')
             self.__color_pick_should_open = False
 
-    def __delete_button(self, active_polygon: str, polygon_id: str) -> None:
+    def __delete_selectable(self, active_polygon: str, polygon_id: str) -> bool:
         """
         Define a button for the action of deleting a polygon.
 
@@ -128,18 +129,23 @@ class Tools(Frame):
             active_polygon: id of the active polygon of the program.
             polygon_id: id of the polygon to render the button to.
 
-        Returns: None
+        Returns: Boolean indicating if selectable
         """
+        clicked_selectable = False
 
-        if imgui.button("Delete"):
+        imgui.selectable('Delete')
+        if imgui.is_item_clicked():
             log.debug(f"Delete polygon with id: {polygon_id}")
+            clicked_selectable = True
 
             # delete the polygon from the program
             self._GUI_manager.delete_polygon_by_id(polygon_id)
 
-            # if the deleted polygon is the active, change the program status no None
+            # if the deleted polygon is the active, change the program status no None (deprecated code)
             if active_polygon == polygon_id:
                 self._GUI_manager.set_active_polygon(None)
+
+        return clicked_selectable
 
     def __generate_polygon_list(self) -> None:
         """
@@ -159,15 +165,11 @@ class Tools(Frame):
             clicked, current_state = imgui.checkbox(self._GUI_manager.get_polygon_name(polygon_id),
                                                     True if polygon_id == active_polygon else False)
 
-            # on the same line, show a button to delete the polygon from the program
-            imgui.same_line()
-            self.__delete_button(active_polygon, polygon_id)
-
-            imgui.same_line()
-            self.__rename_polygon_button(polygon_id)
-
             imgui.same_line()
             self.__color_button(polygon_id)
+
+            imgui.same_line()
+            self.__actions_button(active_polygon, polygon_id)
 
             if not self._GUI_manager.is_polygon_planar(polygon_id):
                 imgui.same_line()
@@ -185,24 +187,82 @@ class Tools(Frame):
                 # Activate the create_polygon tool when clicked the polygon
                 self._GUI_manager.set_active_tool('create_polygon')
 
-    def __rename_polygon_button(self, polygon_id: str) -> None:
+    def __actions_button(self, active_polygon, polygon_id) -> None:
+
+        # configure the button to use to open the actions on the polygon
+        if imgui.button("Actions"):
+
+            # store the old tool and change the tool to none
+            self.__tool_before_pop_up = self._GUI_manager.get_active_tool()
+            self._GUI_manager.set_active_tool(None)
+
+            # open the popup
+            imgui.open_popup(f"action pop up {polygon_id}")
+
+        # open the popup showing the actions for the polygon
+        if imgui.begin_popup(f"action pop up {polygon_id}"):
+            
+            # store in an external variable that the popup was open (to check when its closed)
+            self.__opened_action_popup_dict[polygon_id] = True
+
+            # small text giving instructions
+            imgui.text("Select an action")
+            imgui.separator()
+
+            # what happens when rename option is pressed (all logic is inside the calling)
+            if self.__rename_polygon_selectable(polygon_id):
+
+                # once the rename is completed, go back to the original tool
+                self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
+
+                # tell the external variable that the popup was closed
+                self.__opened_action_popup_dict[polygon_id] = False
+
+                # close the popup
+                imgui.close_current_popup()
+
+            # what happens when delete option is pressed (all logic is inside the calling)
+            if self.__delete_selectable(active_polygon, polygon_id):
+
+                # once the rename is completed, go back to the original tool
+                self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
+
+                # tell the external variable that the popup was closed
+                self.__opened_action_popup_dict[polygon_id] = False
+
+                # close the popup
+                imgui.close_current_popup()
+
+            imgui.end_popup()
+
+        # If the popup does not open but the external variable says that it is open, then that
+        # means that the popup was closed from external methods (usually a click outside the popup)
+        elif self.__opened_action_popup_dict.get(polygon_id, False):
+            log.debug('Pop up closed using external methods...')
+
+            # tell the external variable that the popup is closed (this makes this code to execute only once)
+            self.__opened_action_popup_dict[polygon_id] = False
+
+            # go back to the last tool used
+            self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
+
+    def __rename_polygon_selectable(self, polygon_id: str) -> bool:
         """
         Button to rename the polygon.
 
         Args:
             polygon_id: Id of the polygon to rename.
 
-        Returns: None
+        Returns: Boolean indicating if button was pressed
         """
-        if imgui.button('Rename'):
+        clicked_selectable = False
+
+        imgui.selectable('Rename')
+        if imgui.is_item_clicked():
             log.debug("Rename Button")
 
             # set the name of the polygon as initial text
             self.__input_text_value = self._GUI_manager.get_polygon_name(polygon_id)
-
-            # store active tool to return it after
-            self.__tool_before_pop_up = self._GUI_manager.get_active_tool()
-            self._GUI_manager.set_active_tool(None)
 
             # open the pop up
             imgui.open_popup(f'Rename {polygon_id}')
@@ -221,8 +281,7 @@ class Tools(Frame):
 
             # close the pop up
             if imgui.button("Save and close", self.__rename_size_x - self.__rename_padding_x):
-                # return the active tool
-                self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
+                clicked_selectable = True
 
                 # reset the input text
                 self.__input_text_value = ''
@@ -230,6 +289,8 @@ class Tools(Frame):
                 imgui.close_current_popup()
 
             imgui.end_popup()
+
+        return clicked_selectable
 
     def render(self) -> None:
         """

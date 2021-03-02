@@ -9,8 +9,6 @@ set namespaceSeparator .
 
 ' Package hierarchy
 package src {
-    class utils
-    note bottom: Almost all classes use this module
 
     package engine {
         package render {}
@@ -371,6 +369,7 @@ class src.engine.GUI.frames.Tools {
     - __dot_color_selected_default: int, int, int, int
     - __double_button_margin_width: int
     - __input_text_value: str
+    - __opened_action_popup_dict: dict
     - __rename_padding_x: int
     - __rename_size_x: int
     - __rename_size_y: int
@@ -380,9 +379,10 @@ class src.engine.GUI.frames.Tools {
 
 
     - __color_button(polygon_id)
-    - __delete_button(active_polygon, polygon_id)
+    - __delete_selectable(active_polygon, polygon_id): boolean
+    - __actions_button(active_polygon, polygon_id)
     - __generate_polygon_list()
-    - __rename_polygon_button(polygon_id)
+    - __rename_polygon_selectable(polygon_id): boolean
     - __show_active_tool()
     - __show_editing_tools(left_frame_width)
     - __show_other_tools(left_frame_width)
