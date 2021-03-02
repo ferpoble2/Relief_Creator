@@ -7,6 +7,7 @@ from src.engine.scene.model.model import Model
 from src.utils import get_logger
 from src.engine.scene.model.points import Points
 from src.engine.scene.model.lines import Lines
+from src.engine.scene.model.dashed_lines import DashedLines
 
 import numpy as np
 import OpenGL.GL as GL
@@ -98,7 +99,7 @@ class Polygon(Model):
 
         self.__point_model = Points(scene)  # model to use to draw the points
         self.__lines_model = Lines(scene)  # model to use to draw the lines
-        self.__last_line_model = Lines(scene)  # model to use to render the last line of the polygon
+        self.__last_line_model = DashedLines(scene)  # model to use to render the last line of the polygon
 
         self.__is_planar = True
 
