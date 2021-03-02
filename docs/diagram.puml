@@ -303,6 +303,18 @@ class src.engine.scene.model.Lines{
 
 }
 
+class src.engine.scene.model.DashedLines{
+    - __fragment_shader_file
+    - __vertex_shader_file
+    + dash_size: float
+    + gap_size: float
+    + transparency: float
+
+    ~ _update_uniforms()
+    + set_line_color(color)
+    + set_border_color(color)
+}
+
 class src.input.CTP <<$file>> {
     + read_file(filename: str) : dict
 }
@@ -562,6 +574,8 @@ src.engine.scene.model.Points -u-|> src.engine.scene.model.Model
 src.engine.scene.model.Points --o src.engine.scene.model.Polygon
 src.engine.scene.model.Lines -u-|> src.engine.scene.model.Model
 src.engine.scene.model.Lines --o src.engine.scene.model.Polygon
+src.engine.scene.model.DashedLines -u-|> src.engine.scene.model.Lines
+src.engine.scene.model.DashedLines -l--o src.engine.scene.model.Polygon
 
 src.engine.GUI.frames.Debug -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Loading -u-|> src.engine.GUI.frames.Frame
