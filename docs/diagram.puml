@@ -263,7 +263,7 @@ class src.engine.scene.model.Points{
 
 class src.engine.scene.model.Polygon{
 
-    - __last_line_model: Lines
+    - __last_line_model: DashedLines
     - __lines_model: Lines
     - __name: str
     - __point_model: Points
