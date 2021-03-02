@@ -296,8 +296,11 @@ class src.engine.scene.model.Lines{
 
     ~ _update_uniforms()
     + add_line(first_point, second_point)
+    + get_border_color(): tuple
+    + get_line_color(): tuple
     + get_number_of_points(): int
     + remove_last_added_line()
+    + set_border_color(color)
     + set_line_color(color)
     + set_use_borders(value)
 
@@ -575,7 +578,7 @@ src.engine.scene.model.Points --o src.engine.scene.model.Polygon
 src.engine.scene.model.Lines -u-|> src.engine.scene.model.Model
 src.engine.scene.model.Lines --o src.engine.scene.model.Polygon
 src.engine.scene.model.DashedLines -u-|> src.engine.scene.model.Lines
-src.engine.scene.model.DashedLines -l--o src.engine.scene.model.Polygon
+src.engine.scene.model.DashedLines -r--o src.engine.scene.model.Polygon
 
 src.engine.GUI.frames.Debug -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Loading -u-|> src.engine.GUI.frames.Frame

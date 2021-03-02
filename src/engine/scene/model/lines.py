@@ -1,6 +1,6 @@
 """
-File with the class Points, class in charge of storing all the information related to the models that draw points on
-the scene
+File with the class Lines, class in charge of storing all the information related to the models that draw lines on
+the scene.
 """
 
 from src.engine.scene.model.model import Model
@@ -171,3 +171,31 @@ class Lines(Model):
         Returns: None
         """
         self.__line_color = (color[0], color[1], color[2], color[3])
+
+    def set_border_color(self, color: list) -> None:
+        """
+        Set the color of the border of the line.
+
+        Args:
+            color: new color to use as border.
+
+        Returns: None
+        """
+        self.__border_color = (color[0], color[1], color[2], color[3])
+
+    def get_line_color(self) -> tuple:
+        """
+        Get the color of the lines.
+
+        Returns: Color of the line
+        """
+        return self.__line_color
+
+    def get_border_color(self) -> tuple:
+        """
+        Get the color of the border.
+
+        Returns: Color of the border
+        """
+
+        return self.__border_color
