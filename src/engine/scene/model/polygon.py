@@ -38,10 +38,49 @@ class Polygon(Model):
             line_y_2: y axis of the end of the line
         """
 
-        # do nothing if there is no lines
-        if self.get_point_number() < 3:
-            log.debug('Not enough points to check collision with other lines.')
+        # get the intersections
+        intersections = self.__get_intersection(line_x_1, line_y_1, line_x_2, line_y_2)
+
+        # case no intersections
+        if len(intersections) == 0:
+            log.debug("There is no intersections")
             return False
+        # case one intersection and it is at the end or beginning of the line
+        elif len(intersections) == 1 and isinstance(intersections[0], ShapelyPoint) and \
+                (list(intersections[0].coords)[0] in [(line_x_1, line_y_1), (line_x_2, line_y_2)]):
+            log.debug(f"Special case intersection {intersections}")
+            return False
+        else:
+            log.debug(f"There are some intersections {list(map(str, intersections))}")
+
+            # check the intersections
+            for intersection in intersections:
+                if isinstance(intersection, ShapelyPoint) and \
+                        list(intersection.coords)[0] not in [(line_x_1, line_y_1), (line_x_2, line_y_2)]:
+                    return True
+                elif isinstance(intersection, LineString):
+                    return True
+                elif (not isinstance(intersection, ShapelyPoint)) and (not isinstance(intersection, LineString)):
+                    return True
+
+            return False
+
+    def __get_intersection(self, line_x_1: float, line_y_1: float, line_x_2: float, line_y_2: float) -> list:
+        """
+        Get the intersection of a line with the lines already on the polygon.
+
+        Args:
+            line_x_1: x axis of the beginning of the line
+            line_y_1: y axis of the beginning of the line
+            line_x_2: x axis of the end of the line
+            line_y_2: y axis of the end of the line
+
+        Returns: The type of intersection.
+        """
+        # do nothing if there is no lines
+        if self.get_point_number() < 2:
+            log.debug('Not enough points to get a collision.')
+            return []
 
         # arrange the points
         points = np.array(self.get_point_list())
@@ -63,26 +102,14 @@ class Polygon(Model):
                                             (points[point_ind + 1][0], points[point_ind + 1][1])]))
 
         # check if the line intersect the segments
+        intersections = []
         for segment in segments:
 
             # check if intersects
             if segment.intersects(new_line):
-                intersection = segment.intersection(new_line)
+                intersections.append(segment.intersection(new_line))
 
-                # if the intersection is in only one point, then check the point.
-                if isinstance(intersection, ShapelyPoint):
-                    segment_points = list(segment.coords)
-                    intersection_point = list(intersection.coords)
-
-                    if intersection_point[0] == segment_points[0] or intersection_point[0] == segment_points[1]:
-                        continue
-                    else:
-                        return True
-
-                else:
-                    return True
-
-        return False
+        return intersections
 
     def __init__(self, scene, id_polygon):
         """
@@ -111,6 +138,40 @@ class Polygon(Model):
         """
         return f"Points model: {self.__point_model}\nLines model: {self.__lines_model}"
 
+    def __update_planar_state(self):
+        """
+        Update the variable indicating if the polygon is planar or not.
+
+        To do this, this method check that the last line does not intersect with any other.
+
+        Returns: None
+        """
+        if self.get_point_number() > 2:
+            point_list = self.get_point_list()
+            intersections = self.__get_intersection(point_list[-3], point_list[-2], point_list[0], point_list[1])
+
+            # intersection must be only two point and one linestring with the points
+            points = []
+            lines = []
+            for intersection in intersections:
+                if isinstance(intersection, ShapelyPoint):
+                    points.append(intersection)
+                elif isinstance(intersection, LineString):
+                    lines.append(intersection)
+
+            log.debug(list(lines[0].coords))
+
+            # check the conditions
+            if len(points) != 2:  # more than two points
+                self.__is_planar = False
+            elif len(lines) != 1:  # more than one line
+                self.__is_planar = False
+            elif list(points[0].coords)[0] not in list(lines[0].coords) or \
+                    list(points[1].coords)[0] not in list(lines[0].coords):
+                self.__is_planar = False
+            else:
+                self.__is_planar = True
+
     def add_point(self, x: float, y: float, z: float = 0.5) -> None:
         """
         Add a new point to the list of points.
@@ -129,7 +190,7 @@ class Polygon(Model):
 
             # do not let the creation of lines that intersect
             if self.__check_intersection(x, y, point_list[-3], point_list[-2]):
-                self.scene.set_modal_text('Error', "Line intersect another one")
+                self.scene.set_modal_text('Error', "Line intersect another one.")
                 return
 
             # if the completion line intersect, then change the state of the polygon.
@@ -252,6 +313,8 @@ class Polygon(Model):
                 self.__last_line_model.remove_last_added_line()
             else:
                 self.update_last_line()
+
+            self.__update_planar_state()
 
     def set_dot_color(self, color: list) -> None:
         """
