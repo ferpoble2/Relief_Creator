@@ -156,7 +156,8 @@ class Tools(Frame):
             imgui.push_id(polygon_id)
 
             # show a checkbox with the id of the polygon and show it market if the polygon is active
-            clicked, current_state = imgui.checkbox(self._GUI_manager.get_polygon_name(polygon_id), True if polygon_id == active_polygon else False)
+            clicked, current_state = imgui.checkbox(self._GUI_manager.get_polygon_name(polygon_id),
+                                                    True if polygon_id == active_polygon else False)
 
             # on the same line, show a button to delete the polygon from the program
             imgui.same_line()
@@ -170,7 +171,9 @@ class Tools(Frame):
 
             if not self._GUI_manager.is_polygon_planar(polygon_id):
                 imgui.same_line()
-                imgui.text("Not planar")
+                imgui.image(self._GUI_manager.get_icon('warning').get_texture_id(), 25, 25)
+                if imgui.is_item_hovered():
+                    imgui.set_tooltip("Polygon is not planar!")
 
             # pop the id to continue rendering the others elements
             imgui.pop_id()

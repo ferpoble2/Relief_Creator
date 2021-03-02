@@ -9,6 +9,9 @@ set namespaceSeparator .
 
 ' Package hierarchy
 package src {
+    class utils
+    note bottom: Almost all classes use this module
+
     package engine {
         package render {}
         package data {}
@@ -34,11 +37,13 @@ class src.engine.GUI.GUIManager{
     - __font_bold: IMGUI.font
     - __font_regular: IMGUI.font
     - __glfw_window: GLFWWindow
+    - __icons_dict: dict
     - __implementation: GlfwRenderer
     - __io: IMGUI.io
     - __scene: Scene
 
     {static} + get_frames(gui_manager) : list
+    - __load_icons()
     + add_frames(component_list)
     + add_zoom()
     + are_frame_fixed()
@@ -55,6 +60,7 @@ class src.engine.GUI.GUIManager{
     + get_active_tool(): str
     + get_cpt_file(): str
     + get_gui_key_callback(): function
+    + get_icon(icon_name): Icon
     + get_left_frame_width(): int
     + get_main_menu_bar_height(): int
     + get_map_position(): list
@@ -83,6 +89,13 @@ class src.engine.GUI.GUIManager{
     + set_models_polygon_mode(polygon_mode)
     + set_polygon_name(polygon_id, new_name)
     + set_regular_font()
+}
+
+class src.engine.GUI.Icon{
+
+    - __texture_id: int
+
+    + get_texture_id(): id
 }
 
 class src.engine.settings  {
@@ -588,6 +601,8 @@ src.engine.GUI.frames.MainMenuBar -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.TestWindow -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.TextModal -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Tools -u-|> src.engine.GUI.frames.Frame
+
+src.engine.GUI.Icon -r--o src.engine.GUI.GUIManager
 
 ' uses
 src.engine.scene.model.Map2DModel -u.> src.engine.data.decimation

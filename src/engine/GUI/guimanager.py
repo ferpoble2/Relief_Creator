@@ -12,6 +12,7 @@ from src.engine.GUI.frames.loading import Loading
 from src.engine.GUI.frames.text_modal import TextModal
 from src.engine.GUI.frames.test_window import TestWindow
 from src.utils import get_logger
+from src.engine.GUI.icon import Icon
 
 log = get_logger(module='GUIMANAGER')
 
@@ -34,7 +35,30 @@ class GUIManager:
         self.__font_regular = None
         self.__font_bold = None
 
+        self.__icons_dict = None
+
         self.__engine = None
+
+    def get_icon(self, icon_name: str) -> Icon:
+        """
+        Get the icon with the given name.
+
+        Args:
+            icon_name: Name of the icon to ask for the id.
+
+        Returns: Icon stored in the dictionary.
+        """
+        return self.__icons_dict[icon_name]
+
+    def __load_icons(self) -> None:
+        """
+        Load the icons in the icons dictionary.
+
+        Returns: None
+        """
+        self.__icons_dict = {
+            'warning': Icon('./engine/GUI/icons/warning.png')
+        }
 
     def add_frames(self, component_list: list) -> None:
         """
@@ -344,6 +368,9 @@ class GUIManager:
             './engine/GUI/fonts/open_sans/OpenSans-Bold.ttf', engine.get_font_size()
         )
         self.__implementation.refresh_font_texture()
+
+        # load the icons on the GUI
+        self.__load_icons()
 
         self.__engine = engine
 
