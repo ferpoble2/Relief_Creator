@@ -15,38 +15,72 @@ class Tools(Frame):
     Class that render a sample frame in the application.
     """
 
-    def __init__(self, gui_manager: 'GUIManager'):
+    def __actions_button(self, active_polygon, polygon_id) -> None:
         """
-        Constructor of the class.
+        Generate the button [Actions] in the tools windows.
+
+        The button contains a list of actions to do in the polygon specified.
+
+        Args:
+            active_polygon: active polygon on the engine
+            polygon_id: id of the polygon to render the button
+
+        Returns: None
         """
-        super().__init__(gui_manager)
-        self.change_position([0, self._GUI_manager.get_main_menu_bar_height()])
-        self.__double_button_margin_width = 13
-        self.__button_margin_width = 17
-        self.__slide_bar_quality = self._GUI_manager.get_quality()
 
-        self.__tools_names_dict = {
-            'move_map': 'Move Map',
-            'create_polygon': 'Create Polygon'
-        }
+        # configure the button to use to open the actions on the polygon
+        if imgui.button("Actions"):
+            # store the old tool and change the tool to none
+            self.__tool_before_pop_up = self._GUI_manager.get_active_tool()
+            self._GUI_manager.set_active_tool(None)
 
-        self.__color_pick_window_size_x = 300
-        self.__color_pick_window_size_y = -1
-        self.__color_pick_should_open = False
-        self.__color_selected_default = (1, 1, 0, 1)
-        self.__dot_color_selected_default = (1, 1, 0, 1)
+            # open the popup
+            imgui.open_popup(f"action pop up {polygon_id}")
 
-        self.__rename_size_x = 300
-        self.__rename_size_y = -1
-        self.__rename_padding_x = 20
+        # open the popup showing the actions for the polygon
+        if imgui.begin_popup(f"action pop up {polygon_id}"):
 
-        # auxiliary variables
-        # -------------------
-        self.__tool_before_pop_up = None
-        self.__color_selected_dict = {}
+            # store in an external variable that the popup was open (to check when its closed)
+            self.__opened_action_popup_dict[polygon_id] = True
 
-        self.__input_text_value = ''
-        self.__opened_action_popup_dict = {}
+            # small text giving instructions
+            imgui.text("Select an action")
+            imgui.separator()
+
+            # what happens when rename option is pressed (all logic is inside the calling)
+            if self.__rename_polygon_selectable(polygon_id):
+                # once the rename is completed, go back to the original tool
+                self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
+
+                # tell the external variable that the popup was closed
+                self.__opened_action_popup_dict[polygon_id] = False
+
+                # close the popup
+                imgui.close_current_popup()
+
+            # what happens when delete option is pressed (all logic is inside the calling)
+            if self.__delete_selectable(active_polygon, polygon_id):
+                # once the rename is completed, go back to the original tool
+                self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
+
+                # tell the external variable that the popup was closed
+                self.__opened_action_popup_dict[polygon_id] = False
+
+                # close the popup
+                imgui.close_current_popup()
+
+            imgui.end_popup()
+
+        # If the popup does not open but the external variable says that it is open, then that
+        # means that the popup was closed from external methods (usually a click outside the popup)
+        elif self.__opened_action_popup_dict.get(polygon_id, False):
+            log.debug('Pop up closed using external methods...')
+
+            # tell the external variable that the popup is closed (this makes this code to execute only once)
+            self.__opened_action_popup_dict[polygon_id] = False
+
+            # go back to the last tool used
+            self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
 
     def __color_button(self, polygon_id: str) -> None:
         """
@@ -187,75 +221,38 @@ class Tools(Frame):
                 # Activate the create_polygon tool when clicked the polygon
                 self._GUI_manager.set_active_tool('create_polygon')
 
-    def __actions_button(self, active_polygon, polygon_id) -> None:
+    def __init__(self, gui_manager: 'GUIManager'):
         """
-        Generate the button [Actions] in the tools windows.
-
-        The button contains a list of actions to do in the polygon specified.
-        
-        Args:
-            active_polygon: active polygon on the engine
-            polygon_id: id of the polygon to render the button
-
-        Returns: None
+        Constructor of the class.
         """
+        super().__init__(gui_manager)
+        self.change_position([0, self._GUI_manager.get_main_menu_bar_height()])
+        self.__double_button_margin_width = 13
+        self.__button_margin_width = 17
+        self.__slide_bar_quality = self._GUI_manager.get_quality()
 
-        # configure the button to use to open the actions on the polygon
-        if imgui.button("Actions"):
+        self.__tools_names_dict = {
+            'move_map': 'Move Map',
+            'create_polygon': 'Create Polygon'
+        }
 
-            # store the old tool and change the tool to none
-            self.__tool_before_pop_up = self._GUI_manager.get_active_tool()
-            self._GUI_manager.set_active_tool(None)
+        self.__color_pick_window_size_x = 300
+        self.__color_pick_window_size_y = -1
+        self.__color_pick_should_open = False
+        self.__color_selected_default = (1, 1, 0, 1)
+        self.__dot_color_selected_default = (1, 1, 0, 1)
 
-            # open the popup
-            imgui.open_popup(f"action pop up {polygon_id}")
+        self.__rename_size_x = 300
+        self.__rename_size_y = -1
+        self.__rename_padding_x = 20
 
-        # open the popup showing the actions for the polygon
-        if imgui.begin_popup(f"action pop up {polygon_id}"):
-            
-            # store in an external variable that the popup was open (to check when its closed)
-            self.__opened_action_popup_dict[polygon_id] = True
+        # auxiliary variables
+        # -------------------
+        self.__tool_before_pop_up = None
+        self.__color_selected_dict = {}
 
-            # small text giving instructions
-            imgui.text("Select an action")
-            imgui.separator()
-
-            # what happens when rename option is pressed (all logic is inside the calling)
-            if self.__rename_polygon_selectable(polygon_id):
-
-                # once the rename is completed, go back to the original tool
-                self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
-
-                # tell the external variable that the popup was closed
-                self.__opened_action_popup_dict[polygon_id] = False
-
-                # close the popup
-                imgui.close_current_popup()
-
-            # what happens when delete option is pressed (all logic is inside the calling)
-            if self.__delete_selectable(active_polygon, polygon_id):
-
-                # once the rename is completed, go back to the original tool
-                self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
-
-                # tell the external variable that the popup was closed
-                self.__opened_action_popup_dict[polygon_id] = False
-
-                # close the popup
-                imgui.close_current_popup()
-
-            imgui.end_popup()
-
-        # If the popup does not open but the external variable says that it is open, then that
-        # means that the popup was closed from external methods (usually a click outside the popup)
-        elif self.__opened_action_popup_dict.get(polygon_id, False):
-            log.debug('Pop up closed using external methods...')
-
-            # tell the external variable that the popup is closed (this makes this code to execute only once)
-            self.__opened_action_popup_dict[polygon_id] = False
-
-            # go back to the last tool used
-            self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
+        self.__input_text_value = ''
+        self.__opened_action_popup_dict = {}
 
     def __rename_polygon_selectable(self, polygon_id: str) -> bool:
         """
@@ -302,37 +299,6 @@ class Tools(Frame):
             imgui.end_popup()
 
         return clicked_selectable
-
-    def render(self) -> None:
-        """
-        Render the main sample text.
-        Returns: None
-        """
-
-        imgui.begin('Tools')
-        self.__show_active_tool()
-
-        left_frame_width = self._GUI_manager.get_left_frame_width()
-
-        imgui.separator()
-        self.__show_visualization_tools(left_frame_width)
-
-        imgui.separator()
-        self.__show_editing_tools(left_frame_width)
-
-        imgui.separator()
-        self.__show_polygon_tools(left_frame_width)
-
-        imgui.separator()
-        self.__show_other_tools(left_frame_width)
-
-        if self._GUI_manager.are_frame_fixed():
-            imgui.set_window_position(self.get_position()[0], self.get_position()[1])
-            imgui.set_window_size(self._GUI_manager.get_left_frame_width(),
-                                  self._GUI_manager.get_window_height() - self._GUI_manager.get_main_menu_bar_height(),
-                                  0)
-
-        imgui.end()
 
     def __show_active_tool(self):
         """
@@ -431,3 +397,34 @@ class Tools(Frame):
             log.debug(f"Changed to value {values}")
             self.__slide_bar_quality = values
             self._GUI_manager.change_quality(values)
+
+    def render(self) -> None:
+        """
+        Render the main sample text.
+        Returns: None
+        """
+
+        imgui.begin('Tools')
+        self.__show_active_tool()
+
+        left_frame_width = self._GUI_manager.get_left_frame_width()
+
+        imgui.separator()
+        self.__show_visualization_tools(left_frame_width)
+
+        imgui.separator()
+        self.__show_editing_tools(left_frame_width)
+
+        imgui.separator()
+        self.__show_polygon_tools(left_frame_width)
+
+        imgui.separator()
+        self.__show_other_tools(left_frame_width)
+
+        if self._GUI_manager.are_frame_fixed():
+            imgui.set_window_position(self.get_position()[0], self.get_position()[1])
+            imgui.set_window_size(self._GUI_manager.get_left_frame_width(),
+                                  self._GUI_manager.get_window_height() - self._GUI_manager.get_main_menu_bar_height(),
+                                  0)
+
+        imgui.end()
