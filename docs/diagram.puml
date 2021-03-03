@@ -281,6 +281,7 @@ class src.engine.scene.model.Polygon{
 
 
     - __check_intersection(line_x_1, line_y_1, line_x_2, line_y_2): boolean
+    - __check_repeated_point(x, y, z)
     - __get_intersection(line_x_1, line_y_1, line_x_2, line_y_2): list
     - __str__()
     - __update_planar_state()

@@ -172,6 +172,27 @@ class Polygon(Model):
             else:
                 self.__is_planar = True
 
+    def __check_repeated_point(self, x: float, y: float, z: float) -> bool:
+        """
+        Check if a point already exist on the polygon.
+
+        Args:
+            x: x-coordinate of the point
+            y: y-coordinate of the point
+            z: z-coordinate of the point
+
+        Returns: Boolean representing if point already exist in the polygon.
+        """
+        point_list = self.get_point_list()
+
+        for point_ind in range(int(len(point_list) / 3)):
+            if point_list[point_ind * 3] == x and \
+                    point_list[point_ind * 3 + 1] == y and \
+                    point_list[point_ind * 3 + 2] == z:
+                return True
+
+        return False
+
     def add_point(self, x: float, y: float, z: float = 0.5) -> None:
         """
         Add a new point to the list of points.
@@ -183,6 +204,11 @@ class Polygon(Model):
 
         Returns: None
         """
+
+        # check if point is already on the polygon
+        if self.__check_repeated_point(x, y, z):
+            self.scene.set_modal_text('Error', "Point already exist on polygon.")
+            return
 
         # check if lines intersect
         if self.get_point_number() > 2:
