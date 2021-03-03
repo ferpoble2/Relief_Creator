@@ -23,12 +23,18 @@ package src {
             }
         }
     }
+    package error {}
     package input {}
     package program {}
 }
 
 
 ' Classes definition
+
+class src.error.PolygonError{}
+class src.error.RepeatedPointError{}
+class src.error.LineIntersectionError{}
+
 class src.engine.GUI.GUIManager{
     - __component_list: list
     - __engine: Engine
@@ -40,7 +46,6 @@ class src.engine.GUI.GUIManager{
     - __io: IMGUI.io
     - __scene: Scene
 
-    {static} + get_frames(gui_manager) : list
     - __load_icons()
     + add_frames(component_list)
     + add_zoom()
@@ -57,6 +62,7 @@ class src.engine.GUI.GUIManager{
     + get_active_polygon_id(): str
     + get_active_tool(): str
     + get_cpt_file(): str
+    + get_frames(gui_manager) : list
     + get_gui_key_callback(): function
     + get_icon(icon_name): Icon
     + get_left_frame_width(): int
@@ -595,6 +601,9 @@ src.engine.scene.model.Lines -u-|> src.engine.scene.model.Model
 src.engine.scene.model.Lines --o src.engine.scene.model.Polygon
 src.engine.scene.model.DashedLines -u-|> src.engine.scene.model.Lines
 src.engine.scene.model.DashedLines -r--o src.engine.scene.model.Polygon
+
+src.error.RepeatedPointError -u-|> src.error.PolygonError
+src.error.LineIntersectionError -u-|> src.error.PolygonError
 
 src.engine.GUI.frames.Debug -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Loading -u-|> src.engine.GUI.frames.Frame
