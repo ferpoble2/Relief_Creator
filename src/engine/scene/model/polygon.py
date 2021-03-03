@@ -8,6 +8,8 @@ from src.utils import get_logger
 from src.engine.scene.model.points import Points
 from src.engine.scene.model.lines import Lines
 from src.engine.scene.model.dashed_lines import DashedLines
+from src.error.line_intersection_error import LineIntersectionError
+from src.error.repeated_point_error import RepeatedPointError
 
 import numpy as np
 import OpenGL.GL as GL
@@ -207,8 +209,7 @@ class Polygon(Model):
 
         # check if point is already on the polygon
         if self.__check_repeated_point(x, y, z):
-            self.scene.set_modal_text('Error', "Point already exist on polygon.")
-            return
+            raise RepeatedPointError("Point already exist on polygon.")
 
         # check if lines intersect
         if self.get_point_number() > 2:
@@ -216,8 +217,7 @@ class Polygon(Model):
 
             # do not let the creation of lines that intersect
             if self.__check_intersection(x, y, point_list[-3], point_list[-2]):
-                self.scene.set_modal_text('Error', "Line intersect another one.")
-                return
+                raise LineIntersectionError("Line intersect another one already in the polygon.")
 
             # if the completion line intersect, then change the state of the polygon.
             if self.__check_intersection(x, y, point_list[0], point_list[1]):
