@@ -78,6 +78,20 @@ class Scene:
                 new_x, new_y = self.calculate_map_position_from_window(position_x, position_y)
                 polygon.add_point(new_x, new_y)
 
+    def add_new_vertex_to_active_polygon_using_real_coords(self, x_coord: float, y_coord: float) -> None:
+        """
+        Add a new point to the active polygon using real coordinates.
+
+        Args:
+            x_coord: x coordinate of the new point
+            y_coord: y coordinate of the new point
+
+        Returns: None
+        """
+        for polygon in self.__polygon_list:
+            if polygon.id == self.__engine.get_active_polygon_id():
+                polygon.add_point(x_coord, y_coord)
+
     def calculate_map_position_from_window(self, position_x, position_y) -> (float, float):
         """
         Calculate the position of a point on the map currently being showed on the screen.

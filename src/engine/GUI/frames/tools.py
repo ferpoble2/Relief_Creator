@@ -369,6 +369,20 @@ class Tools(Frame):
 
         self.__generate_polygon_list()
 
+    def add_new_polygon(self, polygon_id: str) -> None:
+        """
+        Add a polygon (externally generated) to the GUI.
+
+        Args:
+            polygon_id: Id of the new polygon.
+
+        Returns: None
+        """
+        self.__color_selected_dict[polygon_id] = {
+            'polygon': self.__color_selected_default,
+            'dot': self.__dot_color_selected_default
+        }
+
     def __show_visualization_tools(self, left_frame_width: int) -> None:
         """
         Show the visualization tools on the frame.

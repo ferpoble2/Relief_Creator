@@ -231,6 +231,17 @@ class Program:
         self.set_cpt_file(path_color_file)
         self.__engine.update_scene_models_colors()
 
+    def load_shapefile_file_with_dialog(self) -> None:
+        """
+        Opens the dialog to select a file and calls the engine to create a new polygon.
+
+        Returns: None
+        """
+        path_to_shapefile = easygui.fileopenbox('Select a shapefile file...')
+        log.debug(f"Path to shapefile: {path_to_shapefile}")
+
+        self.__engine.load_polygon_from_shapefile(path_to_shapefile)
+
     def get_zoom_level(self) -> float:
         """
         Get the zoom level currently being used in the program.

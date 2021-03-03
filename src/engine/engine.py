@@ -3,6 +3,7 @@ File that contains the program class, class that will be the main class of the p
 """
 
 import glfw
+import shapefile
 from threading import Thread
 
 from src.engine.GUI.guimanager import GUIManager
@@ -77,6 +78,58 @@ class Engine:
         Returns: None
         """
         self.program.change_cpt_file_with_dialog()
+
+    def load_shapefile_file_with_dialog(self) -> None:
+        """
+        Call the program to open the dialog to load a shapefile file.
+
+        Returns: None
+        """
+        self.program.load_shapefile_file_with_dialog()
+
+    def load_polygon_from_shapefile(self, filename: str) -> None:
+        """
+        Load the data from a shapefile file and tell the scene to create a polygon with it.
+
+        Args:
+            filename: Name of the shapefile file.
+
+        Returns: None
+        """
+        sf = shapefile.Reader(filename)
+
+        list_of_points = []
+        for shape in sf.shapes():
+            if shape.shapeType == shapefile.POINT:
+                list_of_points.append(shape.points[0][0])
+                list_of_points.append(shape.points[0][1])
+
+        # create a new polygon and set it as active
+        new_polygon_id = self.scene.create_new_polygon()
+        self.set_active_polygon(new_polygon_id)
+
+        # tell the gui manager that a new polygon was created
+        self.gui_manager.add_polygon_to_gui(new_polygon_id)
+
+        # add the points to the polygon
+        for point_ind in range(int(len(list_of_points) / 2)):
+
+            try:
+                self.scene.add_new_vertex_to_active_polygon_using_real_coords(list_of_points[point_ind * 2],
+                                                                          list_of_points[point_ind * 2 + 1])
+            except LineIntersectionError as e:
+                log.error(e)
+                self.scene.delete_polygon_by_id(new_polygon_id)
+                self.set_modal_text('Error', 'Polygon loaded is not planar.')
+                break
+
+            except RepeatedPointError as e:
+                log.error(e)
+                self.scene.delete_polygon_by_id(new_polygon_id)
+                self.set_modal_text('Error', 'Polygon has repeated points.')
+                break
+
+        return
 
     def change_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """

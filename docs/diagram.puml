@@ -48,6 +48,7 @@ class src.engine.GUI.GUIManager{
 
     - __load_icons()
     + add_frames(component_list)
+    + add_polygon_to_gui(polygon_id)
     + add_zoom()
     + are_frame_fixed()
     + change_color_file_with_dialog()
@@ -80,6 +81,7 @@ class src.engine.GUI.GUIManager{
     + is_program_loading(): boolean
     + less_zoom()
     + load_netcdf_file_with_dialog()
+    + load_shapefile_file_with_dialog()
     + optimize_gpu_memory()
     + process_input()
     + refresh_scene_with_model_2d(path_color_file, path_model, model_id)
@@ -395,6 +397,7 @@ class src.engine.GUI.frames.Tools {
     - __show_other_tools(left_frame_width)
     - __show_polygon_tools(left_frame_width)
     - __show_visualization_tools(left_frame_width)
+    + add_new_polygon(polygon_id)
     + render()
 }
 
@@ -448,8 +451,9 @@ class src.engine.controller.Controller {
 
 class src.engine.scene.Scene {
     + add_model(model)
+    + add_new_vertex_to_active_polygon_using_real_coords(x_coord, y_coord)
+    + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
     + add_polygon(polygon)
-    + add_vertex_to_active_polygon(position_x, position_y)
     + calculate_map_position_from_window(): (float, float)
     + change_color_of_polygon(polygon_id, color)
     + change_dot_color_of_polygon(polygon_id, color)
@@ -500,8 +504,10 @@ class src.engine.Engine {
     + scene: Scene
     + window: GLFWWindow
     - __pending_task_list: list
-    + add_vertex_to_active_polygon(position_x, position_y)
+    + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
     + add_zoom()
+    + load_shapefile_file_with_dialog()
+    + load_polygon_from_shapefile(filename)
     + are_frames_fixed(): boolean
     + change_color_file_with_dialog()
     + change_color_of_polygon(polygon_id, color)
@@ -582,6 +588,7 @@ class src.program.Program {
     + is_loading(): boolean
     + less_zoom()
     + load_netcdf_file_with_dialog()
+    + load_shapefile_file_with_dialog()
     + reset_zoom_level()
     + run()
     + set_active_model(new_model_id)

@@ -99,6 +99,28 @@ class GUIManager:
         """
         self.__engine.change_color_file_with_dialog()
 
+    def load_shapefile_file_with_dialog(self) -> None:
+        """
+        Calls the engine to load a polygon from a shapefile file opening the dialog to select file.
+
+        Returns: None
+        """
+        self.__engine.load_shapefile_file_with_dialog()
+
+    def add_polygon_to_gui(self, polygon_id) -> None:
+        """
+        Tells the frames that use the polygon information that a new polygon was created.
+
+        Args:
+            polygon_id: Id of the created polygon
+
+        Returns: None
+        """
+
+        for frame in self.__component_list:
+            if isinstance(frame, Tools):
+                frame.add_new_polygon(polygon_id)
+
     def change_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
         Change the color of the polygon with the specified id.
