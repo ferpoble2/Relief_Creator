@@ -11,6 +11,8 @@ from src.engine.render.render import Render
 from src.engine.scene.scene import Scene
 from src.engine.settings import Settings
 from src.utils import get_logger
+from src.error.repeated_point_error import RepeatedPointError
+from src.error.line_intersection_error import LineIntersectionError
 
 log = get_logger(module='ENGINE')
 
@@ -35,7 +37,7 @@ class Engine:
         self.__pending_task_list = []
         self.__threads_list = []
 
-    def add_vertex_to_active_polygon(self, position_x: int, position_y: int) -> None:
+    def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
         """
         Ask the scene to add a vertex in the active polygon of the engine.
 
@@ -46,7 +48,7 @@ class Engine:
         Returns: None
         """
         try:
-            self.scene.add_vertex_to_active_polygon(position_x, position_y)
+            self.scene.add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
         except AssertionError as e:
             log.error(e)
             self.set_modal_text('Error', f'Error creating polygon. \n\n{e}')

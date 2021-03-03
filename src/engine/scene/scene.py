@@ -57,7 +57,7 @@ class Scene:
         self.__polygon_list.append(polygon)
         self.__polygon_id_count += 1
 
-    def add_vertex_to_active_polygon(self, position_x: int, position_y: int) -> None:
+    def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
         """
         Add a new vertex to the active polygon on the screen.
 
