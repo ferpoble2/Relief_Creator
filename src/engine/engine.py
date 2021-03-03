@@ -116,7 +116,7 @@ class Engine:
 
             try:
                 self.scene.add_new_vertex_to_active_polygon_using_real_coords(list_of_points[point_ind * 2],
-                                                                          list_of_points[point_ind * 2 + 1])
+                                                                              list_of_points[point_ind * 2 + 1])
             except LineIntersectionError as e:
                 log.error(e)
                 self.scene.delete_polygon_by_id(new_polygon_id)
