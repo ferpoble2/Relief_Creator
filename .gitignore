@@ -24,3 +24,6 @@ output/
 /src/logs/ENGINE.log
 /src/logs/FRAMES.log
 /src/logs/TEXT_MODAL.log
+/samples/imgui/imgui.ini
+/src/logs/Points.log
+/src/logs/POLYGON.log

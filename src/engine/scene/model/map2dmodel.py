@@ -66,123 +66,39 @@ class Map2DModel(Model):
         self.__triangles_to_delete = []  # triangles overlapped to delete when optimizing memory
         self.__new_indices = None  # new indices of triangles calculated using parallelism
 
-    def __print_vertices(self) -> None:
+    def __add_triangles_inside_zone_to_delete_list(self,
+                                                   left_coordinate: float,
+                                                   right_coordinate: float,
+                                                   top_coordinate: float,
+                                                   bottom_coordinate: float) -> None:
         """
-        Print the vertices of the model.
-        Returns: None
-        """
-        print(f"Total Vertices: {len(self.__vertices)}")
-        for i in range(int(len(self.__vertices) / 3)):
-            print(f"P{i}: " + "".join(str(self.__vertices[i * 3:(i + 1) * 3])))
-
-    def __print_indices(self) -> None:
-        """
-        Print the indices of the model.
-        Returns: None
-        """
-
-        for i in range(int(len(self.__indices) / 3)):
-            print(f"I{i}: " + "".join(str(self.__indices[i * 3:(i + 1) * 3])))
-
-    def _update_uniforms(self) -> None:
-        """
-        Update the uniforms in the model.
-
-        Set the maximum and minimum height of the vertices.
-        Returns: None
-        """
-        # get the location
-        max_height_location = GL.glGetUniformLocation(self.shader_program, "max_height")
-        min_height_location = GL.glGetUniformLocation(self.shader_program, "min_height")
-        projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
-
-        # set the value
-        GL.glUniform1f(max_height_location, float(self.__max_height))
-        GL.glUniform1f(min_height_location, float(self.__min_height))
-        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.__projection)
-
-        # set colors if using
-        if self.__color_file is not None:
-            colors_location = GL.glGetUniformLocation(self.shader_program, "colors")
-            height_color_location = GL.glGetUniformLocation(self.shader_program, "height_color")
-            length_location = GL.glGetUniformLocation(self.shader_program, "length")
-
-            GL.glUniform3fv(colors_location, len(self.__colors), self.__colors)
-            GL.glUniform1fv(height_color_location, len(self.__height_limit), self.__height_limit)
-            GL.glUniform1i(length_location, len(self.__colors))
-
-    def __set_height_buffer(self) -> None:
-        """
-        Set the buffer object for the heights to be used in the shaders.
-
-        IMPORTANT:
-            Uses the index 1 of the attributes pointers.
-
-        Returns: None
-
-        """
-        height = np.array(self.__height, dtype=np.float32)
-
-        # Set the buffer data in the buffer
-        GL.glBindVertexArray(self.vao)
-        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.hbo)
-        GL.glBufferData(GL.GL_ARRAY_BUFFER,
-                        len(height) * self.scene.get_float_bytes(),
-                        height,
-                        GL.GL_STATIC_DRAW)
-
-        # Enable the data to the shaders
-        GL.glVertexAttribPointer(1, 1, GL.GL_FLOAT, GL.GL_FALSE, 0, ctypes.c_void_p(0))
-        GL.glEnableVertexAttribArray(1)
-
-        return
-
-    def __generate_vertices_list(self, x: list, y: list, z: list, z_value: int = 0) -> list:
-        """
-        Generate a list of vertices given the data of a 3D grid.
-        The z value of the vertices is set to 0.
+        Delete all the indices of the the triangles that are inside the zone from the
+        list of indices.
 
         Args:
-            x: X-axis values
-            y: Y-axis values
-            z: Height values
+            left_coordinate: Left coordinate to check
+            right_coordinate: Right coordinate to check
+            top_coordinate: Top coordinate to check
+            bottom_coordinate: Bottom coordinate to check
 
-        Returns: List with the vertices.
+        Returns: None
         """
-        vertices = []
-        for row_index in range(len(z)):
-            for col_index in range(len(z[0])):
-                vertices.append(x[col_index])
-                vertices.append(y[row_index])
-                vertices.append(z_value)
-        return vertices
+        index_array = np.array(self.__indices)
+        index_array = index_array.reshape((-1, 3))
+        to_delete = []
 
-    def __get_vertex_index(self, x_pos: int, y_pos: int) -> int:
-        """
-        Get the vertex index in the buffer given the x and y position.
+        # Get the triangles to delete
+        # ---------------------------
+        for index in range(len(index_array)):
+            triangle = index_array[index]
+            if self.__is_triangle_inside_zone(triangle, left_coordinate, right_coordinate, top_coordinate,
+                                              bottom_coordinate):
+                to_delete.append(index)
+        log.debug(f"Triangles to delete added: {len(to_delete)}")
 
-        The positions are given as in a cartesian plane.
-        THe 0,0 exist.
-
-        Args:
-            x_pos: Position X of the vertex
-            y_pos: Position Y of the vertex
-
-        Returns: Index of the vertex in the buffer.
-        """
-        return y_pos * len(self.__x) + x_pos
-
-    def __get_index_closest_value(self, list_to_evaluate: list, value: float) -> 'ndarray[int]':
-        """
-        Get the index of the closest element in the array to the value.
-
-        Args:
-            list_to_evaluate: List with numeric elements
-            value: Value to search for
-
-        Returns: Index of the closest value in the array.
-        """
-        return np.argmin(np.abs(np.array(list_to_evaluate) - value))
+        # Add triangles to delete to the list of the model
+        # ------------------------------------------------
+        self.__triangles_to_delete += to_delete
 
     def __generate_index_list(self,
                               step_x: int,
@@ -255,6 +171,53 @@ class Map2DModel(Model):
 
         return indices
 
+    def __generate_vertices_list(self, x: list, y: list, z: list, z_value: int = 0) -> list:
+        """
+        Generate a list of vertices given the data of a 3D grid.
+        The z value of the vertices is set to 0.
+
+        Args:
+            x: X-axis values
+            y: Y-axis values
+            z: Height values
+
+        Returns: List with the vertices.
+        """
+        vertices = []
+        for row_index in range(len(z)):
+            for col_index in range(len(z[0])):
+                vertices.append(x[col_index])
+                vertices.append(y[row_index])
+                vertices.append(z_value)
+        return vertices
+
+    def __get_index_closest_value(self, list_to_evaluate: list, value: float) -> 'ndarray[int]':
+        """
+        Get the index of the closest element in the array to the value.
+
+        Args:
+            list_to_evaluate: List with numeric elements
+            value: Value to search for
+
+        Returns: Index of the closest value in the array.
+        """
+        return np.argmin(np.abs(np.array(list_to_evaluate) - value))
+
+    def __get_vertex_index(self, x_pos: int, y_pos: int) -> int:
+        """
+        Get the vertex index in the buffer given the x and y position.
+
+        The positions are given as in a cartesian plane.
+        THe 0,0 exist.
+
+        Args:
+            x_pos: Position X of the vertex
+            y_pos: Position Y of the vertex
+
+        Returns: Index of the vertex in the buffer.
+        """
+        return y_pos * len(self.__x) + x_pos
+
     def __is_triangle_inside_zone(self,
                                   index_triangle: list,
                                   left_coordinate: float,
@@ -288,107 +251,76 @@ class Map2DModel(Model):
         # ---------------------------------
         return True
 
-    def __add_triangles_inside_zone_to_delete_list(self,
-                                                   left_coordinate: float,
-                                                   right_coordinate: float,
-                                                   top_coordinate: float,
-                                                   bottom_coordinate: float) -> None:
+    def __print_indices(self) -> None:
         """
-        Delete all the indices of the the triangles that are inside the zone from the
-        list of indices.
-
-        Args:
-            left_coordinate: Left coordinate to check
-            right_coordinate: Right coordinate to check
-            top_coordinate: Top coordinate to check
-            bottom_coordinate: Bottom coordinate to check
-
+        Print the indices of the model.
         Returns: None
         """
-        index_array = np.array(self.__indices)
-        index_array = index_array.reshape((-1, 3))
-        to_delete = []
 
-        # Get the triangles to delete
-        # ---------------------------
-        for index in range(len(index_array)):
-            triangle = index_array[index]
-            if self.__is_triangle_inside_zone(triangle, left_coordinate, right_coordinate, top_coordinate,
-                                              bottom_coordinate):
-                to_delete.append(index)
-        log.debug(f"Triangles to delete added: {len(to_delete)}")
+        for i in range(int(len(self.__indices) / 3)):
+            print(f"I{i}: " + "".join(str(self.__indices[i * 3:(i + 1) * 3])))
 
-        # Add triangles to delete to the list of the model
-        # ------------------------------------------------
-        self.__triangles_to_delete += to_delete
-
-    def recalculate_vertices_from_grid_async(self, quality: int = 2, then=lambda: None) -> None:
+    def __print_vertices(self) -> None:
         """
-        Recalculate vertices from grid.
+        Print the vertices of the model.
+        Returns: None
+        """
+        print(f"Total Vertices: {len(self.__vertices)}")
+        for i in range(int(len(self.__vertices) / 3)):
+            print(f"P{i}: " + "".join(str(self.__vertices[i * 3:(i + 1) * 3])))
 
-        Recalculate the vertices with a new definition given the zoom level and the borders used in the
-        projection matrix.
+    def __set_height_buffer(self) -> None:
+        """
+        Set the buffer object for the heights to be used in the shaders.
+
+        IMPORTANT:
+            Uses the index 1 of the attributes pointers.
 
         Returns: None
 
-        Args:
-            then: Routine to execute after the parallel tasks.
-            quality: quality of the rendering process.
         """
-        self.__new_indices = None
+        height = np.array(self.__height, dtype=np.float32)
 
-        def parallel_tasks():
-            log.debug("Coordinates actually showing on the screen:")
-            log.debug(f"left: {self.__left_coordinate}")
-            log.debug(f"right: {self.__right_coordinate}")
-            log.debug(f"top:{self.__top_coordinate} ")
-            log.debug(f"bottom: {self.__bottom_coordinate}")
+        # Set the buffer data in the buffer
+        GL.glBindVertexArray(self.vao)
+        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.hbo)
+        GL.glBufferData(GL.GL_ARRAY_BUFFER,
+                        len(height) * self.scene.get_float_bytes(),
+                        height,
+                        GL.GL_STATIC_DRAW)
 
-            # Calculate the definition to use in the reload
-            # ---------------------------------------------
-            elements_on_screen_x = abs(self.__get_index_closest_value(self.__x, self.__right_coordinate) - \
-                                       self.__get_index_closest_value(self.__x, self.__left_coordinate))
-            elements_on_screen_y = abs(self.__get_index_closest_value(self.__y, self.__top_coordinate) - \
-                                       self.__get_index_closest_value(self.__y, self.__bottom_coordinate))
+        # Enable the data to the shaders
+        GL.glVertexAttribPointer(1, 1, GL.GL_FLOAT, GL.GL_FALSE, 0, ctypes.c_void_p(0))
+        GL.glEnableVertexAttribArray(1)
 
-            log.debug(f"Number of vertices on screen axis X: {elements_on_screen_x}")
-            log.debug(f"Number of vertices on screen axis Y: {elements_on_screen_y}")
+        return
 
-            scene_data = self.scene.get_scene_setting_data()
-            step_x = int(elements_on_screen_x / scene_data['SCENE_WIDTH_X']) + 2
-            step_y = int(elements_on_screen_y / scene_data['SCENE_HEIGHT_Y']) + 2
+    def _update_uniforms(self) -> None:
+        """
+        Update the uniforms in the model.
 
-            log.debug(f"Step used to generate index list on x axis {step_x}")
-            log.debug(f"Step used to generate index list on y axis {step_y}")
+        Set the maximum and minimum height of the vertices.
+        Returns: None
+        """
+        # get the location
+        max_height_location = GL.glGetUniformLocation(self.shader_program, "max_height")
+        min_height_location = GL.glGetUniformLocation(self.shader_program, "min_height")
+        projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
 
-            # Generate new list of triangles to add to the model
-            # --------------------------------------------------
-            self.scene.set_loading_message("Generating new indices...")
-            self.__new_indices = self.__generate_index_list(step_x + quality,
-                                                            step_y + quality,
-                                                            self.__left_coordinate,
-                                                            self.__right_coordinate,
-                                                            self.__top_coordinate,
-                                                            self.__bottom_coordinate)
+        # set the value
+        GL.glUniform1f(max_height_location, float(self.__max_height))
+        GL.glUniform1f(min_height_location, float(self.__min_height))
+        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.__projection)
 
-            # Delete old triangles that are in the same place as the new ones
-            # ---------------------------------------------------------------
-            self.scene.set_loading_message("Recalculating triangles...")
-            self.__add_triangles_inside_zone_to_delete_list(self.__left_coordinate,
-                                                            self.__right_coordinate,
-                                                            self.__top_coordinate,
-                                                            self.__bottom_coordinate)
+        # set colors if using
+        if self.__color_file is not None:
+            colors_location = GL.glGetUniformLocation(self.shader_program, "colors")
+            height_color_location = GL.glGetUniformLocation(self.shader_program, "height_color")
+            length_location = GL.glGetUniformLocation(self.shader_program, "length")
 
-        def then_routine():
-            # Set the new indices
-            # -------------------
-            self.__indices += self.__new_indices
-            self.set_indices(np.array(self.__indices, dtype=np.uint32))
-
-            # call the then routine
-            then()
-
-        self.scene.set_parallel_task(parallel_tasks, then_routine)
+            GL.glUniform3fv(colors_location, len(self.__colors), self.__colors)
+            GL.glUniform1fv(height_color_location, len(self.__height_limit), self.__height_limit)
+            GL.glUniform1i(length_location, len(self.__colors))
 
     def calculate_projection_matrix(self, scene_data: dict, zoom_level: float = 1) -> None:
         """
@@ -464,6 +396,163 @@ class Map2DModel(Model):
                                   self.__top_coordinate,
                                   -1,
                                   1)
+
+    def get_projection_matrix(self) -> 'np.array':
+        """
+        Get the projection matrix being used by the model.
+
+        Returns: Projection matrix being used by the model
+        """
+        return self.__projection
+
+    def get_showed_limits(self) -> dict:
+        """
+        Get a dictionary with the limits of the model being showed on the screen.
+
+        Returns: Dictionary with the limits showing on the scene
+        """
+        return {
+            'left': self.__left_coordinate,
+            'right': self.__right_coordinate,
+            'top': self.__top_coordinate,
+            'bottom': self.__bottom_coordinate
+        }
+
+    def move(self, x_movement: int, y_movement: int) -> None:
+        """
+        Move the model view on the scene changing the projection matrix used.
+
+        Args:
+            x_movement: Movement in the x-axis
+            y_movement: Movement in the y-axis
+
+        Returns: None
+        """
+
+        width_scene = self.scene.get_scene_setting_data()['SCENE_WIDTH_X']
+        height_scene = self.scene.get_scene_setting_data()['SCENE_HEIGHT_Y']
+
+        self.position[0] += (x_movement * (self.__right_coordinate - self.__left_coordinate)) / width_scene
+        self.position[1] += (y_movement * (self.__top_coordinate - self.__bottom_coordinate)) / height_scene
+
+        # tell the program our new position
+        self.scene.set_map_position(self.position)
+
+        # recalculate projection matrix
+        self.calculate_projection_matrix(self.scene.get_scene_setting_data(), self.scene.get_zoom_level())
+
+    def optimize_gpu_memory_async(self, then: callable) -> None:
+        """
+        Optimize the memory allocated in the GPU deleting the triangles stored in the
+        list self.__triangles_to_delete.
+
+        The triangles on the list are the ones that are bellow another triangle rendered after them (this is,
+        the triangles that overlap with other triangles rendered over them).
+
+        Args:
+            then: Routine to execute after the deleting.
+
+        Returns: None
+        """
+        log.debug("Optimizing gpu memory of the model deleting triangles")
+
+        def parallel_routine():
+            # Delete the triangles from the list
+            log.debug("Deleting repeated triangles")
+            self.__triangles_to_delete = list(set(self.__triangles_to_delete))
+
+            log.debug("Generating list of indices")
+            indices_to_delete = []
+            for index_to_delete in self.__triangles_to_delete:
+                indices_to_delete.append(index_to_delete * 3)
+                indices_to_delete.append(index_to_delete * 3 + 1)
+                indices_to_delete.append(index_to_delete * 3 + 2)
+
+            log.debug("Generating mask for the indices")
+            mask = np.ones(len(self.__indices), dtype=bool)
+            mask[indices_to_delete] = False
+
+            log.debug("Applying mask to the indices")
+            arr_indices = np.array(self.__indices)
+            new_indices = arr_indices[mask]
+            self.__indices = list(new_indices)
+
+            self.__triangles_to_delete = []
+
+        def then_routine():
+            # Set the new vertices on the engine
+            self.set_indices(np.array(self.__indices, dtype=np.uint32))
+            then()
+
+        self.scene.set_parallel_task(parallel_task=parallel_routine, then=then_routine)
+
+    def recalculate_vertices_from_grid_async(self, quality: int = 2, then=lambda: None) -> None:
+        """
+        Recalculate vertices from grid.
+
+        Recalculate the vertices with a new definition given the zoom level and the borders used in the
+        projection matrix.
+
+        Returns: None
+
+        Args:
+            then: Routine to execute after the parallel tasks.
+            quality: quality of the rendering process.
+        """
+        self.__new_indices = None
+
+        def parallel_tasks():
+            log.debug("Coordinates actually showing on the screen:")
+            log.debug(f"left: {self.__left_coordinate}")
+            log.debug(f"right: {self.__right_coordinate}")
+            log.debug(f"top:{self.__top_coordinate} ")
+            log.debug(f"bottom: {self.__bottom_coordinate}")
+
+            # Calculate the definition to use in the reload
+            # ---------------------------------------------
+            elements_on_screen_x = abs(self.__get_index_closest_value(self.__x, self.__right_coordinate) - \
+                                       self.__get_index_closest_value(self.__x, self.__left_coordinate))
+            elements_on_screen_y = abs(self.__get_index_closest_value(self.__y, self.__top_coordinate) - \
+                                       self.__get_index_closest_value(self.__y, self.__bottom_coordinate))
+
+            log.debug(f"Number of vertices on screen axis X: {elements_on_screen_x}")
+            log.debug(f"Number of vertices on screen axis Y: {elements_on_screen_y}")
+
+            scene_data = self.scene.get_scene_setting_data()
+            step_x = int(elements_on_screen_x / scene_data['SCENE_WIDTH_X']) + 2
+            step_y = int(elements_on_screen_y / scene_data['SCENE_HEIGHT_Y']) + 2
+
+            log.debug(f"Step used to generate index list on x axis {step_x}")
+            log.debug(f"Step used to generate index list on y axis {step_y}")
+
+            # Generate new list of triangles to add to the model
+            # --------------------------------------------------
+            self.scene.set_loading_message("Generating new indices...")
+            self.__new_indices = self.__generate_index_list(step_x + quality,
+                                                            step_y + quality,
+                                                            self.__left_coordinate,
+                                                            self.__right_coordinate,
+                                                            self.__top_coordinate,
+                                                            self.__bottom_coordinate)
+
+            # Delete old triangles that are in the same place as the new ones
+            # ---------------------------------------------------------------
+            self.scene.set_loading_message("Recalculating triangles...")
+            self.__add_triangles_inside_zone_to_delete_list(self.__left_coordinate,
+                                                            self.__right_coordinate,
+                                                            self.__top_coordinate,
+                                                            self.__bottom_coordinate)
+
+        def then_routine():
+            # Set the new indices
+            # -------------------
+            self.__indices += self.__new_indices
+            self.set_indices(np.array(self.__indices, dtype=np.uint32))
+
+            # call the then routine
+            then()
+
+        self.scene.set_parallel_task(parallel_tasks, then_routine)
 
     def set_color_file(self, filename: str) -> None:
         """
@@ -571,71 +660,3 @@ class Map2DModel(Model):
             then()
 
         self.scene.set_parallel_task(parallel_routine, then_routine)
-
-    def move(self, x_movement: int, y_movement: int) -> None:
-        """
-        Move the model view on the scene changing the projection matrix used.
-
-        Args:
-            x_movement: Movement in the x-axis
-            y_movement: Movement in the y-axis
-
-        Returns: None
-        """
-
-        width_scene = self.scene.get_scene_setting_data()['SCENE_WIDTH_X']
-        height_scene = self.scene.get_scene_setting_data()['SCENE_HEIGHT_Y']
-
-        self.position[0] += (x_movement * (self.__right_coordinate - self.__left_coordinate)) / width_scene
-        self.position[1] += (y_movement * (self.__top_coordinate - self.__bottom_coordinate)) / height_scene
-
-        # tell the program our new position
-        self.scene.set_map_position(self.position)
-
-        # recalculate projection matrix
-        self.calculate_projection_matrix(self.scene.get_scene_setting_data(), self.scene.get_zoom_level())
-
-    def optimize_gpu_memory_async(self, then: callable) -> None:
-        """
-        Optimize the memory allocated in the GPU deleting the triangles stored in the
-        list self.__triangles_to_delete.
-
-        The triangles on the list are the ones that are bellow another triangle rendered after them (this is,
-        the triangles that overlap with other triangles rendered over them).
-
-        Args:
-            then: Routine to execute after the deleting.
-
-        Returns: None
-        """
-        log.debug("Optimizing gpu memory of the model deleting triangles")
-
-        def parallel_routine():
-            # Delete the triangles from the list
-            log.debug("Deleting repeated triangles")
-            self.__triangles_to_delete = list(set(self.__triangles_to_delete))
-
-            log.debug("Generating list of indices")
-            indices_to_delete = []
-            for index_to_delete in self.__triangles_to_delete:
-                indices_to_delete.append(index_to_delete * 3)
-                indices_to_delete.append(index_to_delete * 3 + 1)
-                indices_to_delete.append(index_to_delete * 3 + 2)
-
-            log.debug("Generating mask for the indices")
-            mask = np.ones(len(self.__indices), dtype=bool)
-            mask[indices_to_delete] = False
-
-            log.debug("Applying mask to the indices")
-            arr_indices = np.array(self.__indices)
-            new_indices = arr_indices[mask]
-            self.__indices = list(new_indices)
-
-            self.__triangles_to_delete = []
-
-        def then_routine():
-            # Set the new vertices on the engine
-            self.set_indices(np.array(self.__indices, dtype=np.uint32))
-            then()
-
-        self.scene.set_parallel_task(parallel_task=parallel_routine, then=then_routine)

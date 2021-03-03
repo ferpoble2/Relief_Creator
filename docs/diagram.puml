@@ -29,27 +29,37 @@ package src {
 
 ' Classes definition
 class src.engine.GUI.GUIManager{
-    - __implementation: GlfwRenderer
-    - __glfw_window: GLFWWindow
     - __component_list: list
-    - __io: IMGUI.io
-    - __font: IMGUI.font
-    - __scene: Scene
     - __engine: Engine
+    - __font_bold: IMGUI.font
+    - __font_regular: IMGUI.font
+    - __glfw_window: GLFWWindow
+    - __implementation: GlfwRenderer
+    - __io: IMGUI.io
+    - __scene: Scene
 
     {static} + get_frames(gui_manager) : list
     + add_frames(component_list)
     + add_zoom()
     + are_frame_fixed()
     + change_color_file_with_dialog()
+    + change_color_of_polygon(polygon_id, color)
+    + change_dot_color_of_polygon(polygon_id, color)
     + change_quality(quality)
+    + create_new_polygon(): str
+    + delete_polygon_by_id(polygon_id)
     + draw_frames()
     + fix_frames_position(value)
+    + get_active_model_id(): str
+    + get_active_polygon_id(): str
     + get_active_tool(): str
     + get_cpt_file(): str
+    + get_gui_key_callback(): function
     + get_left_frame_width(): int
     + get_main_menu_bar_height(): int
     + get_map_position(): list
+    + get_polygon_id_list(): list
+    + get_polygon_name(polygon_id): str
     + get_quality(): int
     + get_view_mode(): str
     + get_window_height(): int
@@ -64,10 +74,14 @@ class src.engine.GUI.GUIManager{
     + refresh_scene_with_model_2d(path_color_file, path_model, model_id)
     + reload_models()
     + render()
+    + set_active_polygon(polygon_id)
     + set_active_tool(tool)
+    + set_bold_font()
     + set_loading_message(new_msg)
     + set_modal_text(modal_title, msg)
-    + set_polygon_mode(polygon_mode)
+    + set_models_polygon_mode(polygon_mode)
+    + set_polygon_name(polygon_id, new_name)
+    + set_regular_font()
 }
 
 class src.engine.settings  {
@@ -78,8 +92,15 @@ class src.engine.settings  {
     {static} + FONT_SIZE: int
     {static} + HEIGHT: int
     {static} + LEFT_FRAME_WIDTH: int
+    {static} + TOP_FRAME_HEIGHT: int
+    {static} + BOTTOM_FRAME_HEIGHT: int
     {static} + MAIN_MENU_BAR_HEIGHT: int
     {static} + QUALITY: int
+    {static} + LINE_WIDTH: int
+    {static} + POLYGON_LINE_WIDTH: int
+    {static} + DOT_SIZE: int
+    {static} + POLYGON_DOT_SIZE: int
+    {static} + ACTIVE_POLYGON_LINE_WIDTH: int
     {static} + SCENE_BEGIN_X: int
     {static} + SCENE_BEGIN_Y: int
     {static} + SCENE_WIDTH_X: int
@@ -115,7 +136,6 @@ class src.engine.scene.model.transformations.transformations <<$file>> {
 class src.engine.scene.model.Model {
     + vao: int
     + vbo: int
-    + cbo: int
     + ebo: int
     + shader_program: compiled_shader
     + position: numpy.array[3]
@@ -189,12 +209,7 @@ class src.engine.scene.model.Map2DModel{
     - __new_indices: list
     + hbo : int
 
-    + calculate_projection_matrix(scene_data, zoom_level)
-    + move(x_movement, y_movement)
-    + optimize_gpu_memory_async(then)
-    + recalculate_vertices_from_grid_async(quality, then)
-    + set_color_file(filename)
-    + set_vertices_from_grid_async(x,y,z,quality, then)
+
     - __add_triangles_inside_zone_to_delete_list(left_coordinate, right_coordinate, top_coordinate, bottom_coordinate)
     - __generate_index_list(step_x, step_y, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): list
     - __generate_vertices_list(x, y, z, z_value): list
@@ -205,7 +220,71 @@ class src.engine.scene.model.Map2DModel{
     - __print_vertices()
     - __set_height_buffer()
     ~ _update_uniforms()
+    + calculate_projection_matrix(scene_data, zoom_level)
+    + get_projection_matrix(): array
+    + get_showed_limits(): dict
+    + move(x_movement, y_movement)
+    + optimize_gpu_memory_async(then)
+    + recalculate_vertices_from_grid_async(quality, then)
+    + set_color_file(filename)
+    + set_vertices_from_grid_async(x,y,z,quality, then)
 
+}
+
+class src.engine.scene.model.Points{
+
+    - __color_list: list
+    - __first_point_color: tuple
+    - __fragment_shader_file: str
+    - __indices_list: list
+    - __last_point_color: tuple
+    - __normal_color: tuple
+    - __point_list: list
+    - __vertex_shader_file: str
+    + cbo: int
+
+    - __add_color_to_color_list(color)
+    - __remove_last_color_from_color_list()
+    - __remove_last_point_from_point_list()
+    - __str__()
+    + add_point(x, y, z)
+    + get_first_point_color(): tuple
+    + get_last_point_color(): tuple
+    + get_normal_color(): tuple
+    + get_point_list(): list
+    + remove_last_added_point()
+    + set_color_buffer(colors)
+    + set_first_point_color(new_color)
+    + set_last_point_color(new_color)
+    + set_normal_color(new_color)
+}
+
+class src.engine.scene.model.Polygon{
+
+    - __fragment_shader_file: str
+    - __indices_list: list
+    - __name: str
+    - __point_list: list
+    - __polygon_line_color: tuple
+    - __vertex_shader_file: str
+    - __point_model: Points
+
+    - __add_line_between_first_and_last_point_to_indices_list()
+    - __remove_last_added_line_from_indices_list()
+    - __remove_last_point_from_point_list()
+    - __str__()
+    ~ _update_uniforms()
+    + add_point(x, y, z)
+    + generate_initial_indices()
+    + get_id(): str
+    + get_name(): str
+    + get_point_list(): list
+    + get_point_number(): int
+    + remove_last_added_point()
+    + set_dot_color(color)
+    + set_id(new_id)
+    + set_line_color(color)
+    + set_name(new_name)
 }
 
 class src.input.CTP <<$file>> {
@@ -230,12 +309,39 @@ class src.engine.GUI.frames.Frame {
 }
 
 class src.engine.GUI.frames.MainMenuBar {
+    - __edit_menu()
+    - __file_menu()
+    - __view_menu()
     + render()
 }
 
 class src.engine.GUI.frames.Tools {
-    - double_button_margin_width: int
-    - button_margin_width: int
+    - __button_margin_width: int
+    - __color_pick_should_open: boolean
+    - __color_pick_window_size_x: int
+    - __color_pick_window_size_y: int
+    - __color_selected_default: int, int, int, int
+    - __color_selected_dict: dict
+    - __dot_color_selected_default: int, int, int, int
+    - __double_button_margin_width: int
+    - __input_text_value: str
+    - __rename_padding_x: int
+    - __rename_size_x: int
+    - __rename_size_y: int
+    - __slide_bar_quality: int
+    - __tool_before_pop_up: str
+    - __tools_names_dict: dict
+
+
+    - __color_button(polygon_id)
+    - __delete_button(active_polygon, polygon_id)
+    - __generate_polygon_list()
+    - __rename_polygon_button(polygon_id)
+    - __show_active_tool()
+    - __show_editing_tools(left_frame_width)
+    - __show_other_tools(left_frame_width)
+    - __show_polygon_tools(left_frame_width)
+    - __show_visualization_tools(left_frame_width)
     + render()
 }
 
@@ -289,7 +395,20 @@ class src.engine.controller.Controller {
 
 class src.engine.scene.Scene {
     + add_model(model)
+    + add_polygon(polygon)
+    + add_vertex_to_active_polygon(position_x, position_y)
+    + calculate_map_position_from_window(): (float, float)
+    + change_color_of_polygon(polygon_id, color)
+    + change_dot_color_of_polygon(polygon_id, color)
+    + create_new_polygon(): str
+    + delete_polygon_by_id(polygon_id)
     + draw()
+    + get_active_model_projection_matrix(): array
+    + get_active_model_showed_limits(): dict
+    + get_active_polygon_id(): str
+    + get_polygon_id_list(): list
+    + get_polygon_name(polygon_id): str
+    + get_render_settings(): dict
     + get_zoom_level(): float
     + initialize(engine)
     + move_models(x_movement, y_movement)
@@ -297,17 +416,23 @@ class src.engine.scene.Scene {
     + refresh_with_model_2d(path_color_file, path_model, model_id)
     + reload_models_async(then)
     + remove_all_models()
+    + remove_last_point_from_active_polygon()
     + remove_model(id_model)
     + set_loading_message(new_msg)
     + set_map_position(new_position)
-    + set_polygon_mode(polygon_mode)
+    + set_models_polygon_mode(polygon_mode)
+    + set_polygon_name(polygon_id, new_name)
     + update_models_colors()
     + update_models_projection_matrix()
     + update_viewport()
     + update_viewport_variables()
+
+    - __3d_model_list: list
     - __engine : Engine
     - __height_viewport: int
     - __model_list : list
+    - __polygon_id_count: int
+    - __polygon_list: list
     - __should_execute_then_optimize_gpu_memory: int
     - __should_execute_then_reload: int
     - __width_viewport: int
@@ -320,25 +445,33 @@ class src.engine.Engine {
     + scene: Scene
     + window: GLFWWindow
     - __pending_task_list: list
+    + add_vertex_to_active_polygon(position_x, position_y)
     + add_zoom()
     + are_frames_fixed(): boolean
     + change_color_file_with_dialog()
+    + change_color_of_polygon(polygon_id, color)
+    + change_dot_color_of_polygon(polygon_id,  color)
     + change_height_window(height)
     + change_quality(quality)
     + change_width_window(width)
-    + update_scene_models_colors()
+    + create_new_polygon(): str
+    + delete_polygon_by_id(polygon_id)
     + fix_frames()
+    + get_active_model_id()
+    + get_active_polygon_id(): str
     + get_active_tool(): str
     + get_clear_color(): list
-    + get_CPT_file()
     + get_cpt_file(): str
     + get_float_bytes()
     + get_float_bytes(): int
     + get_font_size(): int
+    + get_gui_key_callback(): function
     + get_gui_setting_data(): dict
     + get_map_position(): list
+    + get_polygon_id_list(): list
+    + get_polygon_name(polygon_id): str
     + get_quality(): int
-    + get_scene_setting_data(): dict
+    + get_render_settings()
     + get_scene_setting_data(): dict
     + get_view_mode(): str
     + get_window_setting_data(): dict
@@ -353,31 +486,39 @@ class src.engine.Engine {
     + reload_models()
     + reset_zoom_level()
     + run()
+    + set_active_polygon(polygon_id)
     + set_active_tool(tool)
     + set_loading_message(new_msg)
     + set_map_position(new_position)
     + set_modal_text(title_modal, msg)
+    + set_models_polygon_mode(polygon_mode)
+    + set_polygon_name(polygon_id, new_name)
     + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
     + set_thread_task(parallel_task, then)
+    + undo_action()
     + update_pending_tasks()
+    + update_scene_models_colors()
     + update_scene_values()
+    + update_scene_viewport()
     + update_threads()
-
 }
 
 class src.program.Program {
 
-    - __engine: Engine
-    - __CPT_file: str
-    - __model_id: str
-    - __zoom_level: float
-    - __map_position: list
+    - __active_model: str
+    - __active_polygon: str
     - __active_tool: str
+    - __CPT_file: str
+    - __engine: Engine
     - __loading: boolean
+    - __map_position: list
+    - __zoom_level: float
 
     + add_zoom()
     + change_cpt_file_with_dialog()
+    + get_active_model(): str
+    + get_active_polygon_id(): str
     + get_active_tool(): str
     + get_cpt_file(): str
     + get_map_position(): list
@@ -387,22 +528,26 @@ class src.program.Program {
     + load_netcdf_file_with_dialog()
     + reset_zoom_level()
     + run()
+    + set_active_model(new_model_id)
+    + set_active_polygon(polygon_id)
     + set_active_tool(new_tool)
     + set_cpt_file(new_file)
     + set_loading(is_loading)
-    + set_model_id(new_model_id)
 }
 
 ' herency
 src.engine.scene.model.Map2DModel -u-|> src.engine.scene.model.Model
 src.engine.scene.model.Map3DModel -u-|> src.engine.scene.model.Model
+src.engine.scene.model.Polygon -u-|> src.engine.scene.model.Model
+src.engine.scene.model.Points -u-|> src.engine.scene.model.Model
+src.engine.scene.model.Points -l--o src.engine.scene.model.Polygon
 
-src.engine.GUI.frames.MainMenuBar -u-|> src.engine.GUI.frames.Frame
-src.engine.GUI.frames.Tools -u-|> src.engine.GUI.frames.Frame
-src.engine.GUI.frames.TestWindow -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Debug -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Loading -u-|> src.engine.GUI.frames.Frame
+src.engine.GUI.frames.MainMenuBar -u-|> src.engine.GUI.frames.Frame
+src.engine.GUI.frames.TestWindow -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.TextModal -u-|> src.engine.GUI.frames.Frame
+src.engine.GUI.frames.Tools -u-|> src.engine.GUI.frames.Frame
 
 ' uses
 src.engine.scene.model.Map2DModel -u.> src.engine.data.decimation

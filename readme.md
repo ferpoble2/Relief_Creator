@@ -20,6 +20,9 @@ tools not developed for that purpose.
 This is a list of shortcuts implemented in the program to make the usage of it more fast.
 
 - CTRL + O: Load a netcdf file on the program.
+= CTRL + T: Loaf a ctp file on the program.
+- M: Change to `Move Map` tool.
+- CTRL + Z: Undo the last action (Not in all tools)
 
 # Instructions for developers
 
@@ -51,6 +54,7 @@ The program is located in the `output` folder under the name of ReliefeCreator.
 There is a number of tools that form part of the engine, they are stored as strings by the program class. Here is the list of all tools of the program:
 
 - move_map: Tool that is active when moving the 2D map on the engine.
+- create_polygon: Tool to create polygons on the screen.
 
 # Reading NetCDF files
 

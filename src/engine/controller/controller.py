@@ -89,17 +89,12 @@ class Controller:
 
         def cursor_position_callback(window, xpos, ypos):
 
-            # check if mouse is inside the scene
-            if self.is_inside_scene(xpos, ypos):
+            # get the active tool being used in the program
+            active_tool = self.__engine.get_active_tool()
 
-                # check if the mouse button is pressed
+            if active_tool == 'move_map':
                 if glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS:
-
-                    # get the active tool being used in the program
-                    active_tool = self.__engine.get_active_tool()
-
-                    # if the active tool is to move a map
-                    if active_tool == 'move_map':
+                    if self.is_inside_scene(xpos, ypos):
                         log.debug(
                             f"Cursor movement: {xpos - self.__mouse_old_pos[0]}, {self.__mouse_old_pos[1] - ypos}")
                         self.__engine.move_scene(xpos - self.__mouse_old_pos[0], self.__mouse_old_pos[1] - ypos)
@@ -117,8 +112,16 @@ class Controller:
         """
 
         def mouse_button_callback(window, button, action, mods):
+
             if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
-                log.debug("Left mouse button pressed")
+                active_tool = self.__engine.get_active_tool()
+
+                if active_tool == 'create_polygon':
+                    pos_x, pos_y = glfw.get_cursor_pos(window)
+
+                    if self.is_inside_scene(pos_x, pos_y):
+                        log.debug(f"Creating points for active polygon at: {pos_x} {pos_y}")
+                        self.__engine.add_vertex_to_active_polygon(pos_x, pos_y)
 
         return mouse_button_callback
 
@@ -196,6 +199,16 @@ class Controller:
                     log.debug("Pressed shortcut to change color file")
                     self.change_color_file_with_dialog()
 
+                if key == glfw.KEY_M:
+                    log.debug("Pressed shortcut to move map")
+                    self.__engine.set_active_tool('move_map')
+
+                if key == glfw.KEY_Z:
+
+                    if self.__is_left_ctrl_pressed:
+                        log.debug("Pressed ctrl+z")
+                        self.__engine.undo_action()
+
             # Check for keys released
             if action == glfw.RELEASE:
 
@@ -207,6 +220,9 @@ class Controller:
                 if key == glfw.KEY_LEFT_ALT:
                     log.debug("Left alt released")
                     self.__is_left_alt_pressed = False
+
+            # call the others callbacks defined in the program.
+            self.__engine.get_gui_key_callback()(window, key, scancode, action, mods)
 
         return on_key
 

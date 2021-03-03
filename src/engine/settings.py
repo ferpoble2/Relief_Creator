@@ -15,14 +15,20 @@ class Settings:
     # FRAME OPTIONS
     LEFT_FRAME_WIDTH = 300
     TOP_FRAME_HEIGHT = 0
+    BOTTOM_FRAME_HEIGHT = 0
     MAIN_MENU_BAR_HEIGHT = 25
 
     # RENDER SETTINGS
     QUALITY = 25
+    LINE_WIDTH = 1
+    POLYGON_LINE_WIDTH = 2
+    ACTIVE_POLYGON_LINE_WIDTH = POLYGON_LINE_WIDTH * 2
+    DOT_SIZE = 1
+    POLYGON_DOT_SIZE = 10
 
     # SCENE settings
     SCENE_BEGIN_X = LEFT_FRAME_WIDTH
-    SCENE_BEGIN_Y = TOP_FRAME_HEIGHT
+    SCENE_BEGIN_Y = BOTTOM_FRAME_HEIGHT
     SCENE_WIDTH_X = WIDTH - LEFT_FRAME_WIDTH
     SCENE_HEIGHT_Y = HEIGHT - MAIN_MENU_BAR_HEIGHT
 
@@ -59,11 +65,11 @@ class Settings:
 
         if Settings.FIXED_FRAMES:
             Settings.SCENE_BEGIN_X = Settings.LEFT_FRAME_WIDTH
-            Settings.SCENE_BEGIN_Y = 0
+            Settings.SCENE_BEGIN_Y = Settings.BOTTOM_FRAME_HEIGHT
             Settings.SCENE_WIDTH_X = Settings.WIDTH - Settings.LEFT_FRAME_WIDTH
             Settings.SCENE_HEIGHT_Y = Settings.HEIGHT - Settings.MAIN_MENU_BAR_HEIGHT - Settings.TOP_FRAME_HEIGHT
         else:
             Settings.SCENE_BEGIN_X = 0
-            Settings.SCENE_BEGIN_Y = Settings.TOP_FRAME_HEIGHT
+            Settings.SCENE_BEGIN_Y = Settings.BOTTOM_FRAME_HEIGHT
             Settings.SCENE_WIDTH_X = Settings.WIDTH
             Settings.SCENE_HEIGHT_Y = Settings.HEIGHT - Settings.MAIN_MENU_BAR_HEIGHT - Settings.TOP_FRAME_HEIGHT

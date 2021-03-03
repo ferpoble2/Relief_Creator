@@ -31,9 +31,9 @@ class GUIManager:
         self.__glfw_window = None
         self.__component_list = []
         self.__io = None
-        self.__font = None
+        self.__font_regular = None
+        self.__font_bold = None
 
-        self.__scene = None
         self.__engine = None
 
     def add_frames(self, component_list: list) -> None:
@@ -50,6 +50,14 @@ class GUIManager:
         for frame in component_list:
             self.__component_list.append(frame)
 
+    def add_zoom(self) -> None:
+        """
+        Add zoom to the current map being watched.
+
+        Returns: None
+        """
+        self.__engine.add_zoom()
+
     def are_frame_fixed(self) -> bool:
         """
         Check if the frames are fixed or not.
@@ -58,6 +66,77 @@ class GUIManager:
         """
         return self.__engine.are_frames_fixed()
 
+    def change_color_file_with_dialog(self) -> None:
+        """
+        Change the color file to the one selected.
+        This change all the models using the color file.
+
+        Returns: None
+        """
+        self.__engine.change_color_file_with_dialog()
+
+    def change_color_of_polygon(self, polygon_id: str, color: list) -> None:
+        """
+        Change the color of the polygon with the specified id.
+
+        Only change the color of the lines of the polygon.
+
+        The colors must be defined in the order RGBA and with values between 0 and 1.
+
+        Args:
+            polygon_id: Id of the polygon to change the color.
+            color: List-like object with the colors to use.
+
+        Returns: None
+        """
+        self.__engine.change_color_of_polygon(polygon_id, color)
+
+    def change_dot_color_of_polygon(self, polygon_id: str, color: list) -> None:
+        """
+        Change the color of the dots of the polygon with the specified id.
+
+        Only change the color of the dots of the polygon.
+
+        The colors must be defined in the order RGBA and with values between 0 and 1.
+
+        Args:
+            polygon_id: Id of the polygon to change the color.
+            color: List-like object with the colors to use.
+
+        Returns: None
+        """
+        self.__engine.change_dot_color_of_polygon(polygon_id, color)
+
+    def change_quality(self, quality: int) -> None:
+        """
+        Change the quality used to render the maps.
+
+        Args:
+            quality: Quality to use in the rendering process
+
+        Returns: None
+        """
+        self.__engine.change_quality(quality)
+
+    def create_new_polygon(self) -> str:
+        """
+        Create a new polygon on the scene
+
+        Returns: the id of the new polygon
+        """
+        return self.__engine.create_new_polygon()
+
+    def delete_polygon_by_id(self, polygon_id: str) -> None:
+        """
+        Delete the polygon with the specified id from the scene
+
+        Args:
+            polygon_id: Id of the polygon to delete
+
+        Returns: None
+        """
+        self.__engine.delete_polygon_by_id(polygon_id)
+
     def draw_frames(self) -> None:
         """
         Draw the components of the GUI (This dont render them).
@@ -65,7 +144,7 @@ class GUIManager:
         Returns: None
         """
         imgui.new_frame()
-        with imgui.font(self.__font):
+        with imgui.font(self.__font_regular):
             for frame in self.__component_list:
                 frame.render()
         imgui.end_frame()
@@ -84,24 +163,44 @@ class GUIManager:
         # Settings change depending if the frames are fixed or not
         if value:
             self.__engine.fix_frames(True)
-            self.__scene.update_viewport()
+            self.__engine.update_scene_viewport()
 
         else:
             self.__engine.fix_frames(False)
-            self.__scene.update_viewport()
+            self.__engine.update_scene_viewport()
 
-    def set_loading_message(self, new_msg: str) -> None:
+    def get_active_model_id(self) -> str:
         """
-        Set a new loading message in the loading frame.
+        Get the active model being used in the program
 
-        Args:
-            new_msg: New message to show in the frame.
-
-        Returns: None
+        Returns: active model id
         """
-        for frame in self.__component_list:
-            if isinstance(frame, Loading):
-                frame.set_loading_message(new_msg)
+        return self.__engine.get_active_model_id()
+
+    def get_active_polygon_id(self) -> str:
+        """
+        Get the active polygon id being used by the program.
+
+        Returns:  id of the active polygon
+        """
+        return self.__engine.get_active_polygon_id()
+
+    def get_active_tool(self) -> str:
+        """
+        Get the active tool being used in the program.
+
+        Returns: Active tool being used.
+
+        """
+        return self.__engine.get_active_tool()
+
+    def get_cpt_file(self) -> str:
+        """
+        Get the CTP file used by the program.
+        Returns: string with the file to use.
+
+        """
+        return self.__engine.get_cpt_file()
 
     def get_frames(self, gui_manager: 'GUIManager') -> list:
         """
@@ -121,100 +220,13 @@ class GUIManager:
             Loading(gui_manager),
         ]
 
-    def set_modal_text(self, modal_title: str, msg: str) -> None:
+    def get_gui_key_callback(self) -> callable:
         """
-        Set the text of the modal frame and set it to show in the next frame.
+        Get the key callback used by imgui.
 
-        Returns: None
-
-        Args:
-            modal_title:  title to use in the modal
-            msg: message to show in the modal
+        Returns: Function used by imgui for the key callback
         """
-        log.debug("Setting modal text")
-
-        for frame in self.__component_list:
-            if isinstance(frame, TextModal):
-                frame.set_modal_text(modal_title, msg)
-
-    def is_program_loading(self) -> bool:
-        """
-        Return if the program is loading or not.
-
-        Returns: Boolean representing if the program is running or not.
-        """
-        return self.__engine.is_program_loading()
-
-    def change_quality(self, quality: int) -> None:
-        """
-        Change the quality used to render the maps.
-
-        Args:
-            quality: Quality to use in the rendering process
-
-        Returns: None
-        """
-        self.__engine.change_quality(quality)
-
-    def get_quality(self) -> int:
-        """
-        Get the render quality used in the engine.
-
-        Returns: Quality used in the engine.
-        """
-        return self.__engine.get_quality()
-
-    def get_window_width(self) -> int:
-        """
-        Get the window width.
-
-        Returns: Window width
-        """
-        data = self.__engine.get_window_setting_data()
-        return data['WIDTH']
-
-    def get_window_height(self) -> int:
-        """
-        Get the window height.
-
-        Returns: Window height
-        """
-        data = self.__engine.get_window_setting_data()
-        return data['HEIGHT']
-
-    def get_active_tool(self) -> str:
-        """
-        Get the active tool being used in the program.
-
-        Returns: Active tool being used.
-
-        """
-        return self.__engine.get_active_tool()
-
-    def get_zoom_level(self) -> float:
-        """
-        Get the zoom level being used in the program.
-
-        Returns: zoom level
-
-        """
-        return self.__engine.get_zoom_level()
-
-    def get_map_position(self) -> list:
-        """
-        The the position of the map in the program.
-
-        Returns: list with the position of the map.
-        """
-        return self.__engine.get_map_position()
-
-    def get_view_mode(self) -> str:
-        """
-        Get the view mode being used in the platform.
-
-        Returns: View mode being used.
-        """
-        return self.__engine.get_view_mode()
+        return self.__implementation.keyboard_callback
 
     def get_left_frame_width(self) -> int:
         """
@@ -232,13 +244,75 @@ class GUIManager:
         """
         return self.__engine.get_gui_setting_data()['MAIN_MENU_BAR_HEIGHT']
 
-    def get_cpt_file(self) -> str:
+    def get_map_position(self) -> list:
         """
-        Get the CTP file used by the program.
-        Returns: string with the file to use.
+        The the position of the map in the program.
+
+        Returns: list with the position of the map.
+        """
+        return self.__engine.get_map_position()
+
+    def get_polygon_id_list(self) -> list:
+        """
+        Get the full list of polygon ids currently being used on the program.
+
+        Returns: list with the polygons
+        """
+        return self.__engine.get_polygon_id_list()
+
+    def get_polygon_name(self, polygon_id: str) -> str:
+        """
+        Get the name of a polygon given its id
+
+        Args:
+            polygon_id: Id of the polygon
+
+        Returns: Name of the polygon
+        """
+        return self.__engine.get_polygon_name(polygon_id)
+
+    def get_quality(self) -> int:
+        """
+        Get the render quality used in the engine.
+
+        Returns: Quality used in the engine.
+        """
+        return self.__engine.get_quality()
+
+    def get_view_mode(self) -> str:
+        """
+        Get the view mode being used in the platform.
+
+        Returns: View mode being used.
+        """
+        return self.__engine.get_view_mode()
+
+    def get_window_height(self) -> int:
+        """
+        Get the window height.
+
+        Returns: Window height
+        """
+        data = self.__engine.get_window_setting_data()
+        return data['HEIGHT']
+
+    def get_window_width(self) -> int:
+        """
+        Get the window width.
+
+        Returns: Window width
+        """
+        data = self.__engine.get_window_setting_data()
+        return data['WIDTH']
+
+    def get_zoom_level(self) -> float:
+        """
+        Get the zoom level being used in the program.
+
+        Returns: zoom level
 
         """
-        return self.__engine.get_cpt_file()
+        return self.__engine.get_zoom_level()
 
     def initialize(self, window, engine: 'Engine') -> None:
         """
@@ -263,13 +337,39 @@ class GUIManager:
 
         # Font options
         self.__io = imgui.get_io()
-        self.__font = self.__io.fonts.add_font_from_file_ttf(
+        self.__font_regular = self.__io.fonts.add_font_from_file_ttf(
             './engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', engine.get_font_size()
+        )
+        self.__font_bold = self.__io.fonts.add_font_from_file_ttf(
+            './engine/GUI/fonts/open_sans/OpenSans-Bold.ttf', engine.get_font_size()
         )
         self.__implementation.refresh_font_texture()
 
-        self.__scene = engine.scene
         self.__engine = engine
+
+    def is_program_loading(self) -> bool:
+        """
+        Return if the program is loading or not.
+
+        Returns: Boolean representing if the program is running or not.
+        """
+        return self.__engine.is_program_loading()
+
+    def less_zoom(self) -> None:
+        """
+        Reduce on 1 the level of zoom.
+
+        Returns: None
+        """
+        self.__engine.less_zoom()
+
+    def load_netcdf_file_with_dialog(self):
+        """
+        Call for the engine to open a dialog text to load a new netcdf file.
+
+        Returns: None
+        """
+        self.__engine.load_netcdf_file_with_dialog()
 
     def optimize_gpu_memory(self) -> None:
         """
@@ -301,29 +401,33 @@ class GUIManager:
         """
         self.__engine.refresh_with_model_2d(path_color_file, path_model, model_id)
 
-    def add_zoom(self) -> None:
+    def reload_models(self):
         """
-        Add zoom to the current map being watched.
+        Ask the Scene to reload the models to better the definitions.
 
         Returns: None
         """
-        self.__engine.add_zoom()
+        self.__engine.reload_models()
 
-    def less_zoom(self) -> None:
+    def render(self) -> None:
         """
-        Reduce on 1 the level of zoom.
-
-        Returns: None
-        """
-        self.__engine.less_zoom()
-
-    def load_netcdf_file_with_dialog(self):
-        """
-        Call for the engine to open a dialog text to load a new netcdf file.
+        Render the GUI (Components must be drew first).
 
         Returns: None
         """
-        self.__engine.load_netcdf_file_with_dialog()
+        imgui.render()
+        self.__implementation.render(imgui.get_draw_data())
+
+    def set_active_polygon(self, polygon_id: str) -> None:
+        """
+        Set a new active polygon on the program.
+
+        Args:
+            polygon_id: Polygon ID to set as the active polygon.
+
+        Returns: None
+        """
+        self.__engine.set_active_polygon(polygon_id)
 
     def set_active_tool(self, tool: str) -> None:
         """
@@ -336,39 +440,80 @@ class GUIManager:
         """
         self.__engine.set_active_tool(tool)
 
-    def change_color_file_with_dialog(self) -> None:
+    def set_bold_font(self) -> None:
         """
-        Change the color file to the one selected.
-        This change all the models using the color file.
+        Set a bold font too use in the render.
+
+        Returns: Set the font to bold.
+        """
+        imgui.pop_font()
+        imgui.push_font(self.__font_bold)
+
+    def set_loading_message(self, new_msg: str) -> None:
+        """
+        Set a new loading message in the loading frame.
+
+        Args:
+            new_msg: New message to show in the frame.
 
         Returns: None
         """
-        self.__engine.change_color_file_with_dialog()
+        for frame in self.__component_list:
+            if isinstance(frame, Loading):
+                frame.set_loading_message(new_msg)
 
-    def render(self) -> None:
+    def set_modal_text(self, modal_title: str, msg: str) -> None:
         """
-        Render the GUI (Components must be drew first).
-
-        Returns: None
-        """
-        imgui.render()
-        self.__implementation.render(imgui.get_draw_data())
-
-    def reload_models(self):
-        """
-        Ask the Scene to reload the models to better the definitions.
+        Set the text of the modal frame and set it to show in the next frame.
 
         Returns: None
-        """
-        self.__engine.reload_models()
 
-    def set_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
+        Args:
+            modal_title:  title to use in the modal
+            msg: message to show in the modal
         """
-        Call the scene to change the polygon mode used.
+        log.debug("Setting modal text")
+
+        for frame in self.__component_list:
+            if isinstance(frame, TextModal):
+                frame.set_modal_text(modal_title, msg)
+
+    def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
+        """
+        Call the scene to change the polygon mode used by the models.
 
         Args:
             polygon_mode: Polygon mode to use.
 
         Returns:
         """
-        self.__scene.set_polygon_mode(polygon_mode)
+        self.__engine.set_models_polygon_mode(polygon_mode)
+
+    def set_polygon_name(self, polygon_id: str, new_name: str) -> None:
+        """
+        Change the name of a polygon.
+
+        Args:
+            polygon_id: Old polygon id
+            new_name: New polygon id
+
+        Returns: None
+        """
+        self.__engine.set_polygon_name(polygon_id, new_name)
+
+    def set_regular_font(self) -> None:
+        """
+        Set the regular font too use in the render.
+
+        Returns: Set the font to bold.
+        """
+        imgui.pop_font()
+        imgui.push_font(self.__font_regular)
+
+    def undo_action(self) -> None:
+        """
+        Call the engine to undo the most recent action made on the program.
+
+        Returns: None
+        """
+        self.__engine.undo_action()
