@@ -57,7 +57,7 @@ class Scene:
         self.__polygon_list.append(polygon)
         self.__polygon_id_count += 1
 
-    def add_vertex_to_active_polygon(self, position_x: int, position_y: int) -> None:
+    def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
         """
         Add a new vertex to the active polygon on the screen.
 
@@ -77,6 +77,20 @@ class Scene:
             if polygon.get_id() == active_polygon:
                 new_x, new_y = self.calculate_map_position_from_window(position_x, position_y)
                 polygon.add_point(new_x, new_y)
+
+    def add_new_vertex_to_active_polygon_using_real_coords(self, x_coord: float, y_coord: float) -> None:
+        """
+        Add a new point to the active polygon using real coordinates.
+
+        Args:
+            x_coord: x coordinate of the new point
+            y_coord: y coordinate of the new point
+
+        Returns: None
+        """
+        for polygon in self.__polygon_list:
+            if polygon.id == self.__engine.get_active_polygon_id():
+                polygon.add_point(x_coord, y_coord)
 
     def calculate_map_position_from_window(self, position_x, position_y) -> (float, float):
         """
@@ -282,6 +296,21 @@ class Scene:
         """
         self.__engine = engine
 
+    def is_polygon_planar(self, polygon_id: str) -> bool:
+        """
+        Check if the polygon is planar or not.
+
+        Return None if polygon is not in the list of polygons.
+
+        Args:
+            polygon_id: Polygon id to check
+
+        Returns: boolean indicating if the polygon is planar or not
+        """
+        for polygon in self.__polygon_list:
+            if polygon.get_id() == polygon_id:
+                return polygon.is_planar()
+
     def move_models(self, x_movement: int, y_movement: int) -> None:
         """
         Move the models on the scene.
@@ -463,6 +492,14 @@ class Scene:
         Returns: None
         """
         self.__engine.set_map_position(new_position)
+
+    def set_modal_text(self, title_modal: str, msg: str) -> None:
+        """
+        Calls the engine to set a modal text on the screen.
+
+        Returns: None
+        """
+        self.__engine.set_modal_text(title_modal, msg)
 
     def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """

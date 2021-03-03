@@ -5,6 +5,7 @@ from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
 
 import imgui
+import shapefile
 import OpenGL.GL as GL
 
 log = get_logger(module="MAIN MENU BAR")
@@ -77,6 +78,24 @@ class MainMenuBar(Frame):
                 except TypeError as e:
                     log.exception(f"Error reading files: {e}")
                     self._GUI_manager.set_modal_text("Error", "Error reading color file (TypeError)")
+
+            imgui.separator()
+            imgui.menu_item('Load shapefile file...', 'Ctrl+L', False, True)
+            if imgui.is_item_clicked():
+                log.debug('Clicked load shapefile...')
+
+                # check that a map is loaded in the program
+                if self._GUI_manager.get_active_model_id() is None:
+                    self._GUI_manager.set_modal_text('Error', 'Load a netcdf file before loading a polygon.')
+
+                # in case all check pass
+                else:
+                    try:
+                        self._GUI_manager.load_shapefile_file_with_dialog()
+
+                    except shapefile.ShapefileException as e:
+                        log.error(e)
+                        self._GUI_manager.set_modal_text('Error', 'Error loading file. (ShapefileException)')
 
             imgui.end_menu()
 

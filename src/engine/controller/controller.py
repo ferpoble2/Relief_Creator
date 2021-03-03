@@ -7,6 +7,8 @@ from typing import Callable
 import glfw
 
 from src.utils import get_logger
+from src.error.line_intersection_error import LineIntersectionError
+from src.error.repeated_point_error import RepeatedPointError
 
 log = get_logger(module="CONTROLLER")
 
@@ -121,7 +123,18 @@ class Controller:
 
                     if self.is_inside_scene(pos_x, pos_y):
                         log.debug(f"Creating points for active polygon at: {pos_x} {pos_y}")
-                        self.__engine.add_vertex_to_active_polygon(pos_x, pos_y)
+
+                        # add a point to the polygon or show an error modal if there is errors.
+                        try:
+                            self.__engine.add_new_vertex_to_active_polygon_using_window_coords(pos_x, pos_y)
+
+                        except RepeatedPointError as e:
+                            log.error(e)
+                            self.__engine.set_modal_text('Error', 'Point already exist in polygon.')
+
+                        except LineIntersectionError as e:
+                            log.error(e)
+                            self.__engine.set_modal_text('Error', 'Line intersect another one already in the polygon.')
 
         return mouse_button_callback
 

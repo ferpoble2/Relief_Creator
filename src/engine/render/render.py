@@ -67,6 +67,8 @@ class Render:
             clear_color[2],
             clear_color[3],
         )
+        GL.glEnable(GL.GL_BLEND);
+        GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
         # Indicate to openGL about the screen used in glfw to render.
         scene_data = engine.get_scene_setting_data()

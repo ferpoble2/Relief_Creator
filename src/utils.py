@@ -11,7 +11,7 @@ LOG_LEVEL = logging.DEBUG
 LOG_FILE_LEVEL = logging.DEBUG
 
 LOG_ONLY_LISTED_MODULES = False
-LOG_LIST_MODULES = ['CONTROLLER', 'PROGRAM']
+LOG_LIST_MODULES = ['POLYGON']
 
 
 def get_logger(log_level: int = LOG_LEVEL, log_file_level: int = LOG_FILE_LEVEL, module: str = 'GLOBAL',

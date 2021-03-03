@@ -3,6 +3,7 @@ File that contains the program class, class that will be the main class of the p
 """
 
 import glfw
+import shapefile
 from threading import Thread
 
 from src.engine.GUI.guimanager import GUIManager
@@ -11,6 +12,8 @@ from src.engine.render.render import Render
 from src.engine.scene.scene import Scene
 from src.engine.settings import Settings
 from src.utils import get_logger
+from src.error.repeated_point_error import RepeatedPointError
+from src.error.line_intersection_error import LineIntersectionError
 
 log = get_logger(module='ENGINE')
 
@@ -35,7 +38,7 @@ class Engine:
         self.__pending_task_list = []
         self.__threads_list = []
 
-    def add_vertex_to_active_polygon(self, position_x: int, position_y: int) -> None:
+    def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
         """
         Ask the scene to add a vertex in the active polygon of the engine.
 
@@ -46,7 +49,7 @@ class Engine:
         Returns: None
         """
         try:
-            self.scene.add_vertex_to_active_polygon(position_x, position_y)
+            self.scene.add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
         except AssertionError as e:
             log.error(e)
             self.set_modal_text('Error', f'Error creating polygon. \n\n{e}')
@@ -75,6 +78,59 @@ class Engine:
         Returns: None
         """
         self.program.change_cpt_file_with_dialog()
+
+    def load_shapefile_file_with_dialog(self) -> None:
+        """
+        Call the program to open the dialog to load a shapefile file.
+
+        Returns: None
+        """
+        self.program.load_shapefile_file_with_dialog()
+
+    def load_polygon_from_shapefile(self, filename: str) -> None:
+        """
+        Load the data from a shapefile file and tell the scene to create a polygon with it.
+
+        Args:
+            filename: Name of the shapefile file.
+
+        Returns: None
+        """
+        sf = shapefile.Reader(filename)
+
+        # TODO: Ask for shapefile examples to parser the data correctly and take the correct actions in case of error
+        list_of_points = []
+        for shape in sf.shapes():
+            if shape.shapeType == shapefile.POINT:
+                list_of_points.append(shape.points[0][0])
+                list_of_points.append(shape.points[0][1])
+
+        # create a new polygon and set it as active
+        new_polygon_id = self.scene.create_new_polygon()
+        self.set_active_polygon(new_polygon_id)
+
+        # tell the gui manager that a new polygon was created
+        self.gui_manager.add_polygon_to_gui(new_polygon_id)
+
+        # add the points to the polygon
+        for point_ind in range(int(len(list_of_points) / 2)):
+
+            try:
+                self.scene.add_new_vertex_to_active_polygon_using_real_coords(list_of_points[point_ind * 2],
+                                                                              list_of_points[point_ind * 2 + 1])
+            except LineIntersectionError as e:
+                log.error(e)
+                self.scene.delete_polygon_by_id(new_polygon_id)
+                self.set_modal_text('Error', 'Polygon loaded is not planar.')
+                break
+
+            except RepeatedPointError as e:
+                log.error(e)
+                self.scene.delete_polygon_by_id(new_polygon_id)
+                self.set_modal_text('Error', 'Polygon has repeated points.')
+                break
+
+        return
 
     def change_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
@@ -117,17 +173,6 @@ class Engine:
         Returns: None
         """
         Settings.HEIGHT = height
-
-    def set_models_polygon_mode(self, polygon_mode: 'OGLConstant.IntConstant') -> None:
-        """
-        Call the scene to change the polygon mode used by the models.
-
-        Args:
-            polygon_mode: Polygon mode to use.
-
-        Returns:
-        """
-        self.scene.set_models_polygon_mode(polygon_mode)
 
     def change_quality(self, quality: int) -> None:
         """
@@ -380,6 +425,17 @@ class Engine:
         # ----------
         self.scene.initialize(engine)
 
+    def is_polygon_planar(self, polygon_id: str) -> bool:
+        """
+        Ask to the scene if the polygon is planar or not.
+
+        Args:
+            polygon_id: Id of the polygon
+
+        Returns: Boolean indicating if the polygon is planar or not
+        """
+        return self.scene.is_polygon_planar(polygon_id)
+
     def is_program_loading(self) -> bool:
         """
         Return if the program is loading or not.
@@ -554,6 +610,17 @@ class Engine:
         Returns: None
         """
         self.gui_manager.set_modal_text(title_modal, msg)
+
+    def set_models_polygon_mode(self, polygon_mode: 'OGLConstant.IntConstant') -> None:
+        """
+        Call the scene to change the polygon mode used by the models.
+
+        Args:
+            polygon_mode: Polygon mode to use.
+
+        Returns:
+        """
+        self.scene.set_models_polygon_mode(polygon_mode)
 
     def set_polygon_name(self, polygon_id: str, new_name: str) -> None:
         """

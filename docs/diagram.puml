@@ -9,6 +9,7 @@ set namespaceSeparator .
 
 ' Package hierarchy
 package src {
+
     package engine {
         package render {}
         package data {}
@@ -22,24 +23,32 @@ package src {
             }
         }
     }
+    package error {}
     package input {}
     package program {}
 }
 
 
 ' Classes definition
+
+class src.error.PolygonError{}
+class src.error.RepeatedPointError{}
+class src.error.LineIntersectionError{}
+
 class src.engine.GUI.GUIManager{
     - __component_list: list
     - __engine: Engine
     - __font_bold: IMGUI.font
     - __font_regular: IMGUI.font
     - __glfw_window: GLFWWindow
+    - __icons_dict: dict
     - __implementation: GlfwRenderer
     - __io: IMGUI.io
     - __scene: Scene
 
-    {static} + get_frames(gui_manager) : list
+    - __load_icons()
     + add_frames(component_list)
+    + add_polygon_to_gui(polygon_id)
     + add_zoom()
     + are_frame_fixed()
     + change_color_file_with_dialog()
@@ -54,7 +63,9 @@ class src.engine.GUI.GUIManager{
     + get_active_polygon_id(): str
     + get_active_tool(): str
     + get_cpt_file(): str
+    + get_frames(gui_manager) : list
     + get_gui_key_callback(): function
+    + get_icon(icon_name): Icon
     + get_left_frame_width(): int
     + get_main_menu_bar_height(): int
     + get_map_position(): list
@@ -66,9 +77,11 @@ class src.engine.GUI.GUIManager{
     + get_window_width(): int
     + get_zoom_level(): float
     + initialize(window, mode)
+    + is_polygon_planar()
     + is_program_loading(): boolean
     + less_zoom()
     + load_netcdf_file_with_dialog()
+    + load_shapefile_file_with_dialog()
     + optimize_gpu_memory()
     + process_input()
     + refresh_scene_with_model_2d(path_color_file, path_model, model_id)
@@ -82,6 +95,13 @@ class src.engine.GUI.GUIManager{
     + set_models_polygon_mode(polygon_mode)
     + set_polygon_name(polygon_id, new_name)
     + set_regular_font()
+}
+
+class src.engine.GUI.Icon{
+
+    - __texture_id: int
+
+    + get_texture_id(): id
 }
 
 class src.engine.settings  {
@@ -247,6 +267,7 @@ class src.engine.scene.model.Points{
     - __remove_last_color_from_color_list()
     - __remove_last_point_from_point_list()
     - __str__()
+    ~ _update_uniforms()
     + add_point(x, y, z)
     + get_first_point_color(): tuple
     + get_last_point_color(): tuple
@@ -261,30 +282,62 @@ class src.engine.scene.model.Points{
 
 class src.engine.scene.model.Polygon{
 
-    - __fragment_shader_file: str
-    - __indices_list: list
+    - __last_line_model: DashedLines
+    - __lines_model: Lines
     - __name: str
-    - __point_list: list
-    - __polygon_line_color: tuple
-    - __vertex_shader_file: str
     - __point_model: Points
 
-    - __add_line_between_first_and_last_point_to_indices_list()
-    - __remove_last_added_line_from_indices_list()
-    - __remove_last_point_from_point_list()
+
+    - __check_intersection(line_x_1, line_y_1, line_x_2, line_y_2): boolean
+    - __check_repeated_point(x, y, z)
+    - __get_intersection(line_x_1, line_y_1, line_x_2, line_y_2): list
     - __str__()
-    ~ _update_uniforms()
+    - __update_planar_state()
     + add_point(x, y, z)
-    + generate_initial_indices()
     + get_id(): str
     + get_name(): str
     + get_point_list(): list
     + get_point_number(): int
+    + is_planar()
     + remove_last_added_point()
     + set_dot_color(color)
     + set_id(new_id)
     + set_line_color(color)
     + set_name(new_name)
+    + update_last_line(remove_last_line)
+}
+
+class src.engine.scene.model.Lines{
+    - __border_color: tuple
+    - __fragment_shader_file: str
+    - __indices_list: list
+    - __line_color: tuple
+    - __point_list: list
+    - __use_border: boolean
+    - __vertex_shader_file: str
+
+    ~ _update_uniforms()
+    + add_line(first_point, second_point)
+    + get_border_color(): tuple
+    + get_line_color(): tuple
+    + get_number_of_points(): int
+    + remove_last_added_line()
+    + set_border_color(color)
+    + set_line_color(color)
+    + set_use_borders(value)
+
+}
+
+class src.engine.scene.model.DashedLines{
+    - __fragment_shader_file
+    - __vertex_shader_file
+    + dash_size: float
+    + gap_size: float
+    + transparency: float
+
+    ~ _update_uniforms()
+    + set_line_color(color)
+    + set_border_color(color)
 }
 
 class src.input.CTP <<$file>> {
@@ -325,6 +378,7 @@ class src.engine.GUI.frames.Tools {
     - __dot_color_selected_default: int, int, int, int
     - __double_button_margin_width: int
     - __input_text_value: str
+    - __opened_action_popup_dict: dict
     - __rename_padding_x: int
     - __rename_size_x: int
     - __rename_size_y: int
@@ -334,14 +388,16 @@ class src.engine.GUI.frames.Tools {
 
 
     - __color_button(polygon_id)
-    - __delete_button(active_polygon, polygon_id)
+    - __delete_selectable(active_polygon, polygon_id): boolean
+    - __actions_button(active_polygon, polygon_id)
     - __generate_polygon_list()
-    - __rename_polygon_button(polygon_id)
+    - __rename_polygon_selectable(polygon_id): boolean
     - __show_active_tool()
     - __show_editing_tools(left_frame_width)
     - __show_other_tools(left_frame_width)
     - __show_polygon_tools(left_frame_width)
     - __show_visualization_tools(left_frame_width)
+    + add_new_polygon(polygon_id)
     + render()
 }
 
@@ -395,8 +451,9 @@ class src.engine.controller.Controller {
 
 class src.engine.scene.Scene {
     + add_model(model)
+    + add_new_vertex_to_active_polygon_using_real_coords(x_coord, y_coord)
+    + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
     + add_polygon(polygon)
-    + add_vertex_to_active_polygon(position_x, position_y)
     + calculate_map_position_from_window(): (float, float)
     + change_color_of_polygon(polygon_id, color)
     + change_dot_color_of_polygon(polygon_id, color)
@@ -411,6 +468,7 @@ class src.engine.scene.Scene {
     + get_render_settings(): dict
     + get_zoom_level(): float
     + initialize(engine)
+    + is_polygon_planar((polygon_id)
     + move_models(x_movement, y_movement)
     + optimize_gpu_memory_async(then)
     + refresh_with_model_2d(path_color_file, path_model, model_id)
@@ -420,6 +478,7 @@ class src.engine.scene.Scene {
     + remove_model(id_model)
     + set_loading_message(new_msg)
     + set_map_position(new_position)
+    + set_modal_text(title_modal, msg)
     + set_models_polygon_mode(polygon_mode)
     + set_polygon_name(polygon_id, new_name)
     + update_models_colors()
@@ -445,8 +504,10 @@ class src.engine.Engine {
     + scene: Scene
     + window: GLFWWindow
     - __pending_task_list: list
-    + add_vertex_to_active_polygon(position_x, position_y)
+    + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
     + add_zoom()
+    + load_shapefile_file_with_dialog()
+    + load_polygon_from_shapefile(filename)
     + are_frames_fixed(): boolean
     + change_color_file_with_dialog()
     + change_color_of_polygon(polygon_id, color)
@@ -477,6 +538,7 @@ class src.engine.Engine {
     + get_window_setting_data(): dict
     + get_zoom_level(): float
     + initialize(engine)
+    + is_polygon_planar(polygon_id)
     + is_program_loading(): boolean
     + less_zoom()
     + load_netcdf_file_with_dialog()
@@ -526,6 +588,7 @@ class src.program.Program {
     + is_loading(): boolean
     + less_zoom()
     + load_netcdf_file_with_dialog()
+    + load_shapefile_file_with_dialog()
     + reset_zoom_level()
     + run()
     + set_active_model(new_model_id)
@@ -540,7 +603,14 @@ src.engine.scene.model.Map2DModel -u-|> src.engine.scene.model.Model
 src.engine.scene.model.Map3DModel -u-|> src.engine.scene.model.Model
 src.engine.scene.model.Polygon -u-|> src.engine.scene.model.Model
 src.engine.scene.model.Points -u-|> src.engine.scene.model.Model
-src.engine.scene.model.Points -l--o src.engine.scene.model.Polygon
+src.engine.scene.model.Points --o src.engine.scene.model.Polygon
+src.engine.scene.model.Lines -u-|> src.engine.scene.model.Model
+src.engine.scene.model.Lines --o src.engine.scene.model.Polygon
+src.engine.scene.model.DashedLines -u-|> src.engine.scene.model.Lines
+src.engine.scene.model.DashedLines -r--o src.engine.scene.model.Polygon
+
+src.error.RepeatedPointError -u-|> src.error.PolygonError
+src.error.LineIntersectionError -u-|> src.error.PolygonError
 
 src.engine.GUI.frames.Debug -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Loading -u-|> src.engine.GUI.frames.Frame
@@ -548,6 +618,8 @@ src.engine.GUI.frames.MainMenuBar -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.TestWindow -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.TextModal -u-|> src.engine.GUI.frames.Frame
 src.engine.GUI.frames.Tools -u-|> src.engine.GUI.frames.Frame
+
+src.engine.GUI.Icon -r--o src.engine.GUI.GUIManager
 
 ' uses
 src.engine.scene.model.Map2DModel -u.> src.engine.data.decimation
