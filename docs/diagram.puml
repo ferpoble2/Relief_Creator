@@ -438,6 +438,8 @@ class src.engine.controller.Controller {
     - __mouse_old_pos: tuple
     - __is_left_ctrl_pressed: boolean
     - __is_left_alt_pressed: boolean
+
+    - __load_shapefile_file_with_dialog()
     + init(render)
     + get_on_key_callback(): function
     + get_resize_callback(): function

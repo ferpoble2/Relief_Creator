@@ -5,6 +5,7 @@ import sys
 from typing import Callable
 
 import glfw
+import shapefile
 
 from src.utils import get_logger
 from src.error.line_intersection_error import LineIntersectionError
@@ -155,6 +156,10 @@ class Controller:
                         log.debug("Pressed ctrl+z")
                         self.__engine.undo_action()
 
+                if key == glfw.KEY_L:
+                    if self.__is_left_ctrl_pressed:
+                        self.__load_shapefile_file_with_dialog()
+
             # Check for keys released
             if action == glfw.RELEASE:
 
@@ -171,6 +176,28 @@ class Controller:
             self.__engine.get_gui_key_callback()(window, key, scancode, action, mods)
 
         return on_key
+
+    def __load_shapefile_file_with_dialog(self) -> None:
+        """
+        Calls the engine to open a dialog to load a shapefile file.
+
+        If there are errors, then open dialogs.
+
+        Returns: None
+        """
+
+        # check that a map is loaded in the program
+        if self.__engine.get_active_model_id() is None:
+            self.__engine.set_modal_text('Error', 'Load a netcdf file before loading a polygon.')
+
+        # in case all check pass
+        else:
+            try:
+                self.__engine.load_shapefile_file_with_dialog()
+
+            except shapefile.ShapefileException as e:
+                log.error(e)
+                self.__engine.set_modal_text('Error', 'Error loading file. (ShapefileException)')
 
     def get_resize_callback(self) -> Callable:
         """
