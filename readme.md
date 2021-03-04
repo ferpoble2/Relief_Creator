@@ -22,7 +22,8 @@ This is a list of shortcuts implemented in the program to make the usage of it m
 - CTRL + O: Load a netcdf file on the program.
 = CTRL + T: Loaf a ctp file on the program.
 - M: Change to `Move Map` tool.
-- CTRL + Z: Undo the last action (Not in all tools)
+- CTRL + Z: Undo the last action (Not in all tools).
+- CTRL + L: Load a shapefile file into the program.
 
 # Instructions for developers
 
@@ -55,6 +56,12 @@ There is a number of tools that form part of the engine, they are stored as stri
 
 - move_map: Tool that is active when moving the 2D map on the engine.
 - create_polygon: Tool to create polygons on the screen.
+
+# About the controller
+
+The program uses two types of controllers to maage the input from the user, one is the controller that the library `imgui` uses to process the inputs of the user related to the GUI, and the other is the one stored in the class `Controller`.
+
+Both controllers are used in the program, the controller stored in the class `Controller` is the one in charge of calling the controller from `imgui`whenever is necessary.
 
 # Reading NetCDF files
 

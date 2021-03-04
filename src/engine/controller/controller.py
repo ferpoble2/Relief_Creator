@@ -40,7 +40,7 @@ class Controller:
         Returns: None
         """
         try:
-            self.__engine.__change_color_file_with_dialog()
+            self.__engine.change_color_file_with_dialog()
 
         except KeyError as e:
             log.exception(f"Error reading files: {e}")
@@ -65,7 +65,7 @@ class Controller:
         Returns: None
         """
         try:
-            self.__engine.__load_netcdf_file_with_dialog()
+            self.__engine.load_netcdf_file_with_dialog()
 
         except KeyError as e:
             log.exception(f"Error reading files, {e}")
