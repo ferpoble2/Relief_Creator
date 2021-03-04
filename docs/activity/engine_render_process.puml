@@ -6,11 +6,11 @@ skinparam ConditionEndStyle hline
 title OnLoop process executed by the engine of the program (update March 4 of 2021)
 
 
-
 start
 
-
     while (Should windows close?) is (no)
+
+        note left: This process is repeated in\n each frame of the program.
 
         partition Pending_tasks {
             if (are there pending tasks?) then (yes)
@@ -44,6 +44,7 @@ start
         }
     endwhile (yes)
 
-    stop
+stop
+
 
 @enduml
