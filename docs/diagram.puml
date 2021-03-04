@@ -4,7 +4,7 @@
 !$file = "(F,#ff75ff) File"
 
 ' Configuration definition
-title Class Diagram For Reliefe Creator
+title Class Diagram For Reliefe Creator (updated march 4 of 2021)
 set namespaceSeparator .
 
 ' Package hierarchy

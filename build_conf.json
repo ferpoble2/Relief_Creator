@@ -88,6 +88,10 @@
   {
    "optionDest": "datas",
    "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/engine/shaders;engine/shaders/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/engine/GUI/icons;engine/GUI/icons"
   }
  ],
  "nonPyinstallerOptions": {
