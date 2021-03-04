@@ -1,0 +1,15 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title Sequence diagram of the process of adding a vertex to a polygon with mouse (Updated  March 3 of 2021)
+
+autonumber
+
+Controller -> Engine : add_new_vertex_to_active_polygon_using_window_coords(x_pos, y_pos)
+Engine -> Scene : add_new_vertex_to_active_polygon_using_window_coords(x_pos, y_pos)
+Scene -> Scene : calculate_map_position_from_window(x_pos, y_pos)
+Scene -> Active_Polygon : add_point(calculated_x_coord, calculated_y_coord)
+Active_Polygon -> Scene
+Scene -> Engine
+Engine -> Controller
+@enduml
