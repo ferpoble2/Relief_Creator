@@ -1,0 +1,49 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+skinparam ConditionEndStyle hline
+
+title OnLoop process executed by the engine of the program (update March 4 of 2021)
+
+
+
+start
+
+
+    while (Should windows close?) is (no)
+
+        partition Pending_tasks {
+            if (are there pending tasks?) then (yes)
+                :subtract one from the number of frames
+                to wait for the task;
+
+                if (task frames to wait is cero?) then (yes)
+                    :execute code stored
+                    in the task;
+                    :delete task from list of tasks;
+                else (no)
+                endif
+
+            else (no)
+            endif
+        }
+        note: Taks can be added\n with set_task_for_next_frame()
+
+        partition Threads {
+            if (are there dead threads on the list of active threads?) then (yes)
+                :execute functions stored to execute after the thread;
+                :delete thread from the list of active threads;
+            else (no)
+            endif
+        }
+        note: Threads can be added\n with set_thread_task()
+
+        partition Render {
+            :Call render to execute OnLoop method with
+            Scene.Draw method as parameter;
+        }
+    endwhile (yes)
+
+    stop
+
+@enduml
