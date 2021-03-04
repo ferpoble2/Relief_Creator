@@ -1,0 +1,38 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+title Logic process to check if a new point is colliding with something. (update March 4 of 2021)
+
+skinparam ConditionEndStyle hline
+
+start
+
+if (collide with something) then (yes)
+    if (is it a point inside the segment?) then (no)
+        while (is there elements to analyze in the list?) is (yes)
+            if (is the list element analyzed a point?) then (yes)
+                if (is it inside the segment?) then (yes)
+                else (no)
+                    #red:(F)
+                endif
+            else (no)
+                if (is it a LineString?) then (yes)
+                    #red:(F)
+                else (no)
+                    if (is it something else apart from LineString or point) then (yes)
+                        #red:(F)
+                    else (no)
+                    endif
+                endif
+            endif
+        endwhile
+    else (yes)
+        #red:(F)
+    endif
+else (no)
+    #red:(F)
+endif
+
+#green:(T)
+
+@enduml
