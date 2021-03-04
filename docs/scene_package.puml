@@ -1,0 +1,261 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+!$file = "(F,#ff75ff) File"
+
+package src {
+
+    package input {
+        note "Package defined\n in another file" as n
+
+        class NetCDF <<$file>>{
+            ...
+            (...)
+        }
+
+        class CTP  <<$file>>{
+            ...
+            (...)
+        }
+    }
+
+    package engine {
+        class Engine {
+            ...
+            (...)
+        }
+        note left: Defined in another file
+
+        package data{
+            note "Package defined\n in another file" as n2
+
+            class decimation <<$file>>{
+                ...
+                (...)
+            }
+        }
+
+        package scene {
+
+            class Scene{
+                + add_model(model)
+                + add_new_vertex_to_active_polygon_using_real_coords(x_coord, y_coord)
+                + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
+                + add_polygon(polygon)
+                + calculate_map_position_from_window(): (float, float)
+                + change_color_of_polygon(polygon_id, color)
+                + change_dot_color_of_polygon(polygon_id, color)
+                + create_new_polygon(): str
+                + delete_polygon_by_id(polygon_id)
+                + draw()
+                + get_active_model_projection_matrix(): array
+                + get_active_model_showed_limits(): dict
+                + get_active_polygon_id(): str
+                + get_polygon_id_list(): list
+                + get_polygon_name(polygon_id): str
+                + get_render_settings(): dict
+                + get_zoom_level(): float
+                + initialize(engine)
+                + is_polygon_planar((polygon_id)
+                + move_models(x_movement, y_movement)
+                + optimize_gpu_memory_async(then)
+                + refresh_with_model_2d(path_color_file, path_model, model_id)
+                + reload_models_async(then)
+                + remove_all_models()
+                + remove_last_point_from_active_polygon()
+                + remove_model(id_model)
+                + set_loading_message(new_msg)
+                + set_map_position(new_position)
+                + set_modal_text(title_modal, msg)
+                + set_models_polygon_mode(polygon_mode)
+                + set_polygon_name(polygon_id, new_name)
+                + update_models_colors()
+                + update_models_projection_matrix()
+                + update_viewport()
+                + update_viewport_variables()
+
+                - __3d_model_list: list
+                - __engine : Engine
+                - __height_viewport: int
+                - __model_list : list
+                - __polygon_id_count: int
+                - __polygon_list: list
+                - __should_execute_then_optimize_gpu_memory: int
+                - __should_execute_then_reload: int
+                - __width_viewport: int
+            }
+
+
+            package model {
+                class Model {
+                    + vao: int
+                    + vbo: int
+                    + ebo: int
+                    + shader_program: compiled_shader
+                    + position: numpy.array[3]
+                    + rotation: numpy.array[3]
+                    + indices_size: int
+                    + draw_mode: GL_DRAW_MODE
+                    + polygon_mode: GL_POLYGON_MODE
+                    + update_uniform_values: boolean
+                    + id: str
+                    + scene: Scene
+
+                    ~ _update_uniforms()
+                    + set_color_file(color_file)
+                    + set_shaders(vertex_shader, fragment_shader)
+                    + set_vertices(vertex)
+                    + set_indices(indices)
+                    + draw()
+                }
+                class Points {
+                    - __color_list: list
+                    - __first_point_color: tuple
+                    - __fragment_shader_file: str
+                    - __indices_list: list
+                    - __last_point_color: tuple
+                    - __normal_color: tuple
+                    - __point_list: list
+                    - __vertex_shader_file: str
+                    + cbo: int
+
+                    - __add_color_to_color_list(color)
+                    - __remove_last_color_from_color_list()
+                    - __remove_last_point_from_point_list()
+                    - __str__()
+                    ~ _update_uniforms()
+                    + add_point(x, y, z)
+                    + get_first_point_color(): tuple
+                    + get_last_point_color(): tuple
+                    + get_normal_color(): tuple
+                    + get_point_list(): list
+                    + remove_last_added_point()
+                    + set_color_buffer(colors)
+                    + set_first_point_color(new_color)
+                    + set_last_point_color(new_color)
+                    + set_normal_color(new_color)
+                }
+                class Map3DModel
+                class Map2DModel {
+                    - __x: array
+                    - __y: array
+                    - __z: array
+                    - __color_file: str
+                    - __colors: array
+                    - __height_limit: array
+                    - __vertices: list
+                    - __indices: list
+                    - __height: list
+                    - __max_height: float
+                    - __min_height: float
+                    - __projection: list
+                    - __left_coordinate: int
+                    - __right_coordinate: int
+                    - __top_coordinate: int
+                    - __bottom_coordinate: int
+                    - __triangles_to_delete: list
+                    - __new_indices: list
+                    + hbo : int
+
+
+                    - __add_triangles_inside_zone_to_delete_list(left_coordinate, right_coordinate, top_coordinate, bottom_coordinate)
+                    - __generate_index_list(step_x, step_y, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): list
+                    - __generate_vertices_list(x, y, z, z_value): list
+                    - __get_index_closest_value(list_to_evaluate, value): int
+                    - __get_vertex_index(x_pos, y_pos): int
+                    - __is_triangle_inside_zone(index_triangle, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): boolean
+                    - __print_indices()
+                    - __print_vertices()
+                    - __set_height_buffer()
+                    ~ _update_uniforms()
+                    + calculate_projection_matrix(scene_data, zoom_level)
+                    + get_projection_matrix(): array
+                    + get_showed_limits(): dict
+                    + move(x_movement, y_movement)
+                    + optimize_gpu_memory_async(then)
+                    + recalculate_vertices_from_grid_async(quality, then)
+                    + set_color_file(filename)
+                    + set_vertices_from_grid_async(x,y,z,quality, then)
+
+                }
+                class Lines {
+                    - __border_color: tuple
+                    - __fragment_shader_file: str
+                    - __indices_list: list
+                    - __line_color: tuple
+                    - __point_list: list
+                    - __use_border: boolean
+                    - __vertex_shader_file: str
+
+                    ~ _update_uniforms()
+                    + add_line(first_point, second_point)
+                    + get_border_color(): tuple
+                    + get_line_color(): tuple
+                    + get_number_of_points(): int
+                    + remove_last_added_line()
+                    + set_border_color(color)
+                    + set_line_color(color)
+                    + set_use_borders(value)
+                }
+                class Polygon {
+                    - __last_line_model: DashedLines
+                    - __lines_model: Lines
+                    - __name: str
+                    - __point_model: Points
+
+
+                    - __check_intersection(line_x_1, line_y_1, line_x_2, line_y_2): boolean
+                    - __check_repeated_point(x, y, z)
+                    - __get_intersection(line_x_1, line_y_1, line_x_2, line_y_2): list
+                    - __str__()
+                    - __update_planar_state()
+                    + add_point(x, y, z)
+                    + get_id(): str
+                    + get_name(): str
+                    + get_point_list(): list
+                    + get_point_number(): int
+                    + is_planar()
+                    + remove_last_added_point()
+                    + set_dot_color(color)
+                    + set_id(new_id)
+                    + set_line_color(color)
+                    + set_name(new_name)
+                    + update_last_line(remove_last_line)
+                }
+                class DashedLines {
+                    - __fragment_shader_file
+                    - __vertex_shader_file
+                    + dash_size: float
+                    + gap_size: float
+                    + transparency: float
+
+                    ~ _update_uniforms()
+                    + set_line_color(color)
+                    + set_border_color(color)
+                }
+            }
+        }
+    }
+}
+
+Map2DModel -u-|> Model
+Map3DModel -u-|> Model
+Polygon -u-|> Model
+Points -u-|> .Model
+Lines -u-|> Model
+DashedLines -u-|> Lines
+
+
+Points --o Polygon
+Lines --o Polygon
+DashedLines -r--o Polygon
+
+Scene o--o Model
+
+Map2DModel .> decimation
+Map2DModel .> CTP
+Scene -l.> NetCDF
+
+Engine o--o Scene
+
+@enduml

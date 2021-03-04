@@ -1,0 +1,174 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+!$file = "(F,#ff75ff) File"
+
+package src {
+
+    package program {}
+
+    package engine {
+        package scene {}
+        package render {}
+        package controller {}
+        package data {}
+        package GUI {}
+    }
+}
+
+class src.program.Program {
+    ...
+    (...)
+}
+note right: package program\n defined in another file
+
+class src.engine.Engine {
+    + controller: Controller
+    + gui_manager: GUIManager
+    + render: Render
+    + scene: Scene
+    + window: GLFWWindow
+    - __pending_task_list: list
+    + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
+    + add_zoom()
+    + load_shapefile_file_with_dialog()
+    + load_polygon_from_shapefile(filename)
+    + are_frames_fixed(): boolean
+    + change_color_file_with_dialog()
+    + change_color_of_polygon(polygon_id, color)
+    + change_dot_color_of_polygon(polygon_id,  color)
+    + change_height_window(height)
+    + change_quality(quality)
+    + change_width_window(width)
+    + create_new_polygon(): str
+    + delete_polygon_by_id(polygon_id)
+    + fix_frames()
+    + get_active_model_id()
+    + get_active_polygon_id(): str
+    + get_active_tool(): str
+    + get_clear_color(): list
+    + get_cpt_file(): str
+    + get_float_bytes()
+    + get_float_bytes(): int
+    + get_font_size(): int
+    + get_gui_key_callback(): function
+    + get_gui_setting_data(): dict
+    + get_map_position(): list
+    + get_polygon_id_list(): list
+    + get_polygon_name(polygon_id): str
+    + get_quality(): int
+    + get_render_settings()
+    + get_scene_setting_data(): dict
+    + get_view_mode(): str
+    + get_window_setting_data(): dict
+    + get_zoom_level(): float
+    + initialize(engine)
+    + is_polygon_planar(polygon_id)
+    + is_program_loading(): boolean
+    + less_zoom()
+    + load_netcdf_file_with_dialog()
+    + move_scene(x_movement, y_movement)
+    + optimize_gpu_memory()
+    + refresh_with_model_2d_async(path_color_file, path_model, model_id, then)
+    + reload_models()
+    + reset_zoom_level()
+    + run()
+    + set_active_polygon(polygon_id)
+    + set_active_tool(tool)
+    + set_loading_message(new_msg)
+    + set_map_position(new_position)
+    + set_modal_text(title_modal, msg)
+    + set_models_polygon_mode(polygon_mode)
+    + set_polygon_name(polygon_id, new_name)
+    + set_task_for_next_frame(task)
+    + set_task_with_loading_frame(task)
+    + set_thread_task(parallel_task, then)
+    + undo_action()
+    + update_pending_tasks()
+    + update_scene_models_colors()
+    + update_scene_values()
+    + update_scene_viewport()
+    + update_threads()
+}
+
+class src.engine.scene.Scene {
+    ...
+    (...)
+}
+note bottom: Package scene defined in another file
+
+class src.engine.render.Render {
+    + __window : GLFWWindow
+    + __gui : GUIManager
+    + __engine : Engine
+    + init(window_name)
+    + on_loop(on_frame_task)
+}
+class src.engine.data.decimation <<$file>>{
+    + simple_decimation(x, y, z, n_rows, n_cols): array, array, array
+}
+class src.engine.controller.Controller {
+    - __render: Render
+    - __scene: Scene
+    - __engine: Engine
+    - __mouse_old_pos: tuple
+    - __is_left_ctrl_pressed: boolean
+    - __is_left_alt_pressed: boolean
+
+    - __change_color_file_with_dialog()
+    - __load_netcdf_file_with_dialog()
+    - __load_shapefile_file_with_dialog()
+    + get_cursor_position_callback(): function
+    + get_mouse_button_callback(): function
+    + get_on_key_callback(): function
+    + get_resize_callback(): function
+    + init(render)
+    + is_inside_scene(mouse_x_pos, mouse_y_pos): boolean
+    + set_mouse_pos(new_x, new_y)
+}
+class src.engine.GUI.GUIManager {
+    ...
+    (...)
+}
+note bottom: Package GUI defined\n in another file
+
+class src.engine.settings  {
+    {static} + CLEAR_COLOR: list
+    {static} + fix_frames(fix_frames): boolean
+    {static} + FIXEX_FRAMES: boolean
+    {static} + FLOAT_BYTES: int
+    {static} + FONT_SIZE: int
+    {static} + HEIGHT: int
+    {static} + LEFT_FRAME_WIDTH: int
+    {static} + TOP_FRAME_HEIGHT: int
+    {static} + BOTTOM_FRAME_HEIGHT: int
+    {static} + MAIN_MENU_BAR_HEIGHT: int
+    {static} + QUALITY: int
+    {static} + LINE_WIDTH: int
+    {static} + POLYGON_LINE_WIDTH: int
+    {static} + DOT_SIZE: int
+    {static} + POLYGON_DOT_SIZE: int
+    {static} + ACTIVE_POLYGON_LINE_WIDTH: int
+    {static} + SCENE_BEGIN_X: int
+    {static} + SCENE_BEGIN_Y: int
+    {static} + SCENE_WIDTH_X: int
+    {static} + SCENE_HEIGHT_Y: int
+    {static} + VIEW_MODE: str
+    {static} + TOP_FRAME_HEIGHT: int
+    {static} + WIDTH: int
+    {static} + MIN_WIDTH: int
+    {static} + MIN_HEIGHT: int
+    {static} + MAX_WIDTH: int
+    {static} + MAX_HEIGHT: int
+    {static} + update_scene_values()
+}
+
+src.engine.Engine o--o src.engine.scene.Scene
+src.engine.Engine o--o src.engine.controller.Controller
+src.engine.Engine o--o src.engine.render.Render
+src.engine.Engine o--o src.engine.GUI.GUIManager
+src.engine.Engine o--o src.program.Program
+
+src.engine.Engine -u.> src.engine.settings
+
+@enduml

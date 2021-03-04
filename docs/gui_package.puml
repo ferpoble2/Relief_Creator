@@ -1,0 +1,193 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+title Class diagram for the GUI package (Updated March 4 of 2021)
+
+package src {
+
+    package engine {
+        class Engine
+    }
+
+    package GUI{
+        class GUIManager
+        class Icon
+
+        package frames {
+            class Frame
+            class Tools
+            class MainMenuBar
+            class Debug
+            class Loading
+            class TestWindow
+            class TextModal
+        }
+    }
+}
+
+class GUIManager{
+    - __component_list: list
+    - __engine: Engine
+    - __font_bold: IMGUI.font
+    - __font_regular: IMGUI.font
+    - __glfw_window: GLFWWindow
+    - __icons_dict: dict
+    - __implementation: GlfwRenderer
+    - __io: IMGUI.io
+    - __scene: Scene
+
+    - __load_icons()
+    + add_frames(component_list)
+    + add_polygon_to_gui(polygon_id)
+    + add_zoom()
+    + are_frame_fixed()
+    + change_color_file_with_dialog()
+    + change_color_of_polygon(polygon_id, color)
+    + change_dot_color_of_polygon(polygon_id, color)
+    + change_quality(quality)
+    + create_new_polygon(): str
+    + delete_polygon_by_id(polygon_id)
+    + draw_frames()
+    + fix_frames_position(value)
+    + get_active_model_id(): str
+    + get_active_polygon_id(): str
+    + get_active_tool(): str
+    + get_cpt_file(): str
+    + get_frames(gui_manager) : list
+    + get_gui_key_callback(): function
+    + get_icon(icon_name): Icon
+    + get_left_frame_width(): int
+    + get_main_menu_bar_height(): int
+    + get_map_position(): list
+    + get_polygon_id_list(): list
+    + get_polygon_name(polygon_id): str
+    + get_quality(): int
+    + get_view_mode(): str
+    + get_window_height(): int
+    + get_window_width(): int
+    + get_zoom_level(): float
+    + initialize(window, mode)
+    + is_polygon_planar()
+    + is_program_loading(): boolean
+    + less_zoom()
+    + load_netcdf_file_with_dialog()
+    + load_shapefile_file_with_dialog()
+    + optimize_gpu_memory()
+    + process_input()
+    + refresh_scene_with_model_2d(path_color_file, path_model, model_id)
+    + reload_models()
+    + render()
+    + set_active_polygon(polygon_id)
+    + set_active_tool(tool)
+    + set_bold_font()
+    + set_loading_message(new_msg)
+    + set_modal_text(modal_title, msg)
+    + set_models_polygon_mode(polygon_mode)
+    + set_polygon_name(polygon_id, new_name)
+    + set_regular_font()
+}
+
+class Icon{
+
+    - __texture_id: int
+
+    + get_texture_id(): id
+}
+
+
+class Frame {
+    ~ _position: list
+    ~ _GUI_manager: GUIManager
+
+    + change_position(new_position)
+    + get_position(): list
+    + render()
+}
+
+class MainMenuBar {
+    - __edit_menu()
+    - __file_menu()
+    - __view_menu()
+    + render()
+}
+
+class Tools {
+    - __button_margin_width: int
+    - __color_pick_should_open: boolean
+    - __color_pick_window_size_x: int
+    - __color_pick_window_size_y: int
+    - __color_selected_default: int, int, int, int
+    - __color_selected_dict: dict
+    - __dot_color_selected_default: int, int, int, int
+    - __double_button_margin_width: int
+    - __input_text_value: str
+    - __opened_action_popup_dict: dict
+    - __rename_padding_x: int
+    - __rename_size_x: int
+    - __rename_size_y: int
+    - __slide_bar_quality: int
+    - __tool_before_pop_up: str
+    - __tools_names_dict: dict
+
+
+    - __color_button(polygon_id)
+    - __delete_selectable(active_polygon, polygon_id): boolean
+    - __actions_button(active_polygon, polygon_id)
+    - __generate_polygon_list()
+    - __rename_polygon_selectable(polygon_id): boolean
+    - __show_active_tool()
+    - __show_editing_tools(left_frame_width)
+    - __show_other_tools(left_frame_width)
+    - __show_polygon_tools(left_frame_width)
+    - __show_visualization_tools(left_frame_width)
+    + add_new_polygon(polygon_id)
+    + render()
+}
+
+class Debug {
+    - __height: int
+    + render()
+}
+
+class Loading {
+    - __loading_message: str
+    - __windows_width: int
+    - __windows_height: int
+    + render()
+    + set_loading_message(new_msg)
+}
+
+class TextModal {
+    - __windows_width: int
+    - __windows_height: int
+    - __margin_button: int
+    - __button_height: int
+    - __should_show: boolean
+    - __modal_title: str
+    - __msg: str
+
+    + render()
+    + set_modal_text(modal_title, msg)
+}
+
+class TestWindow {
+    + render()
+}
+
+class Engine {
+    + ...
+    (...)
+}
+
+Debug -u-|> Frame
+Loading -u-|> Frame
+MainMenuBar -u-|> Frame
+TestWindow -u-|> Frame
+TextModal -u-|> Frame
+Tools -u-|> Frame
+
+GUIManager o-- Icon
+GUIManager o--o Frame
+GUIManager o--o Engine
+
+@enduml
