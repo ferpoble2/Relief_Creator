@@ -439,16 +439,16 @@ class src.engine.controller.Controller {
     - __is_left_ctrl_pressed: boolean
     - __is_left_alt_pressed: boolean
 
+    - __change_color_file_with_dialog()
+    - __load_netcdf_file_with_dialog()
     - __load_shapefile_file_with_dialog()
-    + init(render)
-    + get_on_key_callback(): function
-    + get_resize_callback(): function
     + get_cursor_position_callback(): function
     + get_mouse_button_callback(): function
+    + get_on_key_callback(): function
+    + get_resize_callback(): function
+    + init(render)
     + is_inside_scene(mouse_x_pos, mouse_y_pos): boolean
     + set_mouse_pos(new_x, new_y)
-    + change_color_file_with_dialog()
-    + load_netcdf_file_with_dialog()
 }
 
 class src.engine.scene.Scene {

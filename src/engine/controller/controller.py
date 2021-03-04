@@ -33,14 +33,14 @@ class Controller:
         self.__is_left_ctrl_pressed = False
         self.__is_left_alt_pressed = False
 
-    def change_color_file_with_dialog(self) -> None:
+    def __change_color_file_with_dialog(self) -> None:
         """
         Change the color file opening a dialog to select the file.
 
         Returns: None
         """
         try:
-            self.__engine.change_color_file_with_dialog()
+            self.__engine.__change_color_file_with_dialog()
 
         except KeyError as e:
             log.exception(f"Error reading files: {e}")
@@ -57,6 +57,45 @@ class Controller:
         except OSError as e:
             log.exception(f"Error reading files: {e}")
             self.__engine.set_modal_text("Error", "Error reading color file (OSError)")
+
+    def __load_netcdf_file_with_dialog(self) -> None:
+        """
+        Load a netcdf file opening a dialog to select the file.
+
+        Returns: None
+        """
+        try:
+            self.__engine.__load_netcdf_file_with_dialog()
+
+        except KeyError as e:
+            log.exception(f"Error reading files, {e}")
+            self.__engine.set_modal_text("Error", "Error reading the selected files (KeyError)")
+
+        except OSError as e:
+            log.exception(f"Error reading files,{e}")
+            self.__engine.set_modal_text("Error", "Error reading the selected files (OSError)")
+
+    def __load_shapefile_file_with_dialog(self) -> None:
+        """
+        Calls the engine to open a dialog to load a shapefile file.
+
+        If there are errors, then open dialogs.
+
+        Returns: None
+        """
+
+        # check that a map is loaded in the program
+        if self.__engine.get_active_model_id() is None:
+            self.__engine.set_modal_text('Error', 'Load a netcdf file before loading a polygon.')
+
+        # in case all check pass
+        else:
+            try:
+                self.__engine.load_shapefile_file_with_dialog()
+
+            except shapefile.ShapefileException as e:
+                log.error(e)
+                self.__engine.set_modal_text('Error', 'Error loading file. (ShapefileException)')
 
     def get_cursor_position_callback(self):
         """
@@ -140,11 +179,11 @@ class Controller:
                 # -------------------------
                 if key == glfw.KEY_O and self.__is_left_ctrl_pressed:
                     log.debug("Shortcut open file")
-                    self.load_netcdf_file_with_dialog()
+                    self.__load_netcdf_file_with_dialog()
 
                 if key == glfw.KEY_T and self.__is_left_ctrl_pressed:
                     log.debug("Pressed shortcut to change color file")
-                    self.change_color_file_with_dialog()
+                    self.__change_color_file_with_dialog()
 
                 if key == glfw.KEY_M:
                     log.debug("Pressed shortcut to move map")
@@ -176,28 +215,6 @@ class Controller:
             self.__engine.get_gui_key_callback()(window, key, scancode, action, mods)
 
         return on_key
-
-    def __load_shapefile_file_with_dialog(self) -> None:
-        """
-        Calls the engine to open a dialog to load a shapefile file.
-
-        If there are errors, then open dialogs.
-
-        Returns: None
-        """
-
-        # check that a map is loaded in the program
-        if self.__engine.get_active_model_id() is None:
-            self.__engine.set_modal_text('Error', 'Load a netcdf file before loading a polygon.')
-
-        # in case all check pass
-        else:
-            try:
-                self.__engine.load_shapefile_file_with_dialog()
-
-            except shapefile.ShapefileException as e:
-                log.error(e)
-                self.__engine.set_modal_text('Error', 'Error loading file. (ShapefileException)')
 
     def get_resize_callback(self) -> Callable:
         """
@@ -256,23 +273,6 @@ class Controller:
             is_inside = False
 
         return is_inside
-
-    def load_netcdf_file_with_dialog(self) -> None:
-        """
-        Load a netcdf file opening a dialog to select the file.
-
-        Returns: None
-        """
-        try:
-            self.__engine.load_netcdf_file_with_dialog()
-
-        except KeyError as e:
-            log.exception(f"Error reading files, {e}")
-            self.__engine.set_modal_text("Error", "Error reading the selected files (KeyError)")
-
-        except OSError as e:
-            log.exception(f"Error reading files,{e}")
-            self.__engine.set_modal_text("Error", "Error reading the selected files (OSError)")
 
     def set_mouse_pos(self, new_x: int, new_y: int) -> None:
         """
