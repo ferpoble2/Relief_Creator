@@ -130,9 +130,10 @@ class Tools {
     - __tools_names_dict: dict
 
 
+    - __actions_button(active_polygon, polygon_id)
     - __color_button(polygon_id)
     - __delete_selectable(active_polygon, polygon_id): boolean
-    - __actions_button(active_polygon, polygon_id)
+    - __export_selectable(polygon_id): boolean
     - __generate_polygon_list()
     - __rename_polygon_selectable(polygon_id): boolean
     - __show_active_tool()

@@ -47,6 +47,18 @@ class Tools(Frame):
             imgui.text("Select an action")
             imgui.separator()
 
+            # what happens when the export option is pressed (all logic is done in the calling)
+            if self.__export_selectable(polygon_id):
+                # once the rename is completed, go back to the original tool
+                self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
+
+                # tell the external variable that the popup was closed
+                self.__opened_action_popup_dict[polygon_id] = False
+
+                # close the popup
+                imgui.close_current_popup()
+            imgui.separator()
+
             # what happens when rename option is pressed (all logic is inside the calling)
             if self.__rename_polygon_selectable(polygon_id):
                 # once the rename is completed, go back to the original tool
@@ -178,6 +190,27 @@ class Tools(Frame):
             # if the deleted polygon is the active, change the program status no None (deprecated code)
             if active_polygon == polygon_id:
                 self._GUI_manager.set_active_polygon(None)
+
+        return clicked_selectable
+
+    def __export_selectable(self, polygon_id) -> bool:
+        """
+        Shows a button that let the user export the current polygon in a shapefile file.
+
+        Args:
+            polygon_id: Id of the polygon to render the button to
+
+        Returns: Boolean representing if the selectable was clicked.
+        """
+        clicked_selectable = False
+
+        imgui.selectable('Export to shapefile')
+        if imgui.is_item_clicked():
+            log.debug(f"Exporting polygon with id: {polygon_id}")
+            clicked_selectable = True
+
+            log.error("LOGIC NOT IMPLEMENTED")
+            # TODO: implement logic here
 
         return clicked_selectable
 
@@ -369,20 +402,6 @@ class Tools(Frame):
 
         self.__generate_polygon_list()
 
-    def add_new_polygon(self, polygon_id: str) -> None:
-        """
-        Add a polygon (externally generated) to the GUI.
-
-        Args:
-            polygon_id: Id of the new polygon.
-
-        Returns: None
-        """
-        self.__color_selected_dict[polygon_id] = {
-            'polygon': self.__color_selected_default,
-            'dot': self.__dot_color_selected_default
-        }
-
     def __show_visualization_tools(self, left_frame_width: int) -> None:
         """
         Show the visualization tools on the frame.
@@ -411,6 +430,20 @@ class Tools(Frame):
             log.debug(f"Changed to value {values}")
             self.__slide_bar_quality = values
             self._GUI_manager.change_quality(values)
+
+    def add_new_polygon(self, polygon_id: str) -> None:
+        """
+        Add a polygon (externally generated, already existent in the program) to the GUI.
+
+        Args:
+            polygon_id: Id of the polygon externally generated.
+
+        Returns: None
+        """
+        self.__color_selected_dict[polygon_id] = {
+            'polygon': self.__color_selected_default,
+            'dot': self.__dot_color_selected_default
+        }
 
     def render(self) -> None:
         """
