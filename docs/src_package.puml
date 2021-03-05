@@ -16,10 +16,8 @@ package src {
 
     package program {
 
-        class Program {
-            ...
-            (...)
-        }
+        class Program
+        class parser <<$file>>
     }
 
     package error {
@@ -118,6 +116,7 @@ class Program {
     + less_zoom()
     + load_netcdf_file_with_dialog()
     + load_shapefile_file_with_dialog()
+    + process_arguments(arguments)
     + reset_zoom_level()
     + run()
     + set_active_model(new_model_id)
@@ -127,7 +126,13 @@ class Program {
     + set_loading(is_loading)
 }
 
+class parser {
+    get_command_line_arguments(): Namespace
+}
+
 Program o--o Engine
+
+Program .> parser
 
 Engine -u.> LineIntersectionError
 Engine -u.> RepeatedPointError
