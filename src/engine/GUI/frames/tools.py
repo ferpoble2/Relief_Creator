@@ -209,7 +209,7 @@ class Tools(Frame):
             log.debug(f"Exporting polygon with id: {polygon_id}")
             clicked_selectable = True
 
-            log.error("LOGIC NOT IMPLEMENTED")
+            raise NotImplementedError('Export not implemented yet.')
             # TODO: implement logic here
 
         return clicked_selectable
