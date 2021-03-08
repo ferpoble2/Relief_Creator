@@ -5,7 +5,14 @@
 
 package src {
 
-    package program {}
+    package program {
+        note "package defined\n in another file" as n_program
+    }
+
+    package output {
+        note "package defined\n in another file" as n_output
+        class ShapefileExporter
+    }
 
     package engine {
         package scene {}
@@ -16,11 +23,15 @@ package src {
     }
 }
 
+class ShapefileExporter {
+    ...
+    (...)
+}
+
 class src.program.Program {
     ...
     (...)
 }
-note right: package program\n defined in another file
 
 class src.engine.Engine {
     + controller: Controller
@@ -31,8 +42,6 @@ class src.engine.Engine {
     - __pending_task_list: list
     + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
     + add_zoom()
-    + load_shapefile_file_with_dialog()
-    + load_polygon_from_shapefile(filename)
     + are_frames_fixed(): boolean
     + change_color_file_with_dialog()
     + change_color_of_polygon(polygon_id, color)
@@ -42,6 +51,7 @@ class src.engine.Engine {
     + change_width_window(width)
     + create_new_polygon(): str
     + delete_polygon_by_id(polygon_id)
+    + export_polygon_with_id(polygon_id)
     + fix_frames()
     + get_active_model_id()
     + get_active_polygon_id(): str
@@ -65,6 +75,8 @@ class src.engine.Engine {
     + initialize(engine)
     + is_polygon_planar(polygon_id)
     + is_program_loading(): boolean
+    + load_polygon_from_shapefile(filename)
+    + load_shapefile_file_with_dialog()
     + less_zoom()
     + load_netcdf_file_with_dialog()
     + move_scene(x_movement, y_movement)
@@ -170,5 +182,7 @@ src.engine.Engine o--o src.engine.GUI.GUIManager
 src.engine.Engine o--o src.program.Program
 
 src.engine.Engine -u.> src.engine.settings
+
+src.engine.Engine o-- ShapefileExporter
 
 @enduml

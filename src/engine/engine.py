@@ -4,6 +4,7 @@ File that contains the program class, class that will be the main class of the p
 
 import glfw
 import shapefile
+import easygui
 from threading import Thread
 
 from src.engine.GUI.guimanager import GUIManager
@@ -14,6 +15,7 @@ from src.engine.settings import Settings
 from src.utils import get_logger
 from src.error.repeated_point_error import RepeatedPointError
 from src.error.line_intersection_error import LineIntersectionError
+from src.output.shapefile_exporter import ShapefileExporter
 
 log = get_logger(module='ENGINE')
 
@@ -99,36 +101,36 @@ class Engine:
         sf = shapefile.Reader(filename)
 
         # TODO: Ask for shapefile examples to parser the data correctly and take the correct actions in case of error
-        list_of_points = []
         for shape in sf.shapes():
-            if shape.shapeType == shapefile.POINT:
-                list_of_points.append(shape.points[0][0])
-                list_of_points.append(shape.points[0][1])
+            if shape.shapeType == shapefile.POLYGON:
 
-        # create a new polygon and set it as active
-        new_polygon_id = self.scene.create_new_polygon()
-        self.set_active_polygon(new_polygon_id)
+                # get the  list of points of the polygon
+                list_of_points = shape.points
 
-        # tell the gui manager that a new polygon was created
-        self.gui_manager.add_polygon_to_gui(new_polygon_id)
+                # create a new polygon and set it as active
+                new_polygon_id = self.scene.create_new_polygon()
+                self.set_active_polygon(new_polygon_id)
 
-        # add the points to the polygon
-        for point_ind in range(int(len(list_of_points) / 2)):
+                # tell the gui manager that a new polygon was created
+                self.gui_manager.add_polygon_to_gui(new_polygon_id)
 
-            try:
-                self.scene.add_new_vertex_to_active_polygon_using_real_coords(list_of_points[point_ind * 2],
-                                                                              list_of_points[point_ind * 2 + 1])
-            except LineIntersectionError as e:
-                log.error(e)
-                self.scene.delete_polygon_by_id(new_polygon_id)
-                self.set_modal_text('Error', 'Polygon loaded is not planar.')
-                break
+                # add the points to the polygon
+                for point in list_of_points[:-1]:  # shapefile polygons are closed, so we do not need the last point
 
-            except RepeatedPointError as e:
-                log.error(e)
-                self.scene.delete_polygon_by_id(new_polygon_id)
-                self.set_modal_text('Error', 'Polygon has repeated points.')
-                break
+                    try:
+                        self.scene.add_new_vertex_to_active_polygon_using_real_coords(point[0], point[1])
+
+                    except LineIntersectionError as e:
+                        log.error(e)
+                        self.scene.delete_polygon_by_id(new_polygon_id)
+                        self.set_modal_text('Error', 'Polygon loaded is not planar.')
+                        break
+
+                    except RepeatedPointError as e:
+                        log.error(e)
+                        self.scene.delete_polygon_by_id(new_polygon_id)
+                        self.set_modal_text('Error', 'Polygon has repeated points.')
+                        break
 
         return
 
@@ -776,3 +778,28 @@ class Engine:
         for thread_ended in to_delete:
             log.debug("Thread ended")
             self.__threads_list.remove(thread_ended)
+
+    def export_polygon_with_id(self, polygon_id: str) -> None:
+        """
+        Export the polygon with the given ID to a shapefile file
+
+        Args:
+            polygon_id: Id of the polygon to export to shapefile
+
+        Returns: None
+        """
+
+        # ask for the points of the polygon
+        points = self.scene.get_point_list_from_polygon(polygon_id)
+        file = easygui.filesavebox('Select a filename and directory for the new polygon',
+                                   'Relief Creator',
+                                   self.scene.get_polygon_name(polygon_id))
+
+        if file is None:
+            log.debug("Directory not selected.")
+            return
+
+        # ask the exporter to export the list of points
+        ShapefileExporter().export_polygon_to_shapefile(points,
+                                                        file,
+                                                        self.scene.get_polygon_name(polygon_id))

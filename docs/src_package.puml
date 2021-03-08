@@ -14,6 +14,10 @@ package src {
         class NetCDF <<$file>>
     }
 
+    package output {
+        class ShapefileExporter
+    }
+
     package program {
 
         class Program
@@ -73,6 +77,11 @@ package src {
 
 class CTP {
     + read_file(filename: str) : dict
+}
+
+class ShapefileExporter {
+    - __delete_z_axis(list_of_points): list
+    + export_polygon_to_shapefile(list_of_points, directory, polygon_name)
 }
 
 class NetCDF {
@@ -152,6 +161,7 @@ PolygonError <|-- LineIntersectionError
 SceneError <|-- NonExistentPolygonError
 
 Scene -u.> NonExistentPolygonError
+Engine o-- ShapefileExporter
 
 Scene -d.> NetCDF
 Map2DModel -d.> CTP
