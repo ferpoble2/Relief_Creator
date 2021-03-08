@@ -48,6 +48,7 @@ class GUIManager{
     + create_new_polygon(): str
     + delete_polygon_by_id(polygon_id)
     + draw_frames()
+    + export_polygon_with_id(polygon_id)
     + fix_frames_position(value)
     + get_active_model_id(): str
     + get_active_polygon_id(): str

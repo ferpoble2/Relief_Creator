@@ -74,6 +74,20 @@ class GUIManager:
         for frame in component_list:
             self.__component_list.append(frame)
 
+    def add_polygon_to_gui(self, polygon_id) -> None:
+        """
+        Tells the frames that use the polygon information that a new polygon was created.
+
+        Args:
+            polygon_id: Id of the created polygon
+
+        Returns: None
+        """
+
+        for frame in self.__component_list:
+            if isinstance(frame, Tools):
+                frame.add_new_polygon(polygon_id)
+
     def add_zoom(self) -> None:
         """
         Add zoom to the current map being watched.
@@ -98,28 +112,6 @@ class GUIManager:
         Returns: None
         """
         self.__engine.change_color_file_with_dialog()
-
-    def load_shapefile_file_with_dialog(self) -> None:
-        """
-        Calls the engine to load a polygon from a shapefile file opening the dialog to select file.
-
-        Returns: None
-        """
-        self.__engine.load_shapefile_file_with_dialog()
-
-    def add_polygon_to_gui(self, polygon_id) -> None:
-        """
-        Tells the frames that use the polygon information that a new polygon was created.
-
-        Args:
-            polygon_id: Id of the created polygon
-
-        Returns: None
-        """
-
-        for frame in self.__component_list:
-            if isinstance(frame, Tools):
-                frame.add_new_polygon(polygon_id)
 
     def change_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
@@ -194,6 +186,17 @@ class GUIManager:
             for frame in self.__component_list:
                 frame.render()
         imgui.end_frame()
+
+    def export_polygon_with_id(self, polygon_id:str)->None:
+        """
+        Ask the engine to export the polygon with the given ID
+
+        Args:
+            polygon_id: ID of the polygon to export
+
+        Returns: None
+        """
+        self.__engine.export_polygon_with_id(polygon_id)
 
     def fix_frames_position(self, value: bool) -> None:
         """
@@ -431,6 +434,14 @@ class GUIManager:
         Returns: None
         """
         self.__engine.load_netcdf_file_with_dialog()
+
+    def load_shapefile_file_with_dialog(self) -> None:
+        """
+        Calls the engine to load a polygon from a shapefile file opening the dialog to select file.
+
+        Returns: None
+        """
+        self.__engine.load_shapefile_file_with_dialog()
 
     def optimize_gpu_memory(self) -> None:
         """
