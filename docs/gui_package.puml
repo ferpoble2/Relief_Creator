@@ -9,6 +9,13 @@ package src {
         class Engine
     }
 
+    package error {
+        class ShapefileExportError {
+            ...
+            (...)
+        }
+    }
+
     package GUI{
         class GUIManager
         class Icon
@@ -191,5 +198,7 @@ Tools -u-|> Frame
 GUIManager o-- Icon
 GUIManager o--o Frame
 GUIManager o--o Engine
+
+Tools .> ShapefileExportError
 
 @enduml
