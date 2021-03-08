@@ -9,6 +9,7 @@ from src.engine.scene.model.polygon import Polygon
 from src.engine.scene.model.model import Model
 from src.input.NetCDF import read_info
 from src.utils import get_logger
+from src.error.non_existent_polygon_error import NonExistentPolygonError
 
 log = get_logger(module="SCENE")
 
@@ -44,18 +45,19 @@ class Scene:
         """
         self.__model_list.append(model)
 
-    def add_polygon(self, polygon: 'Polygon') -> None:
+    def add_new_vertex_to_active_polygon_using_real_coords(self, x_coord: float, y_coord: float) -> None:
         """
-        Add a new polygon to render on the scene.
+        Add a new point to the active polygon using real coordinates.
 
         Args:
-            polygon: Polygon to add to the scene
+            x_coord: x coordinate of the new point
+            y_coord: y coordinate of the new point
 
         Returns: None
         """
-        log.debug("Added polygon to the scene")
-        self.__polygon_list.append(polygon)
-        self.__polygon_id_count += 1
+        for polygon in self.__polygon_list:
+            if polygon.id == self.__engine.get_active_polygon_id():
+                polygon.add_point(x_coord, y_coord)
 
     def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
         """
@@ -78,19 +80,18 @@ class Scene:
                 new_x, new_y = self.calculate_map_position_from_window(position_x, position_y)
                 polygon.add_point(new_x, new_y)
 
-    def add_new_vertex_to_active_polygon_using_real_coords(self, x_coord: float, y_coord: float) -> None:
+    def add_polygon(self, polygon: 'Polygon') -> None:
         """
-        Add a new point to the active polygon using real coordinates.
+        Add a new polygon to render on the scene.
 
         Args:
-            x_coord: x coordinate of the new point
-            y_coord: y coordinate of the new point
+            polygon: Polygon to add to the scene
 
         Returns: None
         """
-        for polygon in self.__polygon_list:
-            if polygon.id == self.__engine.get_active_polygon_id():
-                polygon.add_point(x_coord, y_coord)
+        log.debug("Added polygon to the scene")
+        self.__polygon_list.append(polygon)
+        self.__polygon_id_count += 1
 
     def calculate_map_position_from_window(self, position_x, position_y) -> (float, float):
         """
@@ -236,6 +237,21 @@ class Scene:
         Returns: Number of bytes used for store float numbers.
         """
         return self.__engine.get_float_bytes()
+
+    def get_point_list_from_polygon(self, polygon_id: str) -> list:
+        """
+        Return the list of points from a given polygon.
+
+        Args:
+            polygon_id: ID of the polygon.
+
+        Returns: List with the points of the polygon.
+        """
+        for polygon in self.__polygon_list:
+            if polygon.get_id() == polygon_id:
+                return polygon.get_point_list()
+
+        raise NonExistentPolygonError(f"Polygon with ID {polygon_id} does not exist.")
 
     def get_polygon_id_list(self) -> list:
         """

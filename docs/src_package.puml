@@ -24,6 +24,8 @@ package src {
         class PolygonError
         class RepeatedPointError
         class LineIntersectionError
+        class NonExistentPolygonError
+        class SceneError
     }
 
     package engine {
@@ -146,6 +148,10 @@ Polygon -u.> RepeatedPointError
 
 PolygonError <|-- RepeatedPointError
 PolygonError <|-- LineIntersectionError
+
+SceneError <|-- NonExistentPolygonError
+
+Scene -u.> NonExistentPolygonError
 
 Scene -d.> NetCDF
 Map2DModel -d.> CTP
