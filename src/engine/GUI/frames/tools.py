@@ -208,9 +208,7 @@ class Tools(Frame):
         if imgui.is_item_clicked():
             log.debug(f"Exporting polygon with id: {polygon_id}")
             clicked_selectable = True
-
-            raise NotImplementedError('Export not implemented yet.')
-            # TODO: implement logic here
+            self._GUI_manager.export_polygon_with_id(polygon_id)
 
         return clicked_selectable
 
