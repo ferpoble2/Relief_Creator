@@ -30,6 +30,7 @@ package src {
         class LineIntersectionError
         class NonExistentPolygonError
         class SceneError
+        class ExportError
     }
 
     package engine {
