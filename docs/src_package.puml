@@ -50,6 +50,15 @@ package src {
             }
         }
 
+        package GUI {
+            package frames {
+                class Tools {
+                    ...
+                    (...)
+                }
+            }
+        }
+
         package scene {
             note "Package defined\n in another file" as n6
 
@@ -147,6 +156,14 @@ Program o--o Engine
 
 Program .> parser
 
+
+PolygonError <|-- RepeatedPointError
+PolygonError <|-- LineIntersectionError
+
+SceneError <|-- NonExistentPolygonError
+
+ExportError <|-- ShapefileExportError
+
 Engine -u.> LineIntersectionError
 Engine -u.> RepeatedPointError
 
@@ -157,15 +174,10 @@ Polygon -u.> LineIntersectionError
 Polygon -u.> RepeatedPointError
 
 ShapefileExporter -u.> ShapefileExportError
-
-PolygonError <|-- RepeatedPointError
-PolygonError <|-- LineIntersectionError
-
-SceneError <|-- NonExistentPolygonError
-
-ExportError <|-- ShapefileExportError
+Tools .> ShapefileExportError
 
 Scene -u.> NonExistentPolygonError
+
 Engine o-- ShapefileExporter
 
 Scene -d.> NetCDF

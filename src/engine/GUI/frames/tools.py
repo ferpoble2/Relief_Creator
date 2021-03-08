@@ -7,6 +7,8 @@ import imgui
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
 
+from src.error.shapefile_export_error import ShapefileExportError
+
 log = get_logger(module="TOOLS")
 
 
@@ -208,7 +210,13 @@ class Tools(Frame):
         if imgui.is_item_clicked():
             log.debug(f"Exporting polygon with id: {polygon_id}")
             clicked_selectable = True
-            self._GUI_manager.export_polygon_with_id(polygon_id)
+
+            try:
+                self._GUI_manager.export_polygon_with_id(polygon_id)
+
+            except ShapefileExportError as e:
+                log.exception(e)
+                self._GUI_manager.set_modal_text("Error", "Polygon does not have enough points \nto be exported.")
 
         return clicked_selectable
 
