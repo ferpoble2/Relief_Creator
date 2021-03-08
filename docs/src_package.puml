@@ -156,6 +156,7 @@ Controller -u.> RepeatedPointError
 Polygon -u.> LineIntersectionError
 Polygon -u.> RepeatedPointError
 
+ShapefileExporter -u.> ShapefileExportError
 
 PolygonError <|-- RepeatedPointError
 PolygonError <|-- LineIntersectionError

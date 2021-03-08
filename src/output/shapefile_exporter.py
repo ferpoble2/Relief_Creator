@@ -3,6 +3,7 @@ File that contains the class shapefileExporter.
 """
 import shapefile
 
+from src.error.shapefile_export_error import ShapefileExportError
 
 class ShapefileExporter:
     """
@@ -55,6 +56,9 @@ class ShapefileExporter:
         """
         if list_of_points is None:
             list_of_points = []
+
+        if len(list_of_points) < 6:  # two points
+            raise ShapefileExportError('Not enough points to export this polygon.')
 
         w = shapefile.Writer(directory)
 
