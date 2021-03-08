@@ -171,6 +171,10 @@ class Program:
         path_to_shapefile = easygui.fileopenbox('Select a shapefile file...')
         log.debug(f"Path to shapefile: {path_to_shapefile}")
 
+        if path_to_shapefile is None:
+            log.debug("Directory not selected")
+            return
+
         self.__engine.load_polygon_from_shapefile(path_to_shapefile)
 
     def process_arguments(self, arguments: 'argparse.Namespace') -> None:
