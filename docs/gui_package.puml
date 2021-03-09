@@ -19,6 +19,7 @@ package src {
     package GUI{
         class GUIManager
         class Icon
+        class PolygonFolder
 
         package frames {
             class Frame
@@ -30,6 +31,14 @@ package src {
             class TextModal
         }
     }
+}
+
+class PolygonFolder {
+    - __id: str
+    - __polygon_id_list: list
+
+    + add_polygon(polygon_id)
+    + get_polygon_list(): list
 }
 
 class GUIManager{
@@ -195,6 +204,7 @@ TestWindow -u-|> Frame
 TextModal -u-|> Frame
 Tools -u-|> Frame
 
+GUIManager o-- PolygonFolder
 GUIManager o-- Icon
 GUIManager o--o Frame
 GUIManager o--o Engine

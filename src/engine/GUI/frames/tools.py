@@ -230,6 +230,8 @@ class Tools(Frame):
         list_polygons_ids = self._GUI_manager.get_polygon_id_list()
         active_polygon = self._GUI_manager.get_active_polygon_id()
 
+        imgui.text("Fodler")
+
         for polygon_id in list_polygons_ids:
             # push id so the buttons doesnt have conflicts with names
             imgui.push_id(polygon_id)
