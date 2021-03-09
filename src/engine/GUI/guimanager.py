@@ -13,6 +13,7 @@ from src.engine.GUI.frames.text_modal import TextModal
 from src.engine.GUI.frames.test_window import TestWindow
 from src.utils import get_logger
 from src.engine.GUI.icon import Icon
+from src.engine.GUI.polygon_folder import PolygonFolder
 
 log = get_logger(module='GUIMANAGER')
 
@@ -35,20 +36,11 @@ class GUIManager:
         self.__font_regular = None
         self.__font_bold = None
 
+        self.__polygon_folder_list = []
+
         self.__icons_dict = None
 
         self.__engine = None
-
-    def get_icon(self, icon_name: str) -> Icon:
-        """
-        Get the icon with the given name.
-
-        Args:
-            icon_name: Name of the icon to ask for the id.
-
-        Returns: Icon stored in the dictionary.
-        """
-        return self.__icons_dict[icon_name]
 
     def __load_icons(self) -> None:
         """
@@ -164,6 +156,17 @@ class GUIManager:
         """
         return self.__engine.create_new_polygon()
 
+    def create_polygon_folder(self, name: str = 'folder') -> None:
+        """
+        Create a new folder in the list of polygons folders.
+
+        Args:
+            name: Name fot the folder.
+
+        Returns: None
+        """
+        self.__polygon_folder_list.append(PolygonFolder(str(len(self.__polygon_folder_list))))
+
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
         Delete the polygon with the specified id from the scene
@@ -187,7 +190,7 @@ class GUIManager:
                 frame.render()
         imgui.end_frame()
 
-    def export_polygon_with_id(self, polygon_id:str)->None:
+    def export_polygon_with_id(self, polygon_id: str) -> None:
         """
         Ask the engine to export the polygon with the given ID
 
@@ -277,6 +280,17 @@ class GUIManager:
         """
         return self.__implementation.keyboard_callback
 
+    def get_icon(self, icon_name: str) -> Icon:
+        """
+        Get the icon with the given name.
+
+        Args:
+            icon_name: Name of the icon to ask for the id.
+
+        Returns: Icon stored in the dictionary.
+        """
+        return self.__icons_dict[icon_name]
+
     def get_left_frame_width(self) -> int:
         """
         Get the width of the left frame.
@@ -300,6 +314,14 @@ class GUIManager:
         Returns: list with the position of the map.
         """
         return self.__engine.get_map_position()
+
+    def get_polygon_folder_list(self) -> list:
+        """
+        Get the  list of polygon folders.
+
+        Returns: List of polygon folders.
+        """
+        return self.__polygon_folder_list
 
     def get_polygon_id_list(self) -> list:
         """

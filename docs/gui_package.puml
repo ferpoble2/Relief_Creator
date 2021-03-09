@@ -35,6 +35,7 @@ package src {
 
 class PolygonFolder {
     - __id: str
+    - __name: str
     - __polygon_id_list: list
 
     + add_polygon(polygon_id)
@@ -50,6 +51,7 @@ class GUIManager{
     - __icons_dict: dict
     - __implementation: GlfwRenderer
     - __io: IMGUI.io
+    - __polygon_folder_list: list
     - __scene: Scene
 
     - __load_icons()
@@ -62,6 +64,7 @@ class GUIManager{
     + change_dot_color_of_polygon(polygon_id, color)
     + change_quality(quality)
     + create_new_polygon(): str
+    + create_polygon_folder(name)
     + delete_polygon_by_id(polygon_id)
     + draw_frames()
     + export_polygon_with_id(polygon_id)
@@ -76,6 +79,7 @@ class GUIManager{
     + get_left_frame_width(): int
     + get_main_menu_bar_height(): int
     + get_map_position(): list
+    + get_polygon_folder_list(): list
     + get_polygon_id_list(): list
     + get_polygon_name(polygon_id): str
     + get_quality(): int

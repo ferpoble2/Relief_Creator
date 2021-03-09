@@ -11,6 +11,7 @@ class PolygonFolder:
 
     def __init__(self, id: str):
         self.__id = id
+        self.__name = 'folder'
         self.__polygon_id_list = []
 
     def add_polygon(self, polygon_id: str) -> None:
