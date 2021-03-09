@@ -22,7 +22,7 @@ class TextModal(Frame):
         super().__init__(gui_manager)
 
         self.__windows_width = 300
-        self.__windows_height = 100
+        self.__windows_height = None
         self.__margin_button = 20
         self.__button_height = 25
 
@@ -46,14 +46,14 @@ class TextModal(Frame):
             self.__tool_before_pop_up = self._GUI_manager.get_active_tool()
             self._GUI_manager.set_active_tool(None)
 
-            # open the pop up
-            # ---------------
+            # open the pop up and size it
+            # ---------------------------
             imgui.open_popup(self.__modal_title)
             self.__should_show = False
 
+        imgui.set_next_window_size(self.__windows_width, -1)
         if imgui.begin_popup_modal(self.__modal_title)[0]:
-            imgui.set_window_size(self.__windows_width, -1)
-            imgui.text(self.__msg)
+            imgui.text_wrapped(self.__msg)
 
             if imgui.button("Close", self.__windows_width - self.__margin_button, self.__button_height):
                 # return the original tool to the program
