@@ -216,7 +216,7 @@ class Tools(Frame):
 
             except ShapefileExportError as e:
                 log.exception(e)
-                self._GUI_manager.set_modal_text("Error", str(e))
+                self._GUI_manager.set_modal_text("Error", "The polygon does not have enough points.")
 
         return clicked_selectable
 
