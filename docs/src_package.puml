@@ -32,6 +32,7 @@ package src {
         class SceneError
         class ExportError
         class ShapefileExportError
+        class NotEnoughPointsError
     }
 
     package engine {
@@ -163,6 +164,8 @@ PolygonError <|-- LineIntersectionError
 SceneError <|-- NonExistentPolygonError
 
 ExportError <|-- ShapefileExportError
+ShapefileExportError <|-- NotEnoughPointsError
+
 
 Engine -u.> LineIntersectionError
 Engine -u.> RepeatedPointError
