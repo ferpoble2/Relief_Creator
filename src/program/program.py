@@ -187,7 +187,7 @@ class Program:
             arguments (Namespace):  Arguments received in the command line.
         """
 
-        if 'model' in arguments:
+        if 'model' in arguments and arguments.model is not None:
             log.debug('Loading model from command line  using default color file...')
             self.__engine.refresh_with_model_2d(self.get_cpt_file(), arguments.model)
 
