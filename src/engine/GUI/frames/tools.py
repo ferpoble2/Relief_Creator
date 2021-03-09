@@ -7,7 +7,7 @@ import imgui
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
 
-from src.error.shapefile_export_error import ShapefileExportError
+from src.error.not_enought_points_error import NotEnoughPointsError
 
 log = get_logger(module="TOOLS")
 
@@ -214,7 +214,7 @@ class Tools(Frame):
             try:
                 self._GUI_manager.export_polygon_with_id(polygon_id)
 
-            except ShapefileExportError as e:
+            except NotEnoughPointsError as e:
                 log.exception(e)
                 self._GUI_manager.set_modal_text("Error", "The polygon does not have enough points.")
 

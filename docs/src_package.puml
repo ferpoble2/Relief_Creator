@@ -176,8 +176,8 @@ Controller -u.> RepeatedPointError
 Polygon -u.> LineIntersectionError
 Polygon -u.> RepeatedPointError
 
-ShapefileExporter -u.> ShapefileExportError
-Tools .> ShapefileExportError
+ShapefileExporter -u.> NotEnoughPointsError
+Tools .> NotEnoughPointsError
 
 Scene -u.> NonExistentPolygonError
 

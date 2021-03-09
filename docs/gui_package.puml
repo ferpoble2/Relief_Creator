@@ -10,7 +10,7 @@ package src {
     }
 
     package error {
-        class ShapefileExportError {
+        class NotEnoughPointsError {
             ...
             (...)
         }
@@ -199,6 +199,6 @@ GUIManager o-- Icon
 GUIManager o--o Frame
 GUIManager o--o Engine
 
-Tools .> ShapefileExportError
+Tools .> NotEnoughPointsError
 
 @enduml
