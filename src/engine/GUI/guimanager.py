@@ -76,7 +76,7 @@ class GUIManager:
 
     def add_polygon_to_gui(self, polygon_id) -> None:
         """
-        Tells the frames that use the polygon information that a new polygon was created.
+        Tells the frames that make use of the polygon information that a new polygon was created.
 
         Args:
             polygon_id: Id of the created polygon
