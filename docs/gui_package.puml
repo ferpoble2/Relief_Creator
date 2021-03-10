@@ -62,6 +62,7 @@ class GUIManager{
     - __io: IMGUI.io
     - __polygon_folder_list: list
     - __scene: Scene
+    - __folder_id_counter: int
 
     - __load_icons()
     - __get_polygon_folder_list(): list

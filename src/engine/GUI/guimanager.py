@@ -39,6 +39,7 @@ class GUIManager:
         self.__font_bold = None
 
         self.__polygon_folder_list = []
+        self.__folder_id_counter = 0
 
         self.__icons_dict = None
 
@@ -175,9 +176,13 @@ class GUIManager:
 
         Returns: The folder created.
         """
-        new_polygon_folder = PolygonFolder(str(len(self.__polygon_folder_list)))
+        new_polygon_folder = PolygonFolder(str(self.__folder_id_counter))
+        self.__folder_id_counter += 1
+
         new_polygon_folder.set_name(name)
+
         self.__polygon_folder_list.append(new_polygon_folder)
+
         return new_polygon_folder
 
     def delete_all_polygons_inside_folder(self, polygon_folder_id: str) -> None:
