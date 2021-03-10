@@ -227,40 +227,114 @@ class Tools(Frame):
         Returns: None
         """
 
-        list_polygons_ids = self._GUI_manager.get_polygon_id_list()
         active_polygon = self._GUI_manager.get_active_polygon_id()
 
-        imgui.text("Fodler")
+        for folder_id in self._GUI_manager.get_polygon_folder_id_list():
+            folder_was_deleted = self.__folder_popup_menu(folder_id)
 
-        for polygon_id in list_polygons_ids:
-            # push id so the buttons doesnt have conflicts with names
-            imgui.push_id(polygon_id)
+            # list of polygons to render to each folder
+            if not folder_was_deleted:
+                for polygon_id in self._GUI_manager.get_polygons_id_from_polygon_folder(folder_id):
+                    # push id so the buttons doesnt have conflicts with names
+                    imgui.push_id(polygon_id)
 
-            # show a checkbox with the id of the polygon and show it market if the polygon is active
-            clicked, current_state = imgui.checkbox(self._GUI_manager.get_polygon_name(polygon_id),
-                                                    True if polygon_id == active_polygon else False)
+                    # show a checkbox with the id of the polygon and show it market if the polygon is active
+                    clicked, current_state = imgui.checkbox(self._GUI_manager.get_polygon_name(polygon_id),
+                                                            True if polygon_id == active_polygon else False)
 
-            imgui.same_line()
-            self.__color_button(polygon_id)
+                    imgui.same_line()
+                    self.__color_button(polygon_id)
 
-            imgui.same_line()
-            self.__actions_button(active_polygon, polygon_id)
+                    imgui.same_line()
+                    self.__actions_button(active_polygon, polygon_id)
 
-            if not self._GUI_manager.is_polygon_planar(polygon_id):
-                imgui.same_line()
-                imgui.image(self._GUI_manager.get_icon('warning').get_texture_id(), 25, 25)
-                if imgui.is_item_hovered():
-                    imgui.set_tooltip("Polygon is not planar!")
+                    if not self._GUI_manager.is_polygon_planar(polygon_id):
+                        imgui.same_line()
+                        imgui.image(self._GUI_manager.get_icon('warning').get_texture_id(), 25, 25)
+                        if imgui.is_item_hovered():
+                            imgui.set_tooltip("Polygon is not planar!")
 
-            # pop the id to continue rendering the others elements
-            imgui.pop_id()
+                    # pop the id to continue rendering the others elements
+                    imgui.pop_id()
 
-            if clicked:
-                # Change the active polygon to the clicked one
-                self._GUI_manager.set_active_polygon(polygon_id)
+                    if clicked:
+                        # Change the active polygon to the clicked one
+                        self._GUI_manager.set_active_polygon(polygon_id)
 
-                # Activate the create_polygon tool when clicked the polygon
-                self._GUI_manager.set_active_tool('create_polygon')
+                        # Activate the create_polygon tool when clicked the polygon
+                        self._GUI_manager.set_active_tool('create_polygon')
+
+    def __folder_popup_menu(self, folder_id: str) -> bool:
+        """
+        Folder popup menu that shows the name of the folder and configure the actions that happens when a second
+        click is pressed.
+
+        Args:
+            folder_id: ID of the folder to show
+
+        Returns: Boolean indicating if the folder was deleted or not.
+        """
+
+        folder_was_deleted = False
+        imgui.text(self._GUI_manager.get_polygon_folder_name(folder_id))
+        if imgui.is_item_hovered() and imgui.is_mouse_clicked(1):
+            imgui.open_popup(f'Second click options folder {folder_id}')
+
+        # menu option for second click on the folder
+        if imgui.begin_popup(f'Second click options folder {folder_id}'):
+            imgui.text("Select an action")
+
+            imgui.separator()
+            imgui.selectable('Rename')
+            if imgui.is_item_clicked():
+                self.__open_rename_folder_popup = True
+
+            imgui.selectable('Delete folder')
+            if imgui.is_item_clicked():
+                # get list of polygons on the folder
+                polygon_id_list = self._GUI_manager.get_polygons_id_from_polygon_folder(folder_id)
+
+                # delete all the polygons in the folder
+                self._GUI_manager.delete_all_polygons_inside_folder(folder_id)
+
+                # change the active polygon only if it was deleted
+                if self._GUI_manager.get_active_polygon_id() in polygon_id_list:
+                    self._GUI_manager.set_active_polygon(None)
+
+                # delete the folder from the list of folders and don't render it's polygons
+                self._GUI_manager.delete_polygon_folder(folder_id)
+                folder_was_deleted = True
+
+            imgui.end_popup()
+
+        # popup modal for renaming the folders
+        if self.__open_rename_folder_popup:
+            # open the popup
+            imgui.open_popup(f'Rename folder {folder_id}')
+
+            # store the folder name as initial input of the popup
+            self.__rename_folder_input_text_value = self._GUI_manager.get_polygon_folder_name(folder_id)
+
+            # store the last tool used
+            self.__tool_before_pop_up = self._GUI_manager.get_active_tool()
+            self._GUI_manager.set_active_tool(None)
+
+            # tell the object to not open again
+            self.__open_rename_folder_popup = False
+
+        imgui.set_next_window_size(self.__rename_size_x, -1)
+        if imgui.begin_popup_modal(f'Rename folder {folder_id}')[0]:
+            imgui.text('Change the name of the folder:')
+            changed, self.__rename_folder_input_text_value = imgui.input_text('New name',
+                                                                              self.__rename_folder_input_text_value,
+                                                                              25)
+
+            if imgui.button('Change name', self.__rename_size_x - self.__button_margin_width):
+                self._GUI_manager.set_polygon_folder_name(folder_id, self.__rename_folder_input_text_value)
+                imgui.close_current_popup()
+
+            imgui.end_popup()
+        return folder_was_deleted
 
     def __init__(self, gui_manager: 'GUIManager'):
         """
@@ -293,7 +367,9 @@ class Tools(Frame):
         self.__color_selected_dict = {}
 
         self.__input_text_value = ''
+        self.__rename_folder_input_text_value = ''
         self.__opened_action_popup_dict = {}
+        self.__open_rename_folder_popup = False
 
     def __rename_polygon_selectable(self, polygon_id: str) -> bool:
         """
@@ -392,9 +468,10 @@ class Tools(Frame):
             # ---------------------------------
             self._GUI_manager.set_active_tool('create_polygon')
 
-            # create the polygon
-            # ------------------
+            # create the polygon and add it to a folder
+            # -----------------------------------------
             new_polygon_id = self._GUI_manager.create_new_polygon()
+            self._GUI_manager.create_polygon_folder('new_folder').add_polygon(new_polygon_id)
 
             # add the colors to the list of colors data
             # -----------------------------------------
@@ -448,6 +525,9 @@ class Tools(Frame):
 
         Returns: None
         """
+        new_folder = self._GUI_manager.create_polygon_folder('Imported Polygon')
+        new_folder.add_polygon(polygon_id)
+
         self.__color_selected_dict[polygon_id] = {
             'polygon': self.__color_selected_default,
             'dot': self.__dot_color_selected_default

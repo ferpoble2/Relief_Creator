@@ -158,7 +158,9 @@ class Tools {
     - __dot_color_selected_default: int, int, int, int
     - __double_button_margin_width: int
     - __input_text_value: str
+    - __open_rename_folder_popup: boolean
     - __opened_action_popup_dict: dict
+    - __rename_folder_input_text_value: str
     - __rename_padding_x: int
     - __rename_size_x: int
     - __rename_size_y: int
@@ -166,11 +168,13 @@ class Tools {
     - __tool_before_pop_up: str
     - __tools_names_dict: dict
 
-
+    + add_new_polygon(polygon_id)
+    + render()
     - __actions_button(active_polygon, polygon_id)
     - __color_button(polygon_id)
     - __delete_selectable(active_polygon, polygon_id): boolean
     - __export_selectable(polygon_id): boolean
+    - __folder_popup_menu(folder_id)
     - __generate_polygon_list()
     - __rename_polygon_selectable(polygon_id): boolean
     - __show_active_tool()
@@ -178,8 +182,6 @@ class Tools {
     - __show_other_tools(left_frame_width)
     - __show_polygon_tools(left_frame_width)
     - __show_visualization_tools(left_frame_width)
-    + add_new_polygon(polygon_id)
-    + render()
 }
 
 class Debug {
