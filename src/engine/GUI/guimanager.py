@@ -376,6 +376,21 @@ class GUIManager:
         """
         return [folder.get_id() for folder in self.__get_polygon_folder_list()]
 
+    def get_polygons_id_from_polygon_folder(self, polygon_folder_id: str) -> list:
+        """
+        Get the list of polygons id that a folder contains.
+
+        Args:
+            polygon_folder_id: ID of the polygon folder.
+
+        Returns: List with the id of the polygons inside the folder.
+        """
+        for folder in self.__get_polygon_folder_list():
+            if folder.get_id() == polygon_folder_id:
+                return folder.get_polygon_list()
+
+        raise PolygonFolderNotFoundError(f'Folder {polygon_folder_id} not found in the program.')
+
     def get_polygon_folder_name(self, polygon_folder_id: str) -> None:
         """
         Return the name of a polygon folder.
