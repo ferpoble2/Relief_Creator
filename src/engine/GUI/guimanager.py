@@ -197,6 +197,12 @@ class GUIManager:
 
         Returns: None
         """
+        # search for the polygon on the folders and delete it
+        for folder in self.__polygon_folder_list:
+            if polygon_id in folder.get_polygon_list():
+                folder.delete_polygon(polygon_id)
+
+        # delete the polygon from the engine
         self.__engine.delete_polygon_by_id(polygon_id)
 
     def draw_frames(self) -> None:
