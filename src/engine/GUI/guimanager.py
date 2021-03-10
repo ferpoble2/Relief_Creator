@@ -209,6 +209,26 @@ class GUIManager:
             if folder.get_id() == polygon_folder_id:
                 return folder.get_name()
 
+        raise PolygonFolderNotFoundError('Polygon folder not found')
+
+    def delete_all_polygons_inside_folder(self, polygon_folder_id: str) -> None:
+        """
+        Delete all the polygons that are inside a folder from the system and from the folder.
+
+        Args:
+            polygon_folder_id: PolygonFolder ID of the folder to use.
+
+        Returns: None
+        """
+        for folder in self.__get_polygon_folder_list():
+            if folder.get_id() == polygon_folder_id:
+                for polygon_id in folder.get_polygon_list():
+                    self.delete_polygon_by_id(polygon_id)
+                    folder.delete_polygon(polygon_id)
+                break
+
+        return
+
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
         Delete the polygon with the specified id from the scene
