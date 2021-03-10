@@ -32,3 +32,27 @@ class PolygonFolder:
         Returns: List with the polygon ID of the polygons on the folder.
         """
         return self.__polygon_id_list
+
+    def get_name(self) -> None:
+        """
+        Get the name of the polygon folder.
+
+        Returns: Name of the polygon folder.
+        """
+        return self.__name
+
+    def set_name(self, new_name: str) -> None:
+        """
+        Set the name of the polygon folder.
+
+        Returns: None
+        """
+        self.__name = new_name
+
+    def get_id(self) -> str:
+        """
+        Get the ID of the folder.
+
+        Returns: ID of the folder.
+        """
+        return self.__id

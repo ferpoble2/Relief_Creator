@@ -39,7 +39,10 @@ class PolygonFolder {
     - __polygon_id_list: list
 
     + add_polygon(polygon_id)
+    + get_id(): str
+    + get_name(): str
     + get_polygon_list(): list
+    + set_name(new_name)
 }
 
 class GUIManager{
@@ -64,7 +67,7 @@ class GUIManager{
     + change_dot_color_of_polygon(polygon_id, color)
     + change_quality(quality)
     + create_new_polygon(): str
-    + create_polygon_folder(name)
+    + create_polygon_folder(name): PolygonFolder
     + delete_polygon_by_id(polygon_id)
     + draw_frames()
     + export_polygon_with_id(polygon_id)
