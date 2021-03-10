@@ -193,10 +193,9 @@ class GUIManager:
             if folder.get_id() == polygon_folder_id:
                 for polygon_id in folder.get_polygon_list():
                     self.delete_polygon_by_id(polygon_id)
-                    folder.delete_polygon(polygon_id)
-                break
+                return
 
-        return
+        raise PolygonFolderNotFoundError(f'Folder {polygon_folder_id} not found in the program.')
 
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
