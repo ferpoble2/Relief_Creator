@@ -63,6 +63,23 @@ class GUIManager:
         """
         return self.__polygon_folder_list
 
+    def add_polygon_to_polygon_folder(self, folder_id: str, polygon_id: str) -> None:
+        """
+        Add an already existent polygon to the specified folder.
+
+        Args:
+            folder_id: Folder to use
+            polygon_id: Polygon to add to the folder
+
+        Returns: None
+        """
+        for folder in self.__get_polygon_folder_list():
+            if folder.get_id() == folder_id:
+                folder.add_polygon(polygon_id)
+                return
+
+        raise PolygonFolderNotFoundError(f'Can not find folder {folder_id}')
+
     def add_frames(self, component_list: list) -> None:
         """
         Add frames to render in the application.

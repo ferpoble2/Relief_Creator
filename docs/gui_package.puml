@@ -68,6 +68,7 @@ class GUIManager{
     - __get_polygon_folder_list(): list
     + add_frames(component_list)
     + add_polygon_to_gui(polygon_id)
+    + add_polygon_to_polygon_folder(folder_id, polygon_id)
     + add_zoom()
     + are_frame_fixed()
     + change_color_file_with_dialog()
@@ -172,6 +173,7 @@ class Tools {
     + render()
     - __actions_button(active_polygon, polygon_id)
     - __color_button(polygon_id)
+    - __create_new_polygon(folder_id)
     - __delete_selectable(active_polygon, polygon_id): boolean
     - __export_selectable(polygon_id): boolean
     - __folder_popup_menu(folder_id)

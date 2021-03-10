@@ -169,6 +169,37 @@ class Tools(Frame):
             imgui.open_popup(f'Select a color for {polygon_id}')
             self.__color_pick_should_open = False
 
+    def __create_new_polygon(self, folder_id: str = None) -> None:
+        """
+        Calls the GUIManager to create a new polygon in the selected folder.
+        If folder_name is None, then a new folder is created.
+
+        Args:
+            folder_id: Folder in which create the polygon.
+
+        Returns: None
+        """
+        # change the tool to create polygon
+        # ---------------------------------
+        self._GUI_manager.set_active_tool('create_polygon')
+        # create the polygon and add it to a folder
+        # -----------------------------------------
+        new_polygon_id = self._GUI_manager.create_new_polygon()
+        if folder_id is None:
+            self._GUI_manager.create_polygon_folder('New Folder').add_polygon(new_polygon_id)
+        else:
+            self._GUI_manager.add_polygon_to_polygon_folder(folder_id, new_polygon_id)
+        # add the colors to the list of colors data
+        # -----------------------------------------
+        self.__color_selected_dict[new_polygon_id] = {
+            'polygon': self.__color_selected_default,
+            'dot': self.__dot_color_selected_default
+        }
+        # set it as the active polygon
+        # ----------------------------
+        log.debug("Setting polygon as the active polygon")
+        self._GUI_manager.set_active_polygon(new_polygon_id)
+
     def __delete_selectable(self, active_polygon: str, polygon_id: str) -> bool:
         """
         Define a button for the action of deleting a polygon.
@@ -461,29 +492,7 @@ class Tools(Frame):
         """
         imgui.text("Polygon Tools")
         if imgui.button("Create polygon", width=left_frame_width - self.__button_margin_width):
-            log.debug(f"Pressed button create polygon")
-            log.debug("------------------------------")
-
-            # change the tool to create polygon
-            # ---------------------------------
-            self._GUI_manager.set_active_tool('create_polygon')
-
-            # create the polygon and add it to a folder
-            # -----------------------------------------
-            new_polygon_id = self._GUI_manager.create_new_polygon()
-            self._GUI_manager.create_polygon_folder('new_folder').add_polygon(new_polygon_id)
-
-            # add the colors to the list of colors data
-            # -----------------------------------------
-            self.__color_selected_dict[new_polygon_id] = {
-                'polygon': self.__color_selected_default,
-                'dot': self.__dot_color_selected_default
-            }
-
-            # set it as the active polygon
-            # ----------------------------
-            log.debug("Setting polygon as the active polygon")
-            self._GUI_manager.set_active_polygon(new_polygon_id)
+            self.__create_new_polygon()
 
         self.__generate_polygon_list()
 
