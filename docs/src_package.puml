@@ -33,6 +33,9 @@ package src {
         class ExportError
         class ShapefileExportError
         class NotEnoughPointsError
+        class FolderError
+        class GUIError
+        class PolygonFolderNotFoundError
     }
 
     package engine {
@@ -52,6 +55,12 @@ package src {
         }
 
         package GUI {
+
+            class GUIManager {
+                ...
+                (...)
+            }
+
             package frames {
                 class Tools {
                     ...
@@ -167,18 +176,22 @@ SceneError <|-- NonExistentPolygonError
 ExportError <|-- ShapefileExportError
 ShapefileExportError <|-- NotEnoughPointsError
 
+GUIError <|-- FolderError
+FolderError <|-- PolygonFolderNotFoundError
 
-Engine -u.> LineIntersectionError
-Engine -u.> RepeatedPointError
+Engine .> LineIntersectionError
+Engine .> RepeatedPointError
 
-Controller -u.> LineIntersectionError
-Controller -u.> RepeatedPointError
+Controller .> LineIntersectionError
+Controller .> RepeatedPointError
 
-Polygon -u.> LineIntersectionError
-Polygon -u.> RepeatedPointError
+Polygon .> LineIntersectionError
+Polygon .> RepeatedPointError
 
-ShapefileExporter -u.> NotEnoughPointsError
+ShapefileExporter .> NotEnoughPointsError
 Tools .> NotEnoughPointsError
+
+GUIManager .> PolygonFolderNotFoundError
 
 Scene -u.> NonExistentPolygonError
 

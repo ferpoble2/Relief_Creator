@@ -14,6 +14,11 @@ package src {
             ...
             (...)
         }
+
+        class PolygonFolderNotFoundError {
+            ...
+            (...)
+        }
     }
 
     package GUI{
@@ -216,6 +221,7 @@ GUIManager o-- Icon
 GUIManager o--o Frame
 GUIManager o--o Engine
 
+GUIManager .> PolygonFolderNotFoundError
 Tools .> NotEnoughPointsError
 
 @enduml

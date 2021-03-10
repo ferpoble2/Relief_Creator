@@ -15,6 +15,8 @@ from src.utils import get_logger
 from src.engine.GUI.icon import Icon
 from src.engine.GUI.polygon_folder import PolygonFolder
 
+from src.error.polygon_folder_not_found_error import PolygonFolderNotFoundError
+
 log = get_logger(module='GUIMANAGER')
 
 
@@ -169,6 +171,22 @@ class GUIManager:
         new_polygon_folder.set_name(name)
         self.__polygon_folder_list.append(new_polygon_folder)
         return new_polygon_folder
+
+    def delete_polygon_folder(self, folder_id: str) -> None:
+        """
+        Delete a polygon folder from the list of folders.
+
+        Args:
+            folder_id: ID of the folder to delete.
+
+        Returns: None
+        """
+        for folder in self.__polygon_folder_list:
+            if folder.get_id() == folder_id:
+                self.__polygon_folder_list.remove(folder)
+                return
+
+        raise PolygonFolderNotFoundError('Folder is not in the list of folders...')
 
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
