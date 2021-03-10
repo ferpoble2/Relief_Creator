@@ -67,6 +67,7 @@ class GUIManager{
     - __get_polygon_folder_list(): list
     + add_frames(component_list)
     + add_polygon_to_gui(polygon_id)
+    + get_polygon_folder_name(polygon_folder_id): str
     + add_zoom()
     + are_frame_fixed()
     + change_color_file_with_dialog()

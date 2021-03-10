@@ -196,6 +196,19 @@ class GUIManager:
         """
         return [folder.get_id() for folder in self.__get_polygon_folder_list()]
 
+    def get_polygon_folder_name(self, polygon_folder_id: str) -> None:
+        """
+        Return the name of a polygon folder.
+
+        Args:
+            polygon_folder_id: ID of the polygon folder.
+
+        Returns: Name of the folder
+        """
+        for folder in self.__get_polygon_folder_list():
+            if folder.get_id() == polygon_folder_id:
+                return folder.get_name()
+
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
         Delete the polygon with the specified id from the scene
