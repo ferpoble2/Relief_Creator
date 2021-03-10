@@ -220,50 +220,6 @@ class Tools(Frame):
 
         return clicked_selectable
 
-    def __generate_polygon_list(self) -> None:
-        """
-        Generate the list of polygons to show to the user.
-
-        Returns: None
-        """
-
-        active_polygon = self._GUI_manager.get_active_polygon_id()
-
-        for folder_id in self._GUI_manager.get_polygon_folder_id_list():
-            folder_was_deleted = self.__folder_popup_menu(folder_id)
-
-            # list of polygons to render to each folder
-            if not folder_was_deleted:
-                for polygon_id in self._GUI_manager.get_polygons_id_from_polygon_folder(folder_id):
-                    # push id so the buttons doesnt have conflicts with names
-                    imgui.push_id(polygon_id)
-
-                    # show a checkbox with the id of the polygon and show it market if the polygon is active
-                    clicked, current_state = imgui.checkbox(self._GUI_manager.get_polygon_name(polygon_id),
-                                                            True if polygon_id == active_polygon else False)
-
-                    imgui.same_line()
-                    self.__color_button(polygon_id)
-
-                    imgui.same_line()
-                    self.__actions_button(active_polygon, polygon_id)
-
-                    if not self._GUI_manager.is_polygon_planar(polygon_id):
-                        imgui.same_line()
-                        imgui.image(self._GUI_manager.get_icon('warning').get_texture_id(), 25, 25)
-                        if imgui.is_item_hovered():
-                            imgui.set_tooltip("Polygon is not planar!")
-
-                    # pop the id to continue rendering the others elements
-                    imgui.pop_id()
-
-                    if clicked:
-                        # Change the active polygon to the clicked one
-                        self._GUI_manager.set_active_polygon(polygon_id)
-
-                        # Activate the create_polygon tool when clicked the polygon
-                        self._GUI_manager.set_active_tool('create_polygon')
-
     def __folder_popup_menu(self, folder_id: str) -> bool:
         """
         Folder popup menu that shows the name of the folder and configure the actions that happens when a second
@@ -335,6 +291,50 @@ class Tools(Frame):
 
             imgui.end_popup()
         return folder_was_deleted
+
+    def __generate_polygon_list(self) -> None:
+        """
+        Generate the list of polygons to show to the user.
+
+        Returns: None
+        """
+
+        active_polygon = self._GUI_manager.get_active_polygon_id()
+
+        for folder_id in self._GUI_manager.get_polygon_folder_id_list():
+            folder_was_deleted = self.__folder_popup_menu(folder_id)
+
+            # list of polygons to render to each folder
+            if not folder_was_deleted:
+                for polygon_id in self._GUI_manager.get_polygons_id_from_polygon_folder(folder_id):
+                    # push id so the buttons doesnt have conflicts with names
+                    imgui.push_id(polygon_id)
+
+                    # show a checkbox with the id of the polygon and show it market if the polygon is active
+                    clicked, current_state = imgui.checkbox(self._GUI_manager.get_polygon_name(polygon_id),
+                                                            True if polygon_id == active_polygon else False)
+
+                    imgui.same_line()
+                    self.__color_button(polygon_id)
+
+                    imgui.same_line()
+                    self.__actions_button(active_polygon, polygon_id)
+
+                    if not self._GUI_manager.is_polygon_planar(polygon_id):
+                        imgui.same_line()
+                        imgui.image(self._GUI_manager.get_icon('warning').get_texture_id(), 25, 25)
+                        if imgui.is_item_hovered():
+                            imgui.set_tooltip("Polygon is not planar!")
+
+                    # pop the id to continue rendering the others elements
+                    imgui.pop_id()
+
+                    if clicked:
+                        # Change the active polygon to the clicked one
+                        self._GUI_manager.set_active_polygon(polygon_id)
+
+                        # Activate the create_polygon tool when clicked the polygon
+                        self._GUI_manager.set_active_tool('create_polygon')
 
     def __init__(self, gui_manager: 'GUIManager'):
         """
