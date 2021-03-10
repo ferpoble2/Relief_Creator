@@ -188,6 +188,14 @@ class GUIManager:
 
         raise PolygonFolderNotFoundError('Folder is not in the list of folders...')
 
+    def get_polygon_folder_id_list(self) -> list:
+        """
+        Get a list of the ID of the folders in the GUI
+
+        Returns: List of ids of folders
+        """
+        return [folder.get_id() for folder in self.__get_polygon_folder_list()]
+
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
         Delete the polygon with the specified id from the scene
@@ -198,7 +206,7 @@ class GUIManager:
         Returns: None
         """
         # search for the polygon on the folders and delete it
-        for folder in self.__polygon_folder_list:
+        for folder in self.__get_polygon_folder_list():
             if polygon_id in folder.get_polygon_list():
                 folder.delete_polygon(polygon_id)
 
@@ -342,7 +350,7 @@ class GUIManager:
         """
         return self.__engine.get_map_position()
 
-    def get_polygon_folder_list(self) -> list:
+    def __get_polygon_folder_list(self) -> list:
         """
         Get the  list of polygon folders.
 
