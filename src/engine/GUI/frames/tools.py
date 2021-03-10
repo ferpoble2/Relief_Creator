@@ -267,6 +267,14 @@ class Tools(Frame):
         if imgui.is_item_hovered() and imgui.is_mouse_clicked(1):
             imgui.open_popup(f'Second click options folder {folder_id}')
 
+        # button to create a new polygon in the folder
+        imgui.same_line()
+
+        imgui.push_id(folder_id)
+        if imgui.button('+'):
+            self.__create_new_polygon(folder_id)
+        imgui.pop_id()
+
         # menu option for second click on the folder
         if imgui.begin_popup(f'Second click options folder {folder_id}'):
             imgui.text("Select an action")
@@ -491,7 +499,7 @@ class Tools(Frame):
             left_frame_width: width of the frame.
         """
         imgui.text("Polygon Tools")
-        if imgui.button("Create polygon", width=left_frame_width - self.__button_margin_width):
+        if imgui.button("Create folder", width=left_frame_width - self.__button_margin_width):
             self.__create_new_polygon()
 
         self.__generate_polygon_list()
