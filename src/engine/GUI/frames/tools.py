@@ -61,6 +61,17 @@ class Tools(Frame):
                 imgui.close_current_popup()
             imgui.separator()
 
+            # what happens when changing the polygon from one folder to another
+            if self.__change_folder_selectable(polygon_id):
+                # once the rename is completed, go back to the original tool
+                self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
+
+                # tell the external variable that the popup was closed
+                self.__opened_action_popup_dict[polygon_id] = False
+
+                # close the popup
+                imgui.close_current_popup()
+
             # what happens when rename option is pressed (all logic is inside the calling)
             if self.__rename_polygon_selectable(polygon_id):
                 # once the rename is completed, go back to the original tool
@@ -74,16 +85,6 @@ class Tools(Frame):
 
             # what happens when delete option is pressed (all logic is inside the calling)
             if self.__delete_selectable(active_polygon, polygon_id):
-                # once the rename is completed, go back to the original tool
-                self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
-
-                # tell the external variable that the popup was closed
-                self.__opened_action_popup_dict[polygon_id] = False
-
-                # close the popup
-                imgui.close_current_popup()
-
-            if self.__change_folder_selectable(polygon_id):
                 # once the rename is completed, go back to the original tool
                 self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
 
