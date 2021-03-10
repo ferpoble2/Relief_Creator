@@ -156,16 +156,19 @@ class GUIManager:
         """
         return self.__engine.create_new_polygon()
 
-    def create_polygon_folder(self, name: str = 'folder') -> None:
+    def create_polygon_folder(self, name: str = 'folder') -> PolygonFolder:
         """
         Create a new folder in the list of polygons folders.
 
         Args:
             name: Name fot the folder.
 
-        Returns: None
+        Returns: The folder created.
         """
-        self.__polygon_folder_list.append(PolygonFolder(str(len(self.__polygon_folder_list))))
+        new_polygon_folder = PolygonFolder(str(len(self.__polygon_folder_list)))
+        new_polygon_folder.set_name(name)
+        self.__polygon_folder_list.append(new_polygon_folder)
+        return new_polygon_folder
 
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
