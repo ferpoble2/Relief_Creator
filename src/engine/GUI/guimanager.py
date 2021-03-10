@@ -672,6 +672,23 @@ class GUIManager:
         imgui.pop_font()
         imgui.push_font(self.__font_regular)
 
+    def set_polygon_folder_name(self, polygon_folder_id: str, new_name: str) -> None:
+        """
+        Change the name of a polygon folder.
+
+        Args:
+            new_name: New name of the folder.
+            polygon_folder_id: ID of the polygon folder to change the name to.
+
+        Returns: None
+        """
+        for folder in self.__get_polygon_folder_list():
+            if folder.get_id() == polygon_folder_id:
+                folder.set_name(new_name)
+                return
+
+        raise PolygonFolderNotFoundError(f'Can not find folder {polygon_folder_id} in the program.')
+
     def undo_action(self) -> None:
         """
         Call the engine to undo the most recent action made on the program.
