@@ -25,6 +25,17 @@ class PolygonFolder:
         """
         self.__polygon_id_list.append(polygon_id)
 
+    def delete_polygon(self, polygon_id: str) -> None:
+        """
+        Delete the polygon from the list of polygons.
+
+        Args:
+            polygon_id: Delete the polygon from the list of polygons.
+
+        Returns: None
+        """
+        self.__polygon_id_list.remove(polygon_id)
+
     def get_polygon_list(self) -> list:
         """
         Get the polygon list.

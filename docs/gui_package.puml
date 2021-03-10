@@ -44,6 +44,7 @@ class PolygonFolder {
     - __polygon_id_list: list
 
     + add_polygon(polygon_id)
+    + delete_polygon(polygon_id)
     + get_id(): str
     + get_name(): str
     + get_polygon_list(): list
