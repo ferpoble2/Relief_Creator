@@ -346,6 +346,25 @@ class GUIManager:
             Loading(gui_manager),
         ]
 
+    def move_polygon_to_polygon_folder(self, polygon_id: str, folder_id: str) -> None:
+        """
+        Move the polygon from the folder wherever it is to another folder.
+
+        Args:
+            polygon_id: Polygon to move
+            folder_id: ID of the folder to move the polygon to
+
+        Returns: None
+        """
+        # search the polygon and delete it
+        for folder in self.__get_polygon_folder_list():
+            for pol_id in folder.get_polygon_list():
+                if pol_id == polygon_id:
+                    folder.delete_polygon(polygon_id)
+
+            if folder.get_id() == folder_id:
+                folder.add_polygon(polygon_id)
+
     def get_gui_key_callback(self) -> callable:
         """
         Get the key callback used by imgui.

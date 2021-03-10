@@ -83,6 +83,16 @@ class Tools(Frame):
                 # close the popup
                 imgui.close_current_popup()
 
+            if self.__change_folder_selectable(polygon_id):
+                # once the rename is completed, go back to the original tool
+                self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
+
+                # tell the external variable that the popup was closed
+                self.__opened_action_popup_dict[polygon_id] = False
+
+                # close the popup
+                imgui.close_current_popup()
+
             imgui.end_popup()
 
         # If the popup does not open but the external variable says that it is open, then that
@@ -95,6 +105,24 @@ class Tools(Frame):
 
             # go back to the last tool used
             self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
+
+    def __change_folder_selectable(self, polygon_id: str) -> bool:
+        """
+        Render the selectable for changing folders.
+
+        Returns: If the element was clicked or not.
+        """
+        clicked_selectable = False
+
+        if imgui.begin_menu("Change Folder"):
+            for folder_id in self._GUI_manager.get_polygon_folder_id_list():
+                imgui.menu_item(self._GUI_manager.get_polygon_folder_name(folder_id))
+                if imgui.is_item_clicked():
+                    self._GUI_manager.move_polygon_to_polygon_folder(polygon_id, folder_id)
+
+            imgui.end_menu()
+
+        return clicked_selectable
 
     def __color_button(self, polygon_id: str) -> None:
         """

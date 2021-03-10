@@ -108,6 +108,7 @@ class GUIManager{
     + less_zoom()
     + load_netcdf_file_with_dialog()
     + load_shapefile_file_with_dialog()
+    + move_polygon_to_polygon_folder(polygon_id, folder_id)
     + optimize_gpu_memory()
     + process_input()
     + refresh_scene_with_model_2d(path_color_file, path_model, model_id)
@@ -172,6 +173,7 @@ class Tools {
     + add_new_polygon(polygon_id)
     + render()
     - __actions_button(active_polygon, polygon_id)
+    - __change_folder_selectable(polygon_id): boolean
     - __color_button(polygon_id)
     - __create_new_polygon(folder_id)
     - __delete_selectable(active_polygon, polygon_id): boolean
