@@ -24,6 +24,25 @@ class Polygon(Model):
     Class in charge of the polygons of the program.
     """
 
+    def __init__(self, scene, id_polygon):
+        """
+        Constructor of the class.
+        """
+        super().__init__(scene)
+
+        self.id = id_polygon
+        self.draw_mode = GL.GL_LINES
+
+        self.update_uniform_values = False
+
+        self.__name = self.get_id()
+
+        self.__point_model = Points(scene)  # model to use to draw the points
+        self.__lines_model = Lines(scene)  # model to use to draw the lines
+        self.__last_line_model = DashedLines(scene)  # model to use to render the last line of the polygon
+
+        self.__is_planar = True
+
     def __check_intersection(self, line_x_1: float, line_y_1: float, line_x_2: float, line_y_2: float) -> bool:
         """
         Check if the line intersect with the other lines already in the polygon.
@@ -112,25 +131,6 @@ class Polygon(Model):
                 intersections.append(segment.intersection(new_line))
 
         return intersections
-
-    def __init__(self, scene, id_polygon):
-        """
-        Constructor of the class.
-        """
-        super().__init__(scene)
-
-        self.id = id_polygon
-        self.draw_mode = GL.GL_LINES
-
-        self.update_uniform_values = False
-
-        self.__name = self.get_id()
-
-        self.__point_model = Points(scene)  # model to use to draw the points
-        self.__lines_model = Lines(scene)  # model to use to draw the lines
-        self.__last_line_model = DashedLines(scene)  # model to use to render the last line of the polygon
-
-        self.__is_planar = True
 
     def __str__(self):
         """
