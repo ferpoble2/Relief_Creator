@@ -110,7 +110,9 @@ class Controller:
             active_tool = self.__engine.get_active_tool()
 
             if active_tool == 'move_map':
-                if glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS:
+                if glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS and \
+                        not self.__engine.is_mouse_hovering_frame():
+
                     if self.is_inside_scene(xpos, ypos):
                         log.debug(
                             f"Cursor movement: {xpos - self.__mouse_old_pos[0]}, {self.__mouse_old_pos[1] - ypos}")
@@ -130,7 +132,10 @@ class Controller:
 
         def mouse_button_callback(window, button, action, mods):
 
-            if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
+            if button == glfw.MOUSE_BUTTON_LEFT and \
+                    action == glfw.PRESS and \
+                    not self.__engine.is_mouse_hovering_frame():
+
                 active_tool = self.__engine.get_active_tool()
 
                 if active_tool == 'create_polygon':
