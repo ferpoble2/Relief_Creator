@@ -17,7 +17,7 @@ class Tools(Frame):
     Class that render a sample frame in the application.
     """
 
-    def __actions_button(self, active_polygon, polygon_id) -> None:
+    def __actions_button(self, active_polygon, polygon_id, polygon_folder_id) -> None:
         """
         Generate the button [Actions] in the tools windows.
 
@@ -62,7 +62,7 @@ class Tools(Frame):
             imgui.separator()
 
             # what happens when changing the polygon from one folder to another
-            if self.__change_folder_selectable(polygon_id):
+            if self.__change_folder_selectable(polygon_folder_id, polygon_id):
                 # once the rename is completed, go back to the original tool
                 self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
 
@@ -107,7 +107,7 @@ class Tools(Frame):
             # go back to the last tool used
             self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
 
-    def __change_folder_selectable(self, polygon_id: str) -> bool:
+    def __change_folder_selectable(self, current_folder_id: str, polygon_id: str) -> bool:
         """
         Render the selectable for changing folders.
 
@@ -119,7 +119,9 @@ class Tools(Frame):
             for folder_id in self._GUI_manager.get_polygon_folder_id_list():
                 imgui.menu_item(self._GUI_manager.get_polygon_folder_name(folder_id))
                 if imgui.is_item_clicked():
-                    self._GUI_manager.move_polygon_to_polygon_folder(polygon_id, folder_id)
+                    self._GUI_manager.move_polygon_to_polygon_folder(current_folder_id,
+                                                                     polygon_id,
+                                                                     folder_id)
 
             imgui.end_menu()
 
@@ -215,7 +217,8 @@ class Tools(Frame):
         # -----------------------------------------
         new_polygon_id = self._GUI_manager.create_new_polygon()
         if folder_id is None:
-            self._GUI_manager.create_polygon_folder('New Folder').add_polygon(new_polygon_id)
+            folder_id = self._GUI_manager.create_polygon_folder('New Folder')
+            self._GUI_manager.add_polygon_to_polygon_folder(folder_id, new_polygon_id)
         else:
             self._GUI_manager.add_polygon_to_polygon_folder(folder_id, new_polygon_id)
         # add the colors to the list of colors data
@@ -386,7 +389,7 @@ class Tools(Frame):
                     self.__color_button(polygon_id)
 
                     imgui.same_line()
-                    self.__actions_button(active_polygon, polygon_id)
+                    self.__actions_button(active_polygon, polygon_id, folder_id)
 
                     if not self._GUI_manager.is_polygon_planar(polygon_id):
                         imgui.same_line()
@@ -571,8 +574,8 @@ class Tools(Frame):
 
         Returns: None
         """
-        new_folder = self._GUI_manager.create_polygon_folder('Imported Polygon')
-        new_folder.add_polygon(polygon_id)
+        new_folder_id = self._GUI_manager.create_polygon_folder('Imported Polygon')
+        self._GUI_manager.add_polygon_to_polygon_folder(new_folder_id, polygon_id)
 
         self.__color_selected_dict[polygon_id] = {
             'polygon': self.__color_selected_default,

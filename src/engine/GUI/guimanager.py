@@ -13,9 +13,7 @@ from src.engine.GUI.frames.text_modal import TextModal
 from src.engine.GUI.frames.test_window import TestWindow
 from src.utils import get_logger
 from src.engine.GUI.icon import Icon
-from src.engine.GUI.polygon_folder import PolygonFolder
-
-from src.error.polygon_folder_not_found_error import PolygonFolderNotFoundError
+from src.engine.GUI.polygon_folder_manager import PolygonFolderManager
 
 log = get_logger(module='GUIMANAGER')
 
@@ -38,8 +36,7 @@ class GUIManager:
         self.__font_regular = None
         self.__font_bold = None
 
-        self.__polygon_folder_list = []
-        self.__folder_id_counter = 0
+        self.__polygon_folder_manager = PolygonFolderManager()
 
         self.__icons_dict = None
 
@@ -55,14 +52,6 @@ class GUIManager:
             'warning': Icon('./engine/GUI/icons/warning.png')
         }
 
-    def __get_polygon_folder_list(self) -> list:
-        """
-        Get the  list of polygon folders.
-
-        Returns: List of polygon folders.
-        """
-        return self.__polygon_folder_list
-
     def add_polygon_to_polygon_folder(self, folder_id: str, polygon_id: str) -> None:
         """
         Add an already existent polygon to the specified folder.
@@ -73,12 +62,7 @@ class GUIManager:
 
         Returns: None
         """
-        for folder in self.__get_polygon_folder_list():
-            if folder.get_id() == folder_id:
-                folder.add_polygon(polygon_id)
-                return
-
-        raise PolygonFolderNotFoundError(f'Can not find folder {folder_id}')
+        self.__polygon_folder_manager.add_polygon_to_folder(folder_id, polygon_id)
 
     def add_frames(self, component_list: list) -> None:
         """
@@ -184,7 +168,7 @@ class GUIManager:
         """
         return self.__engine.create_new_polygon()
 
-    def create_polygon_folder(self, name: str = 'folder') -> PolygonFolder:
+    def create_polygon_folder(self, name: str = 'folder') -> str:
         """
         Create a new folder in the list of polygons folders.
 
@@ -193,14 +177,7 @@ class GUIManager:
 
         Returns: The folder created.
         """
-        new_polygon_folder = PolygonFolder(str(self.__folder_id_counter))
-        self.__folder_id_counter += 1
-
-        new_polygon_folder.set_name(name)
-
-        self.__polygon_folder_list.append(new_polygon_folder)
-
-        return new_polygon_folder
+        return self.__polygon_folder_manager.create_new_folder()
 
     def delete_all_polygons_inside_folder(self, polygon_folder_id: str) -> None:
         """
@@ -211,13 +188,7 @@ class GUIManager:
 
         Returns: None
         """
-        for folder in self.__get_polygon_folder_list():
-            if folder.get_id() == polygon_folder_id:
-                for polygon_id in folder.get_polygon_list():
-                    self.delete_polygon_by_id(polygon_id)
-                return
-
-        raise PolygonFolderNotFoundError(f'Folder {polygon_folder_id} not found in the program.')
+        self.__polygon_folder_manager.delete_all_polygons_inside_folder(polygon_folder_id)
 
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
@@ -228,10 +199,8 @@ class GUIManager:
 
         Returns: None
         """
-        # search for the polygon on the folders and delete it
-        for folder in self.__get_polygon_folder_list():
-            if polygon_id in folder.get_polygon_list():
-                folder.delete_polygon(polygon_id)
+        # delete it from the folders
+        self.__polygon_folder_manager.delete_polygon_from_all_folders(polygon_id)
 
         # delete the polygon from the engine
         self.__engine.delete_polygon_by_id(polygon_id)
@@ -245,12 +214,7 @@ class GUIManager:
 
         Returns: None
         """
-        for folder in self.__polygon_folder_list:
-            if folder.get_id() == folder_id:
-                self.__polygon_folder_list.remove(folder)
-                return
-
-        raise PolygonFolderNotFoundError('Folder is not in the list of folders...')
+        self.__polygon_folder_manager.delete_folder(folder_id)
 
     def draw_frames(self) -> None:
         """
@@ -346,24 +310,19 @@ class GUIManager:
             Loading(gui_manager),
         ]
 
-    def move_polygon_to_polygon_folder(self, polygon_id: str, folder_id: str) -> None:
+    def move_polygon_to_polygon_folder(self, old_folder_id: str, polygon_id: str, folder_id: str) -> None:
         """
-        Move the polygon from the folder wherever it is to another folder.
+        Move the polygon from one folder to another.
 
         Args:
+            old_folder_id: ID of the folder where the polygon is
             polygon_id: Polygon to move
             folder_id: ID of the folder to move the polygon to
 
         Returns: None
         """
-        # search the polygon and delete it
-        for folder in self.__get_polygon_folder_list():
-            for pol_id in folder.get_polygon_list():
-                if pol_id == polygon_id:
-                    folder.delete_polygon(polygon_id)
+        self.__polygon_folder_manager.move_polygon_to_folder(old_folder_id, polygon_id, folder_id)
 
-            if folder.get_id() == folder_id:
-                folder.add_polygon(polygon_id)
 
     def get_gui_key_callback(self) -> callable:
         """
@@ -414,7 +373,7 @@ class GUIManager:
 
         Returns: List of ids of folders
         """
-        return [folder.get_id() for folder in self.__get_polygon_folder_list()]
+        return self.__polygon_folder_manager.get_folder_id_list()
 
     def get_polygons_id_from_polygon_folder(self, polygon_folder_id: str) -> list:
         """
@@ -425,13 +384,9 @@ class GUIManager:
 
         Returns: List with the id of the polygons inside the folder.
         """
-        for folder in self.__get_polygon_folder_list():
-            if folder.get_id() == polygon_folder_id:
-                return folder.get_polygon_list()
+        return self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id)
 
-        raise PolygonFolderNotFoundError(f'Folder {polygon_folder_id} not found in the program.')
-
-    def get_polygon_folder_name(self, polygon_folder_id: str) -> None:
+    def get_polygon_folder_name(self, polygon_folder_id: str) -> str:
         """
         Return the name of a polygon folder.
 
@@ -440,11 +395,7 @@ class GUIManager:
 
         Returns: Name of the folder
         """
-        for folder in self.__get_polygon_folder_list():
-            if folder.get_id() == polygon_folder_id:
-                return folder.get_name()
-
-        raise PolygonFolderNotFoundError('Polygon folder not found')
+        return self.__polygon_folder_manager.get_name_of_folder(polygon_folder_id)
 
     def get_polygon_id_list(self) -> list:
         """
@@ -737,12 +688,7 @@ class GUIManager:
 
         Returns: None
         """
-        for folder in self.__get_polygon_folder_list():
-            if folder.get_id() == polygon_folder_id:
-                folder.set_name(new_name)
-                return
-
-        raise PolygonFolderNotFoundError(f'Can not find folder {polygon_folder_id} in the program.')
+        self.__polygon_folder_manager.set_name_of_folder(polygon_folder_id, new_name)
 
     def undo_action(self) -> None:
         """
