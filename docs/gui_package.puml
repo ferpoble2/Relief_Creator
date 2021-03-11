@@ -61,8 +61,9 @@ class GUIManager{
     - __icons_dict: dict
     - __implementation: GlfwRenderer
     - __io: IMGUI.io
-    - __scene: Scene
+    - __is_mouse_inside_frame: boolean
     - __polygon_folder_manager: PolygonFolderManager
+    - __scene: Scene
 
     - __load_icons()
     + add_frames(component_list)

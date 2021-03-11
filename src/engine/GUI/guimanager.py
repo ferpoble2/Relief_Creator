@@ -11,6 +11,7 @@ from src.engine.GUI.frames.debug import Debug
 from src.engine.GUI.frames.loading import Loading
 from src.engine.GUI.frames.text_modal import TextModal
 from src.engine.GUI.frames.test_window import TestWindow
+from src.engine.GUI.frames.polygon_information import PolygonInformation
 from src.utils import get_logger
 from src.engine.GUI.icon import Icon
 from src.engine.GUI.polygon_folder_manager import PolygonFolderManager
@@ -35,6 +36,8 @@ class GUIManager:
         self.__io = None
         self.__font_regular = None
         self.__font_bold = None
+
+        self.__is_mouse_inside_frame = False
 
         self.__polygon_folder_manager = PolygonFolderManager()
 
@@ -228,6 +231,9 @@ class GUIManager:
                 frame.render()
         imgui.end_frame()
 
+        # check for the mouse component
+        self.__is_mouse_inside_frame = imgui.get_io().want_capture_mouse
+
     def export_polygon_with_id(self, polygon_id: str) -> None:
         """
         Ask the engine to export the polygon with the given ID
@@ -303,11 +309,12 @@ class GUIManager:
         """
         return [
             MainMenuBar(gui_manager),
-            # TestWindow(gui_manager),
+            TestWindow(gui_manager),
             TextModal(gui_manager),
             Tools(gui_manager),
             Debug(gui_manager),
             Loading(gui_manager),
+            PolygonInformation(gui_manager)
         ]
 
     def move_polygon_to_polygon_folder(self, old_folder_id: str, polygon_id: str, folder_id: str) -> None:
@@ -322,7 +329,6 @@ class GUIManager:
         Returns: None
         """
         self.__polygon_folder_manager.move_polygon_to_folder(old_folder_id, polygon_id, folder_id)
-
 
     def get_gui_key_callback(self) -> callable:
         """
