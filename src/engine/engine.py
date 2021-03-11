@@ -803,3 +803,11 @@ class Engine:
         ShapefileExporter().export_polygon_to_shapefile(points,
                                                         file,
                                                         self.scene.get_polygon_name(polygon_id))
+
+    def is_mouse_hovering_frame(self) -> bool:
+        """
+        Ask the GUIManager if the mouse is hovering a frame.
+
+        Returns: Boolean indicating if mouse is hovering a frame or not.
+        """
+        return self.gui_manager.is_mouse_inside_frame()
