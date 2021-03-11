@@ -102,6 +102,7 @@ class GUIManager{
     + get_polygon_folder_name(polygon_folder_id): str
     + get_polygon_id_list(): list
     + get_polygon_name(polygon_id): str
+    + get_polygon_parameters(polygon_id): list
     + get_polygons_id_from_polygon_folder(polygon_folder_id): list
     + get_quality(): int
     + get_view_mode(): str

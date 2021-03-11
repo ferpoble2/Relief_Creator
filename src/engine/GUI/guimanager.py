@@ -409,6 +409,14 @@ class GUIManager:
         """
         return self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id)
 
+    def get_polygon_parameters(self, polygon_id: str) -> list:
+        """
+        Get the list of parameters of certain polygon.
+
+        Returns: List with the parameters.
+        """
+        return self.__engine.get_parameters_from_polygon(polygon_id)
+
     def get_quality(self) -> int:
         """
         Get the render quality used in the engine.
