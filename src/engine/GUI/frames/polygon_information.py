@@ -43,4 +43,5 @@ class PolygonInformation(Frame):
         imgui.text("some_text")
         imgui.separator()
 
+        imgui.columns(1)
         imgui.end()
