@@ -244,25 +244,6 @@ class Polygon(Model):
         if self.get_point_number() > 3:
             self.update_last_line()
 
-    def update_last_line(self, remove_last_line: bool = True) -> None:
-        """
-        Update the last line of the polygon.
-
-        Args:
-            remove_last_line: True to remove the last line from the line model, False to just add a new line to the model
-
-        Returns: None
-        """
-
-        # remove the last line if exist
-        point_list = self.get_point_list()
-        if remove_last_line:
-            self.__last_line_model.remove_last_added_line()
-
-        # add a new line
-        self.__last_line_model.add_line((point_list[-3], point_list[-2], point_list[-1]),
-                                        (point_list[0], point_list[1], point_list[2]))
-
     def draw(self) -> None:
         """
         Set how and when to draw the polygons.
@@ -392,3 +373,22 @@ class Polygon(Model):
         Returns: None
         """
         self.__name = new_name
+
+    def update_last_line(self, remove_last_line: bool = True) -> None:
+        """
+        Update the last line of the polygon.
+
+        Args:
+            remove_last_line: True to remove the last line from the line model, False to just add a new line to the model
+
+        Returns: None
+        """
+
+        # remove the last line if exist
+        point_list = self.get_point_list()
+        if remove_last_line:
+            self.__last_line_model.remove_last_added_line()
+
+        # add a new line
+        self.__last_line_model.add_line((point_list[-3], point_list[-2], point_list[-1]),
+                                        (point_list[0], point_list[1], point_list[2]))
