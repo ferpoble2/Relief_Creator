@@ -36,13 +36,13 @@ class PolygonFolder:
         """
         self.__polygon_id_list.remove(polygon_id)
 
-    def get_polygon_list(self) -> list:
+    def get_id(self) -> str:
         """
-        Get the polygon list.
+        Get the ID of the folder.
 
-        Returns: List with the polygon ID of the polygons on the folder.
+        Returns: ID of the folder.
         """
-        return self.__polygon_id_list
+        return self.__id
 
     def get_name(self) -> None:
         """
@@ -52,6 +52,14 @@ class PolygonFolder:
         """
         return self.__name
 
+    def get_polygon_list(self) -> list:
+        """
+        Get the polygon list.
+
+        Returns: List with the polygon ID of the polygons on the folder.
+        """
+        return self.__polygon_id_list
+
     def set_name(self, new_name: str) -> None:
         """
         Set the name of the polygon folder.
@@ -59,11 +67,3 @@ class PolygonFolder:
         Returns: None
         """
         self.__name = new_name
-
-    def get_id(self) -> str:
-        """
-        Get the ID of the folder.
-
-        Returns: ID of the folder.
-        """
-        return self.__id
