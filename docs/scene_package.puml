@@ -222,6 +222,7 @@ package src {
                     + add_point(x, y, z)
                     + get_id(): str
                     + get_name(): str
+                    + get_parameter(key): any
                     + get_point_list(): list
                     + get_point_number(): int
                     + is_planar()
@@ -230,6 +231,7 @@ package src {
                     + set_id(new_id)
                     + set_line_color(color)
                     + set_name(new_name)
+                    + set_string_parameter(key, value)
                     + update_last_line(remove_last_line)
                 }
                 class DashedLines {
