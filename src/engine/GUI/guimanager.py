@@ -55,18 +55,6 @@ class GUIManager:
             'warning': Icon('./engine/GUI/icons/warning.png')
         }
 
-    def add_polygon_to_polygon_folder(self, folder_id: str, polygon_id: str) -> None:
-        """
-        Add an already existent polygon to the specified folder.
-
-        Args:
-            folder_id: Folder to use
-            polygon_id: Polygon to add to the folder
-
-        Returns: None
-        """
-        self.__polygon_folder_manager.add_polygon_to_folder(folder_id, polygon_id)
-
     def add_frames(self, component_list: list) -> None:
         """
         Add frames to render in the application.
@@ -94,6 +82,18 @@ class GUIManager:
         for frame in self.__component_list:
             if isinstance(frame, Tools):
                 frame.add_new_polygon(polygon_id)
+
+    def add_polygon_to_polygon_folder(self, folder_id: str, polygon_id: str) -> None:
+        """
+        Add an already existent polygon to the specified folder.
+
+        Args:
+            folder_id: Folder to use
+            polygon_id: Polygon to add to the folder
+
+        Returns: None
+        """
+        self.__polygon_folder_manager.add_polygon_to_folder(folder_id, polygon_id)
 
     def add_zoom(self) -> None:
         """
@@ -317,19 +317,6 @@ class GUIManager:
             PolygonInformation(gui_manager)
         ]
 
-    def move_polygon_to_polygon_folder(self, old_folder_id: str, polygon_id: str, folder_id: str) -> None:
-        """
-        Move the polygon from one folder to another.
-
-        Args:
-            old_folder_id: ID of the folder where the polygon is
-            polygon_id: Polygon to move
-            folder_id: ID of the folder to move the polygon to
-
-        Returns: None
-        """
-        self.__polygon_folder_manager.move_polygon_to_folder(old_folder_id, polygon_id, folder_id)
-
     def get_gui_key_callback(self) -> callable:
         """
         Get the key callback used by imgui.
@@ -381,17 +368,6 @@ class GUIManager:
         """
         return self.__polygon_folder_manager.get_folder_id_list()
 
-    def get_polygons_id_from_polygon_folder(self, polygon_folder_id: str) -> list:
-        """
-        Get the list of polygons id that a folder contains.
-
-        Args:
-            polygon_folder_id: ID of the polygon folder.
-
-        Returns: List with the id of the polygons inside the folder.
-        """
-        return self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id)
-
     def get_polygon_folder_name(self, polygon_folder_id: str) -> str:
         """
         Return the name of a polygon folder.
@@ -421,6 +397,17 @@ class GUIManager:
         Returns: Name of the polygon
         """
         return self.__engine.get_polygon_name(polygon_id)
+
+    def get_polygons_id_from_polygon_folder(self, polygon_folder_id: str) -> list:
+        """
+        Get the list of polygons id that a folder contains.
+
+        Args:
+            polygon_folder_id: ID of the polygon folder.
+
+        Returns: List with the id of the polygons inside the folder.
+        """
+        return self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id)
 
     def get_quality(self) -> int:
         """
@@ -501,6 +488,14 @@ class GUIManager:
 
         self.__engine = engine
 
+    def is_mouse_inside_frame(self) -> bool:
+        """
+        Check if the mouse is hovering a frame.
+
+        Returns: Boolean indicating if the mouse is hovering a frame.
+        """
+        return self.__is_mouse_inside_frame
+
     def is_polygon_planar(self, polygon_id: str) -> bool:
         """
         Ask the engine if the polygon with the specified id is planar or not.
@@ -544,6 +539,19 @@ class GUIManager:
         Returns: None
         """
         self.__engine.load_shapefile_file_with_dialog()
+
+    def move_polygon_to_polygon_folder(self, old_folder_id: str, polygon_id: str, folder_id: str) -> None:
+        """
+        Move the polygon from one folder to another.
+
+        Args:
+            old_folder_id: ID of the folder where the polygon is
+            polygon_id: Polygon to move
+            folder_id: ID of the folder to move the polygon to
+
+        Returns: None
+        """
+        self.__polygon_folder_manager.move_polygon_to_folder(old_folder_id, polygon_id, folder_id)
 
     def optimize_gpu_memory(self) -> None:
         """
@@ -663,6 +671,18 @@ class GUIManager:
         """
         self.__engine.set_models_polygon_mode(polygon_mode)
 
+    def set_polygon_folder_name(self, polygon_folder_id: str, new_name: str) -> None:
+        """
+        Change the name of a polygon folder.
+
+        Args:
+            new_name: New name of the folder.
+            polygon_folder_id: ID of the polygon folder to change the name to.
+
+        Returns: None
+        """
+        self.__polygon_folder_manager.set_name_of_folder(polygon_folder_id, new_name)
+
     def set_polygon_name(self, polygon_id: str, new_name: str) -> None:
         """
         Change the name of a polygon.
@@ -683,18 +703,6 @@ class GUIManager:
         """
         imgui.pop_font()
         imgui.push_font(self.__font_regular)
-
-    def set_polygon_folder_name(self, polygon_folder_id: str, new_name: str) -> None:
-        """
-        Change the name of a polygon folder.
-
-        Args:
-            new_name: New name of the folder.
-            polygon_folder_id: ID of the polygon folder to change the name to.
-
-        Returns: None
-        """
-        self.__polygon_folder_manager.set_name_of_folder(polygon_folder_id, new_name)
 
     def undo_action(self) -> None:
         """
