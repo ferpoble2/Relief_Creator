@@ -211,6 +211,7 @@ package src {
                     - __last_line_model: DashedLines
                     - __lines_model: Lines
                     - __name: str
+                    - __parameters: dict
                     - __point_model: Points
 
 
