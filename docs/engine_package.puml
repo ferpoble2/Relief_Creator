@@ -121,12 +121,13 @@ class src.engine.data.decimation <<$file>>{
     + simple_decimation(x, y, z, n_rows, n_cols): array, array, array
 }
 class src.engine.controller.Controller {
-    - __render: Render
-    - __scene: Scene
     - __engine: Engine
     - __mouse_old_pos: tuple
-    - __is_left_ctrl_pressed: boolean
+    - __render: Render
+    - __scene: Scene
     - __is_left_alt_pressed: boolean
+    - __is_left_ctrl_pressed: boolean
+    - __is_left_mouse_being_pressed: boolean
 
     - __change_color_file_with_dialog()
     - __load_netcdf_file_with_dialog()

@@ -33,6 +33,8 @@ class Controller:
         self.__is_left_ctrl_pressed = False
         self.__is_left_alt_pressed = False
 
+        self.__is_left_mouse_being_pressed = False
+
     def __change_color_file_with_dialog(self) -> None:
         """
         Change the color file opening a dialog to select the file.
@@ -110,13 +112,10 @@ class Controller:
             active_tool = self.__engine.get_active_tool()
 
             if active_tool == 'move_map':
-                if glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS and \
-                        not self.__engine.is_mouse_hovering_frame():
-
-                    if self.is_inside_scene(xpos, ypos):
-                        log.debug(
-                            f"Cursor movement: {xpos - self.__mouse_old_pos[0]}, {self.__mouse_old_pos[1] - ypos}")
-                        self.__engine.move_scene(xpos - self.__mouse_old_pos[0], self.__mouse_old_pos[1] - ypos)
+                if self.__is_left_mouse_being_pressed:
+                    log.debug(
+                        f"Cursor movement: {xpos - self.__mouse_old_pos[0]}, {self.__mouse_old_pos[1] - ypos}")
+                    self.__engine.move_scene(xpos - self.__mouse_old_pos[0], self.__mouse_old_pos[1] - ypos)
 
             # update the move position at the end
             self.set_mouse_pos(xpos, ypos)
@@ -137,6 +136,7 @@ class Controller:
                     not self.__engine.is_mouse_hovering_frame():
 
                 active_tool = self.__engine.get_active_tool()
+                self.__is_left_mouse_being_pressed = True
 
                 if active_tool == 'create_polygon':
                     pos_x, pos_y = glfw.get_cursor_pos(window)
@@ -155,6 +155,9 @@ class Controller:
                         except LineIntersectionError as e:
                             log.error(e)
                             self.__engine.set_modal_text('Error', 'Line intersect another one already in the polygon.')
+
+            if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.RELEASE:
+                self.__is_left_mouse_being_pressed = False
 
         return mouse_button_callback
 
