@@ -401,8 +401,12 @@ class Tools(Frame):
                     imgui.pop_id()
 
                     if clicked:
-                        # Change the active polygon to the clicked one
-                        self._GUI_manager.set_active_polygon(polygon_id)
+
+                        # change or deselect the active polygon.
+                        if self._GUI_manager.get_active_polygon_id() == polygon_id:
+                            self._GUI_manager.set_active_polygon(None)
+                        else:
+                            self._GUI_manager.set_active_polygon(polygon_id)
 
                         # Activate the create_polygon tool when clicked the polygon
                         self._GUI_manager.set_active_tool('create_polygon')
