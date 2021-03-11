@@ -64,6 +64,7 @@ class src.engine.Engine {
     + get_gui_key_callback(): function
     + get_gui_setting_data(): dict
     + get_map_position(): list
+    + get_parameters_from_polygon(polygon_id): list
     + get_polygon_id_list(): list
     + get_polygon_name(polygon_id): str
     + get_quality(): int

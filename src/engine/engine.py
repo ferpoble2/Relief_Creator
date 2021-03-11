@@ -762,6 +762,17 @@ class Engine:
         """
         self.scene.update_viewport()
 
+    def get_parameters_from_polygon(self, polygon_id: str) -> list:
+        """
+        Ask the scene for the parameters of certain polygon.
+
+        Args:
+            polygon_id: ID of the polygon to ask for
+
+        Returns: List with the parameters of the polygon.
+        """
+        return self.scene.get_polygon_params(polygon_id)
+
     def update_threads(self) -> None:
         """
         Checks on the threads of the engine, deleting them if they finished and executing the
