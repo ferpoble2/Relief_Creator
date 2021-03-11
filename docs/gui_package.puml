@@ -35,8 +35,14 @@ package src {
             class Loading
             class TestWindow
             class TextModal
+            class PolygonInformation
         }
     }
+}
+
+class PolygonInformation {
+
+    + render()
 }
 
 class PolygonFolder {
@@ -248,6 +254,7 @@ MainMenuBar -u-|> Frame
 TestWindow -u-|> Frame
 TextModal -u-|> Frame
 Tools -u-|> Frame
+PolygonInformation -u-|> Frame
 
 PolygonFolderManager o-- PolygonFolder
 
