@@ -28,3 +28,5 @@ output/
 /samples/imgui/imgui.ini
 /src/logs/Points.log
 /src/logs/POLYGON.log
+/src/logs/LINES.log
+/src/logs/Polygon Information.log
