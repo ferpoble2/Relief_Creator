@@ -34,7 +34,8 @@ class PolygonFolder:
 
         Returns: None
         """
-        self.__polygon_id_list.remove(polygon_id)
+        if polygon_id in self.__polygon_id_list:
+            self.__polygon_id_list.remove(polygon_id)
 
     def get_id(self) -> str:
         """
