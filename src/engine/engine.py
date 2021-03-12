@@ -100,7 +100,6 @@ class Engine:
         """
         sf = shapefile.Reader(filename)
 
-        # TODO: Ask for shapefile examples to parser the data correctly and take the correct actions in case of error
         for shape in sf.shapes():
             if shape.shapeType == shapefile.POLYGON:
 
