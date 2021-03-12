@@ -45,30 +45,6 @@ class Polygon(Model):
 
         self.__is_planar = True
 
-    def set_string_parameter(self, key: str, value: str) -> None:
-        """
-        Set a new parameter to be stored in the polygon.
-
-        Args:
-            key: Key for the parameter
-            value: Value to store
-
-        Returns: None
-        """
-        self.__parameters[key] = value
-
-    def get_parameter(self, key: str) -> any:
-        """
-        Get the parameter from the polygon.
-
-        Args:
-            key: Key of the parameter.
-
-        Returns: Value of the parameter. None if parameter does not exist.
-        """
-        return self.__parameters.get(key)
-
-
     def __check_intersection(self, line_x_1: float, line_y_1: float, line_x_2: float, line_y_2: float) -> bool:
         """
         Check if the line intersect with the other lines already in the polygon.
@@ -303,6 +279,17 @@ class Polygon(Model):
         """
         return self.__name
 
+    def get_parameter(self, key: str) -> any:
+        """
+        Get the parameter from the polygon.
+
+        Args:
+            key: Key of the parameter.
+
+        Returns: Value of the parameter. None if parameter does not exist.
+        """
+        return self.__parameters.get(key)
+
     def get_point_list(self) -> list:
         """
         Get the list of points.
@@ -399,6 +386,18 @@ class Polygon(Model):
         Returns: None
         """
         self.__name = new_name
+
+    def set_string_parameter(self, key: str, value: str) -> None:
+        """
+        Set a new parameter to be stored in the polygon.
+
+        Args:
+            key: Key for the parameter
+            value: Value to store
+
+        Returns: None
+        """
+        self.__parameters[key] = value
 
     def update_last_line(self, remove_last_line: bool = True) -> None:
         """
