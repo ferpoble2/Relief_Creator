@@ -227,6 +227,7 @@ package src {
                     + get_parameter(key): any
                     + get_point_list(): list
                     + get_point_number(): int
+                    + get_parameter_list(): list
                     + is_planar()
                     + remove_last_added_point()
                     + set_dot_color(color)

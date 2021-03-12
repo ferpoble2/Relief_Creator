@@ -307,6 +307,14 @@ class Polygon(Model):
         # return int(len(self.__point_list) / 3)
         return int(len(self.get_point_list()) / 3)
 
+    def get_parameter_list(self) -> list:
+        """
+        Return all the parameters of the polygon as a list.
+
+        Returns: List with the parameters [(key, value), (key, value), ...]
+        """
+        return [(k, v) for k, v in self.__parameters.items()]
+
     def is_planar(self) -> bool:
         """
         Check if the polygon is planar or not
