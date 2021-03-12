@@ -23,10 +23,10 @@ class Debug(Frame):
         """
         super().__init__(gui_manager)
         self.___width = 300
-        self.__height = 300
+        self.__height = 500
 
         self.change_position(
-            [self._GUI_manager.get_window_width() - self.___width,
+            [self._GUI_manager.get_window_width() - self.___width - 200,
              self._GUI_manager.get_window_height() - self.__height])
 
     def render(self) -> None:
@@ -58,6 +58,9 @@ class Debug(Frame):
         imgui.separator()
         imgui.text(f"RAM used: {memory_usage_mb} MB")
         # imgui.text(f"CPU usage: {cpu_percent} %")  # This value change a lot in short time (dont give useful infromation)
+
+        imgui.separator()
+        imgui.text_wrapped(f"List of polygons: {self._GUI_manager.get_polygon_id_list()}")
 
         if self._GUI_manager.are_frame_fixed():
             self.change_position([self.get_position()[0], self._GUI_manager.get_window_height() - self.__height])
