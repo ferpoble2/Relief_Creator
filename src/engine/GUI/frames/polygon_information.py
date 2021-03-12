@@ -35,13 +35,11 @@ class PolygonInformation(Frame):
 
             # set the flags if the windows should be collapsable or not
             if self._GUI_manager.are_frame_fixed():
-                imgui.begin('Polygon Information',False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE)
+                imgui.begin('Polygon Information', False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE)
                 self.change_position([self._GUI_manager.get_window_width() - self.__width,
                                       self._GUI_manager.get_window_height() - self.__height])
                 imgui.set_window_position(self.get_position()[0], self.get_position()[1])
-                imgui.set_window_size(self.__width,
-                                      self.__height,
-                                      0)
+                imgui.set_window_size(self.__width, self.__height, 0)
 
             else:
                 imgui.begin('Polygon Information')
