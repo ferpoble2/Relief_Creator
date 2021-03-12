@@ -601,7 +601,7 @@ class Scene:
         self.__width_viewport = viewport_data['SCENE_WIDTH_X']
         self.__height_viewport = viewport_data['SCENE_HEIGHT_Y']
 
-    def get_polygon_params(self, polygon_id:str)->list:
+    def get_polygon_params(self, polygon_id: str) -> list:
         """
         Get the parameters of certain polygon.
 
