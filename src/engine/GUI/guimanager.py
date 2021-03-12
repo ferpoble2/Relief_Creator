@@ -186,12 +186,18 @@ class GUIManager:
         """
         Delete all the polygons that are inside a folder from the system and from the folder.
 
+        If the polygon is on two folders at the same time (should not happen), this also deletes
+        the polygon from the other folder.
+
         Args:
             polygon_folder_id: PolygonFolder ID of the folder to use.
 
         Returns: None
         """
-        self.__polygon_folder_manager.delete_all_polygons_inside_folder(polygon_folder_id)
+
+        polygons_inside = self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id).copy()
+        for polygon_id in polygons_inside:
+            self.delete_polygon_by_id(polygon_id)
 
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
