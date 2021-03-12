@@ -30,29 +30,36 @@ class PolygonInformation(Frame):
         Render the frame.
         Returns: None
         """
-        imgui.begin('Polygon Information')
+        # Do not draw the screen if there is no active polygon.
+        if self._GUI_manager.get_active_polygon_id() is not None:
 
-        imgui.columns(2, 'Data List')
-        imgui.separator()
-        imgui.text("Field Name")
-        imgui.next_column()
-        imgui.text("Value")
-        imgui.separator()
+            # set the flags if the windows should be collapsable or not
+            if self._GUI_manager.are_frame_fixed():
+                imgui.begin('Polygon Information',False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE)
+                self.change_position([self._GUI_manager.get_window_width() - self.__width,
+                                      self._GUI_manager.get_window_height() - self.__height])
+                imgui.set_window_position(self.get_position()[0], self.get_position()[1])
+                imgui.set_window_size(self.__width,
+                                      self.__height,
+                                      0)
 
-        imgui.next_column()
-        imgui.text("Sample_name")
-        imgui.next_column()
-        imgui.text("some_text")
-        imgui.separator()
+            else:
+                imgui.begin('Polygon Information')
 
-        imgui.columns(1)
+            imgui.columns(2, 'Data List')
+            imgui.separator()
+            imgui.text("Field Name")
+            imgui.next_column()
+            imgui.text("Value")
+            imgui.separator()
 
-        if self._GUI_manager.are_frame_fixed():
-            self.change_position([self._GUI_manager.get_window_width() - self.__width,
-                                  self._GUI_manager.get_window_height() - self.__height])
-            imgui.set_window_position(self.get_position()[0], self.get_position()[1])
-            imgui.set_window_size(self.__width,
-                                  self.__height,
-                                  0)
+            for parameter in self._GUI_manager.get_polygon_parameters(self._GUI_manager.get_active_polygon_id()):
+                imgui.next_column()
+                imgui.text(parameter[0])
+                imgui.next_column()
+                imgui.text(parameter[1])
+                imgui.separator()
 
-        imgui.end()
+            imgui.columns(1)
+
+            imgui.end()
