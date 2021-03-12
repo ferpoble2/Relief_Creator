@@ -592,7 +592,15 @@ class Tools(Frame):
         Returns: None
         """
 
-        imgui.begin('Tools')
+        if self._GUI_manager.are_frame_fixed():
+            imgui.begin('Tools', False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE)
+            imgui.set_window_position(self.get_position()[0], self.get_position()[1])
+            imgui.set_window_size(self._GUI_manager.get_left_frame_width(),
+                                  self._GUI_manager.get_window_height() - self._GUI_manager.get_main_menu_bar_height(),
+                                  0)
+        else:
+            imgui.begin('Tools')
+
         self.__show_active_tool()
 
         left_frame_width = self._GUI_manager.get_left_frame_width()
@@ -608,11 +616,5 @@ class Tools(Frame):
 
         imgui.separator()
         self.__show_other_tools(left_frame_width)
-
-        if self._GUI_manager.are_frame_fixed():
-            imgui.set_window_position(self.get_position()[0], self.get_position()[1])
-            imgui.set_window_size(self._GUI_manager.get_left_frame_width(),
-                                  self._GUI_manager.get_window_height() - self._GUI_manager.get_main_menu_bar_height(),
-                                  0)
 
         imgui.end()
