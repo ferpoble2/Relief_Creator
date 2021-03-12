@@ -614,4 +614,4 @@ class Scene:
             if polygon.get_id() == polygon_id:
                 return polygon.get_parameter_list()
 
-        raise NonExistentPolygonError('Polygon does not exist in the program')
+        raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
