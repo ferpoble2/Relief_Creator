@@ -63,6 +63,7 @@ package src {
                 + get_point_list_from_polygon(polygoon_id): list
                 + get_polygon_id_list(): list
                 + get_polygon_name(polygon_id): str
+                + get_polygon_params(polygon_id)
                 + get_render_settings(): dict
                 + get_zoom_level(): float
                 + initialize(engine)

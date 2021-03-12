@@ -600,3 +600,18 @@ class Scene:
         viewport_data = self.__engine.get_scene_setting_data()
         self.__width_viewport = viewport_data['SCENE_WIDTH_X']
         self.__height_viewport = viewport_data['SCENE_HEIGHT_Y']
+
+    def get_polygon_params(self, polygon_id:str)->list:
+        """
+        Get the parameters of certain polygon.
+
+        Args:
+            polygon_id: ID of the polygon.
+
+        Returns: List with the parameters of the polygon.
+        """
+        for polygon in self.__polygon_list:
+            if polygon.get_id() == polygon_id:
+                return polygon.get_parameter_list()
+
+        raise NonExistentPolygonError('Polygon does not exist in the program')
