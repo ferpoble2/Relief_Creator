@@ -88,6 +88,27 @@ class Polygon(Model):
 
             return False
 
+    def __check_repeated_point(self, x: float, y: float, z: float) -> bool:
+        """
+        Check if a point already exist on the polygon.
+
+        Args:
+            x: x-coordinate of the point
+            y: y-coordinate of the point
+            z: z-coordinate of the point
+
+        Returns: Boolean representing if point already exist in the polygon.
+        """
+        point_list = self.get_point_list()
+
+        for point_ind in range(int(len(point_list) / 3)):
+            if point_list[point_ind * 3] == x and \
+                    point_list[point_ind * 3 + 1] == y and \
+                    point_list[point_ind * 3 + 2] == z:
+                return True
+
+        return False
+
     def __get_intersection(self, line_x_1: float, line_y_1: float, line_x_2: float, line_y_2: float) -> list:
         """
         Get the intersection of a line with the lines already on the polygon.
@@ -175,27 +196,6 @@ class Polygon(Model):
                 self.__is_planar = False
             else:
                 self.__is_planar = True
-
-    def __check_repeated_point(self, x: float, y: float, z: float) -> bool:
-        """
-        Check if a point already exist on the polygon.
-
-        Args:
-            x: x-coordinate of the point
-            y: y-coordinate of the point
-            z: z-coordinate of the point
-
-        Returns: Boolean representing if point already exist in the polygon.
-        """
-        point_list = self.get_point_list()
-
-        for point_ind in range(int(len(point_list) / 3)):
-            if point_list[point_ind * 3] == x and \
-                    point_list[point_ind * 3 + 1] == y and \
-                    point_list[point_ind * 3 + 2] == z:
-                return True
-
-        return False
 
     def add_point(self, x: float, y: float, z: float = 0.5) -> None:
         """
