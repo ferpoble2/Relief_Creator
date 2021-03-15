@@ -36,6 +36,7 @@ package src {
         class FolderError
         class GUIError
         class PolygonFolderNotFoundError
+        class UnknownDataTypeError
     }
 
     package engine {
@@ -175,6 +176,7 @@ SceneError <|-- NonExistentPolygonError
 
 ExportError <|-- ShapefileExportError
 ShapefileExportError <|-- NotEnoughPointsError
+ShapefileExportError <|-- UnknownDataTypeError
 
 GUIError <|-- FolderError
 FolderError <|-- PolygonFolderNotFoundError
@@ -188,7 +190,8 @@ Controller .> RepeatedPointError
 Polygon .> LineIntersectionError
 Polygon .> RepeatedPointError
 
-ShapefileExporter .> NotEnoughPointsError
+ShapefileExporter -u.> NotEnoughPointsError
+ShapefileExporter -u.> UnknownDataTypeError
 Tools .> NotEnoughPointsError
 
 PolygonFolderManager .> PolygonFolderNotFoundError
