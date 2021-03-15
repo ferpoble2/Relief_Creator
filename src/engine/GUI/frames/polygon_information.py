@@ -56,7 +56,7 @@ class PolygonInformation(Frame):
                 imgui.next_column()
                 imgui.text(parameter[0])
                 imgui.next_column()
-                imgui.text(parameter[1])
+                imgui.text(str(parameter[1]))
                 imgui.separator()
 
             imgui.columns(1)
