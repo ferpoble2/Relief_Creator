@@ -615,3 +615,21 @@ class Scene:
                 return polygon.get_parameter_list()
 
         raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
+
+    def set_polygon_param(self, polygon_id: str, key: str, value: any) -> None:
+        """
+        Set a new parameter in the polygon.
+
+        Args:
+            polygon_id: ID of the polygon.
+            key: Key to add to the parameters.
+            value: Value of the parameter.
+
+        Returns: None
+        """
+        for polygon in self.__polygon_list:
+            if polygon.get_id() == polygon_id:
+                polygon.set_new_parameter(key, value)
+                return
+
+        raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
