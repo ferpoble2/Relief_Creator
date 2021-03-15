@@ -23,7 +23,7 @@ class PolygonInformation(Frame):
         """
         super().__init__(gui_manager)
         self.__height = 300
-        self.__width = 200
+        self.__width = 300
 
         # auxiliary variables
         self.__key_string_value = 'Name of parameter'
