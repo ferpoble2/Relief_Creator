@@ -100,16 +100,21 @@ class Engine:
         """
         sf = shapefile.Reader(filename)
 
-        for shape in sf.shapes():
-            if shape.shapeType == shapefile.POLYGON:
+        for shape_record in sf.shapeRecords():
+            if shape_record.shape.shapeType == shapefile.POLYGON:
                 errors = False
 
                 # get the  list of points of the polygon
-                list_of_points = shape.points
+                list_of_points = shape_record.shape.points
 
                 # create a new polygon and set it as active
                 new_polygon_id = self.scene.create_new_polygon()
                 self.set_active_polygon(new_polygon_id)
+
+                # set the parameters of the polygon
+                record_dict = shape_record.record.as_dict()
+                for k, v in record_dict.items():
+                    self.scene.set_polygon_param(new_polygon_id, k, v)
 
                 # add the points to the polygon
                 for point in list_of_points[:-1]:  # shapefile polygons are closed, so we do not need the last point
