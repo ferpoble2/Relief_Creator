@@ -846,3 +846,15 @@ class Engine:
         Returns: None
         """
         self.scene.set_polygon_param(polygon_id, key, value)
+
+    def delete_parameter_from_polygon(self, polygon_id: str, key: str) -> None:
+        """
+        Delete a parameter from a polygon.
+
+        Args:
+            polygon_id: ID of the polygon.
+            key: Parameter to be deleted.
+
+        Returns: None
+        """
+        self.scene.delete_polygon_param(polygon_id, key)
