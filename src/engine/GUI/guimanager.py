@@ -199,6 +199,18 @@ class GUIManager:
         for polygon_id in polygons_inside:
             self.delete_polygon_by_id(polygon_id)
 
+    def delete_polygon_from_all_folders(self, polygon_id: str) -> None:
+        """
+        Delete the polygon from all folders. Does not delete the polygon from the program, to do that call the
+        delete_polygon_by_id method.
+
+        Args:
+            polygon_id: ID of the polygon.
+
+        Returns: None
+        """
+        self.__polygon_folder_manager.delete_polygon_from_all_folders(polygon_id)
+
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
         Delete the polygon with the specified id from the scene
