@@ -55,7 +55,7 @@ class GUIManager:
             'warning': Icon('./engine/GUI/icons/warning.png')
         }
 
-    def __update_frames_with_new_polygon(self, polygon_id:str)->None:
+    def __update_frames_with_new_polygon(self, polygon_id: str) -> None:
         """
         Update the frames with the new polygon, calling the corresponding method by class.
 
@@ -769,3 +769,15 @@ class GUIManager:
         Returns: None
         """
         self.__engine.undo_action()
+
+    def delete_polygon_parameter(self, polygon_id: str, key: str) -> None:
+        """
+        Delete a parameter from a polygon.
+
+        Args:
+            polygon_id: ID of the polygon.
+            key: key to delete.
+
+        Returns: None
+        """
+        self.__engine.delete_parameter_from_polygon(polygon_id, key)
