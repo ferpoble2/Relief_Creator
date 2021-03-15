@@ -6,6 +6,7 @@ import shapefile
 from src.error.not_enought_points_error import NotEnoughPointsError
 from src.error.unknown_data_type_error import UnknownDataTypeError
 
+
 class ShapefileExporter:
     """
     Class in charge of exporting data to shapefile format.
@@ -92,15 +93,22 @@ class ShapefileExporter:
         w = shapefile.Writer(directory)
 
         # create the fields
-        w.field('name', 'C')
+        for k, v in list(parameters.items()):
+            if type(v) == str:
+                w.field(k, 'C')
+            elif type(v) == float:
+                w.field(k, 'N')
+            elif type(v) == bool:
+                w.field(k, 'L')
 
         # Save the polygons
         points = self.__delete_z_axis(list_of_points)
         if self.__is_clockwise(points):
             points.reverse()  # polygons must be defined CCW
 
+        params = [value for value in list(parameters.values())]
+        w.record(*params)
         w.poly([points])
 
         # Save the data in the previously created fields.
-        w.record(polygon_name)
         w.close()
