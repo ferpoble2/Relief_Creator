@@ -133,6 +133,7 @@ class GUIManager{
     + set_polygon_folder_name(polygon_folder_id, new_name)
     + set_polygon_name(polygon_id, new_name)
     + set_regular_font()
+    + set_polygon_parameter(polygon_id, key, value)
     + undo()
 }
 

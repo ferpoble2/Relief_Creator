@@ -740,6 +740,19 @@ class GUIManager:
         """
         self.__engine.set_polygon_name(polygon_id, new_name)
 
+    def set_polygon_parameter(self, polygon_id: str, key: str, value: any) -> None:
+        """
+        Set a new parameter to the polygon.
+
+        Args:
+            polygon_id: ID of the polygon.
+            value: Value of the new polygon.
+            key: Key to the new polygon.
+
+        Returns: None
+        """
+        self.__engine.set_new_parameter_to_polygon(polygon_id, key, value)
+
     def set_regular_font(self) -> None:
         """
         Set the regular font too use in the render.
