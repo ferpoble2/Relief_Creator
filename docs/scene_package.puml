@@ -224,6 +224,7 @@ package src {
                     - __str__()
                     - __update_planar_state()
                     + add_point(x, y, z)
+                    + delete_parameter(key)
                     + get_id(): str
                     + get_name(): str
                     + get_parameter(key): any

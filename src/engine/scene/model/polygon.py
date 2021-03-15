@@ -407,6 +407,17 @@ class Polygon(Model):
         """
         self.__parameters[key] = value
 
+    def delete_parameter(self, key: str) -> None:
+        """
+        Delete a parameter from the dictionary of parameters.
+
+        Args:
+            key: Key to be deleted.
+
+        Returns: None
+        """
+        self.__parameters.pop(key)
+
     def update_last_line(self, remove_last_line: bool = True) -> None:
         """
         Update the last line of the polygon.
