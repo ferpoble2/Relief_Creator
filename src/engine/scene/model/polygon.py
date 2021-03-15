@@ -246,6 +246,17 @@ class Polygon(Model):
         if self.get_point_number() > 3:
             self.update_last_line()
 
+    def delete_parameter(self, key: str) -> None:
+        """
+        Delete a parameter from the dictionary of parameters.
+
+        Args:
+            key: Key to be deleted.
+
+        Returns: None
+        """
+        self.__parameters.pop(key)
+
     def draw(self) -> None:
         """
         Set how and when to draw the polygons.
@@ -290,6 +301,14 @@ class Polygon(Model):
         """
         return self.__parameters.get(key)
 
+    def get_parameter_list(self) -> list:
+        """
+        Return all the parameters of the polygon as a list.
+
+        Returns: List with the parameters [(key, value), (key, value), ...]
+        """
+        return [(k, v) for k, v in self.__parameters.items()]
+
     def get_point_list(self) -> list:
         """
         Get the list of points.
@@ -306,14 +325,6 @@ class Polygon(Model):
         """
         # return int(len(self.__point_list) / 3)
         return int(len(self.get_point_list()) / 3)
-
-    def get_parameter_list(self) -> list:
-        """
-        Return all the parameters of the polygon as a list.
-
-        Returns: List with the parameters [(key, value), (key, value), ...]
-        """
-        return [(k, v) for k, v in self.__parameters.items()]
 
     def is_planar(self) -> bool:
         """
@@ -406,17 +417,6 @@ class Polygon(Model):
         Returns: None
         """
         self.__parameters[key] = value
-
-    def delete_parameter(self, key: str) -> None:
-        """
-        Delete a parameter from the dictionary of parameters.
-
-        Args:
-            key: Key to be deleted.
-
-        Returns: None
-        """
-        self.__parameters.pop(key)
 
     def update_last_line(self, remove_last_line: bool = True) -> None:
         """
