@@ -42,6 +42,9 @@ package src {
 
 class PolygonInformation {
 
+       - __key_string_value: str
+       - __value_string_value: str
+
     + render()
 }
 
