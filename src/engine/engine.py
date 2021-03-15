@@ -122,7 +122,8 @@ class Engine:
                         errors = True
                         self.scene.delete_polygon_by_id(new_polygon_id)
                         self.set_active_polygon(None)
-                        self.set_modal_text('Error', 'A polygon in the file is not planar, so it will not be loaded.')
+                        self.set_modal_text('Error',
+                                            'A polygon in the file has intersected lines, so it will not be loaded.')
                         break
 
                     except RepeatedPointError as e:
