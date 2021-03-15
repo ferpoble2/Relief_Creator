@@ -102,6 +102,7 @@ class Engine:
 
         for shape in sf.shapes():
             if shape.shapeType == shapefile.POLYGON:
+                errors = False
 
                 # get the  list of points of the polygon
                 list_of_points = shape.points
@@ -109,9 +110,6 @@ class Engine:
                 # create a new polygon and set it as active
                 new_polygon_id = self.scene.create_new_polygon()
                 self.set_active_polygon(new_polygon_id)
-
-                # tell the gui manager that a new polygon was created
-                self.gui_manager.add_polygon_to_gui(new_polygon_id)
 
                 # add the points to the polygon
                 for point in list_of_points[:-1]:  # shapefile polygons are closed, so we do not need the last point
@@ -121,15 +119,23 @@ class Engine:
 
                     except LineIntersectionError as e:
                         log.error(e)
+                        errors = True
                         self.scene.delete_polygon_by_id(new_polygon_id)
-                        self.set_modal_text('Error', 'Polygon loaded is not planar.')
+                        self.set_active_polygon(None)
+                        self.set_modal_text('Error', 'A polygon in the file is not planar, so it will not be loaded.')
                         break
 
                     except RepeatedPointError as e:
                         log.error(e)
+                        errors = True
                         self.scene.delete_polygon_by_id(new_polygon_id)
-                        self.set_modal_text('Error', 'Polygon has repeated points.')
+                        self.set_active_polygon(None)
+                        self.set_modal_text('Error', 'A polygon loaded has repeated points, so it will not be loaded.')
                         break
+
+                if not errors:
+                    # tell the gui manager that a new polygon was created
+                    self.gui_manager.add_polygon_to_gui(new_polygon_id)
 
         return
 
