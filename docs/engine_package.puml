@@ -97,6 +97,7 @@ class src.engine.Engine {
     + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
     + set_thread_task(parallel_task, then)
+    + set_new_parameter_to_polygon(polygon_id, key, value)
     + undo_action()
     + update_pending_tasks()
     + update_scene_models_colors()

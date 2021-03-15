@@ -114,7 +114,7 @@ class Engine:
                 # set the parameters of the polygon
                 record_dict = shape_record.record.as_dict()
                 for k, v in record_dict.items():
-                    self.scene.set_polygon_param(new_polygon_id, k, v)
+                    self.set_new_parameter_to_polygon(new_polygon_id, k, v)
 
                 # add the points to the polygon
                 for point in list_of_points[:-1]:  # shapefile polygons are closed, so we do not need the last point
@@ -833,3 +833,16 @@ class Engine:
         Returns: Boolean indicating if mouse is hovering a frame or not.
         """
         return self.gui_manager.is_mouse_inside_frame()
+
+    def set_new_parameter_to_polygon(self, polygon_id: str, key: str, value: any) -> None:
+        """
+        Set a new parameter to an existent polygon.
+
+        Args:
+            value: value of the parameter.
+            key: key of the new value.
+            polygon_id: ID of the polygon.
+
+        Returns: None
+        """
+        self.scene.set_polygon_param(polygon_id, key, value)
