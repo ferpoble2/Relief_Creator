@@ -13,7 +13,7 @@ from src.error.non_existent_polygon_error import NonExistentPolygonError
 
 log = get_logger(module="SCENE")
 
-
+# TODO: Change the variable from a list of polygons to a dictionary.
 class Scene:
 
     def __init__(self):
