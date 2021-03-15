@@ -180,7 +180,7 @@ class GUIManager:
 
         Returns: The folder created.
         """
-        return self.__polygon_folder_manager.create_new_folder()
+        return self.__polygon_folder_manager.create_new_folder(name)
 
     def delete_all_polygons_inside_folder(self, polygon_folder_id: str) -> None:
         """
