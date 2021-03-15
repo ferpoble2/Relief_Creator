@@ -92,7 +92,7 @@ class PolygonInformation(Frame):
                     imgui.selectable('Edit')
                     if imgui.is_item_clicked():
                         self.__should_open_edit_dialog = True
-                        self.__parameter_to_edit = parameter[0]
+                        self.__parameter_to_edit = (parameter[0], parameter[1])
 
                     # delete option
                     imgui.selectable('Delete')
@@ -232,8 +232,19 @@ class PolygonInformation(Frame):
             self.__should_open_edit_dialog = False
 
             # change default values for the fields
-            self.__key_string_value = self.__parameter_to_edit
+            self.__key_string_value = self.__parameter_to_edit[0]
             self.__value_string_value = ''
+            self.__current_bool_selected = 0
+
+            if type(self.__parameter_to_edit[1]) == str:
+                self.__current_variable_type = 0
+                self.__value_string_value = self.__parameter_to_edit[1]
+            elif type(self.__parameter_to_edit[1]) == float:
+                self.__current_variable_type = 1
+                self.__value_string_value = str(self.__parameter_to_edit[1])
+            elif type(self.__parameter_to_edit[1]) == bool:
+                self.__current_variable_type = 2
+                self.__current_bool_selected = 0 if self.__parameter_to_edit[1] else 1
 
         # popup to edit a parameter
         if imgui.begin_popup_modal('Edit parameter')[0]:
@@ -241,19 +252,55 @@ class PolygonInformation(Frame):
             # should modify the key
             imgui.text(f'Parameter: {self.__key_string_value}')
 
-            # new parameter
+            imgui.text('Variable type: ')
+            imgui.same_line()
+            clicked, self.__current_variable_type = imgui.listbox(
+                "  ", self.__current_variable_type, self.__parameters_type_list
+            )
+
+            # new value
             imgui.text('New value of the parameter:')
             imgui.same_line()
-            _, self.__value_string_value = imgui.input_text('',
-                                                            self.__value_string_value,
-                                                            50)
 
-            # change the parameter once done
-            if imgui.button('Done', -1):
+            data_errors = False
+
+            # Process the input to not accept invalid data
+            # --------------------------------------------
+            # text data
+            if self.__current_variable_type == 0:
+                _, self.__value_string_value = imgui.input_text(' ',
+                                                                self.__value_string_value,
+                                                                50)
+
+            # numeric data
+            elif self.__current_variable_type == 1:
+                _, self.__value_string_value = imgui.input_text(' ',
+                                                                self.__value_string_value,
+                                                                50)
+                if not self.__check_numeric(self.__value_string_value):
+                    imgui.text_colored('Value is not a number', 1, 0, 0)
+                    data_errors = True
+
+            # boolean data
+            elif self.__current_variable_type == 2:
+                clicked, self.__current_bool_selected = imgui.listbox(
+                    "   ", self.__current_bool_selected, ['True', 'False']
+                )
+
+            # Button Logic
+            if imgui.button('Done', -1) and not data_errors:
+                value = None
+                if self.__current_variable_type == 0:
+                    value = str(self.__value_string_value)
+                elif self.__current_variable_type == 1:
+                    value = float(self.__value_string_value)
+                elif self.__current_variable_type == 2:
+                    value = True if self.__current_bool_selected == 0 else False
+
                 # set the new parameter
                 self._GUI_manager.set_polygon_parameter(self._GUI_manager.get_active_polygon_id(),
                                                         self.__key_string_value,
-                                                        self.__value_string_value)
+                                                        value)
 
                 # reset the variables
                 imgui.close_current_popup()
