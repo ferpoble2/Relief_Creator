@@ -135,7 +135,7 @@ class Engine:
 
                 if not errors:
                     # tell the gui manager that a new polygon was created
-                    self.gui_manager.add_polygon_to_gui(new_polygon_id)
+                    self.gui_manager.add_imported_polygon(new_polygon_id)
 
         return
 
