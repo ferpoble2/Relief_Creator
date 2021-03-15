@@ -824,7 +824,8 @@ class Engine:
         # ask the exporter to export the list of points
         ShapefileExporter().export_polygon_to_shapefile(points,
                                                         file,
-                                                        self.scene.get_polygon_name(polygon_id))
+                                                        self.scene.get_polygon_name(polygon_id),
+                                                        dict(self.scene.get_polygon_params(polygon_id)))
 
     def is_mouse_hovering_frame(self) -> bool:
         """
