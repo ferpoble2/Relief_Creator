@@ -395,7 +395,7 @@ class Polygon(Model):
         """
         self.__name = new_name
 
-    def set_string_parameter(self, key: str, value: str) -> None:
+    def set_new_parameter(self, key: str, value: str) -> None:
         """
         Set a new parameter to be stored in the polygon.
 
