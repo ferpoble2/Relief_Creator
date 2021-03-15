@@ -4,6 +4,7 @@ File that contains the class shapefileExporter.
 import shapefile
 
 from src.error.not_enought_points_error import NotEnoughPointsError
+from src.error.unknown_data_type_error import UnknownDataTypeError
 
 class ShapefileExporter:
     """
@@ -60,17 +61,28 @@ class ShapefileExporter:
 
     def export_polygon_to_shapefile(self, list_of_points=None,
                                     directory: str = './polygon',
-                                    polygon_name='polygon') -> None:
+                                    polygon_name: str = 'polygon',
+                                    parameters: dict = None) -> None:
         """
         Export a list of points as a polygon in a shapefile file.
 
+        Will only export the parameters that are from the follow types:
+        - str
+        - float
+        - boolean
+
+        Any other parameter with another type will raise an exception.
+
         Args:
-            polygon_name: Name of the polygon to store
+            parameters: Dictionary with the parameters of the polygon.
+            polygon_name: Name of the polygon to store.
             list_of_points: List of points to store as a polygon in shapefile format.
-            directory: Directory and filename of the file to create
+            directory: Directory and filename of the file to create.
 
         Returns: None
         """
+        if parameters is None:
+            parameters = {}
         if list_of_points is None:
             list_of_points = []
 
@@ -85,7 +97,7 @@ class ShapefileExporter:
         # Save the polygons
         points = self.__delete_z_axis(list_of_points)
         if self.__is_clockwise(points):
-            points.reverse()    # polygons must be defined CCW
+            points.reverse()  # polygons must be defined CCW
 
         w.poly([points])
 
