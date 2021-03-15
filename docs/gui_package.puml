@@ -54,6 +54,8 @@ class PolygonInformation {
     - __add_parameter_popup()
     - __edit_parameter_popup()
     - __check_numeric(value): boolean
+    - __render_parameter_value_input(): bool
+    - __convert_value_to_exportable_variable_type(value_to_convert): any
 
     + render()
 }

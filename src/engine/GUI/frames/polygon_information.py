@@ -157,36 +157,15 @@ class PolygonInformation(Frame):
             imgui.text('Value of the parameter:')
             imgui.same_line()
 
-            data_errors = False  # variable to store if there was data errors.
-
-            # Process the input to not accept invalid data
-            # --------------------------------------------
-            # text data
-            if self.__current_variable_type == 0:
-                _, self.__value_string_value = imgui.input_text(' ',
-                                                                self.__value_string_value,
-                                                                50)
-
-            # numeric data
-            elif self.__current_variable_type == 1:
-                _, self.__value_string_value = imgui.input_text(' ',
-                                                                self.__value_string_value,
-                                                                50)
-                if not self.__check_numeric(self.__value_string_value):
-                    imgui.text_colored('Value is not a number', 1, 0, 0)
-                    data_errors = True
-
-            # boolean data
-            elif self.__current_variable_type == 2:
-                clicked, self.__current_bool_selected = imgui.listbox(
-                    "   ", self.__current_bool_selected, ['True', 'False']
-                )
+            data_errors = self.__render_parameter_value_input()
 
             # logic of the button
             # -------------------
             if imgui.button('Done', -1) and not data_errors:  # do nothing if there is data errors
                 polygon_id = self._GUI_manager.get_active_polygon_id()
                 dict_parameters = dict(self._GUI_manager.get_polygon_parameters(polygon_id))
+
+                # case parameter already exist
                 if self.__key_string_value in dict_parameters:
 
                     # close the popup
@@ -197,17 +176,14 @@ class PolygonInformation(Frame):
                                                      f'{self._GUI_manager.get_polygon_name(polygon_id)} '
                                                      f'already has a parameter named:'
                                                      f' {self.__key_string_value}')
-
+                # case new parameter
                 else:
-                    # convert the data to the associated type
-                    # note: the data should be in the correct format to export it
-                    value = None
-                    if self.__current_variable_type == 0:
-                        value = str(self.__value_string_value)
-                    elif self.__current_variable_type == 1:
-                        value = float(self.__value_string_value)
-                    elif self.__current_variable_type == 2:
-                        value = True if self.__current_bool_selected == 0 else False
+                    if self.__current_variable_type == 2:  # boolean
+                        value = self.__convert_value_to_exportable_variable_type(self.__current_bool_selected,
+                                                                                 self.__current_variable_type)
+                    else:
+                        value = self.__convert_value_to_exportable_variable_type(self.__value_string_value,
+                                                                                 self.__current_variable_type)
 
                     # store the value
                     self._GUI_manager.set_polygon_parameter(self._GUI_manager.get_active_polygon_id(),
@@ -249,9 +225,10 @@ class PolygonInformation(Frame):
         # popup to edit a parameter
         if imgui.begin_popup_modal('Edit parameter')[0]:
 
-            # should modify the key
+            # should not modify the key of the parameter
             imgui.text(f'Parameter: {self.__key_string_value}')
 
+            # variable type
             imgui.text('Variable type: ')
             imgui.same_line()
             clicked, self.__current_variable_type = imgui.listbox(
@@ -262,40 +239,17 @@ class PolygonInformation(Frame):
             imgui.text('New value of the parameter:')
             imgui.same_line()
 
-            data_errors = False
-
-            # Process the input to not accept invalid data
-            # --------------------------------------------
-            # text data
-            if self.__current_variable_type == 0:
-                _, self.__value_string_value = imgui.input_text(' ',
-                                                                self.__value_string_value,
-                                                                50)
-
-            # numeric data
-            elif self.__current_variable_type == 1:
-                _, self.__value_string_value = imgui.input_text(' ',
-                                                                self.__value_string_value,
-                                                                50)
-                if not self.__check_numeric(self.__value_string_value):
-                    imgui.text_colored('Value is not a number', 1, 0, 0)
-                    data_errors = True
-
-            # boolean data
-            elif self.__current_variable_type == 2:
-                clicked, self.__current_bool_selected = imgui.listbox(
-                    "   ", self.__current_bool_selected, ['True', 'False']
-                )
+            data_errors = self.__render_parameter_value_input()
 
             # Button Logic
             if imgui.button('Done', -1) and not data_errors:
-                value = None
-                if self.__current_variable_type == 0:
-                    value = str(self.__value_string_value)
-                elif self.__current_variable_type == 1:
-                    value = float(self.__value_string_value)
-                elif self.__current_variable_type == 2:
-                    value = True if self.__current_bool_selected == 0 else False
+
+                if self.__current_variable_type == 2:  # boolean
+                    value = self.__convert_value_to_exportable_variable_type(self.__current_bool_selected,
+                                                                             self.__current_variable_type)
+                else:
+                    value = self.__convert_value_to_exportable_variable_type(self.__value_string_value,
+                                                                             self.__current_variable_type)
 
                 # set the new parameter
                 self._GUI_manager.set_polygon_parameter(self._GUI_manager.get_active_polygon_id(),
@@ -306,6 +260,69 @@ class PolygonInformation(Frame):
                 imgui.close_current_popup()
 
             imgui.end_popup()
+
+    def __render_parameter_value_input(self) -> bool:
+        """
+        Render the correct input for the type of data selected depending on the current variable type
+        (__current_variable_type).
+
+        The value inserted by the user is stored in the __value_string_value variable. In case of boolean the value
+        is stored in the __current_bool_selected variable.
+
+        Returns: Boolean indicating if there were data errors in the input.
+        """
+
+        data_errors = False
+        # Process the input to not accept invalid data
+        # --------------------------------------------
+        # text data
+        if self.__current_variable_type == 0:
+            _, self.__value_string_value = imgui.input_text(' ',
+                                                            self.__value_string_value,
+                                                            50)
+
+        # numeric data
+        elif self.__current_variable_type == 1:
+            _, self.__value_string_value = imgui.input_text(' ',
+                                                            self.__value_string_value,
+                                                            50)
+            if not self.__check_numeric(self.__value_string_value):
+                imgui.text_colored('Value is not a number', 1, 0, 0)
+                data_errors = True
+
+        # boolean data
+        elif self.__current_variable_type == 2:
+            _, self.__current_bool_selected = imgui.listbox(
+                "   ", self.__current_bool_selected, ['True', 'False']
+            )
+
+        return data_errors
+
+    def __convert_value_to_exportable_variable_type(self, value_to_convert: any, variable_type: int) -> any:
+        """
+        Convert the value to an exportable variable type depending on the current variable type selected.
+
+        Can cause exceptions if used with a bad argument.
+
+        If the type is text, then convert to str.
+        If the type is number, then convert to float.
+        If the type is boolean, then convert to boolean.
+
+        Args:
+            variable_type: Type to convert the variable to. 0 for text, 1 for number and 2 for boolean.
+            value_to_convert: Value to convert.
+
+        Returns: Value converted. None if current_variable_type has an invalid value.
+        """
+        value = None
+        if variable_type == 0:
+            value = str(value_to_convert)
+        elif variable_type == 1:
+            value = float(value_to_convert)
+        elif variable_type == 2:
+            value = True if value_to_convert == 0 else False
+
+        return value
 
     def __check_numeric(self, value: str) -> bool:
         """
