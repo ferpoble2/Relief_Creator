@@ -572,15 +572,13 @@ class Tools(Frame):
     def add_new_polygon(self, polygon_id: str) -> None:
         """
         Add a polygon (externally generated, already existent in the program) to the GUI.
+        Polygon must be already in some folder.
 
         Args:
             polygon_id: Id of the polygon externally generated.
 
         Returns: None
         """
-        new_folder_id = self._GUI_manager.create_polygon_folder('Imported Polygon')
-        self._GUI_manager.add_polygon_to_polygon_folder(new_folder_id, polygon_id)
-
         self.__color_selected_dict[polygon_id] = {
             'polygon': self.__color_selected_default,
             'dot': self.__dot_color_selected_default
