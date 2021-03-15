@@ -633,3 +633,20 @@ class Scene:
                 return
 
         raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
+
+    def delete_polygon_param(self, polygon_id: str, key: str) -> None:
+        """
+        Delete a parameter from the polygon.
+
+        Args:
+            polygon_id: ID of the polygon.
+            key: Key to be deleted.
+
+        Returns: None
+        """
+        for polygon in self.__polygon_list:
+            if polygon.get_id() == polygon_id:
+                polygon.set_new_parameter(key, value)
+                return
+
+        raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')

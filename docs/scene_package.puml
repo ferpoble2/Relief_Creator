@@ -56,6 +56,7 @@ package src {
                 + change_dot_color_of_polygon(polygon_id, color)
                 + create_new_polygon(): str
                 + delete_polygon_by_id(polygon_id)
+                + delete_polygon_param(polygon_id, key)
                 + draw()
                 + get_active_model_projection_matrix(): array
                 + get_active_model_showed_limits(): dict
