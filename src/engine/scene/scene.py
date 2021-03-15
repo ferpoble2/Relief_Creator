@@ -646,7 +646,7 @@ class Scene:
         """
         for polygon in self.__polygon_list:
             if polygon.get_id() == polygon_id:
-                polygon.delete_parameter(key, key)
+                polygon.delete_parameter(key)
                 return
 
         raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
