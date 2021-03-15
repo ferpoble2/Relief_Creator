@@ -55,6 +55,19 @@ class GUIManager:
             'warning': Icon('./engine/GUI/icons/warning.png')
         }
 
+    def __update_frames_with_new_polygon(self, polygon_id:str)->None:
+        """
+        Update the frames with the new polygon, calling the corresponding method by class.
+
+        Args:
+            polygon_id: ID of the new polygon.
+
+        Returns: None
+        """
+        for frame in self.__component_list:
+            if isinstance(frame, Tools):
+                frame.add_new_polygon(polygon_id)
+
     def add_frames(self, component_list: list) -> None:
         """
         Add frames to render in the application.
@@ -69,7 +82,7 @@ class GUIManager:
         for frame in component_list:
             self.__component_list.append(frame)
 
-    def add_polygon_to_gui(self, polygon_id) -> None:
+    def add_polygon_to_gui(self, polygon_id: str) -> None:
         """
         Tells the frames that make use of the polygon information that a new polygon was created.
 
@@ -78,10 +91,11 @@ class GUIManager:
 
         Returns: None
         """
+        folder_id = self.__polygon_folder_manager.create_new_folder('New Folder')
+        self.__polygon_folder_manager.add_polygon_to_folder(folder_id, polygon_id)
 
-        for frame in self.__component_list:
-            if isinstance(frame, Tools):
-                frame.add_new_polygon(polygon_id)
+        # update gui
+        self.__update_frames_with_new_polygon(polygon_id)
 
     def add_polygon_to_polygon_folder(self, folder_id: str, polygon_id: str) -> None:
         """
@@ -94,6 +108,23 @@ class GUIManager:
         Returns: None
         """
         self.__polygon_folder_manager.add_polygon_to_folder(folder_id, polygon_id)
+
+    def add_imported_polygon(self, polygon_id: str) -> None:
+        """
+        Add the polygon to the folder that stores the imported polygons and update all the frames with the new
+        polygon.
+
+        If the folder do not exist, then it is created.
+
+        Args:
+            polygon_id: ID of the polygon to add.
+
+        Returns: None
+        """
+        self.__polygon_folder_manager.add_polygon_to_imported_polygon_folder(polygon_id)
+
+        # update gui
+        self.__update_frames_with_new_polygon(polygon_id)
 
     def add_zoom(self) -> None:
         """
@@ -198,18 +229,6 @@ class GUIManager:
         polygons_inside = self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id).copy()
         for polygon_id in polygons_inside:
             self.delete_polygon_by_id(polygon_id)
-
-    def delete_polygon_from_all_folders(self, polygon_id: str) -> None:
-        """
-        Delete the polygon from all folders. Does not delete the polygon from the program, to do that call the
-        delete_polygon_by_id method.
-
-        Args:
-            polygon_id: ID of the polygon.
-
-        Returns: None
-        """
-        self.__polygon_folder_manager.delete_polygon_from_all_folders(polygon_id)
 
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """

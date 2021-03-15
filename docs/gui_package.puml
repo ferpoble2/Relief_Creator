@@ -72,10 +72,12 @@ class GUIManager{
     - __scene: Scene
 
     - __load_icons()
+    - __update_frames_with_new_polygon(polygon_id)
     + add_frames(component_list)
     + add_polygon_to_gui(polygon_id)
     + add_polygon_to_polygon_folder(folder_id, polygon_id)
     + add_zoom()
+    + add_imported_polygon(polygon_id)
     + are_frame_fixed()
     + change_color_file_with_dialog()
     + change_color_of_polygon(polygon_id, color)
@@ -85,7 +87,6 @@ class GUIManager{
     + create_polygon_folder(name): PolygonFolder
     + delete_all_polygons_inside_folder(polygon_folder_id)
     + delete_polygon_by_id(polygon_id)
-    + delete_polygon_from_all_folders(polygon_id)
     + draw_frames()
     + export_polygon_with_id(polygon_id)
     + fix_frames_position(value)
