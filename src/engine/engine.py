@@ -13,6 +13,7 @@ from src.engine.render.render import Render
 from src.engine.scene.scene import Scene
 from src.engine.settings import Settings
 from src.utils import get_logger
+from src.utils import is_numeric
 from src.error.repeated_point_error import RepeatedPointError
 from src.error.line_intersection_error import LineIntersectionError
 from src.output.shapefile_exporter import ShapefileExporter
@@ -89,6 +90,7 @@ class Engine:
         """
         self.program.load_shapefile_file_with_dialog()
 
+    # TODO: change this logic to a class called importer
     def load_polygon_from_shapefile(self, filename: str) -> None:
         """
         Load the data from a shapefile file and tell the scene to create a polygon with it.
@@ -114,7 +116,14 @@ class Engine:
                 # set the parameters of the polygon
                 record_dict = shape_record.record.as_dict()
                 for k, v in record_dict.items():
-                    self.set_new_parameter_to_polygon(new_polygon_id, k, v)
+
+                    # convert the parameter to the types managed for the exporter
+                    if type(v) == bool:
+                        self.set_new_parameter_to_polygon(new_polygon_id, k, v)
+                    elif is_numeric(v):
+                        self.set_new_parameter_to_polygon(new_polygon_id, k, float(v))
+                    else:
+                        self.set_new_parameter_to_polygon(new_polygon_id, k, str(v))
 
                 # add the points to the polygon
                 for point in list_of_points[:-1]:  # shapefile polygons are closed, so we do not need the last point
