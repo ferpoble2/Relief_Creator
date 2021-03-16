@@ -89,11 +89,17 @@ class Map2DModel(Model):
 
         # Get the triangles to delete
         # ---------------------------
+        import time
+        initial = time.time()
+
         for index in range(len(index_array)):
             triangle = index_array[index]
             if self.__is_triangle_inside_zone(triangle, left_coordinate, right_coordinate, top_coordinate,
                                               bottom_coordinate):
                 to_delete.append(index)
+
+        print(f'Triangles added with time: {time.time() - initial}')
+
         log.debug(f"Triangles to delete added: {len(to_delete)}")
 
         # Add triangles to delete to the list of the model
@@ -511,20 +517,30 @@ class Map2DModel(Model):
             self.__triangles_to_delete = list(set(self.__triangles_to_delete))
 
             log.debug("Generating list of indices")
-            indices_to_delete = []
-            for index_to_delete in self.__triangles_to_delete:
-                indices_to_delete.append(index_to_delete * 3)
-                indices_to_delete.append(index_to_delete * 3 + 1)
-                indices_to_delete.append(index_to_delete * 3 + 2)
+
+            triangles_array = np.array(self.__triangles_to_delete)
+            vertex_1 = triangles_array * 3
+            vertex_2 = triangles_array * 3 + 1
+            vertex_3 = triangles_array * 3 + 2
+
+            indices_to_delete = np.concatenate((vertex_1, vertex_2, vertex_3))
+
+            # deprecated code
+            # ---------------
+            # indices_to_delete = []
+            # for index_to_delete in self.__triangles_to_delete:
+            #     indices_to_delete.append(index_to_delete * 3)
+            #     indices_to_delete.append(index_to_delete * 3 + 1)
+            #     indices_to_delete.append(index_to_delete * 3 + 2)
 
             log.debug("Generating mask for the indices")
             mask = np.ones(len(self.__indices), dtype=bool)
             mask[indices_to_delete] = False
 
             log.debug("Applying mask to the indices")
-            arr_indices = np.array(self.__indices)
+            arr_indices = np.array(self.__indices)  # time consuming (must optimize)
             new_indices = arr_indices[mask]
-            self.__indices = list(new_indices)
+            self.__indices = new_indices.tolist()  # time consuming (must optimize)
 
             self.__triangles_to_delete = []
 
