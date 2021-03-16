@@ -68,3 +68,20 @@ def interpolate(value: float, value_min: float, value_max: float, target_min: fl
 
     """
     return (float(value) - value_min) * (float(target_max) - target_min) / (float(value_max) - value_min) + target_min
+
+
+def is_numeric(value: any) -> bool:
+    """
+    Check if a value can be converted to float.
+
+    Args:
+        value: value to check
+
+    Returns: boolean indicating if can be converted
+    """
+
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
