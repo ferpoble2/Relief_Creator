@@ -519,8 +519,8 @@ class Map2DModel(Model):
             log.debug(f"Number of vertices on screen axis Y: {elements_on_screen_y}")
 
             scene_data = self.scene.get_scene_setting_data()
-            step_x = int(elements_on_screen_x / scene_data['SCENE_WIDTH_X']) + 2
-            step_y = int(elements_on_screen_y / scene_data['SCENE_HEIGHT_Y']) + 2
+            step_x = int(elements_on_screen_x / scene_data['SCENE_WIDTH_X']) # + 2
+            step_y = int(elements_on_screen_y / scene_data['SCENE_HEIGHT_Y']) # + 2
 
             log.debug(f"Step used to generate index list on x axis {step_x}")
             log.debug(f"Step used to generate index list on y axis {step_y}")
