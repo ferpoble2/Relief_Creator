@@ -19,6 +19,10 @@ class Render:
         self.__GUI = None
         self.__engine = None
 
+        self.__previous_time = glfw.get_time()
+        self.__frame_count = 0
+        self.__current_time = None
+
     def init(self, window_name: str = "Relieve Creator", engine: 'Engine' = None) -> 'GLFWWindow':
         """Initialize OpenGL and glfw for the application.
 
@@ -100,6 +104,13 @@ class Render:
             func()
 
         self.__GUI.draw_frames()
+
+        self.__current_time = glfw.get_time()
+        self.__frame_count += 1
+        if self.__current_time - self.__previous_time >= 1:
+            glfw.set_window_title(self.__window, f'Relief Creator - {self.__frame_count}')
+            self.__frame_count = 0
+            self.__previous_time = self.__current_time
 
         # Once the render is done, buffers are swapped, showing the complete scene.
         self.__GUI.render()
