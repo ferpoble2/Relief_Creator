@@ -158,16 +158,65 @@ class Map2DModel(Model):
         log.debug(f"len x {len(self.__x)}")
         log.debug(f"len y {len(self.__y)}")
 
-        for row in range(len(self.__y))[index_minimum_y:index_maximum_y + 1:step_y]:
-            for col in range(len(self.__x))[index_minimum_x:index_maximum_x + 1:step_x]:
-                if col + step_x < len(self.__x) and row + step_y < len(self.__y):
-                    indices.append(self.__get_vertex_index(col, row))
-                    indices.append(self.__get_vertex_index(col + step_x, row))
-                    indices.append(self.__get_vertex_index(col, row + step_y))
+        # calculate the indices to add to the program using numpy
+        # -------------------------------------------------------
+        rows = range(len(self.__y))[index_minimum_y:index_maximum_y + 1:step_y]
+        cols = range(len(self.__x))[index_minimum_x:index_maximum_x + 1:step_x]
+        len_rows = len(rows)
+        len_cols = len(cols)
 
-                    indices.append(self.__get_vertex_index(col + step_x, row))
-                    indices.append(self.__get_vertex_index(col + step_x, row + step_y))
-                    indices.append(self.__get_vertex_index(col, row + step_y))
+        rows = np.tile(np.array(rows), (len_cols, 1)).transpose()
+        cols = np.tile(np.array(cols), (len_rows, 1))
+
+        other_cols = cols[:-1, :-1]
+        other_rows = rows[:-1, :-1]
+
+        # first part of the triangles
+        # ---------------------------
+
+        index_1 = self.__get_vertex_index(other_cols, other_rows)
+        index_2 = self.__get_vertex_index(other_cols + step_x, other_rows)
+        index_3 = self.__get_vertex_index(other_cols, other_rows + step_y)
+
+        index_1 = index_1.reshape(-1)
+        index_2 = index_2.reshape(-1)
+        index_3 = index_3.reshape(-1)
+
+        # second part of the triangles
+        # ---------------------------
+        index_4 = self.__get_vertex_index(other_cols + step_x, other_rows)
+        index_5 = self.__get_vertex_index(other_cols + step_x, other_rows + step_y)
+        index_6 = self.__get_vertex_index(other_cols, other_rows + step_y)
+
+        index_4 = index_4.reshape(-1)
+        index_5 = index_5.reshape(-1)
+        index_6 = index_6.reshape(-1)
+
+        # add the indices
+        # ---------------
+        for ind in range(len(index_1)):
+            indices.append(index_1[ind])
+            indices.append(index_2[ind])
+            indices.append(index_3[ind])
+            indices.append(index_4[ind])
+            indices.append(index_5[ind])
+            indices.append(index_6[ind])
+
+        # time_before = time.time()
+        #
+        # for row in range(len(self.__y))[index_minimum_y:index_maximum_y + 1:step_y]:
+        #     for col in range(len(self.__x))[index_minimum_x:index_maximum_x + 1:step_x]:
+        #         if col + step_x < len(self.__x) and row + step_y < len(self.__y):
+        #             indices.append(self.__get_vertex_index(col, row))
+        #             indices.append(self.__get_vertex_index(col + step_x, row))
+        #             indices.append(self.__get_vertex_index(col, row + step_y))
+        #
+        #             indices.append(self.__get_vertex_index(col + step_x, row))
+        #             indices.append(self.__get_vertex_index(col + step_x, row + step_y))
+        #             indices.append(self.__get_vertex_index(col, row + step_y))
+        #             pass
+        #
+        # print(f'Duration of indices: {time.time() - time_before}')
 
         return indices
 
@@ -519,8 +568,8 @@ class Map2DModel(Model):
             log.debug(f"Number of vertices on screen axis Y: {elements_on_screen_y}")
 
             scene_data = self.scene.get_scene_setting_data()
-            step_x = int(elements_on_screen_x / scene_data['SCENE_WIDTH_X']) # + 2
-            step_y = int(elements_on_screen_y / scene_data['SCENE_HEIGHT_Y']) # + 2
+            step_x = int(elements_on_screen_x / scene_data['SCENE_WIDTH_X'])  # + 2
+            step_y = int(elements_on_screen_y / scene_data['SCENE_HEIGHT_Y'])  # + 2
 
             log.debug(f"Step used to generate index list on x axis {step_x}")
             log.debug(f"Step used to generate index list on y axis {step_y}")
