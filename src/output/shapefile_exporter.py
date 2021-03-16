@@ -72,7 +72,7 @@ class ShapefileExporter:
         - float
         - boolean
 
-        Any other parameter with another type will raise an exception.
+        Any other parameter with another type will be converted to string
 
         Args:
             parameters: Dictionary with the parameters of the polygon.
@@ -100,13 +100,16 @@ class ShapefileExporter:
                 w.field(k, 'N')
             elif type(v) == bool:
                 w.field(k, 'L')
+            else:   # in case of unknown data type
+                w.field(k, 'C')  # convert the parameter to string
+                parameters[k] = str(v)
 
         # Save the polygons
         points = self.__delete_z_axis(list_of_points)
         if self.__is_clockwise(points):
             points.reverse()  # polygons must be defined CCW
 
-        params = [value for value in list(parameters.values())]
+        params = list(parameters.values())
         w.record(*params)
         w.poly([points])
 
