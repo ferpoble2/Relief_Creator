@@ -442,6 +442,7 @@ class Engine:
         glfw.set_window_size_callback(self.window, self.controller.get_resize_callback())
         glfw.set_mouse_button_callback(self.window, self.controller.get_mouse_button_callback())
         glfw.set_cursor_pos_callback(self.window, self.controller.get_cursor_position_callback())
+        glfw.set_scroll_callback(self.window, self.controller.get_mouse_scroll_callback())
 
         # SCENE CODE
         # ----------
