@@ -6,6 +6,7 @@ import imgui
 
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
+from src.engine.GUI.frames.relief_tools import ReliefTools
 
 from src.error.not_enought_points_error import NotEnoughPointsError
 
@@ -426,6 +427,9 @@ class Tools(Frame):
             'create_polygon': 'Create Polygon'
         }
 
+        # object in charge of render the relief tools
+        self.__relief_tools = ReliefTools(gui_manager)
+
         self.__color_pick_window_size_x = 300
         self.__color_pick_window_size_y = -1
         self.__color_pick_should_open = False
@@ -611,6 +615,9 @@ class Tools(Frame):
 
         imgui.separator()
         self.__show_polygon_tools(left_frame_width)
+
+        imgui.separator()
+        self.__relief_tools.render()
 
         imgui.separator()
         self.__show_other_tools(left_frame_width)

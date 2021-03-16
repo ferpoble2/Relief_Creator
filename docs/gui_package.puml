@@ -36,6 +36,7 @@ package src {
             class TestWindow
             class TextModal
             class PolygonInformation
+            class ReliefTools
         }
     }
 }
@@ -57,6 +58,10 @@ class PolygonInformation {
     - __render_parameter_value_input(): bool
     - __convert_value_to_exportable_variable_type(value_to_convert): any
 
+    + render()
+}
+
+class ReliefTools {
     + render()
 }
 
@@ -196,6 +201,7 @@ class Tools {
     - __slide_bar_quality: int
     - __tool_before_pop_up: str
     - __tools_names_dict: dict
+    - __relief_tools: ReliefTools
 
     + add_new_polygon(polygon_id)
     + render()
@@ -282,6 +288,8 @@ GUIManager o-- PolygonFolderManager
 GUIManager o-- Icon
 GUIManager o--o Frame
 GUIManager o--o Engine
+
+Tools *-> ReliefTools
 
 PolygonFolderManager .> PolygonFolderNotFoundError
 Tools .> NotEnoughPointsError
