@@ -143,6 +143,7 @@ class src.engine.controller.Controller {
     + get_mouse_button_callback(): function
     + get_on_key_callback(): function
     + get_resize_callback(): function
+    + get_mouse_scroll_callback(): function
     + init(render)
     + is_inside_scene(mouse_x_pos, mouse_y_pos): boolean
     + set_mouse_pos(new_x, new_y)

@@ -161,6 +161,23 @@ class Controller:
 
         return mouse_button_callback
 
+    def get_mouse_scroll_callback(self) -> Callable:
+        """
+        Get the callback for the mouse wheel.
+
+        Returns: Function to call for the mouse wheel.
+        """
+
+        def mouse_wheel_callback(window, x_offset, y_offset):
+
+            if y_offset > 0:
+                self.__engine.add_zoom()
+
+            if y_offset < 0:
+                self.__engine.less_zoom()
+
+        return mouse_wheel_callback
+
     def get_on_key_callback(self) -> Callable:
         """
         Get the callback function to use when a key is pressed.
