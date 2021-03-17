@@ -43,55 +43,33 @@ package src {
     package engine {
         note "Package defined\n in another file" as n
 
-        class Engine {
-            ...
-            (...)
-        }
+        class Engine
 
         package controller {
             note "Package defined\n in another file" as n8
-            class Controller {
-                ...
-                (...)
-            }
+            class Controller
         }
 
         package GUI {
 
-            class PolygonFolderManager {
-                ...
-                (...)
-            }
+            class GUIManager
+
+            class PolygonFolderManager
 
             package frames {
-                class Tools {
-                    ...
-                    (...)
-                }
+                class Tools
             }
         }
 
         package scene {
             note "Package defined\n in another file" as n6
-
-            class Scene {
-                ...
-                (...)
-            }
+            class Scene
 
             package model {
                 note "Package defined\n in another file" as n7
 
-                class Map2DModel {
-                    ...
-                    (...)
-                }
-
-                class Polygon {
-                    ...
-                    (...)
-                }
-
+                class Map2DModel
+                class Polygon
             }
         }
 
@@ -199,6 +177,7 @@ Polygon .> RepeatedPointError
 ShapefileExporter -u.> NotEnoughPointsError
 ShapefileExporter -u.> UnknownDataTypeError
 Tools .> NotEnoughPointsError
+GUIManager .> WrongInterpolationTypeError
 
 PolygonFolderManager .> PolygonFolderNotFoundError
 
