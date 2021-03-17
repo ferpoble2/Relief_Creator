@@ -33,7 +33,7 @@ package src <<External Dependencies>> {
 
     package error {
         class NotEnoughPointsError
-
+        class WrongInterpolationTypeError
         class PolygonFolderNotFoundError
     }
 
@@ -71,6 +71,7 @@ GUIManager o--o Engine
 Tools *-> ReliefTools
 
 PolygonFolderManager .> PolygonFolderNotFoundError
+GUIManager .> WrongInterpolationTypeError
 Tools .> NotEnoughPointsError
 
 @enduml
