@@ -170,11 +170,15 @@ class Controller:
 
         def mouse_wheel_callback(window, x_offset, y_offset):
 
-            if y_offset > 0:
-                self.__engine.add_zoom()
+            # do something only if not hovering frames
+            if not self.__engine.is_mouse_hovering_frame():
+                if y_offset > 0:
+                    self.__engine.add_zoom()
 
-            if y_offset < 0:
-                self.__engine.less_zoom()
+                if y_offset < 0:
+                    self.__engine.less_zoom()
+
+            self.__engine.get_gui_scroll_callback()(window, x_offset, y_offset)
 
         return mouse_wheel_callback
 
