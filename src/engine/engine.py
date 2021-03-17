@@ -513,6 +513,14 @@ class Engine:
 
         self.scene.optimize_gpu_memory_async(then_routine)
 
+    def get_gui_scroll_callback(self):
+        """
+        Ask the gui manager for the callback used in the scrolling.
+
+        Returns: Function used in the callback.
+        """
+        return self.gui_manager.get_gui_mouse_scroll_callback()
+
     def refresh_with_model_2d(self, path_color_file: str, path_model: str, model_id: str = 'main') -> None:
         """
         Refresh the scene creating a 2D model with the parameters given.
