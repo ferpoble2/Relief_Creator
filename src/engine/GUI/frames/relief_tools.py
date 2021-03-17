@@ -22,6 +22,12 @@ class ReliefTools:
         """
         self.__gui_manager = gui_manager
 
+        self.__combo_options = ["Linear", "Cubic", "Another One..."]
+        self.__current_combo_option = 0
+
+        self.__max_height_value = 0
+        self.__min_height_value = 0
+
     def render(self) -> None:
         """
         Render the relief tools to modify the relief of the model.
@@ -30,9 +36,12 @@ class ReliefTools:
 
         imgui.text('Relief Tools')
 
-        imgui.selectable('Linear')
+        clicked, self.__current_combo_option = imgui.combo(
+            "Type of interpolation", self.__current_combo_option, self.__combo_options
+        )
 
-        imgui.input_text('Max Height', '', 30)
-        imgui.input_text('Min Height', '', 30)
+        imgui.input_float('Min Height', self.__min_height_value)
+        imgui.input_float('Max Height', self.__max_height_value)
 
-        pass
+        if imgui.button('Change Height', -1):
+            log.debug('Pressed button change height')
