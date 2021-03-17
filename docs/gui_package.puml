@@ -10,15 +10,18 @@ package GUI{
     class PolygonFolderManager
 
     package frames {
+
+        package tools{
+            class Tools
+            class ReliefTools
+        }
         class Frame
-        class Tools
         class MainMenuBar
         class Debug
         class Loading
         class TestWindow
         class TextModal
         class PolygonInformation
-        class ReliefTools
     }
 }
 
