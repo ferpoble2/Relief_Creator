@@ -1,0 +1,13 @@
+@startuml
+class Render {
+    - __window : GLFWWindow
+    - __gui : GUIManager
+    - __engine : Engine
+    - __previous_time : float
+    - __frame_count : int
+    - __current_time : float
+
+    + init(window_name)
+    + on_loop(on_frame_task)
+}
+@enduml

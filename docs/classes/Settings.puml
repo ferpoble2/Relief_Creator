@@ -1,0 +1,32 @@
+@startuml
+class Settings  {
+    {static} + CLEAR_COLOR: list
+    {static} + fix_frames(fix_frames): boolean
+    {static} + FIXEX_FRAMES: boolean
+    {static} + FLOAT_BYTES: int
+    {static} + FONT_SIZE: int
+    {static} + HEIGHT: int
+    {static} + LEFT_FRAME_WIDTH: int
+    {static} + TOP_FRAME_HEIGHT: int
+    {static} + BOTTOM_FRAME_HEIGHT: int
+    {static} + MAIN_MENU_BAR_HEIGHT: int
+    {static} + QUALITY: int
+    {static} + LINE_WIDTH: int
+    {static} + POLYGON_LINE_WIDTH: int
+    {static} + DOT_SIZE: int
+    {static} + POLYGON_DOT_SIZE: int
+    {static} + ACTIVE_POLYGON_LINE_WIDTH: int
+    {static} + SCENE_BEGIN_X: int
+    {static} + SCENE_BEGIN_Y: int
+    {static} + SCENE_WIDTH_X: int
+    {static} + SCENE_HEIGHT_Y: int
+    {static} + VIEW_MODE: str
+    {static} + TOP_FRAME_HEIGHT: int
+    {static} + WIDTH: int
+    {static} + MIN_WIDTH: int
+    {static} + MIN_HEIGHT: int
+    {static} + MAX_WIDTH: int
+    {static} + MAX_HEIGHT: int
+    {static} + update_scene_values()
+}
+@enduml
