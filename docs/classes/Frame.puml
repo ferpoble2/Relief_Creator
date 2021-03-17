@@ -1,0 +1,12 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Frame {
+    ~ _position: list
+    ~ _GUI_manager: GUIManager
+
+    + change_position(new_position)
+    + get_position(): list
+    + render()
+}
+@enduml

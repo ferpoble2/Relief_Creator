@@ -3,282 +3,52 @@
 
 title Class diagram for the GUI package (Updated March 4 of 2021)
 
-package src {
+package GUI{
+    class GUIManager
+    class Icon
+    class PolygonFolder
+    class PolygonFolderManager
+
+    package frames {
+        class Frame
+        class Tools
+        class MainMenuBar
+        class Debug
+        class Loading
+        class TestWindow
+        class TextModal
+        class PolygonInformation
+        class ReliefTools
+    }
+}
+
+package src <<External Dependencies>> {
 
     package engine {
         class Engine
     }
 
     package error {
-        class NotEnoughPointsError {
-            ...
-            (...)
-        }
+        class NotEnoughPointsError
 
-        class PolygonFolderNotFoundError {
-            ...
-            (...)
-        }
+        class PolygonFolderNotFoundError
     }
 
-    package GUI{
-        class GUIManager
-        class Icon
-        class PolygonFolder
-        class PolygonFolderManager
-
-        package frames {
-            class Frame
-            class Tools
-            class MainMenuBar
-            class Debug
-            class Loading
-            class TestWindow
-            class TextModal
-            class PolygonInformation
-            class ReliefTools
-        }
-    }
 }
 
-class PolygonInformation {
-
-    - __key_string_value: str
-    - __parameter_to_edit: str
-    - __should_open_add_dialog: boolean
-    - __should_open_edit_dialog: boolean
-    - __value_string_value: str
-    - __parameters_type_list: list
-    - __current_variable_type: int
-    - __current_bool_selected: int
-
-    - __add_parameter_popup()
-    - __edit_parameter_popup()
-    - __check_numeric(value): boolean
-    - __render_parameter_value_input(): bool
-    - __convert_value_to_exportable_variable_type(value_to_convert): any
-
-    + render()
-}
-
-class ReliefTools {
-    - __gui_manager: GUIManager
-    - __combo_options: list[str]
-    - __current_combo_option: int
-    - __max_height_value: float
-    - __min_height_value: float
-
-    + render()
-}
-
-class PolygonFolder {
-    - __id: str
-    - __name: str
-    - __polygon_id_list: list
-
-    + add_polygon(polygon_id)
-    + delete_polygon(polygon_id)
-    + get_id(): str
-    + get_name(): str
-    + get_polygon_list(): list
-    + set_name(new_name)
-}
-
-class GUIManager{
-    - __component_list: list
-    - __engine: Engine
-    - __font_bold: IMGUI.font
-    - __font_regular: IMGUI.font
-    - __glfw_window: GLFWWindow
-    - __icons_dict: dict
-    - __implementation: GlfwRenderer
-    - __io: IMGUI.io
-    - __is_mouse_inside_frame: boolean
-    - __polygon_folder_manager: PolygonFolderManager
-    - __scene: Scene
-
-    - __load_icons()
-    - __update_frames_with_new_polygon(polygon_id)
-    + add_frames(component_list)
-    + add_imported_polygon(polygon_id)
-    + add_polygon_to_gui(polygon_id)
-    + add_polygon_to_polygon_folder(folder_id, polygon_id)
-    + add_zoom()
-    + are_frame_fixed()
-    + change_color_file_with_dialog()
-    + change_color_of_polygon(polygon_id, color)
-    + change_dot_color_of_polygon(polygon_id, color)
-    + change_quality(quality)
-    + create_new_polygon(): str
-    + create_polygon_folder(name): PolygonFolder
-    + delete_all_polygons_inside_folder(polygon_folder_id)
-    + delete_polygon_by_id(polygon_id)
-    + delete_polygon_parameter(polygon_id, key)
-    + draw_frames()
-    + export_polygon_with_id(polygon_id)
-    + fix_frames_position(value)
-    + get_active_model_id(): str
-    + get_active_polygon_id(): str
-    + get_active_tool(): str
-    + get_cpt_file(): str
-    + get_frames(gui_manager) : list
-    + get_gui_key_callback(): function
-    + get_gui_mouse_scroll_callback(): function
-    + get_icon(icon_name): Icon
-    + get_left_frame_width(): int
-    + get_main_menu_bar_height(): int
-    + get_map_position(): list
-    + get_polygon_folder_id_list(): list
-    + get_polygon_folder_name(polygon_folder_id): str
-    + get_polygon_id_list(): list
-    + get_polygon_name(polygon_id): str
-    + get_polygon_parameters(polygon_id): list
-    + get_polygons_id_from_polygon_folder(polygon_folder_id): list
-    + get_quality(): int
-    + get_view_mode(): str
-    + get_window_height(): int
-    + get_window_width(): int
-    + get_zoom_level(): float
-    + initialize(window, mode)
-    + is_mouse_inside_frame(): boolean
-    + is_polygon_planar()
-    + is_program_loading(): boolean
-    + less_zoom()
-    + load_netcdf_file_with_dialog()
-    + load_shapefile_file_with_dialog()
-    + move_polygon_to_polygon_folder(polygon_id, folder_id)
-    + optimize_gpu_memory()
-    + process_input()
-    + refresh_scene_with_model_2d(path_color_file, path_model, model_id)
-    + reload_models()
-    + render()
-    + set_active_polygon(polygon_id)
-    + set_active_tool(tool)
-    + set_bold_font()
-    + set_loading_message(new_msg)
-    + set_modal_text(modal_title, msg)
-    + set_models_polygon_mode(polygon_mode)
-    + set_polygon_folder_name(polygon_folder_id, new_name)
-    + set_polygon_name(polygon_id, new_name)
-    + set_polygon_parameter(polygon_id, key, value)
-    + set_regular_font()
-    + undo()
-}
-
-class Icon{
-
-    - __texture_id: int
-
-    + get_texture_id(): id
-}
-
-
-class Frame {
-    ~ _position: list
-    ~ _GUI_manager: GUIManager
-
-    + change_position(new_position)
-    + get_position(): list
-    + render()
-}
-
-class MainMenuBar {
-    - __edit_menu()
-    - __file_menu()
-    - __view_menu()
-    + render()
-}
-
-class Tools {
-    - __button_margin_width: int
-    - __color_pick_should_open: boolean
-    - __color_pick_window_size_x: int
-    - __color_pick_window_size_y: int
-    - __color_selected_default: int, int, int, int
-    - __color_selected_dict: dict
-    - __dot_color_selected_default: int, int, int, int
-    - __double_button_margin_width: int
-    - __input_text_value: str
-    - __open_rename_folder_popup: boolean
-    - __opened_action_popup_dict: dict
-    - __rename_folder_input_text_value: str
-    - __rename_padding_x: int
-    - __rename_size_x: int
-    - __rename_size_y: int
-    - __slide_bar_quality: int
-    - __tool_before_pop_up: str
-    - __tools_names_dict: dict
-    - __relief_tools: ReliefTools
-
-    + add_new_polygon(polygon_id)
-    + render()
-    - __actions_button(active_polygon, polygon_id)
-    - __change_folder_selectable(polygon_id): boolean
-    - __color_button(polygon_id)
-    - __create_new_polygon(folder_id)
-    - __delete_selectable(active_polygon, polygon_id): boolean
-    - __export_selectable(polygon_id): boolean
-    - __folder_popup_menu(folder_id)
-    - __generate_polygon_list()
-    - __rename_polygon_selectable(polygon_id): boolean
-    - __show_active_tool()
-    - __show_editing_tools(left_frame_width)
-    - __show_polygon_tools(left_frame_width)
-    - __show_visualization_tools(left_frame_width)
-}
-
-class Debug {
-    - __height: int
-    + render()
-}
-
-class Loading {
-    - __loading_message: str
-    - __windows_width: int
-    - __windows_height: int
-    + render()
-    + set_loading_message(new_msg)
-}
-
-class TextModal {
-    - __windows_width: int
-    - __windows_height: int
-    - __margin_button: int
-    - __button_height: int
-    - __should_show: boolean
-    - __modal_title: str
-    - __msg: str
-
-    + render()
-    + set_modal_text(modal_title, msg)
-}
-
-class TestWindow {
-    + render()
-}
-
-class Engine {
-    + ...
-    (...)
-}
-
-class PolygonFolderManager {
-
-    - __folder_count_id: int
-    - __folders: dict
-
-    + add_polygon_to_folder(folder_id, polygon_id)
-    + create_new_folder(name): str
-    + delete_all_polygons_inside_folder(folder_id)
-    + delete_folder(folder_id)
-    + delete_polygon_from_all_folders(polygon_id)
-    + delete_polygon_inside_folder(polygon_id, folder_id)
-    + get_folder_id_list(): list
-    + get_name_of_folder(folder_id): str
-    + get_polygon_id_list(folder_id): list
-    + move_polygon_to_folder(old_folder_id, polygon_id, folder_id)
-    + set_name_of_folder(folder_id, new_name)
-}
+!include classes/PolygonInformation.puml
+!include classes/ReliefTools.puml
+!include classes/PolygonFolder.puml
+!include classes/GUIManager.puml
+!include classes/Icon.puml
+!include classes/Frame.puml
+!include classes/MainMenuBar.puml
+!include classes/Debug.puml
+!include classes/Loading.puml
+!include classes/TextModal.puml
+!include classes/TestWindow.puml
+!include classes/Tools.puml
+!include classes/PolygonFolderManager.puml
 
 Debug -u-|> Frame
 Loading -u-|> Frame

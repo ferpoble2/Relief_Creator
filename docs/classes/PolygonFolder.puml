@@ -1,0 +1,14 @@
+@startuml
+class PolygonFolder {
+    - __id: str
+    - __name: str
+    - __polygon_id_list: list
+
+    + add_polygon(polygon_id)
+    + delete_polygon(polygon_id)
+    + get_id(): str
+    + get_name(): str
+    + get_polygon_list(): list
+    + set_name(new_name)
+}
+@enduml

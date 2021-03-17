@@ -1,0 +1,8 @@
+@startuml
+class Icon{
+
+    - __texture_id: int
+
+    + get_texture_id(): id
+}
+@enduml

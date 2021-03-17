@@ -1,0 +1,10 @@
+@startuml
+class Loading {
+    - __loading_message: str
+    - __windows_width: int
+    - __windows_height: int
+    + render()
+    + set_loading_message(new_msg)
+}
+
+@enduml

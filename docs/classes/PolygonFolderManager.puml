@@ -1,0 +1,20 @@
+@startuml
+class PolygonFolderManager {
+
+    - __folder_count_id: int
+    - __folders: dict
+
+    + add_polygon_to_folder(folder_id, polygon_id)
+    + create_new_folder(name): str
+    + delete_all_polygons_inside_folder(folder_id)
+    + delete_folder(folder_id)
+    + delete_polygon_from_all_folders(polygon_id)
+    + delete_polygon_inside_folder(polygon_id, folder_id)
+    + get_folder_id_list(): list
+    + get_name_of_folder(folder_id): str
+    + get_polygon_id_list(folder_id): list
+    + move_polygon_to_folder(old_folder_id, polygon_id, folder_id)
+    + set_name_of_folder(folder_id, new_name)
+}
+
+@enduml

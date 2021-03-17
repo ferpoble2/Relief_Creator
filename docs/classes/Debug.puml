@@ -1,0 +1,7 @@
+@startuml
+class Debug {
+    - __height: int
+    + render()
+}
+
+@enduml

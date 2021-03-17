@@ -1,0 +1,11 @@
+@startuml
+class MainMenuBar {
+    - __edit_menu()
+    - __file_menu()
+    - __view_menu()
+    + render()
+}
+
+
+
+@enduml
