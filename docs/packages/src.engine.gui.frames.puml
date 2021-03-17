@@ -23,7 +23,6 @@ package frames {
 
 !if (%false())
     !startsub EXTERNAL
-        !includesub src.engine.gui.frames.tools.puml!EXTERNAL
         Tools .> NotEnoughPointsError
     !endsub
 !endif

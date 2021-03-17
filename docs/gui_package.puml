@@ -35,5 +35,4 @@ package src {
 !include classes/PolygonFolderManager.puml
 
 
-
 @enduml
