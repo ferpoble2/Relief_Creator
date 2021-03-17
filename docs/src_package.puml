@@ -37,6 +37,7 @@ package src {
         class GUIError
         class PolygonFolderNotFoundError
         class UnknownDataTypeError
+        class WrongInterpolationTypeError
     }
 
     package engine {
@@ -96,6 +97,8 @@ package src {
 
     }
 }
+
+!include classes/WrongInterpolationTypeError.puml
 
 class CTP {
     + read_file(filename: str) : dict
@@ -178,6 +181,8 @@ SceneError <|-- NonExistentPolygonError
 ExportError <|-- ShapefileExportError
 ShapefileExportError <|-- NotEnoughPointsError
 ShapefileExportError <|-- UnknownDataTypeError
+GUIError <|-- WrongInterpolationTypeError
+
 
 GUIError <|-- FolderError
 FolderError <|-- PolygonFolderNotFoundError

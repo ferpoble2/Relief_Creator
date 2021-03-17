@@ -5,6 +5,8 @@ import OpenGL.constant as OGLConstant
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
 
+from src.error.WrongInterpolationTypeError import WrongInterpolationTypeError
+
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar
 from src.engine.GUI.frames.tools.tools import Tools
 from src.engine.GUI.frames.debug import Debug
@@ -81,6 +83,32 @@ class GUIManager:
         """
         for frame in component_list:
             self.__component_list.append(frame)
+
+    def change_points_height(self, polygon_id: str, model_id: str, min_height: float, max_height: float,
+                             interpolation_type: 'str' = 'linear') -> None:
+        """
+        Call the engine to change the height of the points inside the specified polygon.
+
+        Call a different function depending on the type of interpolation.
+        Types can have the following values:
+            - linear
+
+
+        Args:
+            model_id: ID of the model to use for the interpolation.
+            polygon_id: ID of the polygon to use for interpolation.
+            min_height: Min height of the points after the interpolation.
+            max_height: Max height of the points after the interpolation.
+            interpolation_type: Type of interpolation to use.
+
+        Returns: None
+        """
+
+        if interpolation_type == 'linear':
+            self.__engine.interpolate_points_using_linear_interpolation(polygon_id, model_id, min_height, max_height)
+
+        raise WrongInterpolationTypeError(
+            f'Interpolation of type {interpolation_type} is not admitted by the program.')
 
     def add_polygon_to_gui(self, polygon_id: str) -> None:
         """

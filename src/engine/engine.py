@@ -513,6 +513,24 @@ class Engine:
 
         self.scene.optimize_gpu_memory_async(then_routine)
 
+    def interpolate_points_using_linear_interpolation(self,
+                                                      polygon_id: str,
+                                                      model_id: str,
+                                                      min_height: float,
+                                                      max_height: float) -> None:
+        """
+        Ask the scene to interpolate the points of the specified polygon using a linear interpolation.
+
+        Args:
+            model_id: ID of the model to use for the interpolation.
+            polygon_id: ID of the polygon to use.
+            min_height: Min height of the points once converted.
+            max_height: Max height of the points once converted.
+
+        Returns: None
+        """
+        self.scene.interpolate_using_linear_interpolation(polygon_id, model_id, min_height, max_height)
+
     def get_gui_scroll_callback(self):
         """
         Ask the gui manager for the callback used in the scrolling.
