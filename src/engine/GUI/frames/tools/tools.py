@@ -6,7 +6,7 @@ import imgui
 
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
-from src.engine.GUI.frames.relief_tools import ReliefTools
+from src.engine.GUI.frames.tools.relief_tools import ReliefTools
 
 from src.error.not_enought_points_error import NotEnoughPointsError
 

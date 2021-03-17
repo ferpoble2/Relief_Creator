@@ -6,7 +6,7 @@ import imgui
 from imgui.integrations.glfw import GlfwRenderer
 
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar
-from src.engine.GUI.frames.tools import Tools
+from src.engine.GUI.frames.tools.tools import Tools
 from src.engine.GUI.frames.debug import Debug
 from src.engine.GUI.frames.loading import Loading
 from src.engine.GUI.frames.text_modal import TextModal

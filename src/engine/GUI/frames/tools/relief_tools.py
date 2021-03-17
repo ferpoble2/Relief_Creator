@@ -3,8 +3,6 @@ File with the class ReliefTools. Class in charge of render the Relief tools insi
 """
 
 import imgui
-import psutil
-import os
 
 from src.utils import get_logger
 
