@@ -24,11 +24,7 @@ package src {
         class parser <<$file>>
     }
 
-    package error{}
-
     package engine {
-        note "Package defined\n in another file" as n
-
         class Engine
 
         package controller {
@@ -62,9 +58,8 @@ package src {
     }
 }
 
-!include packages/src.error.puml
-
-!include classes/WrongInterpolationTypeError.puml
+!includesub packages/src.error.puml!INTERNAL
+!includesub packages/src.error.puml!EXTERNAL
 
 class CTP {
     + read_file(filename: str) : dict
@@ -135,42 +130,7 @@ class parser {
 }
 
 Program o--o Engine
-
 Program .> parser
-
-
-'PolygonError <|-- RepeatedPointError
-'PolygonError <|-- LineIntersectionError
-'
-'SceneError <|-- NonExistentPolygonError
-'
-'ExportError <|-- ShapefileExportError
-'ShapefileExportError <|-- NotEnoughPointsError
-'ShapefileExportError <|-- UnknownDataTypeError
-'GUIError <|-- WrongInterpolationTypeError
-'
-'
-'GUIError <|-- FolderError
-'FolderError <|-- PolygonFolderNotFoundError
-'
-'Engine .> LineIntersectionError
-'Engine .> RepeatedPointError
-'
-'Controller .> LineIntersectionError
-'Controller .> RepeatedPointError
-'
-'Polygon .> LineIntersectionError
-'Polygon .> RepeatedPointError
-'
-'ShapefileExporter -u.> NotEnoughPointsError
-'ShapefileExporter -u.> UnknownDataTypeError
-'Tools .> NotEnoughPointsError
-'GUIManager .> WrongInterpolationTypeError
-'
-'PolygonFolderManager .> PolygonFolderNotFoundError
-'
-'Scene -u.> NonExistentPolygonError
-
 Engine o-- ShapefileExporter
 
 Scene -d.> NetCDF

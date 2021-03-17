@@ -1,19 +1,21 @@
 @startuml
-    package error {
-        class PolygonError
-        class RepeatedPointError
-        class LineIntersectionError
-        class NonExistentPolygonError
-        class SceneError
-        class ExportError
-        class ShapefileExportError
-        class NotEnoughPointsError
-        class FolderError
-        class GUIError
-        class PolygonFolderNotFoundError
-        class UnknownDataTypeError
-        class WrongInterpolationTypeError
-    }
+
+!startsub INTERNAL
+package error {
+    class PolygonError
+    class RepeatedPointError
+    class LineIntersectionError
+    class NonExistentPolygonError
+    class SceneError
+    class ExportError
+    class ShapefileExportError
+    class NotEnoughPointsError
+    class FolderError
+    class GUIError
+    class PolygonFolderNotFoundError
+    class UnknownDataTypeError
+    class WrongInterpolationTypeError
+}
 
 PolygonError <|-- RepeatedPointError
 PolygonError <|-- LineIntersectionError
@@ -24,19 +26,34 @@ ShapefileExportError <|-- UnknownDataTypeError
 GUIError <|-- WrongInterpolationTypeError
 GUIError <|-- FolderError
 FolderError <|-- PolygonFolderNotFoundError
+!endsub
 
+!if (%false())
+    !startsub EXTERNAL
+        Engine .> RepeatedPointError
+        Controller .> LineIntersectionError
+        Controller .> RepeatedPointError
+        model.Polygon .> LineIntersectionError
+        Polygon .> RepeatedPointError
+        ShapefileExporter -u.> NotEnoughPointsError
+        ShapefileExporter -u.> UnknownDataTypeError
+        Tools .> NotEnoughPointsError
+        GUIManager .> WrongInterpolationTypeError
+        PolygonFolderManager .> PolygonFolderNotFoundError
+        Scene -u.> NonExistentPolygonError
+    !endsub
+!endif
 
-Engine .> LineIntersectionError
-Engine .> RepeatedPointError
-Controller .> LineIntersectionError
-Controller .> RepeatedPointError
-Polygon .> LineIntersectionError
-Polygon .> RepeatedPointError
-ShapefileExporter -u.> NotEnoughPointsError
-ShapefileExporter -u.> UnknownDataTypeError
-Tools .> NotEnoughPointsError
-GUIManager .> WrongInterpolationTypeError
-PolygonFolderManager .> PolygonFolderNotFoundError
-Scene -u.> NonExistentPolygonError
-
+src.engine.Engine .> LineIntersectionError
+src.engine.Engine .> RepeatedPointError
+src.controller.Controller .> LineIntersectionError
+src.controller.Controller .> RepeatedPointError
+src.engine.scene.model.Polygon .> LineIntersectionError
+src.engine.scene.model.Polygon .> RepeatedPointError
+src.output.ShapefileExporter -u.> NotEnoughPointsError
+src.output.ShapefileExporter -u.> UnknownDataTypeError
+src.engine.GUI.frames.Tools .> NotEnoughPointsError
+src.engine.GUI.GUIManager .> WrongInterpolationTypeError
+src.engine.GUI.PolygonFolderManager .> PolygonFolderNotFoundError
+src.engine.scene.Scene -u.> NonExistentPolygonError
 @enduml
