@@ -94,10 +94,10 @@ class GUIManager{
     - __load_icons()
     - __update_frames_with_new_polygon(polygon_id)
     + add_frames(component_list)
+    + add_imported_polygon(polygon_id)
     + add_polygon_to_gui(polygon_id)
     + add_polygon_to_polygon_folder(folder_id, polygon_id)
     + add_zoom()
-    + add_imported_polygon(polygon_id)
     + are_frame_fixed()
     + change_color_file_with_dialog()
     + change_color_of_polygon(polygon_id, color)
@@ -107,6 +107,7 @@ class GUIManager{
     + create_polygon_folder(name): PolygonFolder
     + delete_all_polygons_inside_folder(polygon_folder_id)
     + delete_polygon_by_id(polygon_id)
+    + delete_polygon_parameter(polygon_id, key)
     + draw_frames()
     + export_polygon_with_id(polygon_id)
     + fix_frames_position(value)
@@ -116,6 +117,7 @@ class GUIManager{
     + get_cpt_file(): str
     + get_frames(gui_manager) : list
     + get_gui_key_callback(): function
+    + get_gui_mouse_scroll_callback(): function
     + get_icon(icon_name): Icon
     + get_left_frame_width(): int
     + get_main_menu_bar_height(): int
@@ -152,9 +154,8 @@ class GUIManager{
     + set_models_polygon_mode(polygon_mode)
     + set_polygon_folder_name(polygon_folder_id, new_name)
     + set_polygon_name(polygon_id, new_name)
-    + set_regular_font()
     + set_polygon_parameter(polygon_id, key, value)
-    + delete_polygon_parameter(polygon_id, key)
+    + set_regular_font()
     + undo()
 }
 

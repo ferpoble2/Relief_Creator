@@ -362,6 +362,14 @@ class GUIManager:
         """
         return self.__implementation.keyboard_callback
 
+    def get_gui_mouse_scroll_callback(self) -> callable:
+        """
+        Get the mouse scroll callback used by imgui.
+
+        Returns: Function used by imgui for the mouse scroll callback
+        """
+        return self.__implementation.scroll_callback
+
     def get_icon(self, icon_name: str) -> Icon:
         """
         Get the icon with the given name.
@@ -530,6 +538,7 @@ class GUIManager:
 
         # load the icons on the GUI
         self.__load_icons()
+        self.get_gui_mouse_scroll_callback()
 
         self.__engine = engine
 
