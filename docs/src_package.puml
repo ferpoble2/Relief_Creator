@@ -24,21 +24,7 @@ package src {
         class parser <<$file>>
     }
 
-    package error {
-        class PolygonError
-        class RepeatedPointError
-        class LineIntersectionError
-        class NonExistentPolygonError
-        class SceneError
-        class ExportError
-        class ShapefileExportError
-        class NotEnoughPointsError
-        class FolderError
-        class GUIError
-        class PolygonFolderNotFoundError
-        class UnknownDataTypeError
-        class WrongInterpolationTypeError
-    }
+    package error{}
 
     package engine {
         note "Package defined\n in another file" as n
@@ -75,6 +61,8 @@ package src {
 
     }
 }
+
+!include packages/src.error.puml
 
 !include classes/WrongInterpolationTypeError.puml
 
@@ -151,37 +139,37 @@ Program o--o Engine
 Program .> parser
 
 
-PolygonError <|-- RepeatedPointError
-PolygonError <|-- LineIntersectionError
-
-SceneError <|-- NonExistentPolygonError
-
-ExportError <|-- ShapefileExportError
-ShapefileExportError <|-- NotEnoughPointsError
-ShapefileExportError <|-- UnknownDataTypeError
-GUIError <|-- WrongInterpolationTypeError
-
-
-GUIError <|-- FolderError
-FolderError <|-- PolygonFolderNotFoundError
-
-Engine .> LineIntersectionError
-Engine .> RepeatedPointError
-
-Controller .> LineIntersectionError
-Controller .> RepeatedPointError
-
-Polygon .> LineIntersectionError
-Polygon .> RepeatedPointError
-
-ShapefileExporter -u.> NotEnoughPointsError
-ShapefileExporter -u.> UnknownDataTypeError
-Tools .> NotEnoughPointsError
-GUIManager .> WrongInterpolationTypeError
-
-PolygonFolderManager .> PolygonFolderNotFoundError
-
-Scene -u.> NonExistentPolygonError
+'PolygonError <|-- RepeatedPointError
+'PolygonError <|-- LineIntersectionError
+'
+'SceneError <|-- NonExistentPolygonError
+'
+'ExportError <|-- ShapefileExportError
+'ShapefileExportError <|-- NotEnoughPointsError
+'ShapefileExportError <|-- UnknownDataTypeError
+'GUIError <|-- WrongInterpolationTypeError
+'
+'
+'GUIError <|-- FolderError
+'FolderError <|-- PolygonFolderNotFoundError
+'
+'Engine .> LineIntersectionError
+'Engine .> RepeatedPointError
+'
+'Controller .> LineIntersectionError
+'Controller .> RepeatedPointError
+'
+'Polygon .> LineIntersectionError
+'Polygon .> RepeatedPointError
+'
+'ShapefileExporter -u.> NotEnoughPointsError
+'ShapefileExporter -u.> UnknownDataTypeError
+'Tools .> NotEnoughPointsError
+'GUIManager .> WrongInterpolationTypeError
+'
+'PolygonFolderManager .> PolygonFolderNotFoundError
+'
+'Scene -u.> NonExistentPolygonError
 
 Engine o-- ShapefileExporter
 
