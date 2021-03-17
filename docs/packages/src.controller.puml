@@ -1,0 +1,19 @@
+@startuml
+
+!startsub INTERNAL
+
+package controller {
+    class Controller
+}
+!endsub
+
+src.engine.Engine o--o Controller
+hide members
+
+!if (%false())
+    !startsub EXTERNAL
+        Engine o--o Controller
+    !endsub
+!endif
+
+@enduml

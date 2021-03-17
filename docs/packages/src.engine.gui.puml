@@ -1,0 +1,44 @@
+@startuml
+
+!startsub INTERNAL
+package GUI{
+    class GUIManager
+    class Icon
+    class PolygonFolder
+    class PolygonFolderManager
+
+    !includesub src.engine.gui.frames.puml!INTERNAL
+}
+
+PolygonFolderManager o-- PolygonFolder
+GUIManager o-- PolygonFolderManager
+GUIManager o-- Icon
+GUIManager o--o Frame
+
+!endsub
+
+' Code that will affect only the current diagram
+' can be messy since will not be imported
+package src.error {
+    class NotEnoughPointsError
+}
+
+!includesub src.engine.gui.frames.puml!EXTERNAL
+
+GUIManager o--o src.engine.Engine
+PolygonFolderManager .> src.error.PolygonFolderNotFoundError
+GUIManager .> src.error.WrongInterpolationTypeError
+
+' hide members to make the diagram more legible
+hide members
+
+!if (%false())
+    !startsub EXTERNAL
+        !includesub src.engine.gui.frames.puml!EXTERNAL
+        GUIManager o--o Engine
+        PolygonFolderManager .> PolygonFolderNotFoundError
+        GUIManager .> WrongInterpolationTypeError
+    !endsub
+!endif
+
+@enduml

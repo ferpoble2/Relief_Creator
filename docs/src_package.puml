@@ -27,10 +27,8 @@ package src {
     package engine {
         class Engine
 
-        package controller {
-            note "Package defined\n in another file" as n8
-            class Controller
-        }
+        !includesub packages/src.controller.puml!INTERNAL
+        !includesub packages/src.error.puml!INTERNAL
 
         package GUI {
 
@@ -58,7 +56,6 @@ package src {
     }
 }
 
-!includesub packages/src.error.puml!INTERNAL
 !includesub packages/src.error.puml!EXTERNAL
 
 class CTP {

@@ -1,0 +1,34 @@
+@startuml
+
+!startsub INTERNAL
+package frames {
+    class Frame
+    !includesub src.engine.gui.frames.tools.puml!INTERNAL
+    class MainMenuBar
+    class Debug
+    class Loading
+    class TestWindow
+    class TextModal
+    class PolygonInformation
+}
+
+    Debug -u-|> Frame
+    Loading -u-|> Frame
+    MainMenuBar -u-|> Frame
+    TestWindow -u-|> Frame
+    TextModal -u-|> Frame
+    PolygonInformation -u-|> Frame
+!endsub
+
+!if (%false())
+    !startsub EXTERNAL
+        !includesub src.engine.gui.frames.tools.puml!EXTERNAL
+        Tools .> NotEnoughPointsError
+    !endsub
+!endif
+
+!includesub src.engine.gui.frames.tools.puml!EXTERNAL
+Tools .> src.error.NotEnoughPointsError
+hide members
+
+@enduml

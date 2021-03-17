@@ -3,41 +3,22 @@
 
 title Class diagram for the GUI package (Updated March 4 of 2021)
 
-package GUI{
-    class GUIManager
-    class Icon
-    class PolygonFolder
-    class PolygonFolderManager
+!includesub packages/src.engine.gui.puml!INTERNAL
 
-    package frames {
-
-        package tools{
-            class Tools
-            class ReliefTools
-        }
-        class Frame
-        class MainMenuBar
-        class Debug
-        class Loading
-        class TestWindow
-        class TextModal
-        class PolygonInformation
-    }
-}
-
-package src <<External Dependencies>> {
-
-    package engine {
-        class Engine
-    }
+package src {
+    !includesub packages/src.error.puml!INTERNAL
 
     package error {
-        class NotEnoughPointsError
-        class WrongInterpolationTypeError
-        class PolygonFolderNotFoundError
+        hide members
     }
 
+    package engine {
+        hide members
+        class Engine
+    }
 }
+
+!includesub packages/src.engine.gui.puml!EXTERNAL
 
 !include classes/PolygonInformation.puml
 !include classes/ReliefTools.puml
@@ -53,25 +34,6 @@ package src <<External Dependencies>> {
 !include classes/Tools.puml
 !include classes/PolygonFolderManager.puml
 
-Debug -u-|> Frame
-Loading -u-|> Frame
-MainMenuBar -u-|> Frame
-TestWindow -u-|> Frame
-TextModal -u-|> Frame
-Tools -u-|> Frame
-PolygonInformation -u-|> Frame
 
-PolygonFolderManager o-- PolygonFolder
-
-GUIManager o-- PolygonFolderManager
-GUIManager o-- Icon
-GUIManager o--o Frame
-GUIManager o--o Engine
-
-Tools *-> ReliefTools
-
-PolygonFolderManager .> PolygonFolderNotFoundError
-GUIManager .> WrongInterpolationTypeError
-Tools .> NotEnoughPointsError
 
 @enduml
