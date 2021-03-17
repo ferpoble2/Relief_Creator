@@ -43,6 +43,7 @@ class Map2DModel(Model):
 
         # vertices values (used in the buffer)
         self.__vertices = []
+        self.__vertices_array = np.array([])
 
         # indices of the model (used in the buffer)
         self.__indices = []
@@ -83,22 +84,81 @@ class Map2DModel(Model):
 
         Returns: None
         """
-        index_array = np.array(self.__indices)
-        index_array = index_array.reshape((-1, 3))
-        to_delete = []
 
-        # Get the triangles to delete
-        # ---------------------------
-        import time
-        initial = time.time()
+        # Get the variables and matrix to use
+        # --------------------------
+        indices_array = np.array(self.__indices)
+        indices_array = indices_array.reshape(-1)
 
-        for index in range(len(index_array)):
-            triangle = index_array[index]
-            if self.__is_triangle_inside_zone(triangle, left_coordinate, right_coordinate, top_coordinate,
-                                              bottom_coordinate):
-                to_delete.append(index)
+        vertices_array = self.__vertices_array.reshape((-1, 3))
 
-        print(f'Triangles added with time: {time.time() - initial}')
+        indices_with_coords_array = vertices_array[indices_array]
+        indices_with_coords_array = indices_with_coords_array.reshape((-1, 3, 3))
+
+        # find out the indices with triangles inside the zone using masks
+        # ---------------------------------------------------------------
+        indices_with_coords_array = indices_with_coords_array.reshape((-1, 9)).transpose()
+        mask = np.ones(len(indices_with_coords_array[0]), dtype=bool)
+
+        mask[np.where(indices_with_coords_array[0] < left_coordinate)[0]] = False
+        mask[np.where(indices_with_coords_array[3] < left_coordinate)[0]] = False
+        mask[np.where(indices_with_coords_array[6] < left_coordinate)[0]] = False
+
+        mask[np.where(indices_with_coords_array[0] > right_coordinate)[0]] = False
+        mask[np.where(indices_with_coords_array[3] > right_coordinate)[0]] = False
+        mask[np.where(indices_with_coords_array[6] > right_coordinate)[0]] = False
+
+        mask[np.where(indices_with_coords_array[1] < bottom_coordinate)[0]] = False
+        mask[np.where(indices_with_coords_array[4] < bottom_coordinate)[0]] = False
+        mask[np.where(indices_with_coords_array[7] < bottom_coordinate)[0]] = False
+
+        mask[np.where(indices_with_coords_array[1] > top_coordinate)[0]] = False
+        mask[np.where(indices_with_coords_array[4] > top_coordinate)[0]] = False
+        mask[np.where(indices_with_coords_array[7] > top_coordinate)[0]] = False
+
+        inside = np.where(mask == True)[0]
+
+        # Deprecated Code (using intersection instead of masks)
+        # -----------------------------------------------------
+        # index_out_1 = np.where(indices_with_coords_array[0] > left_coordinate)[0]
+        # index_out_2 = np.where(indices_with_coords_array[3] > left_coordinate)[0]
+        # index_out_3 = np.where(indices_with_coords_array[6] > left_coordinate)[0]
+        # all_right = np.intersect1d(np.intersect1d(index_out_1, index_out_2), index_out_3)
+        #
+        # index_out_1 = np.where(indices_with_coords_array[0] < right_coordinate)[0]
+        # index_out_2 = np.where(indices_with_coords_array[3] < right_coordinate)[0]
+        # index_out_3 = np.where(indices_with_coords_array[6] < right_coordinate)[0]
+        # all_left = np.intersect1d(np.intersect1d(index_out_1, index_out_2), index_out_3)
+        #
+        # index_out_1 = np.where(indices_with_coords_array[1] < top_coordinate)[0]
+        # index_out_2 = np.where(indices_with_coords_array[4] < top_coordinate)[0]
+        # index_out_3 = np.where(indices_with_coords_array[7] < top_coordinate)[0]
+        # all_bottom = np.intersect1d(np.intersect1d(index_out_1, index_out_2), index_out_3)
+        #
+        # index_out_1 = np.where(indices_with_coords_array[1] > bottom_coordinate)[0]
+        # index_out_2 = np.where(indices_with_coords_array[4] > bottom_coordinate)[0]
+        # index_out_3 = np.where(indices_with_coords_array[7] > bottom_coordinate)[0]
+        # all_top = np.intersect1d(np.intersect1d(index_out_1, index_out_2), index_out_3)
+        #
+        # inside = np.intersect1d(np.intersect1d(np.intersect1d(all_left, all_right), all_bottom), all_top)
+
+        to_delete = list(inside)
+
+        # Deprecated Code
+        # ---------------
+        # print(f'Triangles added using numpy with time: {time.time() - initial}')
+        #
+        # initial = time.time()
+        #
+        # index_array = np.array(self.__indices)
+        # index_array = index_array.reshape((-1, 3))
+        #
+        # for index in range(len(index_array)):
+        #     triangle = index_array[index]
+        #     if self.__is_triangle_inside_zone(triangle, left_coordinate, right_coordinate, top_coordinate,
+        #                                       bottom_coordinate):
+        #         to_delete.append(index)
+        # print(f'Triangles added with time: {time.time() - initial}')
 
         log.debug(f"Triangles to delete added: {len(to_delete)}")
 
@@ -208,6 +268,9 @@ class Map2DModel(Model):
             indices.append(index_5[ind])
             indices.append(index_6[ind])
 
+        # Deprecated Code
+        # ---------------
+        # import time
         # time_before = time.time()
         #
         # for row in range(len(self.__y))[index_minimum_y:index_maximum_y + 1:step_y]:
@@ -523,7 +586,7 @@ class Map2DModel(Model):
             vertex_2 = triangles_array * 3 + 1
             vertex_3 = triangles_array * 3 + 2
 
-            indices_to_delete = np.concatenate((vertex_1, vertex_2, vertex_3))
+            indices_to_delete = np.concatenate((vertex_1, vertex_2, vertex_3)).astype(int)
 
             # deprecated code
             # ---------------
@@ -687,6 +750,7 @@ class Map2DModel(Model):
             log.debug("Loading buffers")
             self.scene.set_loading_message("Loading vertices...")
             self.__vertices = self.__generate_vertices_list(x, y, z)
+            self.__vertices_array = np.array(self.__vertices)
 
             log.debug("Generating Indices")
             self.scene.set_loading_message("Generating polygons...")
