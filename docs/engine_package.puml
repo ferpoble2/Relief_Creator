@@ -58,6 +58,7 @@ class src.engine.Engine {
     + get_active_tool(): str
     + get_clear_color(): list
     + get_cpt_file(): str
+    + get_gui_scroll_callback(): function
     + get_float_bytes()
     + get_float_bytes(): int
     + get_font_size(): int
