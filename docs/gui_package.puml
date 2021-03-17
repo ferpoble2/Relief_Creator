@@ -223,7 +223,6 @@ class Tools {
     - __rename_polygon_selectable(polygon_id): boolean
     - __show_active_tool()
     - __show_editing_tools(left_frame_width)
-    - __show_other_tools(left_frame_width)
     - __show_polygon_tools(left_frame_width)
     - __show_visualization_tools(left_frame_width)
 }
