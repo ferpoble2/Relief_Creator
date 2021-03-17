@@ -18,6 +18,7 @@ package frames {
     TestWindow -u-|> Frame
     TextModal -u-|> Frame
     PolygonInformation -u-|> Frame
+    Tools -u-|> Frame
 !endsub
 
 !if (%false())
@@ -27,7 +28,6 @@ package frames {
     !endsub
 !endif
 
-!includesub src.engine.gui.frames.tools.puml!EXTERNAL
 Tools .> src.error.NotEnoughPointsError
 hide members
 

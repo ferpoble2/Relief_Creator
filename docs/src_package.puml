@@ -27,18 +27,22 @@ package src {
     package engine {
         class Engine
 
-        !includesub packages/src.controller.puml!INTERNAL
+        !includesub packages/src.engine.controller.puml!INTERNAL
         !includesub packages/src.error.puml!INTERNAL
+        !includesub packages/src.engine.gui.puml!INTERNAL
 
         package GUI {
-
-            class GUIManager
-
-            class PolygonFolderManager
-
+            hide members
             package frames {
-                class Tools
+                hide members
+                package tools{
+                    hide members
+                }
             }
+        }
+
+        package error{
+            hide members
         }
 
         package scene {
@@ -56,7 +60,10 @@ package src {
     }
 }
 
-!includesub packages/src.error.puml!EXTERNAL
+'!includesub packages/src.engine.controller.puml!EXTERNAL
+'!includesub packages/src.error.puml!EXTERNAL
+'!includesub packages/src.engine.gui.puml!EXTERNAL
+
 
 class CTP {
     + read_file(filename: str) : dict

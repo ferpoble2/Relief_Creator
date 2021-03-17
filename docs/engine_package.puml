@@ -3,55 +3,46 @@
 
 !$file = "(F,#ff75ff) File"
 
-
-
-    package engine {
-        class Engine
-        class Settings
-        package scene {
-            class Scene
-        }
-        package render {
-            class Render
-        }
-        package controller {
-            class Controller
-        }
-        package data {
-            class decimation
-        }
-        package GUI {
-            class GUIManager
-        }
-    }
+!includesub packages/src.engine.puml!INTERNAL
 
 package src <<External Dependencies>> {
-
     package program {
+        hide members
         class Program
     }
-
     package output {
+        hide members
         class ShapefileExporter
     }
-
 }
 
+' HIDE ELEMENTS NOT IMPORTANT
+package GUI {
+    hide members
+}
+package tools {
+    hide members
+}
+package scene {
+    hide members
+}
+package render {
+    hide members
+}
+package controller {
+    hide members
+}
+
+remove frames
+remove Icon
+remove PolygonFolderManager
+remove PolygonFolder
+
+!includesub packages/src.engine.puml!EXTERNAL
+
 !include classes/Engine.puml
-!include classes/Render.puml
 !include classes/Settings.puml
-!include classes/Controller.puml
 !include file_modules/decimation.puml
-'!include classes/GUIManager.puml
 
-Engine o--o Scene
-Engine o--o Controller
-Engine o--o Render
-Engine o--o GUIManager
-Engine o--o Program
-
-Engine -u.> Settings
-
-Engine o-- ShapefileExporter
 
 @enduml
