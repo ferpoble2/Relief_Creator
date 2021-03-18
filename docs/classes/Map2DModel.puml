@@ -1,0 +1,44 @@
+@startuml
+                class Map2DModel {
+                    - __x: array
+                    - __y: array
+                    - __z: array
+                    - __color_file: str
+                    - __colors: array
+                    - __height_limit: array
+                    - __vertices: list
+                    - __indices: list
+                    - __height: list
+                    - __max_height: float
+                    - __min_height: float
+                    - __projection: list
+                    - __left_coordinate: int
+                    - __right_coordinate: int
+                    - __top_coordinate: int
+                    - __bottom_coordinate: int
+                    - __triangles_to_delete: list
+                    - __new_indices: list
+                    + hbo : int
+
+
+                    - __add_triangles_inside_zone_to_delete_list(left_coordinate, right_coordinate, top_coordinate, bottom_coordinate)
+                    - __generate_index_list(step_x, step_y, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): list
+                    - __generate_vertices_list(x, y, z, z_value): list
+                    - __get_index_closest_value(list_to_evaluate, value): int
+                    - __get_vertex_index(x_pos, y_pos): int
+                    - __is_triangle_inside_zone(index_triangle, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): boolean
+                    - __print_indices()
+                    - __print_vertices()
+                    - __set_height_buffer()
+                    ~ _update_uniforms()
+                    + calculate_projection_matrix(scene_data, zoom_level)
+                    + get_projection_matrix(): array
+                    + get_showed_limits(): dict
+                    + move(x_movement, y_movement)
+                    + optimize_gpu_memory_async(then)
+                    + recalculate_vertices_from_grid_async(quality, then)
+                    + set_color_file(filename)
+                    + set_vertices_from_grid_async(x,y,z,quality, then)
+
+                }
+@enduml

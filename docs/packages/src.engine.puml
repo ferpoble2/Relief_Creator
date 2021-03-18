@@ -36,13 +36,7 @@
 
 ' Code that will affect only the current diagram
 ' can be messy since will not be imported
-package src.output{
-    hide members
-}
-
-package src.program{
-    hide members
-}
+hide members
 
 Engine o-- src.output.ShapefileExporter
 Engine o--o src.program.Program

@@ -1,6 +1,6 @@
 @startuml
+!$file = "(F,#ff75ff) File"
 class decimation <<$file>>{
     + simple_decimation(x, y, z, n_rows, n_cols): array, array, array
 }
-
 @enduml

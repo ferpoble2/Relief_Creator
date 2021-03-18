@@ -1,0 +1,22 @@
+@startuml
+                class Lines {
+                    - __border_color: tuple
+                    - __fragment_shader_file: str
+                    - __indices_list: list
+                    - __line_color: tuple
+                    - __point_list: list
+                    - __use_border: boolean
+                    - __vertex_shader_file: str
+
+                    ~ _update_uniforms()
+                    + add_line(first_point, second_point)
+                    + get_border_color(): tuple
+                    + get_line_color(): tuple
+                    + get_number_of_points(): int
+                    + remove_last_added_line()
+                    + set_border_color(color)
+                    + set_line_color(color)
+                    + set_use_borders(value)
+                }
+
+@enduml

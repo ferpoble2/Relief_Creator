@@ -1,0 +1,30 @@
+@startuml
+                class Points {
+                    - __color_list: list
+                    - __first_point_color: tuple
+                    - __fragment_shader_file: str
+                    - __indices_list: list
+                    - __last_point_color: tuple
+                    - __normal_color: tuple
+                    - __point_list: list
+                    - __vertex_shader_file: str
+                    + cbo: int
+
+                    - __add_color_to_color_list(color)
+                    - __remove_last_color_from_color_list()
+                    - __remove_last_point_from_point_list()
+                    - __str__()
+                    ~ _update_uniforms()
+                    + add_point(x, y, z)
+                    + get_first_point_color(): tuple
+                    + get_last_point_color(): tuple
+                    + get_normal_color(): tuple
+                    + get_point_list(): list
+                    + remove_last_added_point()
+                    + set_color_buffer(colors)
+                    + set_first_point_color(new_color)
+                    + set_last_point_color(new_color)
+                    + set_normal_color(new_color)
+                }
+
+@enduml

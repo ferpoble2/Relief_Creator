@@ -1,0 +1,6 @@
+@startuml
+!$file = "(F,#ff75ff) File"
+class CTP  <<$file>>{
+    + read_file(filename: str) : dict
+}
+@enduml

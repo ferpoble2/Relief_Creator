@@ -7,17 +7,25 @@
 !startsub INTERNAL
 package scene {
     class Scene
+    !includesub src.engine.scene.model.puml!INTERNAL
 }
+
+Scene o--o Model
 !endsub
 
 !if (%false())
     !startsub EXTERNAL
         Scene o--o Engine
+        Scene .> NonExistentPolygonError
+        Scene .> NetCDF
     !endsub
 !endif
 
 ' Code that will affect only the current diagram
 ' can be messy since will not be imported
+hide members
 src.engine.Engine o--o Scene
+Scene .> src.error.NonExistentPolygonError
+Scene .> src.input.NetCDF
 
 @enduml

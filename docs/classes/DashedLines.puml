@@ -1,0 +1,14 @@
+@startuml
+                class DashedLines {
+                    - __fragment_shader_file
+                    - __vertex_shader_file
+                    + dash_size: float
+                    + gap_size: float
+                    + transparency: float
+
+                    ~ _update_uniforms()
+                    + set_line_color(color)
+                    + set_border_color(color)
+                }
+
+@enduml

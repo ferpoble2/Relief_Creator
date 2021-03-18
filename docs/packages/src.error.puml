@@ -44,6 +44,7 @@ FolderError <|-- PolygonFolderNotFoundError
     !endsub
 !endif
 
+hide members
 src.engine.Engine .> LineIntersectionError
 src.engine.Engine .> RepeatedPointError
 src.controller.Controller .> LineIntersectionError

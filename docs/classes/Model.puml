@@ -1,0 +1,23 @@
+@startuml
+class Model {
+                    + vao: int
+                    + vbo: int
+                    + ebo: int
+                    + shader_program: compiled_shader
+                    + position: numpy.array[3]
+                    + rotation: numpy.array[3]
+                    + indices_size: int
+                    + draw_mode: GL_DRAW_MODE
+                    + polygon_mode: GL_POLYGON_MODE
+                    + update_uniform_values: boolean
+                    + id: str
+                    + scene: Scene
+
+                    ~ _update_uniforms()
+                    + set_color_file(color_file)
+                    + set_shaders(vertex_shader, fragment_shader)
+                    + set_vertices(vertex)
+                    + set_indices(indices)
+                    + draw()
+                }
+@enduml

@@ -1,0 +1,33 @@
+@startuml
+                class Polygon {
+                    - __last_line_model: DashedLines
+                    - __lines_model: Lines
+                    - __name: str
+                    - __parameters: dict
+                    - __point_model: Points
+
+
+                    - __check_intersection(line_x_1, line_y_1, line_x_2, line_y_2): boolean
+                    - __check_repeated_point(x, y, z)
+                    - __get_intersection(line_x_1, line_y_1, line_x_2, line_y_2): list
+                    - __str__()
+                    - __update_planar_state()
+                    + add_point(x, y, z)
+                    + delete_parameter(key)
+                    + get_id(): str
+                    + get_name(): str
+                    + get_parameter(key): any
+                    + get_point_list(): list
+                    + get_point_number(): int
+                    + get_parameter_list(): list
+                    + is_planar()
+                    + remove_last_added_point()
+                    + set_dot_color(color)
+                    + set_id(new_id)
+                    + set_line_color(color)
+                    + set_name(new_name)
+                    + set_new_parameter(key, value)
+                    + update_last_line(remove_last_line)
+                }
+
+@enduml
