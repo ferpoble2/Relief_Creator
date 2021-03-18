@@ -92,6 +92,10 @@
   {
    "optionDest": "datas",
    "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/engine/GUI/icons;engine/GUI/icons"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/input/test_polygons;input/test_polygons/"
   }
  ],
  "nonPyinstallerOptions": {

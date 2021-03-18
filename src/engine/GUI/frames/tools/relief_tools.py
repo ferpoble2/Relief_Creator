@@ -20,7 +20,7 @@ class ReliefTools:
         """
         self.__gui_manager = gui_manager
 
-        self.__combo_options = ["Linear", "Cubic", "Another One..."]
+        self.__combo_options = ["Linear"]
         self.__current_combo_option = 0
 
         self.__max_height_value = 0
