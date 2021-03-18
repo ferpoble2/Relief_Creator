@@ -2,7 +2,6 @@
 'https://plantuml.com/class-diagram
 
 !$file = "(F,#ff75ff) File"
-
 !includesub packages/src.engine.puml!INTERNAL
 
 package src <<External Dependencies>> {
@@ -30,6 +29,9 @@ package render {
     hide members
 }
 package controller {
+    hide members
+}
+package model {
     hide members
 }
 
