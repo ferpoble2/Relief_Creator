@@ -14,13 +14,17 @@ package tools {
 Tools *-- ReliefTools
 !endsub
 
-Tools -u-|> src.engine.gui.frames.Frame
-hide members
 
 !if (%false())
     !startsub EXTERNAL
        Tools -u-|> Frame
+       Tools .> NotEnoughPointsError
     !endsub
 !endif
+
+
+Tools -u-|> src.engine.gui.frames.Frame
+Tools .> src.error.NotEnoughPointsError
+hide members
 
 @enduml

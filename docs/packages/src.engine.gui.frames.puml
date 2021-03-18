@@ -23,11 +23,11 @@ package frames {
 
 !if (%false())
     !startsub EXTERNAL
-        Tools .> NotEnoughPointsError
+
     !endsub
 !endif
 
-Tools .> src.error.NotEnoughPointsError
+
 hide members
 
 @enduml
