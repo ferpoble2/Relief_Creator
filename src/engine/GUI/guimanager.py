@@ -14,6 +14,7 @@ from src.engine.GUI.frames.loading import Loading
 from src.engine.GUI.frames.text_modal import TextModal
 from src.engine.GUI.frames.test_window import TestWindow
 from src.engine.GUI.frames.polygon_information import PolygonInformation
+from src.engine.GUI.frames.confirmation_modal import ConfirmationModal
 from src.utils import get_logger
 from src.engine.GUI.icon import Icon
 from src.engine.GUI.polygon_folder_manager import PolygonFolderManager
@@ -379,7 +380,8 @@ class GUIManager:
             Tools(gui_manager),
             Debug(gui_manager),
             Loading(gui_manager),
-            PolygonInformation(gui_manager)
+            PolygonInformation(gui_manager),
+            ConfirmationModal(gui_manager)
         ]
 
     def get_gui_key_callback(self) -> callable:
