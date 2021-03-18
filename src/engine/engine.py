@@ -118,9 +118,11 @@ class Engine:
                 for k, v in record_dict.items():
 
                     # convert the parameter to the types managed for the exporter
-                    if type(v) == bool:
+                    if v is None:
+                        self.set_new_parameter_to_polygon(new_polygon_id, k, '')
+                    elif type(v) == bool:
                         self.set_new_parameter_to_polygon(new_polygon_id, k, v)
-                    elif is_numeric(v):
+                    elif is_numeric(str(v)):
                         self.set_new_parameter_to_polygon(new_polygon_id, k, float(v))
                     else:
                         self.set_new_parameter_to_polygon(new_polygon_id, k, str(v))

@@ -70,7 +70,7 @@ def interpolate(value: float, value_min: float, value_max: float, target_min: fl
     return (float(value) - value_min) * (float(target_max) - target_min) / (float(value_max) - value_min) + target_min
 
 
-def is_numeric(value: any) -> bool:
+def is_numeric(value: str) -> bool:
     """
     Check if a value can be converted to float.
 
