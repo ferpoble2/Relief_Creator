@@ -3,141 +3,18 @@
 
 title Class diagram for the src package (updated March 4 of 2021)
 
-!$file = "(F,#ff75ff) File"
-
-package src {
-
-    class utils <<$file>>
-
-    package input {
-        class CTP <<$file>>
-        class NetCDF <<$file>>
-    }
-
-    package output {
-        class ShapefileExporter
-    }
-
-    package program {
-
-        class Program
-        class parser <<$file>>
-    }
-
-    package engine {
-        class Engine
-
-        !includesub packages/src.engine.controller.puml!INTERNAL
-        !includesub packages/src.error.puml!INTERNAL
-        !includesub packages/src.engine.gui.puml!INTERNAL
-
-        package GUI {
-            hide members
-            package frames {
-                hide members
-                package tools{
-                    hide members
-                }
-            }
-        }
-
-        package error{
-            hide members
-        }
-
-        package scene {
-            note "Package defined\n in another file" as n6
-            class Scene
-
-            package model {
-                note "Package defined\n in another file" as n7
-
-                class Map2DModel
-                class Polygon
-            }
-        }
-
-    }
-}
-
-'!includesub packages/src.engine.controller.puml!EXTERNAL
-'!includesub packages/src.error.puml!EXTERNAL
-'!includesub packages/src.engine.gui.puml!EXTERNAL
+!includesub packages/src.puml!INTERNAL
 
 
-class CTP {
-    + read_file(filename: str) : dict
-}
+!include file_modules/CTP.puml
+!include file_modules/NetCDF.puml
+!include file_modules/utils.puml
+!include file_modules/parser.puml
 
-class ShapefileExporter {
-    - __delete_z_axis(list_of_points): list
-    - __is_clockwise(points): boolean
-    + export_polygon_to_shapefile(list_of_points, directory, polygon_name)
-}
-
-class NetCDF {
-    + LONGITUDE_KEYS: list
-    + LATITUDE_KEYS: list
-    + HEIGHT_KEYS: list
-
-    + read_info(filename): array, array, array
-    + get_variables_from_grp(grp, key_values): list
-}
-
-class utils {
-    + LOG_TO_FILE: boolean
-    + LOG_TO_CONSOLE: boolean
-    + LOG_LEVEL: int
-    + LOG_FILE_LEVEL: int
-    + LOG_ONLY_LISTED_MODULES: boolean
-    + LOG_LIST_MODULES: list
-
-    + interpolate(value, value_min, value_max, target_min,target_max) : float
-    + get_logger(log_level, log_file_level, module, directory) : logger
-    + is_numeric(value) : boolean
-}
-
-class Program {
-    - __active_model: str
-    - __active_polygon: str
-    - __active_tool: str
-    - __CPT_file: str
-    - __engine: Engine
-    - __loading: boolean
-    - __map_position: list
-    - __zoom_level: float
-
-    + add_zoom()
-    + change_cpt_file_with_dialog()
-    + get_active_model(): str
-    + get_active_polygon_id(): str
-    + get_active_tool(): str
-    + get_cpt_file(): str
-    + get_map_position(): list
-    + initialize(program)
-    + is_loading(): boolean
-    + less_zoom()
-    + load_netcdf_file_with_dialog()
-    + load_shapefile_file_with_dialog()
-    + process_arguments(arguments)
-    + reset_zoom_level()
-    + run()
-    + set_active_model(new_model_id)
-    + set_active_polygon(polygon_id)
-    + set_active_tool(new_tool)
-    + set_cpt_file(new_file)
-    + set_loading(is_loading)
-}
-
-class parser {
-    get_command_line_arguments(): Namespace
-}
+!include classes/ShapefileExporter.puml
+!include classes/Program.puml
 
 Program o--o Engine
-Program .> parser
 Engine o-- ShapefileExporter
-
-Scene -d.> NetCDF
-Map2DModel -d.> CTP
 
 @enduml

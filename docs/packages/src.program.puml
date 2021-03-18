@@ -1,0 +1,27 @@
+@startuml
+
+' Template file to use to create the diagrams od the packages.
+' Every file must have a sub part called INTERNAL with the internal connections of the package and
+' a sub part called EXTERNAL with the external parts.
+
+!startsub INTERNAL
+
+package program {
+    class Program
+    !include ../file_modules/parser.puml
+}
+
+Program .> parser
+!endsub
+
+!if (%false())
+    !startsub EXTERNAL
+
+    !endsub
+!endif
+
+' Code that will affect only the current diagram
+' can be messy since will not be imported
+hide members
+
+@enduml

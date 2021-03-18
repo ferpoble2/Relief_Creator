@@ -1,0 +1,8 @@
+@startuml
+class ShapefileExporter {
+    - __delete_z_axis(list_of_points): list
+    - __is_clockwise(points): boolean
+    + export_polygon_to_shapefile(list_of_points, directory, polygon_name)
+}
+
+@enduml

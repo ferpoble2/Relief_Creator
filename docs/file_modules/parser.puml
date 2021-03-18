@@ -1,0 +1,7 @@
+@startuml
+!$file = "(F,#ff75ff) File"
+class parser <<$file>>{
+    get_command_line_arguments(): Namespace
+}
+
+@enduml

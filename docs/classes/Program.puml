@@ -1,0 +1,33 @@
+@startuml
+class Program {
+    - __active_model: str
+    - __active_polygon: str
+    - __active_tool: str
+    - __CPT_file: str
+    - __engine: Engine
+    - __loading: boolean
+    - __map_position: list
+    - __zoom_level: float
+
+    + add_zoom()
+    + change_cpt_file_with_dialog()
+    + get_active_model(): str
+    + get_active_polygon_id(): str
+    + get_active_tool(): str
+    + get_cpt_file(): str
+    + get_map_position(): list
+    + initialize(program)
+    + is_loading(): boolean
+    + less_zoom()
+    + load_netcdf_file_with_dialog()
+    + load_shapefile_file_with_dialog()
+    + process_arguments(arguments)
+    + reset_zoom_level()
+    + run()
+    + set_active_model(new_model_id)
+    + set_active_polygon(polygon_id)
+    + set_active_tool(new_tool)
+    + set_cpt_file(new_file)
+    + set_loading(is_loading)
+}
+@enduml

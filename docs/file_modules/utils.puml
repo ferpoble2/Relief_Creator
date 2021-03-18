@@ -1,0 +1,15 @@
+@startuml
+!$file = "(F,#ff75ff) File"
+class utils <<$file>> {
+    + LOG_TO_FILE: boolean
+    + LOG_TO_CONSOLE: boolean
+    + LOG_LEVEL: int
+    + LOG_FILE_LEVEL: int
+    + LOG_ONLY_LISTED_MODULES: boolean
+    + LOG_LIST_MODULES: list
+
+    + interpolate(value, value_min, value_max, target_min,target_max) : float
+    + get_logger(log_level, log_file_level, module, directory) : logger
+    + is_numeric(value) : boolean
+}
+@enduml
