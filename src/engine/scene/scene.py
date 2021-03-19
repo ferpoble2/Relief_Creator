@@ -29,7 +29,7 @@ class Scene:
         Constructor of the class.
         """
         self.__model_hash = {}
-        self.__3d_model_list = []
+        self.__3d_model_hash = {}
         self.__polygon_list = []
         self.__engine = None
 
