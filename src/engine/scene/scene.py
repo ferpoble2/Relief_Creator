@@ -13,6 +13,7 @@ from src.error.non_existent_polygon_error import NonExistentPolygonError
 
 log = get_logger(module="SCENE")
 
+
 # TODO: Change the variable from a list of polygons to a dictionary.
 class Scene:
 
@@ -184,6 +185,23 @@ class Scene:
                 self.__polygon_list.remove(polygon)
                 break
 
+    def delete_polygon_param(self, polygon_id: str, key: str) -> None:
+        """
+        Delete a parameter from the polygon.
+
+        Args:
+            polygon_id: ID of the polygon.
+            key: Key to be deleted.
+
+        Returns: None
+        """
+        for polygon in self.__polygon_list:
+            if polygon.get_id() == polygon_id:
+                polygon.delete_parameter(key)
+                return
+
+        raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
+
     def draw(self) -> None:
         """
         Draw the models in the list.
@@ -277,6 +295,21 @@ class Scene:
         for polygon in self.__polygon_list:
             if polygon.get_id() == polygon_id:
                 return polygon.get_name()
+
+    def get_polygon_params(self, polygon_id: str) -> list:
+        """
+        Get the parameters of certain polygon.
+
+        Args:
+            polygon_id: ID of the polygon.
+
+        Returns: List with the parameters of the polygon.
+        """
+        for polygon in self.__polygon_list:
+            if polygon.get_id() == polygon_id:
+                return polygon.get_parameter_list()
+
+        raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
 
     def get_render_settings(self) -> dict:
         """
@@ -556,6 +589,24 @@ class Scene:
             if polygon.get_id() == polygon_id:
                 polygon.set_name(new_name)
 
+    def set_polygon_param(self, polygon_id: str, key: str, value: any) -> None:
+        """
+        Set a new parameter in the polygon.
+
+        Args:
+            polygon_id: ID of the polygon.
+            key: Key to add to the parameters.
+            value: Value of the parameter.
+
+        Returns: None
+        """
+        for polygon in self.__polygon_list:
+            if polygon.get_id() == polygon_id:
+                polygon.set_new_parameter(key, value)
+                return
+
+        raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
+
     def update_models_colors(self) -> None:
         """
         Update the colors of the models reloading the colors from the file used in the program.
@@ -601,52 +652,18 @@ class Scene:
         self.__width_viewport = viewport_data['SCENE_WIDTH_X']
         self.__height_viewport = viewport_data['SCENE_HEIGHT_Y']
 
-    def get_polygon_params(self, polygon_id: str) -> list:
+    def transform_points_using_linear_transformation(self, polygon_id: str, model_id: str, min_height: float,
+                                                     max_height: float) -> None:
         """
-        Get the parameters of certain polygon.
+        Modify the points inside the polygon from the specified model using a linear transformation.
 
         Args:
-            polygon_id: ID of the polygon.
-
-        Returns: List with the parameters of the polygon.
-        """
-        for polygon in self.__polygon_list:
-            if polygon.get_id() == polygon_id:
-                return polygon.get_parameter_list()
-
-        raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
-
-    def set_polygon_param(self, polygon_id: str, key: str, value: any) -> None:
-        """
-        Set a new parameter in the polygon.
-
-        Args:
-            polygon_id: ID of the polygon.
-            key: Key to add to the parameters.
-            value: Value of the parameter.
+            polygon_id: ID of the polygon to use.
+            model_id: Model to modify.
+            min_height: Min target height.
+            max_height: Max target height.
 
         Returns: None
         """
-        for polygon in self.__polygon_list:
-            if polygon.get_id() == polygon_id:
-                polygon.set_new_parameter(key, value)
-                return
 
-        raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
-
-    def delete_polygon_param(self, polygon_id: str, key: str) -> None:
-        """
-        Delete a parameter from the polygon.
-
-        Args:
-            polygon_id: ID of the polygon.
-            key: Key to be deleted.
-
-        Returns: None
-        """
-        for polygon in self.__polygon_list:
-            if polygon.get_id() == polygon_id:
-                polygon.delete_parameter(key)
-                return
-
-        raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
+        raise NotImplementedError('Still not implemented')

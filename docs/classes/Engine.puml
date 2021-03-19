@@ -55,7 +55,7 @@ class Engine {
     + reset_zoom_level()
     + run()
     + set_active_polygon(polygon_id)
-    + interpolate_points_using_linear_interpolation(polygon_id, model_id, min_height, max_height)
+    + transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
     + set_active_tool(tool)
     + set_loading_message(new_msg)
     + set_map_position(new_position)

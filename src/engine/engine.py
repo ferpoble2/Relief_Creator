@@ -514,11 +514,11 @@ class Engine:
 
         self.scene.optimize_gpu_memory_async(then_routine)
 
-    def interpolate_points_using_linear_interpolation(self,
-                                                      polygon_id: str,
-                                                      model_id: str,
-                                                      min_height: float,
-                                                      max_height: float) -> None:
+    def transform_points_using_linear_transformation(self,
+                                                     polygon_id: str,
+                                                     model_id: str,
+                                                     min_height: float,
+                                                     max_height: float) -> None:
         """
         Ask the scene to interpolate the points of the specified polygon using a linear interpolation.
 
@@ -530,7 +530,7 @@ class Engine:
 
         Returns: None
         """
-        self.scene.interpolate_using_linear_interpolation(polygon_id, model_id, min_height, max_height)
+        self.scene.transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
 
     def get_gui_scroll_callback(self):
         """

@@ -91,7 +91,7 @@ class GUIManager:
         """
 
         if interpolation_type == 'linear':
-            self.__engine.interpolate_points_using_linear_interpolation(polygon_id, model_id, min_height, max_height)
+            self.__engine.transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
 
         raise WrongInterpolationTypeError(
             f'Interpolation of type {interpolation_type} is not admitted by the program.')

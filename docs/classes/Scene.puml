@@ -35,6 +35,7 @@
                 + set_models_polygon_mode(polygon_mode)
                 + set_polygon_name(polygon_id, new_name)
                 + set_polygon_param(polygon_id, key, value)
+                + transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
                 + update_models_colors()
                 + update_models_projection_matrix()
                 + update_viewport()
