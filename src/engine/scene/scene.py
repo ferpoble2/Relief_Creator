@@ -119,9 +119,9 @@ class Scene:
         y_dist_pixel = (window_settings['HEIGHT'] - position_y) - scene_settings['SCENE_BEGIN_Y']
 
         x_pos = map_positions['left'] + (map_positions['right'] - map_positions['left']) * x_dist_pixel / \
-                scene_settings['SCENE_WIDTH_X']
+            scene_settings['SCENE_WIDTH_X']
         y_pos = map_positions['bottom'] + (map_positions['top'] - map_positions['bottom']) * y_dist_pixel / \
-                scene_settings['SCENE_HEIGHT_Y']
+            scene_settings['SCENE_HEIGHT_Y']
 
         log.debug(f'Calculated position is: {x_pos} {y_pos}')
         return x_pos, y_pos
