@@ -730,6 +730,28 @@ class GUIManager:
 
         raise AssertionError('There is not a frame from the TextModal class to set a modal message.')
 
+    def set_confirmation_modal(self, modal_title: str, msg: str, yes_function: callable, no_function: callable) -> None:
+        """
+        Opens a confirmation modal in the screen with two options (yes and no), after clicking each one execute the
+        functions given.
+
+        Args:
+            modal_title: Title of the modal.
+            msg: Message to use in the modal.
+            yes_function: Function to execute when pressed yes.
+            no_function: Function to execute when pressed no.
+
+        Returns: None
+        """
+        log.debug('Setting confirmation modal')
+
+        for frame in self.__component_list:
+            if isinstance(ConfirmationModal):
+                frame.set_confirmation_text(modal_title, msg, yes_function, no_function)
+                return
+
+        raise AssertionError('There is not a frame of class ConfirmationModal in the program.')
+
     def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
         Call the scene to change the polygon mode used by the models.
