@@ -7,10 +7,12 @@
 !startsub INTERNAL
 package scene {
     class Scene
+    class TransformationHelper
     !includesub src.engine.scene.model.puml!INTERNAL
 }
 
 Scene o--o Model
+Scene .> TransformationHelper
 !endsub
 
 !if (%false())
