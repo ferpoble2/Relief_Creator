@@ -44,7 +44,7 @@
                 - __3d_model_list: list
                 - __engine : Engine
                 - __height_viewport: int
-                - __model_list : list
+                - __model_hash : dictionary
                 - __polygon_id_count: int
                 - __polygon_list: list
                 - __should_execute_then_optimize_gpu_memory: int
