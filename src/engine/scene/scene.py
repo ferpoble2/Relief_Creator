@@ -16,6 +16,12 @@ log = get_logger(module="SCENE")
 
 # TODO: Change the variable from a list of polygons to a dictionary.
 class Scene:
+    """
+    Class in charge of all the elements that are rendered using Opengl.
+
+    This class manage all the configurations needed to show the models in the screen and the different operations
+    that they do.
+    """
 
     def __init__(self):
         """
