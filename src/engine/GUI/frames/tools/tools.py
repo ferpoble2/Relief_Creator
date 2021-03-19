@@ -293,7 +293,7 @@ class Tools(Frame):
 
         return clicked_selectable
 
-    def __folder_popup_menu(self, folder_id: str) -> bool:
+    def __folder_popup_menu(self, folder_id: str) -> None:
         """
         Folder popup menu that shows the name of the folder and configure the actions that happens when a second
         click is pressed.
@@ -301,10 +301,8 @@ class Tools(Frame):
         Args:
             folder_id: ID of the folder to show
 
-        Returns: Boolean indicating if the folder was deleted or not.
+        Returns: None
         """
-
-        folder_was_deleted = False
         imgui.text(self._GUI_manager.get_polygon_folder_name(folder_id))
         if imgui.is_item_hovered() and imgui.is_mouse_clicked(1):
             imgui.open_popup(f'Second click options folder {folder_id}')
@@ -328,19 +326,29 @@ class Tools(Frame):
 
             imgui.selectable('Delete folder')
             if imgui.is_item_clicked():
-                # get list of polygons on the folder
-                polygon_id_list = self._GUI_manager.get_polygons_id_from_polygon_folder(folder_id)
 
-                # change the active polygon only if it was deleted
-                if self._GUI_manager.get_active_polygon_id() in polygon_id_list:
-                    self._GUI_manager.set_active_polygon(None)
+                # noinspection PyMissingOrEmptyDocstring
+                def yes_function():
+                    # get list of polygons on the folder
+                    polygon_id_list = self._GUI_manager.get_polygons_id_from_polygon_folder(folder_id)
 
-                # delete all the polygons in the folder
-                self._GUI_manager.delete_all_polygons_inside_folder(folder_id)
+                    # change the active polygon only if it was deleted
+                    if self._GUI_manager.get_active_polygon_id() in polygon_id_list:
+                        self._GUI_manager.set_active_polygon(None)
 
-                # delete the folder from the list of folders and don't render it's polygons
-                self._GUI_manager.delete_polygon_folder(folder_id)
-                folder_was_deleted = True
+                    # delete all the polygons in the folder
+                    self._GUI_manager.delete_all_polygons_inside_folder(folder_id)
+
+                    # delete the folder from the list of folders and don't render it's polygons
+                    self._GUI_manager.delete_polygon_folder(folder_id)
+
+                # ask for the confirmation of the action
+                self._GUI_manager.set_confirmation_modal(
+                    'Confirmation',
+                    f'Do you want to delete the folder {self._GUI_manager.get_polygon_folder_name(folder_id)}?',
+                    yes_function,
+                    lambda: None
+                )
 
             imgui.end_popup()
 
@@ -371,7 +379,6 @@ class Tools(Frame):
                 imgui.close_current_popup()
 
             imgui.end_popup()
-        return folder_was_deleted
 
     def __generate_polygon_list(self) -> None:
         """
@@ -383,10 +390,10 @@ class Tools(Frame):
         active_polygon = self._GUI_manager.get_active_polygon_id()
 
         for folder_id in self._GUI_manager.get_polygon_folder_id_list():
-            folder_was_deleted = self.__folder_popup_menu(folder_id)
+            self.__folder_popup_menu(folder_id)
 
             # list of polygons to render to each folder
-            if not folder_was_deleted:
+            if folder_id in self._GUI_manager.get_polygon_folder_id_list():
                 for polygon_id in self._GUI_manager.get_polygons_id_from_polygon_folder(folder_id):
                     # push id so the buttons doesnt have conflicts with names
                     imgui.push_id(polygon_id)
