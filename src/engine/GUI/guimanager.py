@@ -746,7 +746,7 @@ class GUIManager:
         log.debug('Setting confirmation modal')
 
         for frame in self.__component_list:
-            if isinstance(ConfirmationModal):
+            if isinstance(frame, ConfirmationModal):
                 frame.set_confirmation_text(modal_title, msg, yes_function, no_function)
                 return
 
