@@ -2,6 +2,7 @@
 File that contain the Scene class. This class is in charge of the management of the models of the scene.
 """
 import OpenGL.GL as GL
+# noinspection PyPep8Naming
 import OpenGL.constant as OGLConstant
 
 from src.engine.scene.model.map2dmodel import Map2DModel
@@ -27,7 +28,7 @@ class Scene:
         """
         Constructor of the class.
         """
-        self.__model_list = []
+        self.__model_hash = {}
         self.__3d_model_list = []
         self.__polygon_list = []
         self.__engine = None
@@ -44,13 +45,13 @@ class Scene:
 
     def add_model(self, model: Model) -> None:
         """
-        Add a model to the list of models.
+        Add a model to the hash of models.
         Args:
-            model: Model to add to the list
+            model: Model to add to the hashtable.
 
         Returns: None
         """
-        self.__model_list.append(model)
+        self.__model_hash[model.id] = model
 
     def add_new_vertex_to_active_polygon_using_real_coords(self, x_coord: float, y_coord: float) -> None:
         """
@@ -210,16 +211,17 @@ class Scene:
 
     def draw(self) -> None:
         """
-        Draw the models in the list.
+        Draw the models in the hash of models.
 
         Draw the models in the order of the list.
         Returns: None
         """
-        for model in self.__model_list:
+        for model in self.__model_hash.values():
             model.draw()
         for polygon in self.__polygon_list:
             polygon.draw()
 
+    # noinspection PyUnresolvedReferences
     def get_active_model_projection_matrix(self) -> 'np.array':
         """
         Get the projection matrix from the active model.
@@ -227,9 +229,8 @@ class Scene:
         Returns: array with the projection matrix of the active model.
         """
         active_model_id = self.__engine.get_active_model_id()
-        for model in self.__model_list:
-            if model.id == active_model_id:
-                return model.get_projection_matrix()
+        if active_model_id in self.__model_hash:
+            return self.__model_hash[active_model_id].get_projection_matrix()
 
     def get_active_model_showed_limits(self) -> dict:
         """
@@ -241,9 +242,8 @@ class Scene:
         if active_model_id is None:
             raise AssertionError("There is no active model.")
 
-        for model in self.__model_list:
-            if model.id == active_model_id:
-                return model.get_showed_limits()
+        if active_model_id in self.__model_hash:
+            return self.__model_hash[active_model_id].get_showed_limits()
 
     def get_active_polygon_id(self) -> str:
         """
@@ -341,6 +341,7 @@ class Scene:
         """
         return self.__engine.get_zoom_level()
 
+    # noinspection PyUnresolvedReferences
     def initialize(self, engine: 'Engine') -> None:
         """
         Initialize the component in the engine.
@@ -377,7 +378,7 @@ class Scene:
         Returns: None
         """
         log.debug("Moving models")
-        for model in self.__model_list:
+        for model in self.__model_hash.values():
             model.move(x_movement, y_movement)
 
     def optimize_gpu_memory_async(self, then: callable) -> None:
@@ -390,25 +391,26 @@ class Scene:
         Returns: None
         """
         log.debug("Optimizing gpu memory of models")
-        self.__should_execute_then_optimize_gpu_memory = len(self.__model_list)
+        self.__should_execute_then_optimize_gpu_memory = len(self.__model_hash)
 
+        # noinspection PyMissingOrEmptyDocstring
         def then_routine():
             self.__should_execute_then_optimize_gpu_memory -= 1
             self.__should_execute_then_optimize_gpu_memory = max(0, self.__should_execute_then_optimize_gpu_memory)
 
             if self.__should_execute_then_optimize_gpu_memory == 0:
-                self.__should_execute_then_optimize_gpu_memory = len(self.__model_list)
+                self.__should_execute_then_optimize_gpu_memory = len(self.__model_hash)
                 then()
 
-        for model in self.__model_list:
+        for model in self.__model_hash.values():
             model.optimize_gpu_memory_async(then_routine)
 
         # if there is no models, call the then routine doing nothing
-        if len(self.__model_list) == 0:
+        if len(self.__model_hash) == 0:
             then()
 
     def refresh_with_model_2d_async(self, path_color_file: str, path_model: str, model_id: str = 'main',
-                                    then=lambda: None) -> 'Model':
+                                    then=lambda: None) -> None:
         """
         Refresh the scene, removing all the models, and adding the new model specified
         in the input.
@@ -435,6 +437,7 @@ class Scene:
         log.debug("Generating model")
         model = Map2DModel(self)
 
+        # noinspection PyMissingOrEmptyDocstring
         def then_routine():
             log.debug("Settings colors from file.")
             model.set_color_file(path_color_file)
@@ -465,29 +468,30 @@ class Scene:
 
         # set up the then routine that should executes only once.
         # -------------------------------------------------------
-        self.__should_execute_then_reload = len(self.__model_list)
+        self.__should_execute_then_reload = len(self.__model_hash)
 
+        # noinspection PyMissingOrEmptyDocstring
         def then_routine():
             self.__should_execute_then_reload -= 1
             self.__should_execute_then_reload = max(self.__should_execute_then_reload, 0)
 
             if self.__should_execute_then_reload == 0:
-                self.__should_execute_then_reload = len(self.__model_list)
+                self.__should_execute_then_reload = len(self.__model_hash)
                 then()
 
-        for model in self.__model_list:
+        for model in self.__model_hash.values():
             model.recalculate_vertices_from_grid_async(quality=self.__engine.get_quality(), then=then_routine)
 
         # if there is no models, call the then routine doing nothing
-        if len(self.__model_list) == 0:
+        if len(self.__model_hash) == 0:
             then()
 
     def remove_all_models(self) -> None:
         """
-        Remove all models from the list of models.
+        Remove all models from the hash of models.
         Returns: None
         """
-        self.__model_list = []
+        self.__model_hash = {}
 
     def remove_last_point_from_active_polygon(self) -> None:
         """
@@ -513,18 +517,16 @@ class Scene:
 
     def remove_model(self, id_model: str) -> None:
         """
-        Return the model with the specified id.
+        Delete the model with the specified id.
+
         Args:
             id_model: Id of the model to remove.
 
         Returns: None
         """
-        model_to_remove = None
-        for model in self.__model_list:
-            if model.id == id_model:
-                model_to_remove = model
 
-        self.__model_list.remove(model_to_remove)
+        if id_model in self.__model_hash:
+            self.__model_hash.pop(id_model)
 
     def set_loading_message(self, new_msg: str) -> None:
         """
@@ -565,7 +567,7 @@ class Scene:
 
         Returns: None
         """
-        for model in self.__model_list:
+        for model in self.__model_hash.values():
             model.polygon_mode = polygon_mode
 
     def set_parallel_task(self, parallel_task, then):
@@ -620,7 +622,7 @@ class Scene:
         Returns: None
         """
         color_file = self.__engine.get_cpt_file()
-        for model in self.__model_list:
+        for model in self.__model_hash.values():
             model.set_color_file(color_file)
 
     def update_models_projection_matrix(self) -> None:
@@ -632,7 +634,7 @@ class Scene:
         log.debug("Updating projection matrix of models.")
         scene_data = self.__engine.get_scene_setting_data()
 
-        for model in self.__model_list:
+        for model in self.__model_hash.values():
             model.calculate_projection_matrix(scene_data, self.__engine.get_zoom_level())
 
     def update_viewport(self) -> None:
