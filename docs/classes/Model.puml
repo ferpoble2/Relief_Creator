@@ -18,6 +18,8 @@ class Model {
                     + set_shaders(vertex_shader, fragment_shader)
                     + set_vertices(vertex)
                     + set_indices(indices)
+                    + get_vertices_array(): array
+                    + get_indices_array(): array
                     + draw()
                 }
 @enduml

@@ -42,6 +42,11 @@ class Model:
 
         self.scene = scene
 
+        # auxiliary variables
+        # -------------------
+        self.__vertices_array = np.array([])
+        self.__indices_array = np.array([])
+
     def set_shaders(self, vertex_shader: str, fragment_shader: str) -> None:
         """Set the shaders to use in the model.
 
@@ -105,6 +110,22 @@ class Model:
         """
         raise NotImplementedError("Method set_color_file not implemented in the model.")
 
+    def get_vertices_array(self) -> np.ndarray:
+        """
+        Get the array of vertices currently being used in the model.
+
+        Returns: Numpy array with the elements currently being used in the model.
+        """
+        return self.__vertices_array
+
+    def get_indices_array(self) -> np.ndarray:
+        """
+        Get the array of indices currently being used in the model.
+
+        Returns: Numpy array with the elements currently being used in the model.
+        """
+        return self.__vertices_array
+
     def set_vertices(self, vertex: np.ndarray) -> None:
         """Set the vertices buffers inside the model.
 
@@ -126,6 +147,8 @@ class Model:
         )
         GL.glEnableVertexAttribArray(0)
 
+        self.__vertices_array = vertex
+
     def set_indices(self, indices: np.ndarray) -> None:
         """Set the vertex indices of the vertices of the model.
 
@@ -142,6 +165,7 @@ class Model:
             GL.GL_STATIC_DRAW,
         )
 
+        self.__indices_array = indices
         self.indices_size = len(indices)
 
     def __str__(self) -> str:
