@@ -47,23 +47,14 @@ class Model:
         self.__vertices_array = np.array([])
         self.__indices_array = np.array([])
 
-    def set_shaders(self, vertex_shader: str, fragment_shader: str) -> None:
-        """Set the shaders to use in the model.
+    def __str__(self) -> str:
+        """Return the string representing the model object.
 
-        Set the shaders of the model, compiling them and creating a program.
-
-        Args:
-            vertex_shader: Path to the vertex shader location.
-            fragment_shader: Path to the fragment shader location.
+        Returns:
+            str: String representing the object.
         """
 
-        vertex_shader = open(vertex_shader, "r").read()
-        fragment_shader = open(fragment_shader, "r").read()
-
-        self.shader_program = GL.OpenGL.GL.shaders.compileProgram(
-            compileShader(vertex_shader, GL.GL_VERTEX_SHADER),
-            compileShader(fragment_shader, GL.GL_FRAGMENT_SHADER),
-        )
+        return f"Model with vao={self.vao}."
 
     def _update_uniforms(self) -> None:
         """
@@ -99,6 +90,22 @@ class Model:
         GL.glPolygonMode(GL.GL_FRONT, GL.GL_FILL)
         GL.glPolygonMode(GL.GL_BACK, GL.GL_FILL)
 
+    def get_indices_array(self) -> np.ndarray:
+        """
+        Get the array of indices currently being used in the model.
+
+        Returns: Numpy array with the elements currently being used in the model.
+        """
+        return self.__vertices_array
+
+    def get_vertices_array(self) -> np.ndarray:
+        """
+        Get the array of vertices currently being used in the model.
+
+        Returns: Numpy array with the elements currently being used in the model.
+        """
+        return self.__vertices_array
+
     def set_color_file(self, color_file: str) -> None:
         """
         Update the colors used by the model from the ones in the file.
@@ -110,21 +117,42 @@ class Model:
         """
         raise NotImplementedError("Method set_color_file not implemented in the model.")
 
-    def get_vertices_array(self) -> np.ndarray:
-        """
-        Get the array of vertices currently being used in the model.
+    def set_indices(self, indices: np.ndarray) -> None:
+        """Set the vertex indices of the vertices of the model.
 
-        Returns: Numpy array with the elements currently being used in the model.
+        Args:
+            indices: Indices to be used in the draw process.
         """
-        return self.__vertices_array
 
-    def get_indices_array(self) -> np.ndarray:
-        """
-        Get the array of indices currently being used in the model.
+        GL.glBindVertexArray(self.vao)
+        GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, self.ebo)
+        GL.glBufferData(
+            GL.GL_ELEMENT_ARRAY_BUFFER,
+            len(indices) * self.scene.get_float_bytes(),
+            indices,
+            GL.GL_STATIC_DRAW,
+        )
 
-        Returns: Numpy array with the elements currently being used in the model.
+        self.__indices_array = indices
+        self.indices_size = len(indices)
+
+    def set_shaders(self, vertex_shader: str, fragment_shader: str) -> None:
+        """Set the shaders to use in the model.
+
+        Set the shaders of the model, compiling them and creating a program.
+
+        Args:
+            vertex_shader: Path to the vertex shader location.
+            fragment_shader: Path to the fragment shader location.
         """
-        return self.__vertices_array
+
+        vertex_shader = open(vertex_shader, "r").read()
+        fragment_shader = open(fragment_shader, "r").read()
+
+        self.shader_program = GL.OpenGL.GL.shaders.compileProgram(
+            compileShader(vertex_shader, GL.GL_VERTEX_SHADER),
+            compileShader(fragment_shader, GL.GL_FRAGMENT_SHADER),
+        )
 
     def set_vertices(self, vertex: np.ndarray) -> None:
         """Set the vertices buffers inside the model.
@@ -148,31 +176,3 @@ class Model:
         GL.glEnableVertexAttribArray(0)
 
         self.__vertices_array = vertex
-
-    def set_indices(self, indices: np.ndarray) -> None:
-        """Set the vertex indices of the vertices of the model.
-
-        Args:
-            indices: Indices to be used in the draw process.
-        """
-
-        GL.glBindVertexArray(self.vao)
-        GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, self.ebo)
-        GL.glBufferData(
-            GL.GL_ELEMENT_ARRAY_BUFFER,
-            len(indices) * self.scene.get_float_bytes(),
-            indices,
-            GL.GL_STATIC_DRAW,
-        )
-
-        self.__indices_array = indices
-        self.indices_size = len(indices)
-
-    def __str__(self) -> str:
-        """Return the string representing the model object.
-
-        Returns:
-            str: String representing the object.
-        """
-
-        return f"Model with vao={self.vao}."
