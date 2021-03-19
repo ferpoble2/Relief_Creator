@@ -43,7 +43,6 @@ class Map2DModel(Model):
 
         # vertices values (used in the buffer)
         self.__vertices = []
-        self.__vertices_array = np.array([])
 
         # indices of the model (used in the buffer)
         self.__indices = []
@@ -90,7 +89,7 @@ class Map2DModel(Model):
         indices_array = np.array(self.__indices)
         indices_array = indices_array.reshape(-1)
 
-        vertices_array = self.__vertices_array.reshape((-1, 3))
+        vertices_array = self.get_vertices_array().reshape((-1, 3))
 
         indices_with_coords_array = vertices_array[indices_array]
         indices_with_coords_array = indices_with_coords_array.reshape((-1, 3, 3))
@@ -750,7 +749,6 @@ class Map2DModel(Model):
             log.debug("Loading buffers")
             self.scene.set_loading_message("Loading vertices...")
             self.__vertices = self.__generate_vertices_list(x, y, z)
-            self.__vertices_array = np.array(self.__vertices)
 
             log.debug("Generating Indices")
             self.scene.set_loading_message("Generating polygons...")
