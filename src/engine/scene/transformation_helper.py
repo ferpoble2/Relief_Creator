@@ -16,3 +16,4 @@ class TransformationHelper:
         pass
 
     def modify_points_inside_polygon(self, points: np.ndarray, polygon: 'Polygon', new_height):
+        raise NotImplementedError()
