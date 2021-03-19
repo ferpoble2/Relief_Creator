@@ -68,8 +68,7 @@ class GUIManager:
         Returns: None
         """
         for frame in self.__component_list:
-            if isinstance(frame, Tools):
-                frame.add_new_polygon(polygon_id)
+            frame.add_new_polygon(polygon_id)
 
     def add_frames(self, component_list: list) -> None:
         """

@@ -31,6 +31,19 @@ class Frame:
         """
         return self._position
 
+    def add_new_polygon(self, polygon_id) -> None:
+        """
+        Function to call to add a new polygon into the frame.
+
+        Must be defined in child classes.
+
+        Args:
+            polygon_id: ID of the polygon.
+
+        Returns: None
+        """
+        pass
+
     def render(self) -> None:
         """
         Draw the frames on the screen.

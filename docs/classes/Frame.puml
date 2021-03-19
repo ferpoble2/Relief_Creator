@@ -5,6 +5,7 @@ class Frame {
     ~ _position: list
     ~ _GUI_manager: GUIManager
 
+    + add_new_polygon(polygon_id)
     + change_position(new_position)
     + get_position(): list
     + render()
