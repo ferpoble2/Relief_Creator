@@ -30,7 +30,7 @@ class Scene:
         """
         self.__model_hash = {}
         self.__3d_model_hash = {}
-        self.__polygon_list = []
+        self.__polygon_hash = {}
         self.__engine = None
 
         self.__width_viewport = None
@@ -63,9 +63,9 @@ class Scene:
 
         Returns: None
         """
-        for polygon in self.__polygon_list:
-            if polygon.id == self.__engine.get_active_polygon_id():
-                polygon.add_point(x_coord, y_coord)
+        active_polygon = self.__engine.get_active_polygon_id()
+        if active_polygon in self.__polygon_hash:
+            self.__polygon_hash[active_polygon].add_point(x_coord, y_coord)
 
     def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
         """
@@ -83,10 +83,9 @@ class Scene:
         if active_polygon is None:
             raise AssertionError('There is no active polygon.')
 
-        for polygon in self.__polygon_list:
-            if polygon.get_id() == active_polygon:
-                new_x, new_y = self.calculate_map_position_from_window(position_x, position_y)
-                polygon.add_point(new_x, new_y)
+        if active_polygon in self.__polygon_hash:
+            new_x, new_y = self.calculate_map_position_from_window(position_x, position_y)
+            self.__polygon_hash[active_polygon].add_point(new_x, new_y)
 
     def add_polygon(self, polygon: 'Polygon') -> None:
         """
@@ -98,7 +97,7 @@ class Scene:
         Returns: None
         """
         log.debug("Added polygon to the scene")
-        self.__polygon_list.append(polygon)
+        self.__polygon_hash[polygon.get_id()] = polygon
         self.__polygon_id_count += 1
 
     def calculate_map_position_from_window(self, position_x, position_y) -> (float, float):
@@ -141,9 +140,8 @@ class Scene:
 
         Returns: None
         """
-        for polygon in self.__polygon_list:
-            if polygon.get_id() == polygon_id:
-                polygon.set_line_color(color)
+        if polygon_id in self.__polygon_hash:
+            self.__polygon_hash[polygon_id].set_line_color(color)
 
     def change_dot_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
@@ -159,9 +157,8 @@ class Scene:
 
         Returns: None
         """
-        for polygon in self.__polygon_list:
-            if polygon.get_id() == polygon_id:
-                polygon.set_dot_color(color)
+        if polygon_id in self.__polygon_hash:
+            self.__polygon_hash[polygon_id].set_dot_color(color)
 
     def create_new_polygon(self) -> str:
         """
@@ -180,17 +177,15 @@ class Scene:
 
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
-        Delete the polygon with the specified id from the scene
+        Delete the polygon with the specified id from the scene.
 
         Args:
             polygon_id: Id to use to delete.
 
         Returns: None
         """
-        for polygon in self.__polygon_list:
-            if polygon.get_id() == polygon_id:
-                self.__polygon_list.remove(polygon)
-                break
+        if polygon_id in self.__polygon_hash:
+            self.__polygon_hash.pop(polygon_id)
 
     def delete_polygon_param(self, polygon_id: str, key: str) -> None:
         """
@@ -202,12 +197,10 @@ class Scene:
 
         Returns: None
         """
-        for polygon in self.__polygon_list:
-            if polygon.get_id() == polygon_id:
-                polygon.delete_parameter(key)
-                return
-
-        raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
+        try:
+            self.__polygon_hash[polygon_id].delete_parameter(key)
+        except KeyError:
+            raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
 
     def draw(self) -> None:
         """
@@ -218,7 +211,7 @@ class Scene:
         """
         for model in self.__model_hash.values():
             model.draw()
-        for polygon in self.__polygon_list:
+        for polygon in self.__polygon_hash.values():
             polygon.draw()
 
     # noinspection PyUnresolvedReferences
@@ -271,11 +264,10 @@ class Scene:
 
         Returns: List with the points of the polygon.
         """
-        for polygon in self.__polygon_list:
-            if polygon.get_id() == polygon_id:
-                return polygon.get_point_list()
-
-        raise NonExistentPolygonError(f"Polygon with ID {polygon_id} does not exist.")
+        try:
+            return self.__polygon_hash[polygon_id].get_point_list()
+        except KeyError:
+            raise NonExistentPolygonError(f"Polygon with ID {polygon_id} does not exist.")
 
     def get_polygon_id_list(self) -> list:
         """
@@ -283,11 +275,7 @@ class Scene:
 
         Returns: list with polygon ids being used in the program.
         """
-        polygon_ids = []
-        for polygon in self.__polygon_list:
-            polygon_ids.append(polygon.get_id())
-
-        return polygon_ids
+        return list(self.__polygon_hash.keys())
 
     def get_polygon_name(self, polygon_id: str) -> str:
         """
@@ -298,9 +286,8 @@ class Scene:
 
         Returns: Name of the polygon
         """
-        for polygon in self.__polygon_list:
-            if polygon.get_id() == polygon_id:
-                return polygon.get_name()
+        if polygon_id in self.__polygon_hash:
+            return self.__polygon_hash[polygon_id].get_name()
 
     def get_polygon_params(self, polygon_id: str) -> list:
         """
@@ -311,11 +298,10 @@ class Scene:
 
         Returns: List with the parameters of the polygon.
         """
-        for polygon in self.__polygon_list:
-            if polygon.get_id() == polygon_id:
-                return polygon.get_parameter_list()
-
-        raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
+        try:
+            return self.__polygon_hash[polygon_id].get_parameter_list()
+        except KeyError:
+            raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
 
     def get_render_settings(self) -> dict:
         """
@@ -363,9 +349,8 @@ class Scene:
 
         Returns: boolean indicating if the polygon is planar or not
         """
-        for polygon in self.__polygon_list:
-            if polygon.get_id() == polygon_id:
-                return polygon.is_planar()
+        if polygon_id in self.__polygon_hash:
+            return self.__polygon_hash[polygon_id].is_planar()
 
     def move_models(self, x_movement: int, y_movement: int) -> None:
         """
@@ -508,10 +493,9 @@ class Scene:
             raise AssertionError('There is no active polygon.')
 
         log.debug(f'Removing last point from polygon {polygon_id}')
-        for polygon in self.__polygon_list:
-            if polygon_id == polygon.get_id():
-                polygon.remove_last_added_point()
-                return
+        if polygon_id in self.__polygon_hash:
+            self.__polygon_hash[polygon_id].remove_last_added_point()
+            return
 
         raise AssertionError('Active polygon is not in the list of polygons')
 
@@ -592,10 +576,8 @@ class Scene:
 
         Returns: None
         """
-
-        for polygon in self.__polygon_list:
-            if polygon.get_id() == polygon_id:
-                polygon.set_name(new_name)
+        if polygon_id in self.__polygon_hash:
+            self.__polygon_hash[polygon_id].set_name(new_name)
 
     def set_polygon_param(self, polygon_id: str, key: str, value: any) -> None:
         """
@@ -608,12 +590,11 @@ class Scene:
 
         Returns: None
         """
-        for polygon in self.__polygon_list:
-            if polygon.get_id() == polygon_id:
-                polygon.set_new_parameter(key, value)
-                return
-
-        raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
+        try:
+            self.__polygon_hash[polygon_id].set_new_parameter(key, value)
+            return
+        except KeyError:
+            raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
 
     def update_models_colors(self) -> None:
         """
