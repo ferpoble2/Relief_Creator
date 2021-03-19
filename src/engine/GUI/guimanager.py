@@ -70,20 +70,6 @@ class GUIManager:
         for frame in self.__component_list:
             frame.add_new_polygon(polygon_id)
 
-    def add_frames(self, component_list: list) -> None:
-        """
-        Add frames to render in the application.
-
-        Receive a list of components that must inherit from the Frame class.
-
-        Args:
-            component_list: List of frames to render.
-
-        Returns: None
-        """
-        for frame in component_list:
-            self.__component_list.append(frame)
-
     def change_points_height(self, polygon_id: str, model_id: str, min_height: float, max_height: float,
                              interpolation_type: 'str' = 'linear') -> None:
         """
@@ -363,26 +349,6 @@ class GUIManager:
         """
         return self.__engine.get_cpt_file()
 
-    def get_frames(self, gui_manager: 'GUIManager') -> list:
-        """
-        Return the frame object to use in the application.
-
-        Args:
-            gui_manager: GUIManager to use to initialize the frames.
-
-        Returns: list with the frame objects.
-        """
-        return [
-            MainMenuBar(gui_manager),
-            TestWindow(gui_manager),
-            TextModal(gui_manager),
-            Tools(gui_manager),
-            Debug(gui_manager),
-            Loading(gui_manager),
-            PolygonInformation(gui_manager),
-            ConfirmationModal(gui_manager)
-        ]
-
     def get_gui_key_callback(self) -> callable:
         """
         Get the key callback used by imgui.
@@ -534,11 +500,12 @@ class GUIManager:
         """
         return self.__engine.get_zoom_level()
 
-    def initialize(self, window, engine: 'Engine') -> None:
+    def initialize(self, window, engine: 'Engine', gui_manager: 'GUIManager') -> None:
         """
         Set the initial configurations of the GUI.
 
         Args:
+            gui_manager: The object used to make this call.
             engine: Engine used in the application
             window: Window to use to draw the GUI
 
@@ -569,7 +536,21 @@ class GUIManager:
         self.__load_icons()
         self.get_gui_mouse_scroll_callback()
 
+        # set the engine
         self.__engine = engine
+
+        # initialize the components of the manager
+        # ----------------------------------------
+        self.__component_list = [
+            MainMenuBar(gui_manager),
+            TestWindow(gui_manager),
+            TextModal(gui_manager),
+            Tools(gui_manager),
+            Debug(gui_manager),
+            Loading(gui_manager),
+            PolygonInformation(gui_manager),
+            ConfirmationModal(gui_manager)
+        ]
 
     def is_mouse_inside_frame(self) -> bool:
         """
@@ -726,6 +707,9 @@ class GUIManager:
         for frame in self.__component_list:
             if isinstance(frame, Loading):
                 frame.set_loading_message(new_msg)
+                return
+
+        raise AssertionError('There is not a frame from the Loading class to set a loading message.')
 
     def set_modal_text(self, modal_title: str, msg: str) -> None:
         """
@@ -742,6 +726,9 @@ class GUIManager:
         for frame in self.__component_list:
             if isinstance(frame, TextModal):
                 frame.set_modal_text(modal_title, msg)
+                return
+
+        raise AssertionError('There is not a frame from the TextModal class to set a modal message.')
 
     def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """

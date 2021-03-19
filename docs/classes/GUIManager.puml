@@ -15,7 +15,6 @@ class GUIManager{
 
     - __load_icons()
     - __update_frames_with_new_polygon(polygon_id)
-    + add_frames(component_list)
     + add_imported_polygon(polygon_id)
     + add_polygon_to_gui(polygon_id)
     + add_polygon_to_polygon_folder(folder_id, polygon_id)
@@ -37,7 +36,6 @@ class GUIManager{
     + get_active_polygon_id(): str
     + get_active_tool(): str
     + get_cpt_file(): str
-    + get_frames(gui_manager) : list
     + get_gui_key_callback(): function
     + get_gui_mouse_scroll_callback(): function
     + get_icon(icon_name): Icon

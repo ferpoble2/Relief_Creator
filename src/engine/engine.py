@@ -434,8 +434,7 @@ class Engine:
         # GUI CODE
         # --------
         log.debug("Loading GUI")
-        self.gui_manager.initialize(self.window, engine)
-        self.gui_manager.add_frames(self.gui_manager.get_frames(self.gui_manager))
+        self.gui_manager.initialize(self.window, engine, self.gui_manager)
 
         # CONTROLLER CODE
         # ---------------
