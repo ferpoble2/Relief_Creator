@@ -250,12 +250,21 @@ class Tools(Frame):
             log.debug(f"Delete polygon with id: {polygon_id}")
             clicked_selectable = True
 
-            # delete the polygon from the program
-            self._GUI_manager.delete_polygon_by_id(polygon_id)
+            # noinspection PyMissingOrEmptyDocstring
+            def yes_function():
+                # delete the polygon from the program
+                self._GUI_manager.delete_polygon_by_id(polygon_id)
 
-            # if the deleted polygon is the active, change the program status no None (deprecated code)
-            if active_polygon == polygon_id:
-                self._GUI_manager.set_active_polygon(None)
+                # if the deleted polygon is the active, change the program status no None (deprecated code)
+                if active_polygon == polygon_id:
+                    self._GUI_manager.set_active_polygon(None)
+
+            self._GUI_manager.set_confirmation_modal(
+                'Confirmation',
+                f'Do you want to delete the polygon {self._GUI_manager.get_polygon_name(polygon_id)}?',
+                yes_function,
+                lambda: None
+            )
 
         return clicked_selectable
 
@@ -612,6 +621,5 @@ class Tools(Frame):
         if self._GUI_manager.get_active_polygon_id() is not None:
             imgui.separator()
             self.__relief_tools.render()
-
 
         imgui.end()
