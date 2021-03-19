@@ -10,6 +10,7 @@ package frames {
     class TestWindow
     class TextModal
     class PolygonInformation
+    class ConfirmationModal
 }
 
     Debug -u-|> Frame
@@ -19,6 +20,7 @@ package frames {
     TextModal -u-|> Frame
     PolygonInformation -u-|> Frame
     Tools -u-|> Frame
+    ConfirmationModal -u-|> Frame
 !endsub
 
 !if (%false())

@@ -33,6 +33,7 @@ package src {
 !include classes/TestWindow.puml
 !include classes/Tools.puml
 !include classes/PolygonFolderManager.puml
+!include classes/ConfirmationModal.puml
 
 
 @enduml
