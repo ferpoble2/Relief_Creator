@@ -605,12 +605,12 @@ class Engine:
 
         glfw.terminate()
 
-    def set_active_polygon(self, polygon_id: str) -> None:
+    def set_active_polygon(self, polygon_id: str or None) -> None:
         """
-        Set a new active polygon on the program.
+        Set a new active polygon on the program. Set None to remove the active polygon.
 
         Args:
-            polygon_id: ID of the polygon
+            polygon_id: ID of the polygon or None.
 
         Returns: None
         """
