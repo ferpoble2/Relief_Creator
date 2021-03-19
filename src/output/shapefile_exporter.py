@@ -87,6 +87,9 @@ class ShapefileExporter:
         if list_of_points is None:
             list_of_points = []
 
+        # add the name if there is not in the parameters
+        if 'name' not in parameters:
+            parameters['name'] = polygon_name
         if len(list_of_points) < 6:  # two points
             raise NotEnoughPointsError('Not enough points to export this polygon.')
 
