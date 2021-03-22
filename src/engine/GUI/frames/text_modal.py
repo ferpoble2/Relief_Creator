@@ -52,6 +52,11 @@ class TextModal(Frame):
             self.__should_show = False
 
         imgui.set_next_window_size(self.__windows_width, -1)
+        imgui.set_next_window_position(imgui.get_io().display_size.x * 0.5,
+                                       imgui.get_io().display_size.y * 0.5,
+                                       imgui.ALWAYS,
+                                       0.5,
+                                       0.5)
         if imgui.begin_popup_modal(self.__modal_title)[0]:
             imgui.text_wrapped(self.__msg)
 
