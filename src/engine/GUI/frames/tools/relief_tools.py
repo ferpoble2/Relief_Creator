@@ -34,12 +34,25 @@ class ReliefTools:
 
         imgui.text('Relief Tools')
 
+        imgui.text('Current polygon information:')
+
+        imgui.columns(2, None, False)
+
+        imgui.text(f'Max height:')
+        imgui.next_column()
+        imgui.text(f'dummy')
+        imgui.next_column()
+        imgui.text(f'Min height:')
+        imgui.next_column()
+        imgui.text(f'dummy')
+        imgui.columns(1)
+
         clicked, self.__current_combo_option = imgui.combo(
             "Transformation", self.__current_combo_option, self.__combo_options
         )
 
-        imgui.input_float('Min Height', self.__min_height_value)
-        imgui.input_float('Max Height', self.__max_height_value)
+        _, self.__min_height_value = imgui.input_float('Min Height', self.__min_height_value)
+        _, self.__max_height_value = imgui.input_float('Max Height', self.__max_height_value)
 
         if imgui.button('Change Height', -1):
             if self.__current_combo_option == 0:
