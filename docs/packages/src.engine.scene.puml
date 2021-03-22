@@ -20,6 +20,8 @@ Scene .> TransformationHelper
         Scene o--o Engine
         Scene .> NonExistentPolygonError
         Scene .> NetCDF
+        Scene .> PolygonPointNumberError
+        Scene .> PolygonNotPlanarError
     !endsub
 !endif
 
@@ -29,5 +31,7 @@ hide members
 src.engine.Engine o--o Scene
 Scene .> src.error.NonExistentPolygonError
 Scene .> src.input.NetCDF
+Scene .> src.error.PolygonPointNumberError
+Scene .> src.error.PolygonNotPlanarError
 
 @enduml
