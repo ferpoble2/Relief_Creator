@@ -1,0 +1,10 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class TransformationHelper {
+
+    - __generate_mask(points, polygon_points)
+    + modify_points_inside_polygon_linear(points, height, polygon_points, new_max_height, new_min_height)
+}
+
+@enduml
