@@ -16,6 +16,8 @@ package error {
     class UnknownDataTypeError
     class WrongInterpolationTypeError
     class ModelTransformationError
+    class PolygonNotPlanarError
+    class PolygonPointNumberError
 }
 
 PolygonError <|-- RepeatedPointError
@@ -28,6 +30,8 @@ GUIError <|-- WrongInterpolationTypeError
 GUIError <|-- FolderError
 FolderError <|-- PolygonFolderNotFoundError
 SceneError <|-- ModelTransformationError
+ModelTransformationError <|-- PolygonNotPlanarError
+ModelTransformationError <|-- PolygonPointNumberError
 !endsub
 hide members
 
