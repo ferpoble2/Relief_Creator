@@ -32,12 +32,15 @@
                     - __set_height_buffer()
                     ~ _update_uniforms()
                     + calculate_projection_matrix(scene_data, zoom_level)
+                    + get_height_array(): array
                     + get_projection_matrix(): array
                     + get_showed_limits(): dict
+                    + get_vertices_shape(): tuple
                     + move(x_movement, y_movement)
                     + optimize_gpu_memory_async(then)
                     + recalculate_vertices_from_grid_async(quality, then)
                     + set_color_file(filename)
+                    + set_height_buffer(array)
                     + set_vertices_from_grid_async(x,y,z,quality, then)
 
                 }

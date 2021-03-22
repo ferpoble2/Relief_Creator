@@ -48,7 +48,7 @@ class Map2DModel(Model):
         self.__indices = []
 
         # height values
-        self.__height = []
+        self.__height_array = np.array([])
         self.__max_height = None
         self.__min_height = None
 
@@ -396,7 +396,7 @@ class Map2DModel(Model):
         Returns: None
 
         """
-        height = np.array(self.__height, dtype=np.float32)
+        height = np.array(self.__height_array, dtype=np.float32)
 
         # Set the buffer data in the buffer
         GL.glBindVertexArray(self.vao)
@@ -514,6 +514,14 @@ class Map2DModel(Model):
                                   -1,
                                   1)
 
+    def get_height_array(self) -> np.ndarray:
+        """
+        Get the array used to set the height buffer in the object.
+
+        Returns: numpy array with the values of the buffer.
+        """
+        return self.__height_array
+
     def get_projection_matrix(self) -> 'np.array':
         """
         Get the projection matrix being used by the model.
@@ -534,6 +542,14 @@ class Map2DModel(Model):
             'top': self.__top_coordinate,
             'bottom': self.__bottom_coordinate
         }
+
+    def get_vertices_shape(self) -> tuple:
+        """
+        get the shape of the vertices of the model.
+
+        Returns: Tuple with the shape of the vertices.
+        """
+        return len(self.__y), len(self.__x), 3
 
     def move(self, x_movement: int, y_movement: int) -> None:
         """
@@ -714,6 +730,21 @@ class Map2DModel(Model):
         self.__colors = np.array(colors, dtype=np.float32)
         self.__height_limit = np.array(height_limit, dtype=np.float32)
 
+    def set_height_buffer(self, new_height: np.ndarray) -> None:
+        """
+        Change the values of the height buffer.
+
+        Args:
+            new_height: Numpy array with the new height values.
+
+        Returns: None
+        """
+
+        self.__height_array = new_height.reshape(-1)
+        self.__max_height = np.nanmax(self.__height_array)
+        self.__min_height = np.nanmin(self.__height_array)
+        self.__set_height_buffer()
+
     def set_vertices_from_grid_async(self, x, y, z, quality=1, then=lambda: None) -> None:
         """
         Set the vertices of the model from a grid.
@@ -777,11 +808,7 @@ class Map2DModel(Model):
                 )
 
             # set the height buffer for rendering and store height values
-            self.__height = np.array(z).reshape(-1)
-            self.__max_height = np.nanmax(self.__height)
-            self.__min_height = np.nanmin(self.__height)
-
-            self.__set_height_buffer()
+            self.set_height_buffer(np.array(z))
 
             # call the then routine
             then()
