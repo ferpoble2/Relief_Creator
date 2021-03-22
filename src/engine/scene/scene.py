@@ -11,6 +11,9 @@ from src.engine.scene.model.model import Model
 from src.input.NetCDF import read_info
 from src.utils import get_logger
 from src.error.non_existent_polygon_error import NonExistentPolygonError
+from src.error.polygon_point_number_error import PolygonPointNumberError
+from src.error.polygon_not_planar_error import PolygonNotPlanarError
+from src.engine.scene.transformation_helper import TransformationHelper
 
 log = get_logger(module="SCENE")
 
@@ -119,9 +122,9 @@ class Scene:
         y_dist_pixel = (window_settings['HEIGHT'] - position_y) - scene_settings['SCENE_BEGIN_Y']
 
         x_pos = map_positions['left'] + (map_positions['right'] - map_positions['left']) * x_dist_pixel / \
-            scene_settings['SCENE_WIDTH_X']
+                scene_settings['SCENE_WIDTH_X']
         y_pos = map_positions['bottom'] + (map_positions['top'] - map_positions['bottom']) * y_dist_pixel / \
-            scene_settings['SCENE_HEIGHT_Y']
+                scene_settings['SCENE_HEIGHT_Y']
 
         log.debug(f'Calculated position is: {x_pos} {y_pos}')
         return x_pos, y_pos
@@ -646,6 +649,9 @@ class Scene:
         """
         Modify the points inside the polygon from the specified model using a linear transformation.
 
+        Only works with the following models:
+        - Map2DModel
+
         Args:
             polygon_id: ID of the polygon to use.
             model_id: Model to modify.
@@ -655,4 +661,31 @@ class Scene:
         Returns: None
         """
 
-        raise NotImplementedError('Still not implemented')
+        # get the important information.
+        model = self.__model_hash[model_id]
+        if not isinstance(model, Map2DModel):
+            raise TypeError('Can not use that model for transforming points. Try using a Map2DModel.')
+
+        polygon = self.__polygon_hash[polygon_id]
+
+        # ask the model and polygon for the parameters to calculate the new height
+        vertices_shape = model.get_vertices_shape()
+        vertex_array = model.get_vertices_array().reshape(vertices_shape)
+        height_array = model.get_height_array().reshape((vertices_shape[0], vertices_shape[1]))
+        polygon_points = polygon.get_point_list()
+
+        if len(polygon_points) < 3:
+            raise PolygonPointNumberError('The polygon used doesnt have at least 3 vertices.')
+
+        if not polygon.is_planar():
+            raise PolygonNotPlanarError('Polygon used is not planar.')
+
+        # calculate the new height of the points
+        new_height = TransformationHelper().modify_points_inside_polygon_linear(vertex_array,
+                                                                                height_array,
+                                                                                polygon_points,
+                                                                                max_height,
+                                                                                min_height)
+
+        # tell the polygon the new height of the vertices
+        model.set_height_buffer(new_height)
