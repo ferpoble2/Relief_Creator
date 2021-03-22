@@ -27,7 +27,8 @@ class ConfirmationModal(Frame):
         self.__yes_func = lambda: log.debug('Called yes function.')
         self.__no_func = lambda: log.debug('Called no function.')
 
-        self.__button_width = 150
+        self.__windows_width = 300
+        self.__button_width = self.__windows_width / 2 - 12
 
         self.__should_show = False
         self.__modal_title = "Confirmation Modal"
@@ -43,6 +44,12 @@ class ConfirmationModal(Frame):
         Render a modal with the specified text.
         Returns: None
         """
+        imgui.set_next_window_size(self.__windows_width, -1)
+        imgui.set_next_window_position(imgui.get_io().display_size.x * 0.5,
+                                       imgui.get_io().display_size.y * 0.5,
+                                       imgui.ALWAYS,
+                                       0.5,
+                                       0.5)
 
         if self.__should_show:
             log.debug('Opened')
@@ -57,12 +64,6 @@ class ConfirmationModal(Frame):
             imgui.open_popup(self.__modal_title)
             self.__should_show = False
 
-        imgui.set_next_window_size(-1, -1)
-        imgui.set_next_window_position(imgui.get_io().display_size.x * 0.5,
-                                       imgui.get_io().display_size.y * 0.5,
-                                       imgui.ALWAYS,
-                                       0.5,
-                                       0.5)
         if imgui.begin_popup_modal(self.__modal_title)[0]:
             imgui.text_wrapped(self.__msg)
 
