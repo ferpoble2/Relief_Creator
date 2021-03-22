@@ -54,10 +54,11 @@ def get_logger(log_level: int = LOG_LEVEL, log_file_level: int = LOG_FILE_LEVEL,
 
 
 def interpolate(value: float, value_min: float, value_max: float, target_min: float = -1,
-                target_max: float = 1) -> float:
+                target_max: float = 1, convert: bool = True) -> float:
     """
 
     Args:
+        convert: True to convert the value to float
         value: Value to interpolate.
         value_min: Minimum value of the values.
         value_max: Maximum value of the values.
@@ -67,7 +68,10 @@ def interpolate(value: float, value_min: float, value_max: float, target_min: fl
     Returns: Interpolated value.
 
     """
-    return (float(value) - value_min) * (float(target_max) - target_min) / (float(value_max) - value_min) + target_min
+    if convert:
+        value = float(value)
+
+    return (value - value_min) * (float(target_max) - target_min) / (float(value_max) - value_min) + target_min
 
 
 def is_numeric(value: str) -> bool:
