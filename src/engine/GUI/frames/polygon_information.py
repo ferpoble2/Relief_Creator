@@ -127,6 +127,11 @@ class PolygonInformation(Frame):
     def __add_parameter_popup(self):
         # popup modal to add
         imgui.set_next_window_size(-1, -1)
+        imgui.set_next_window_position(imgui.get_io().display_size.x * 0.5,
+                                       imgui.get_io().display_size.y * 0.5,
+                                       imgui.ALWAYS,
+                                       0.5,
+                                       0.5)
 
         # in case of opening
         if self.__should_open_add_dialog:
@@ -206,6 +211,11 @@ class PolygonInformation(Frame):
 
         # popup modal to edit
         imgui.set_next_window_size(-1, -1)
+        imgui.set_next_window_position(imgui.get_io().display_size.x * 0.5,
+                                       imgui.get_io().display_size.y * 0.5,
+                                       imgui.ALWAYS,
+                                       0.5,
+                                       0.5)
 
         # ask if open it
         if self.__should_open_edit_dialog:
