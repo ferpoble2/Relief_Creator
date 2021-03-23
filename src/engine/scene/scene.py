@@ -122,9 +122,9 @@ class Scene:
         y_dist_pixel = (window_settings['HEIGHT'] - position_y) - scene_settings['SCENE_BEGIN_Y']
 
         x_pos = map_positions['left'] + (map_positions['right'] - map_positions['left']) * x_dist_pixel / \
-                scene_settings['SCENE_WIDTH_X']
+            scene_settings['SCENE_WIDTH_X']
         y_pos = map_positions['bottom'] + (map_positions['top'] - map_positions['bottom']) * y_dist_pixel / \
-                scene_settings['SCENE_HEIGHT_Y']
+            scene_settings['SCENE_HEIGHT_Y']
 
         log.debug(f'Calculated position is: {x_pos} {y_pos}')
         return x_pos, y_pos
@@ -713,3 +713,35 @@ class Scene:
                                       then_task_args=[self,
                                                       model,
                                                       new_height])
+
+    def calculate_max_min_height(self, model_id: str, polygon_id: str) -> tuple:
+        """
+        Calculate the maximum and minimum height of the vertices that are inside the polygon.
+
+        Args:
+            model_id: ID of the model to use.
+            polygon_id: ID of the polygon to use.
+
+        Returns: Tuple with the maximum and minimum height of the vertices inside the polygon.
+        """
+
+        # get the important information.
+        model = self.__model_hash[model_id]
+        if not isinstance(model, Map2DModel):
+            raise TypeError('Can not use that model for transforming points. Try using a Map2DModel.')
+
+        polygon = self.__polygon_hash[polygon_id]
+
+        # ask the model and polygon for the parameters to calculate the new height
+        vertices_shape = model.get_vertices_shape()
+        vertex_array = model.get_vertices_array().reshape(vertices_shape)
+        height_array = model.get_height_array().reshape((vertices_shape[0], vertices_shape[1]))
+        polygon_points = polygon.get_point_list()
+
+        if len(polygon_points) < 9:
+            raise PolygonPointNumberError('The polygon used doesnt have at least 3 vertices.')
+
+        if not polygon.is_planar():
+            raise PolygonNotPlanarError('Polygon used is not planar.')
+
+        return TransformationHelper().get_max_min_inside_polygon(vertex_array, polygon_points, height_array)

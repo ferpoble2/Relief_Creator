@@ -414,6 +414,7 @@ class Engine:
         """
         return self.program.get_zoom_level()
 
+    # noinspection PyUnresolvedReferences
     def initialize(self, engine: 'Engine', program: 'Program') -> None:
         """
         Initialize the components of the program.
@@ -501,7 +502,7 @@ class Engine:
         """
         Call the scene to optimize the GPU memory.
 
-        Make an asyncronic call, setting the loading screen.
+        Make an asynchronous call, setting the loading screen.
 
         Returns: None
         """
@@ -509,6 +510,7 @@ class Engine:
         self.program.set_loading(True)
         self.set_loading_message("Deleting triangles from the memory")
 
+        # noinspection PyMissingOrEmptyDocstring
         def then_routine():
             self.program.set_loading(False)
 
@@ -552,6 +554,7 @@ class Engine:
         Returns: none
         """
 
+        # noinspection PyMissingOrEmptyDocstring
         def then_routine():
             self.program.set_active_model(model_id)
             self.program.set_loading(False)
@@ -579,6 +582,7 @@ class Engine:
         self.program.set_loading(True)
         self.set_loading_message("Please wait a moment...")
 
+        # noinspection PyMissingOrEmptyDocstring
         def then_routine():
             self.program.set_loading(False)
 
@@ -661,6 +665,7 @@ class Engine:
         """
         self.gui_manager.set_modal_text(title_modal, msg)
 
+    # noinspection PyUnresolvedReferences
     def set_models_polygon_mode(self, polygon_mode: 'OGLConstant.IntConstant') -> None:
         """
         Call the scene to change the polygon mode used by the models.
@@ -711,6 +716,7 @@ class Engine:
         """
         self.program.set_loading(True)
 
+        # noinspection PyMissingOrEmptyDocstring
         def task_loading():
             task()
             self.program.set_loading(False)
@@ -915,3 +921,15 @@ class Engine:
         Returns: None
         """
         self.scene.delete_polygon_param(polygon_id, key)
+
+    def calculate_max_min_height(self, model_id: str, polygon_id: str) -> tuple:
+        """
+        Ask the scene for max and min values of the vertices that are inside the polygon.
+
+        Args:
+            model_id: ID of the model to use.
+            polygon_id: ID of the polygon to use.
+
+        Returns: tuple with the max and min value.
+        """
+        return self.scene.calculate_max_min_height(model_id, polygon_id)

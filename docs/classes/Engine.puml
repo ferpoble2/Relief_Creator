@@ -9,6 +9,7 @@ class Engine {
     + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
     + add_zoom()
     + are_frames_fixed(): boolean
+    + calculate_max_min_height(model_id, polygon_id): tuple
     + change_color_file_with_dialog()
     + change_color_of_polygon(polygon_id, color)
     + change_dot_color_of_polygon(polygon_id,  color)
@@ -16,6 +17,7 @@ class Engine {
     + change_quality(quality)
     + change_width_window(width)
     + create_new_polygon(): str
+    + delete_parameter_from_polygon(polygon_id, key)
     + delete_polygon_by_id(polygon_id)
     + export_polygon_with_id(polygon_id)
     + fix_frames()
@@ -24,11 +26,11 @@ class Engine {
     + get_active_tool(): str
     + get_clear_color(): list
     + get_cpt_file(): str
-    + get_gui_scroll_callback(): function
     + get_float_bytes()
     + get_float_bytes(): int
     + get_font_size(): int
     + get_gui_key_callback(): function
+    + get_gui_scroll_callback(): function
     + get_gui_setting_data(): dict
     + get_map_position(): list
     + get_parameters_from_polygon(polygon_id): list
@@ -55,19 +57,18 @@ class Engine {
     + reset_zoom_level()
     + run()
     + set_active_polygon(polygon_id)
-    + transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
     + set_active_tool(tool)
     + set_loading_message(new_msg)
     + set_map_position(new_position)
     + set_modal_text(title_modal, msg)
     + set_models_polygon_mode(polygon_mode)
+    + set_new_parameter_to_polygon(polygon_id, key, value)
     + set_polygon_name(polygon_id, new_name)
+    + set_program_loading(new_state)
     + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
     + set_thread_task(parallel_task, then, parallel_task_args, then_task_args)
-    + set_program_loading(new_state)
-    + set_new_parameter_to_polygon(polygon_id, key, value)
-    + delete_parameter_from_polygon(polygon_id, key)
+    + transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
     + undo_action()
     + update_pending_tasks()
     + update_scene_models_colors()

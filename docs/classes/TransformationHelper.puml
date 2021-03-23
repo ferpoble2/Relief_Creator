@@ -4,6 +4,7 @@
 class TransformationHelper {
 
     - __generate_mask(points, polygon_points)
+    + get_max_min_inside_polygon(points, polygon_points, height): tuple
     + modify_points_inside_polygon_linear(points, height, polygon_points, new_max_height, new_min_height)
 }
 

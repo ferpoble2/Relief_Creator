@@ -5,6 +5,7 @@
                 + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
                 + add_polygon(polygon)
                 + calculate_map_position_from_window(): (float, float)
+                + calculate_max_min_height(model_id, polygon_id): tuple
                 + change_color_of_polygon(polygon_id, color)
                 + change_dot_color_of_polygon(polygon_id, color)
                 + create_new_polygon(): str
@@ -14,7 +15,7 @@
                 + get_active_model_projection_matrix(): array
                 + get_active_model_showed_limits(): dict
                 + get_active_polygon_id(): str
-                + get_point_list_from_polygon(polygoon_id): list
+                + get_point_list_from_polygon(polygon_id): list
                 + get_polygon_id_list(): list
                 + get_polygon_name(polygon_id): str
                 + get_polygon_params(polygon_id)

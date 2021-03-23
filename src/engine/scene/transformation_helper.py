@@ -35,7 +35,7 @@ class TransformationHelper:
             new_max_height: New height to interpolate the points
             new_min_height: New height to interpolate the points
 
-        Returns: numpy.ndarray with the new points
+        Returns: numpy.array with the new points
         """
         flags = self.__generate_mask(points, polygon_points)
 
@@ -48,6 +48,24 @@ class TransformationHelper:
 
         height[flags] = new_height
         return height
+
+    def get_max_min_inside_polygon(self, points: np.ndarray, polygon_points: List[float], heights: np.ndarray) -> tuple:
+        """
+        Extract the maximum and minimum value of the points that are inside the polygon.
+
+        Args:
+            points: Points of the model. (shape must be (x, y, 3))
+            polygon_points: List with the points of the polygon. [x1, y1, z1, x2, y2, z2, ...]
+            heights: height: Array with the height of the points. must have shape (x, y)
+
+        Returns: Tuple with the maximum and minimum value
+        """
+        flags = self.__generate_mask(points, polygon_points)
+
+        maximum = np.max(heights[flags])
+        minimum = np.min(heights[flags])
+
+        return maximum, minimum
 
     def __generate_mask(self, points, polygon_points) -> np.ndarray:
         """
@@ -71,6 +89,8 @@ class TransformationHelper:
         xv = points[:, :, 0]
         yv = points[:, :, 1]
         p = path.Path(points_2d)
+
+        # noinspection PyTypeChecker
         flags = p.contains_points(np.hstack((xv.flatten()[:, np.newaxis], yv.flatten()[:, np.newaxis])))
         flags = flags.reshape(xv.shape)
         return flags

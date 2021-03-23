@@ -16,6 +16,7 @@ class ReliefTools:
     Class that render the ReliefTools inside another frame.
     """
 
+    # noinspection PyUnresolvedReferences
     def __init__(self, gui_manager: 'GUIManager'):
         """
         Constructor of the class.
@@ -27,6 +28,9 @@ class ReliefTools:
 
         self.__max_height_value = 0
         self.__min_height_value = 0
+
+        self.__max_height_polygon = None
+        self.__min_height_polygon = None
 
     def render(self) -> None:
         """
@@ -42,12 +46,34 @@ class ReliefTools:
 
         imgui.text(f'Max height:')
         imgui.next_column()
-        imgui.text(f'dummy')
+        imgui.text(str(self.__max_height_polygon))
         imgui.next_column()
         imgui.text(f'Min height:')
         imgui.next_column()
-        imgui.text(f'dummy')
+        imgui.text(str(self.__min_height_polygon))
         imgui.columns(1)
+
+        if imgui.button('Recalculate Information', -1):
+            log.debug('Recalculate polygon information')
+
+            try:
+                self.__max_height_polygon, self.__min_height_polygon = self.__gui_manager.calculate_max_min_height(
+                    self.__gui_manager.get_active_model_id(),
+                    self.__gui_manager.get_active_polygon_id())
+
+            except TypeError:
+                self.__gui_manager.set_modal_text('Error',
+                                                  'The current model is not supported to use to update the '
+                                                  'height of the vertices, try using another type of model.')
+
+            except PolygonPointNumberError:
+                self.__gui_manager.set_modal_text('Error',
+                                                  'The polygon must have at least 3 points to be able to'
+                                                  'modify the heights.')
+
+            except PolygonNotPlanarError:
+                self.__gui_manager.set_modal_text('Error',
+                                                  'The polygon is not planar. Try using a planar polygon.')
 
         clicked, self.__current_combo_option = imgui.combo(
             "Transformation", self.__current_combo_option, self.__combo_options
@@ -76,4 +102,4 @@ class ReliefTools:
 
                 except PolygonNotPlanarError:
                     self.__gui_manager.set_modal_text('Error',
-                                                      'The polygon is not planar. Try using a plannar polygon.')
+                                                      'The polygon is not planar. Try using a planar polygon.')

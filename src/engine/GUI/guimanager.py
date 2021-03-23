@@ -1,6 +1,7 @@
 """
 File with the class that will manage the state of the GUI.
 """
+# noinspection PyPep8Naming
 import OpenGL.constant as OGLConstant
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
@@ -19,6 +20,7 @@ from src.utils import get_logger
 from src.engine.GUI.icon import Icon
 from src.engine.GUI.polygon_folder_manager import PolygonFolderManager
 
+# noinspection SpellCheckingInspection
 log = get_logger(module='GUIMANAGER')
 
 
@@ -387,7 +389,7 @@ class GUIManager:
 
     def get_main_menu_bar_height(self) -> int:
         """
-        Get the main menu bar heigh frm the settings.
+        Get the main menu bar height frm the settings.
 
         Returns: main_menu_bar height
         """
@@ -501,6 +503,7 @@ class GUIManager:
         """
         return self.__engine.get_zoom_level()
 
+    # noinspection PyUnresolvedReferences
     def initialize(self, window, engine: 'Engine', gui_manager: 'GUIManager') -> None:
         """
         Set the initial configurations of the GUI.
@@ -829,3 +832,15 @@ class GUIManager:
         Returns: None
         """
         self.__engine.delete_parameter_from_polygon(polygon_id, key)
+
+    def calculate_max_min_height(self, model_id: str, polygon_id: str) -> tuple:
+        """
+        Ask the engine for max and min values of the vertices that are inside the polygon.
+
+        Args:
+            model_id: ID of the model to use.
+            polygon_id: ID of the polygon to use.
+
+        Returns: tuple with the max and min value.
+        """
+        return self.__engine.calculate_max_min_height(model_id, polygon_id)

@@ -20,9 +20,11 @@ class GUIManager{
     + add_polygon_to_polygon_folder(folder_id, polygon_id)
     + add_zoom()
     + are_frame_fixed()
+    + calculate_max_min_height(model_id, polygon_id): tuple
     + change_color_file_with_dialog()
     + change_color_of_polygon(polygon_id, color)
     + change_dot_color_of_polygon(polygon_id, color)
+    + change_height_using_active_polygon(polygon_id, min_height, max_height, type)
     + change_quality(quality)
     + create_new_polygon(): str
     + create_polygon_folder(name): PolygonFolder
@@ -65,15 +67,14 @@ class GUIManager{
     + process_input()
     + refresh_scene_with_model_2d(path_color_file, path_model, model_id)
     + reload_models()
-    + change_height_using_active_polygon(polygon_id, min_height, max_height, type)
     + render()
     + set_active_polygon(polygon_id)
     + set_active_tool(tool)
     + set_bold_font()
+    + set_confirmation_modal(modal_title, msg, yes_function, no_function)
     + set_loading_message(new_msg)
     + set_modal_text(modal_title, msg)
     + set_models_polygon_mode(polygon_mode)
-    + set_confirmation_modal(modal_title, msg, yes_function, no_function)
     + set_polygon_folder_name(polygon_folder_id, new_name)
     + set_polygon_name(polygon_id, new_name)
     + set_polygon_parameter(polygon_id, key, value)
