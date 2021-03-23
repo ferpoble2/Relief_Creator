@@ -680,12 +680,36 @@ class Scene:
         if not polygon.is_planar():
             raise PolygonNotPlanarError('Polygon used is not planar.')
 
-        # calculate the new height of the points
-        new_height = TransformationHelper().modify_points_inside_polygon_linear(vertex_array,
-                                                                                height_array,
-                                                                                polygon_points,
-                                                                                max_height,
-                                                                                min_height)
+        # define mutable object to store results to use from the parallel task to the then task
+        new_height = [None]
 
-        # tell the polygon the new height of the vertices
-        model.set_height_buffer(new_height)
+        # define the parallel functions to use
+        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames
+        def parallel_task(self, vertex_array, height_array, polygon_points, max_height, min_height, new_height):
+            self.__engine.set_loading_message('Modifying height...')
+            self.__engine.set_program_loading(True)
+
+            # calculate the new height of the points
+            new_height[0] = TransformationHelper().modify_points_inside_polygon_linear(vertex_array,
+                                                                                       height_array,
+                                                                                       polygon_points,
+                                                                                       max_height,
+                                                                                       min_height)
+
+        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames
+        def then(self, model, new_height):
+            # tell the polygon the new height of the vertices
+            model.set_height_buffer(new_height[0])
+            self.__engine.set_program_loading(False)
+
+        self.__engine.set_thread_task(parallel_task, then,
+                                      parallel_task_args=[self,
+                                                          vertex_array,
+                                                          height_array,
+                                                          polygon_points,
+                                                          max_height,
+                                                          min_height,
+                                                          new_height],
+                                      then_task_args=[self,
+                                                      model,
+                                                      new_height])
