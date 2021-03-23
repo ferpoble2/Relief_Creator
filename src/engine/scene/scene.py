@@ -674,7 +674,7 @@ class Scene:
         height_array = model.get_height_array().reshape((vertices_shape[0], vertices_shape[1]))
         polygon_points = polygon.get_point_list()
 
-        if len(polygon_points) < 3:
+        if len(polygon_points) < 9:
             raise PolygonPointNumberError('The polygon used doesnt have at least 3 vertices.')
 
         if not polygon.is_planar():
