@@ -18,7 +18,7 @@ class Tools(Frame):
     Class that render a sample frame in the application.
     """
 
-    def __actions_button(self, active_polygon, polygon_id, polygon_folder_id) -> None:
+    def __polygon_action_logic(self, active_polygon, polygon_id, polygon_folder_id) -> None:
         """
         Generate the button [Actions] in the tools windows.
 
@@ -32,7 +32,7 @@ class Tools(Frame):
         """
 
         # configure the button to use to open the actions on the polygon
-        if imgui.button("Actions"):
+        if imgui.is_item_clicked(1):
             # store the old tool and change the tool to none
             self.__tool_before_pop_up = self._GUI_manager.get_active_tool()
             self._GUI_manager.set_active_tool(None)
@@ -401,12 +401,10 @@ class Tools(Frame):
                     # show a checkbox with the id of the polygon and show it market if the polygon is active
                     clicked, current_state = imgui.checkbox(self._GUI_manager.get_polygon_name(polygon_id),
                                                             True if polygon_id == active_polygon else False)
+                    self.__polygon_action_logic(active_polygon, polygon_id, folder_id)
 
                     imgui.same_line()
                     self.__color_button(polygon_id)
-
-                    imgui.same_line()
-                    self.__actions_button(active_polygon, polygon_id, folder_id)
 
                     if not self._GUI_manager.is_polygon_planar(polygon_id):
                         imgui.same_line()
