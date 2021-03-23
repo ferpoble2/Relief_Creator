@@ -83,8 +83,9 @@ class ReliefTools:
         _, self.__max_height_value = imgui.input_float('Max Height', self.__max_height_value)
 
         if imgui.button('Change Height', -1):
-            if self.__min_height_value > self.__max_height_value:
-                self.__gui_manager.set_modal_text('Error', 'The new minimum value is higher than the maximum value.')
+            if self.__min_height_value >= self.__max_height_value:
+                self.__gui_manager.set_modal_text('Error', 'The new minimum value is higher or equal to'
+                                                           ' the maximum value.')
             else:
                 if self.__current_combo_option == 0:
                     try:
