@@ -41,6 +41,7 @@ class GUIManager:
         self.__io = None
         self.__font_regular = None
         self.__font_bold = None
+        self.__font_tool_title = None
 
         self.__is_mouse_inside_frame = False
 
@@ -534,6 +535,10 @@ class GUIManager:
         self.__font_bold = self.__io.fonts.add_font_from_file_ttf(
             './engine/GUI/fonts/open_sans/OpenSans-Bold.ttf', engine.get_font_size()
         )
+        self.__font_tool_title = self.__io.fonts.add_font_from_file_ttf(
+            './engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', engine.get_tool_title_font_size()
+        )
+
         self.__implementation.refresh_font_texture()
 
         # load the icons on the GUI
@@ -698,6 +703,15 @@ class GUIManager:
         """
         imgui.pop_font()
         imgui.push_font(self.__font_bold)
+
+    def set_tool_title_font(self) -> None:
+        """
+        Set the font to use for the tool titles.
+
+        Returns: None
+        """
+        imgui.pop_font()
+        imgui.push_font(self.__font_tool_title)
 
     def set_loading_message(self, new_msg: str) -> None:
         """

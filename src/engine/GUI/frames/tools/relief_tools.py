@@ -45,7 +45,9 @@ class ReliefTools:
                 'min_height': None
             }
 
+        self.__gui_manager.set_tool_title_font()
         imgui.text('Relief Tools')
+        self.__gui_manager.set_regular_font()
 
         imgui.text('Current polygon information:')
         imgui.columns(2, None, False)

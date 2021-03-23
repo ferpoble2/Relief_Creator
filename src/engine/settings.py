@@ -36,6 +36,7 @@ class Settings:
 
     # GUI settings
     FONT_SIZE = 18
+    TOOL_TITLE_FONT_SIZE = 25
     FIXED_FRAMES = True
 
     CLEAR_COLOR = [0.15, 0.15, 0.15, 1]  # clear color of the screen

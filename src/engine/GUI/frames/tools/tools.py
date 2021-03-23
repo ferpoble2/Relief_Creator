@@ -527,7 +527,9 @@ class Tools(Frame):
         Args:
             left_frame_width: width of the frame.
         """
+        self._GUI_manager.set_tool_title_font()
         imgui.text("Editing Tools")
+        self._GUI_manager.set_regular_font()
         if imgui.button("Move Map", width=left_frame_width - self.__button_margin_width):
             log.debug("Pressed button Move Map")
             log.debug("-----------------------")
@@ -540,7 +542,9 @@ class Tools(Frame):
         Args:
             left_frame_width: width of the frame.
         """
+        self._GUI_manager.set_tool_title_font()
         imgui.text("Polygon Tools")
+        self._GUI_manager.set_regular_font()
         if imgui.button("Create folder", width=left_frame_width - self.__button_margin_width):
             self.__create_new_polygon()
 
@@ -553,7 +557,9 @@ class Tools(Frame):
         Args:
             left_frame_width: width of the frame.
         """
+        self._GUI_manager.set_tool_title_font()
         imgui.text("Visualization Tools")
+        self._GUI_manager.set_regular_font()
         if imgui.button("Zoom in", width=left_frame_width / 2 - self.__double_button_margin_width):
             log.debug("Pressed button Zoom in")
             log.debug("----------------------")

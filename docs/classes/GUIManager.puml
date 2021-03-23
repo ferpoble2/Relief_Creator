@@ -5,6 +5,7 @@ class GUIManager{
     - __engine: Engine
     - __font_bold: IMGUI.font
     - __font_regular: IMGUI.font
+    - __font_tool_title: IMGUI.font
     - __glfw_window: GLFWWindow
     - __icons_dict: dict
     - __implementation: GlfwRenderer
@@ -79,6 +80,7 @@ class GUIManager{
     + set_polygon_name(polygon_id, new_name)
     + set_polygon_parameter(polygon_id, key, value)
     + set_regular_font()
+    + set_tool_title_font()
     + undo()
 }
 @enduml

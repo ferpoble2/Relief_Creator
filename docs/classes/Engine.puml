@@ -39,6 +39,7 @@ class Engine {
     + get_quality(): int
     + get_render_settings()
     + get_scene_setting_data(): dict
+    + get_tool_title_font_size(): int
     + get_view_mode(): str
     + get_window_setting_data(): dict
     + get_zoom_level(): float
