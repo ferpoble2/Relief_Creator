@@ -83,23 +83,26 @@ class ReliefTools:
         _, self.__max_height_value = imgui.input_float('Max Height', self.__max_height_value)
 
         if imgui.button('Change Height', -1):
-            if self.__current_combo_option == 0:
-                try:
-                    self.__gui_manager.change_points_height(self.__gui_manager.get_active_polygon_id(),
-                                                            self.__gui_manager.get_active_model_id(),
-                                                            min_height=self.__min_height_value,
-                                                            max_height=self.__max_height_value,
-                                                            interpolation_type='linear')
-                except TypeError:
-                    self.__gui_manager.set_modal_text('Error',
-                                                      'The current model is not supported to use to update the '
-                                                      'height of the vertices, try using another type of model.')
+            if self.__min_height_value > self.__max_height_value:
+                self.__gui_manager.set_modal_text('Error', 'The new minimum value is higher than the maximum value.')
+            else:
+                if self.__current_combo_option == 0:
+                    try:
+                        self.__gui_manager.change_points_height(self.__gui_manager.get_active_polygon_id(),
+                                                                self.__gui_manager.get_active_model_id(),
+                                                                min_height=self.__min_height_value,
+                                                                max_height=self.__max_height_value,
+                                                                interpolation_type='linear')
+                    except TypeError:
+                        self.__gui_manager.set_modal_text('Error',
+                                                          'The current model is not supported to use to update the '
+                                                          'height of the vertices, try using another type of model.')
 
-                except PolygonPointNumberError:
-                    self.__gui_manager.set_modal_text('Error',
-                                                      'The polygon must have at least 3 points to be able to'
-                                                      'modify the heights.')
+                    except PolygonPointNumberError:
+                        self.__gui_manager.set_modal_text('Error',
+                                                          'The polygon must have at least 3 points to be able to'
+                                                          'modify the heights.')
 
-                except PolygonNotPlanarError:
-                    self.__gui_manager.set_modal_text('Error',
-                                                      'The polygon is not planar. Try using a planar polygon.')
+                    except PolygonNotPlanarError:
+                        self.__gui_manager.set_modal_text('Error',
+                                                          'The polygon is not planar. Try using a planar polygon.')
