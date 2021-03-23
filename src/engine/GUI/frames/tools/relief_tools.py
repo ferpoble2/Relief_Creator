@@ -29,37 +29,43 @@ class ReliefTools:
         self.__max_height_value = 0
         self.__min_height_value = 0
 
-        self.__max_height_polygon = None
-        self.__min_height_polygon = None
+        self.__polygon_data = {}
 
     def render(self) -> None:
         """
         Render the relief tools to modify the relief of the model.
         Returns: None
         """
+        # get all the data necessary
+        active_polygon_id = self.__gui_manager.get_active_polygon_id()
+
+        if active_polygon_id not in self.__polygon_data:
+            self.__polygon_data[active_polygon_id] = {
+                'max_height': None,
+                'min_height': None
+            }
 
         imgui.text('Relief Tools')
 
         imgui.text('Current polygon information:')
-
         imgui.columns(2, None, False)
-
         imgui.text(f'Max height:')
         imgui.next_column()
-        imgui.text(str(self.__max_height_polygon))
+        imgui.text(str(self.__polygon_data[active_polygon_id]['min_height']))
         imgui.next_column()
         imgui.text(f'Min height:')
         imgui.next_column()
-        imgui.text(str(self.__min_height_polygon))
+        imgui.text(str(self.__polygon_data[active_polygon_id]['max_height']))
         imgui.columns(1)
 
         if imgui.button('Recalculate Information', -1):
             log.debug('Recalculate polygon information')
 
             try:
-                self.__max_height_polygon, self.__min_height_polygon = self.__gui_manager.calculate_max_min_height(
-                    self.__gui_manager.get_active_model_id(),
-                    self.__gui_manager.get_active_polygon_id())
+                maximum, minimum = self.__gui_manager.calculate_max_min_height(self.__gui_manager.get_active_model_id(),
+                                                                               active_polygon_id)
+                self.__polygon_data[active_polygon_id]['max_height'] = maximum
+                self.__polygon_data[active_polygon_id]['min_height'] = minimum
 
             except TypeError:
                 self.__gui_manager.set_modal_text('Error',
@@ -89,7 +95,7 @@ class ReliefTools:
             else:
                 if self.__current_combo_option == 0:
                     try:
-                        self.__gui_manager.change_points_height(self.__gui_manager.get_active_polygon_id(),
+                        self.__gui_manager.change_points_height(active_polygon_id,
                                                                 self.__gui_manager.get_active_model_id(),
                                                                 min_height=self.__min_height_value,
                                                                 max_height=self.__max_height_value,
