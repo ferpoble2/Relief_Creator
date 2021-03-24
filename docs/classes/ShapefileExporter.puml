@@ -3,6 +3,7 @@ class ShapefileExporter {
     - __delete_z_axis(list_of_points): list
     - __is_clockwise(points): boolean
     + export_polygon_to_shapefile(list_of_points, directory, polygon_name)
+    + export_list_of_polygons(list_of_polygons, list_of_parameters, list_of_polygon_names, directory)
 }
 
 @enduml

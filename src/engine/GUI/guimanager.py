@@ -858,3 +858,15 @@ class GUIManager:
         Returns: tuple with the max and min value.
         """
         return self.__engine.calculate_max_min_height(model_id, polygon_id)
+
+    def export_polygons_inside_folder(self, polygon_folder_id: str) -> None:
+        """
+        Ask the engine to export a list of polygons to a shapefile file.
+
+        Args:
+            polygon_folder_id: ID of the folder containing the polygons.
+
+        Returns: None
+        """
+        self.__engine.export_polygon_list_id(self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id),
+                                             self.__polygon_folder_manager.get_name_of_folder(polygon_folder_id))

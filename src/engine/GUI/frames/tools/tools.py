@@ -320,6 +320,18 @@ class Tools(Frame):
             imgui.text("Select an action")
 
             imgui.separator()
+            imgui.selectable('Export Polygons')
+            if imgui.is_item_clicked():
+                try:
+                    self._GUI_manager.export_polygons_inside_folder(folder_id)
+                    self._GUI_manager.set_modal_text('Information', 'Polygons exported successfully.')
+                    imgui.close_current_popup()
+
+                except NotEnoughPointsError:
+                    self._GUI_manager.set_modal_text('Error', 'One or more polygons does not have enough '
+                                                              'points to be exported.')
+
+            imgui.separator()
             imgui.selectable('Rename')
             if imgui.is_item_clicked():
                 self.__open_rename_folder_popup = True
@@ -426,6 +438,7 @@ class Tools(Frame):
                         # Activate the create_polygon tool when clicked the polygon
                         self._GUI_manager.set_active_tool('create_polygon')
 
+    # noinspection PyUnresolvedReferences
     def __init__(self, gui_manager: 'GUIManager'):
         """
         Constructor of the class.
@@ -580,7 +593,7 @@ class Tools(Frame):
 
         changed, values = imgui.slider_int("Quality", self.__slide_bar_quality, 1, 30)
         if changed:
-            log.debug("Changed slidebar quality")
+            log.debug("Changed slide bar quality")
             log.debug("------------------------")
             log.debug(f"Changed to value {values}")
             self.__slide_bar_quality = values

@@ -117,6 +117,10 @@ class Engine:
                 record_dict = shape_record.record.as_dict()
                 for k, v in record_dict.items():
 
+                    # set the name of the polygon if it is stored in the parameters
+                    if k == 'name':
+                        self.scene.set_polygon_name(new_polygon_id, str(v))
+
                     # convert the parameter to the types managed for the exporter
                     if v is None:
                         self.set_new_parameter_to_polygon(new_polygon_id, k, '')
@@ -896,6 +900,37 @@ class Engine:
                                                         file,
                                                         self.scene.get_polygon_name(polygon_id),
                                                         dict(self.scene.get_polygon_params(polygon_id)))
+
+    def export_polygon_list_id(self, polygon_id_list: list, filename='polygons') -> None:
+        """
+        Export the polygons to a shapefile file.
+
+        Args:
+            filename: Name to use as placeholder in the box to store files.
+            polygon_id_list: List with the polygons IDs.
+
+        Returns: None
+        """
+        points_list = []
+        parameters_list = []
+        names_list = []
+        for polygon_id in polygon_id_list:
+            points_list.append(self.scene.get_point_list_from_polygon(polygon_id))
+            parameters_list.append(dict(self.scene.get_polygon_params(polygon_id)))
+            names_list.append(self.scene.get_polygon_name(polygon_id))
+
+        file = easygui.filesavebox('Select a directory and filename for the shapefile file.',
+                                   'Relief Creator',
+                                   filename)
+
+        if file is None:
+            log.debug("Directory not selected.")
+            return
+
+        ShapefileExporter().export_list_of_polygons(points_list,
+                                                    parameters_list,
+                                                    names_list,
+                                                    file)
 
     def is_mouse_hovering_frame(self) -> bool:
         """

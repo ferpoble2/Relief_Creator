@@ -66,6 +66,7 @@ class GUIManager{
     + move_polygon_to_polygon_folder(polygon_id, folder_id)
     + optimize_gpu_memory()
     + process_input()
+    + export_polygons_inside_folder(polygon_folder_id)
     + refresh_scene_with_model_2d(path_color_file, path_model, model_id)
     + reload_models()
     + render()

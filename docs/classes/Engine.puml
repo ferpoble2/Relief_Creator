@@ -19,6 +19,7 @@ class Engine {
     + create_new_polygon(): str
     + delete_parameter_from_polygon(polygon_id, key)
     + delete_polygon_by_id(polygon_id)
+    + export_polygon_list_id(polygon_id_list, filename)
     + export_polygon_with_id(polygon_id)
     + fix_frames()
     + get_active_model_id()

@@ -4,7 +4,6 @@ File that contains the class shapefileExporter.
 import shapefile
 
 from src.error.not_enought_points_error import NotEnoughPointsError
-from src.error.unknown_data_type_error import UnknownDataTypeError
 
 
 class ShapefileExporter:
@@ -60,6 +59,72 @@ class ShapefileExporter:
             s += (p2[0] - p1[0]) * (p2[1] + p1[1])
         return s > 0.0
 
+    def export_list_of_polygons(self, list_of_points: list, list_of_parameters: list, list_of_polygon_names: list,
+                                directory: str) -> None:
+        """
+        Export a list of polygons into a shapefile file.
+
+        Args:
+            list_of_points: List with list of points of the polygons. (list of lists)
+            list_of_parameters: List with the parameters of the polygons. (list of dictionaries)
+            list_of_polygon_names: List with the names of the polygons.
+            directory: Directory + filename of the shapefile file to store.
+
+        Returns: None
+        """
+        assert len(list_of_points) == len(list_of_parameters) == len(list_of_polygon_names)
+
+        polygon_number = len(list_of_points)
+        key_type_dict = {}
+        processed_point_list = []
+
+        # add the name to the parameters
+        for ind in range(polygon_number):
+            if 'name' not in list_of_parameters[ind]:
+                list_of_parameters[ind]['name'] = list_of_polygon_names[ind]
+
+            if len(list_of_points[ind]) < 6:
+                raise NotEnoughPointsError('One or more polygons from the list does not have enough points'
+                                           'to export')
+
+            # sort the points to be counter clockwise
+            points = self.__delete_z_axis(list_of_points[ind])
+            if self.__is_clockwise(points):
+                points.reverse()  # polygons must be defined CCW
+            processed_point_list.append(points)
+
+            # store all the keys and the type of the parameter in another dictionary
+            for k, v in list(list_of_parameters[ind].items()):
+                if k not in key_type_dict:
+                    key_type_dict[k] = type(v)
+
+        w = shapefile.Writer(directory)
+
+        # create the fields for the parameters
+        for k, v in list(key_type_dict.items()):
+            if v == str:
+                w.field(k, 'C')
+            elif v == float:
+                w.field(k, 'N')
+            elif v == bool:
+                w.field(k, 'L')
+            else:  # in case of unknown data type
+                w.field(k, 'C')  # convert the parameter to string
+                key_type_dict[k] = str
+
+        for ind in range(polygon_number):
+
+            # dictionary with all the keys
+            dict_params = {k: None for k in key_type_dict.keys()}
+            for k, v in list(list_of_parameters[ind].items()):
+                dict_params[k] = key_type_dict[k](v)  # convert the value to the specified type
+
+            params = list(dict_params.values())
+            w.record(*params)
+            w.poly([processed_point_list[ind]])
+
+        w.close()
+
     def export_polygon_to_shapefile(self, list_of_points=None,
                                     directory: str = './polygon',
                                     polygon_name: str = 'polygon',
@@ -103,7 +168,7 @@ class ShapefileExporter:
                 w.field(k, 'N')
             elif type(v) == bool:
                 w.field(k, 'L')
-            else:   # in case of unknown data type
+            else:  # in case of unknown data type
                 w.field(k, 'C')  # convert the parameter to string
                 parameters[k] = str(v)
 
