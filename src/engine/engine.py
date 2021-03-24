@@ -3,7 +3,6 @@ File that contains the program class, class that will be the main class of the p
 """
 
 import glfw
-import shapefile
 import easygui
 from threading import Thread
 
@@ -13,10 +12,10 @@ from src.engine.render.render import Render
 from src.engine.scene.scene import Scene
 from src.engine.settings import Settings
 from src.utils import get_logger
-from src.utils import is_numeric
 from src.error.repeated_point_error import RepeatedPointError
 from src.error.line_intersection_error import LineIntersectionError
 from src.output.shapefile_exporter import ShapefileExporter
+from src.input.shapefile_importer import ShapefileImporter
 
 log = get_logger(module='ENGINE')
 
@@ -90,7 +89,6 @@ class Engine:
         """
         self.program.load_shapefile_file_with_dialog()
 
-    # TODO: change this logic to a class called importer
     def load_polygon_from_shapefile(self, filename: str) -> None:
         """
         Load the data from a shapefile file and tell the scene to create a polygon with it.
@@ -100,63 +98,43 @@ class Engine:
 
         Returns: None
         """
-        sf = shapefile.Reader(filename)
+        polygons_point_list, polygons_param_list = ShapefileImporter().get_polygon_information(filename)
 
-        for shape_record in sf.shapeRecords():
-            if shape_record.shape.shapeType == shapefile.POLYGON:
-                errors = False
+        for ind in range(len(polygons_point_list)):
+            errors = False
 
-                # get the  list of points of the polygon
-                list_of_points = shape_record.shape.points
+            new_polygon_id = self.scene.create_new_polygon()
+            self.set_active_polygon(new_polygon_id)
 
-                # create a new polygon and set it as active
-                new_polygon_id = self.scene.create_new_polygon()
-                self.set_active_polygon(new_polygon_id)
+            for k, v in list(polygons_param_list[ind].items()):
+                self.set_new_parameter_to_polygon(new_polygon_id, k, v)
 
-                # set the parameters of the polygon
-                record_dict = shape_record.record.as_dict()
-                for k, v in record_dict.items():
+            # add the points to the polygon
+            for point in polygons_point_list[ind]:  # shapefile polygons are closed, so we do not need the last point
 
-                    # set the name of the polygon if it is stored in the parameters
-                    if k == 'name':
-                        self.scene.set_polygon_name(new_polygon_id, str(v))
+                try:
+                    self.scene.add_new_vertex_to_active_polygon_using_real_coords(point[0], point[1])
 
-                    # convert the parameter to the types managed for the exporter
-                    if v is None:
-                        self.set_new_parameter_to_polygon(new_polygon_id, k, '')
-                    elif type(v) == bool:
-                        self.set_new_parameter_to_polygon(new_polygon_id, k, v)
-                    elif is_numeric(str(v)):
-                        self.set_new_parameter_to_polygon(new_polygon_id, k, float(v))
-                    else:
-                        self.set_new_parameter_to_polygon(new_polygon_id, k, str(v))
+                except LineIntersectionError as e:
+                    log.error(e)
+                    errors = True
+                    self.scene.delete_polygon_by_id(new_polygon_id)
+                    self.set_active_polygon(None)
+                    self.set_modal_text('Error',
+                                        'A polygon in the file has intersected lines, so it will not be loaded.')
+                    break
 
-                # add the points to the polygon
-                for point in list_of_points[:-1]:  # shapefile polygons are closed, so we do not need the last point
+                except RepeatedPointError as e:
+                    log.error(e)
+                    errors = True
+                    self.scene.delete_polygon_by_id(new_polygon_id)
+                    self.set_active_polygon(None)
+                    self.set_modal_text('Error', 'A polygon loaded has repeated points, so it will not be loaded.')
+                    break
 
-                    try:
-                        self.scene.add_new_vertex_to_active_polygon_using_real_coords(point[0], point[1])
-
-                    except LineIntersectionError as e:
-                        log.error(e)
-                        errors = True
-                        self.scene.delete_polygon_by_id(new_polygon_id)
-                        self.set_active_polygon(None)
-                        self.set_modal_text('Error',
-                                            'A polygon in the file has intersected lines, so it will not be loaded.')
-                        break
-
-                    except RepeatedPointError as e:
-                        log.error(e)
-                        errors = True
-                        self.scene.delete_polygon_by_id(new_polygon_id)
-                        self.set_active_polygon(None)
-                        self.set_modal_text('Error', 'A polygon loaded has repeated points, so it will not be loaded.')
-                        break
-
-                if not errors:
-                    # tell the gui manager that a new polygon was created
-                    self.gui_manager.add_imported_polygon(new_polygon_id)
+            if not errors:
+                # tell the gui manager that a new polygon was created
+                self.gui_manager.add_imported_polygon(new_polygon_id)
 
         return
 

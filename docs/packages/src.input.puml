@@ -9,17 +9,20 @@
 package input {
     !include ../file_modules/NetCDF.puml
     !include ../file_modules/CTP.puml
+    class ShapefileImporter
 }
 !endsub
 
 !if (%false())
     !startsub EXTERNAL
-
+        ShapefileImporter .> utils
     !endsub
 !endif
 
 ' Code that will affect only the current diagram
 ' can be messy since will not be imported
-
+!include ../file_modules/utils.puml
+ShapefileImporter .> utils
+hide members
 
 @enduml

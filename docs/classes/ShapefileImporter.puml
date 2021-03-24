@@ -1,0 +1,8 @@
+@startuml
+
+class ShapefileImporter {
+
+    + get_polygon_information(filename): tuple
+}
+
+@enduml
