@@ -272,6 +272,28 @@ class Scene:
         if active_model_id in self.__model_hash:
             return self.__model_hash[active_model_id].get_showed_limits()
 
+    # noinspection SpellCheckingInspection
+    def get_map2dmodel_vertices_array(self, model_id: str) -> 'np.ndarray':
+        """
+        Get the array of vertices of the specified model.
+
+        Id model is not map2dmodel then TypeError exception is raised.
+
+        Args:
+            model_id: ID of the model.
+
+        Returns: Array with the vertices of the model.
+        """
+        model = self.__model_hash[model_id]
+        if not isinstance(model, Map2DModel):
+            raise TypeError(f'Model {model_id} is not a Map2DModel instance.')
+
+        vertices_array = model.get_vertices_array().reshape(model.get_vertices_shape())
+        heights = model.get_height_array().reshape((vertices_array.shape[0], vertices_array.shape[1]))
+
+        vertices_array[:, :, 2] = heights
+        return vertices_array
+
     def get_active_polygon_id(self) -> str:
         """
         Get the id of the active polygon on the program.

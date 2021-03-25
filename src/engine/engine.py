@@ -16,6 +16,7 @@ from src.error.repeated_point_error import RepeatedPointError
 from src.error.line_intersection_error import LineIntersectionError
 from src.output.shapefile_exporter import ShapefileExporter
 from src.input.shapefile_importer import ShapefileImporter
+from src.output.netcdf_exporter import NetcdfExporter
 
 log = get_logger(module='ENGINE')
 
@@ -954,3 +955,28 @@ class Engine:
         Returns: tuple with the max and min value.
         """
         return self.scene.calculate_max_min_height(model_id, polygon_id)
+
+    def export_model_as_netcdf(self, model_id: str) -> None:
+        """
+        Save the information of a model in a netcdf file.
+
+        Args:
+            model_id: ID of the model to export.
+
+        Returns: None
+        """
+
+        # select a directory to store the file.
+        file = easygui.filesavebox('Select a directory and filename for the shapefile file.',
+                                   'Relief Creator',
+                                   'Model')
+
+        if file is None:
+            log.debug("Directory not selected.")
+            return
+
+        # ask the scene for information
+        vertices = self.scene.get_map2dmodel_vertices_array(model_id)
+
+        # ask the output to write the file
+        NetcdfExporter().export_model_vertices_to_netcdf_file(vertices, file)

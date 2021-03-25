@@ -9,6 +9,7 @@ class Engine {
     + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
     + add_zoom()
     + are_frames_fixed(): boolean
+    + export_model_as_netcdf(model_id)
     + calculate_max_min_height(model_id, polygon_id): tuple
     + change_color_file_with_dialog()
     + change_color_of_polygon(polygon_id, color)

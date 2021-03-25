@@ -98,6 +98,12 @@ class MainMenuBar(Frame):
                         log.error(e)
                         self._GUI_manager.set_modal_text('Error', 'Error loading file. (ShapefileException)')
 
+            imgui.separator()
+            imgui.menu_item('Export current model...')
+            if imgui.is_item_clicked():
+                self._GUI_manager.export_model_as_netcdf(self._GUI_manager.get_active_model_id())
+                imgui.close_current_popup()
+
             imgui.end_menu()
 
     def __view_menu(self):

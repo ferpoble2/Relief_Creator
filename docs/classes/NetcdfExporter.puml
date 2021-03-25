@@ -1,0 +1,8 @@
+@startuml
+
+class NetcdfExporter{
+
+    + export_model_vertices_to_netcdf_file(vertices, filename)
+}
+
+@enduml

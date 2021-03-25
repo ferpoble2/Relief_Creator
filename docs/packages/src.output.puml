@@ -8,6 +8,7 @@
 
 package output {
     class ShapefileExporter
+    class NetcdfExporter
 }
 !endsub
 

@@ -31,7 +31,8 @@
     !startsub EXTERNAL
         Engine o-- ShapefileExporter
         Engine o--o Program
-        Engine o-- ShapefileImporter
+        Engine .> ShapefileImporter
+        Engine .> NetcdfExporter
     !endsub
 !endif
 
@@ -41,7 +42,7 @@ hide members
 
 Engine o-- src.output.ShapefileExporter
 Engine o--o src.program.Program
-Engine o-- src.input.ShapefileImporter
-
+Engine .> src.input.ShapefileImporter
+Engine .>src.output.NetcdfExporter
 
 @enduml

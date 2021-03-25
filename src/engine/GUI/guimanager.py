@@ -870,3 +870,14 @@ class GUIManager:
         """
         self.__engine.export_polygon_list_id(self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id),
                                              self.__polygon_folder_manager.get_name_of_folder(polygon_folder_id))
+
+    def export_model_as_netcdf(self, model_id: str) -> None:
+        """
+        Ask the engine to export the model with the specified ID as  a netcdf file.
+
+        Args:
+            model_id: ID of the model to export.
+
+        Returns: None
+        """
+        self.__engine.export_model_as_netcdf(model_id)
