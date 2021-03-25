@@ -18,7 +18,6 @@ from src.engine.scene.transformation_helper import TransformationHelper
 log = get_logger(module="SCENE")
 
 
-# TODO: Change the variable from a list of polygons to a dictionary.
 class Scene:
     """
     Class in charge of all the elements that are rendered using Opengl.
