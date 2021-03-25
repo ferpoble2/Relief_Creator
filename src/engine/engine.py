@@ -17,6 +17,7 @@ from src.error.line_intersection_error import LineIntersectionError
 from src.output.shapefile_exporter import ShapefileExporter
 from src.input.shapefile_importer import ShapefileImporter
 from src.output.netcdf_exporter import NetcdfExporter
+from src.engine.process_manager import ProcessManager
 
 log = get_logger(module='ENGINE')
 
@@ -37,6 +38,7 @@ class Engine:
         self.scene = Scene()
         self.controller = Controller()
         self.program = None
+        self.process_manager = ProcessManager()
 
         self.__pending_task_list = []
         self.__threads_list = []
@@ -596,6 +598,7 @@ class Engine:
         while not glfw.window_should_close(self.window):
             self.update_pending_tasks()
             self.update_threads()
+            self.process_manager.update_process()
             self.render.on_loop([lambda: self.scene.draw()])
 
         glfw.terminate()
@@ -753,6 +756,30 @@ class Engine:
              'then_func': then,
              'then_args': then_task_args}
         )
+
+    def set_process_task(self, parallel_task: callable, then_task: callable, parallel_task_args=None,
+                         then_task_args=None) -> None:
+        """
+        Creates a new process with the given tasks and start it.
+
+        Args:
+            parallel_task: Task to execute in another process.
+            then_task: Task to execute after the process. (the return object from the parallel task will be passed as
+                       first parameter to this function)
+            parallel_task_args: Arguments to give to the parallel task.
+            then_task_args: Arguments to give to the then task.
+
+        Returns: None
+        """
+        if parallel_task_args is None:
+            parallel_task_args = []
+        if then_task_args is None:
+            then_task_args = []
+
+        self.process_manager.create_parallel_process(parallel_task,
+                                                     parallel_task_args,
+                                                     then_task,
+                                                     then_task_args)
 
     def undo_action(self) -> None:
         """

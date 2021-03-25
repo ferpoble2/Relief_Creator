@@ -70,6 +70,7 @@ class Engine {
     + set_program_loading(new_state)
     + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
+    + set_process_task(parallel_task, then_task, parallel_task_args, then_task_args)
     + set_thread_task(parallel_task, then, parallel_task_args, then_task_args)
     + transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
     + undo_action()

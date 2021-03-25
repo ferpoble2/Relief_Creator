@@ -1,0 +1,9 @@
+@startuml
+
+class ProcessManager{
+    + true_parallel_task(queue, function, *args)
+    + create_parallel_process(parallel_task, parallel_task_args, then_function, then_function_args)
+    + update_process()
+}
+
+@enduml
