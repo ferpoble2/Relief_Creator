@@ -627,7 +627,7 @@ class Map2DModel(Model):
             self.set_indices(np.array(self.__indices, dtype=np.uint32))
             then()
 
-        self.scene.set_parallel_task(parallel_task=parallel_routine, then=then_routine)
+        self.scene.set_thread_task(parallel_task=parallel_routine, then=then_routine)
 
     def recalculate_vertices_from_grid_async(self, quality: int = 2, then=lambda: None) -> None:
         """
@@ -695,7 +695,7 @@ class Map2DModel(Model):
             # call the then routine
             then()
 
-        self.scene.set_parallel_task(parallel_tasks, then_routine)
+        self.scene.set_thread_task(parallel_tasks, then_routine)
 
     def set_color_file(self, filename: str) -> None:
         """
@@ -813,4 +813,4 @@ class Map2DModel(Model):
             # call the then routine
             then()
 
-        self.scene.set_parallel_task(parallel_routine, then_routine)
+        self.scene.set_thread_task(parallel_routine, then_routine)

@@ -610,7 +610,7 @@ class Scene:
         for model in self.__model_hash.values():
             model.polygon_mode = polygon_mode
 
-    def set_parallel_task(self, parallel_task, then):
+    def set_thread_task(self, parallel_task, then):
         """
         Set a parallel task in the engine.
 
