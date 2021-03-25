@@ -122,12 +122,44 @@ class Scene:
         y_dist_pixel = (window_settings['HEIGHT'] - position_y) - scene_settings['SCENE_BEGIN_Y']
 
         x_pos = map_positions['left'] + (map_positions['right'] - map_positions['left']) * x_dist_pixel / \
-            scene_settings['SCENE_WIDTH_X']
+                scene_settings['SCENE_WIDTH_X']
         y_pos = map_positions['bottom'] + (map_positions['top'] - map_positions['bottom']) * y_dist_pixel / \
-            scene_settings['SCENE_HEIGHT_Y']
+                scene_settings['SCENE_HEIGHT_Y']
 
         log.debug(f'Calculated position is: {x_pos} {y_pos}')
         return x_pos, y_pos
+
+    def calculate_max_min_height(self, model_id: str, polygon_id: str) -> tuple:
+        """
+        Calculate the maximum and minimum height of the vertices that are inside the polygon.
+
+        Args:
+            model_id: ID of the model to use.
+            polygon_id: ID of the polygon to use.
+
+        Returns: Tuple with the maximum and minimum height of the vertices inside the polygon.
+        """
+
+        # get the important information.
+        model = self.__model_hash[model_id]
+        if not isinstance(model, Map2DModel):
+            raise TypeError('Can not use that model for transforming points. Try using a Map2DModel.')
+
+        polygon = self.__polygon_hash[polygon_id]
+
+        # ask the model and polygon for the parameters to calculate the new height
+        vertices_shape = model.get_vertices_shape()
+        vertex_array = model.get_vertices_array().reshape(vertices_shape)
+        height_array = model.get_height_array().reshape((vertices_shape[0], vertices_shape[1]))
+        polygon_points = polygon.get_point_list()
+
+        if len(polygon_points) < 9:
+            raise PolygonPointNumberError('The polygon used doesnt have at least 3 vertices.')
+
+        if not polygon.is_planar():
+            raise PolygonNotPlanarError('Polygon used is not planar.')
+
+        return TransformationHelper().get_max_min_inside_polygon(vertex_array, polygon_points, height_array)
 
     def change_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
@@ -599,51 +631,6 @@ class Scene:
         except KeyError:
             raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
 
-    def update_models_colors(self) -> None:
-        """
-        Update the colors of the models reloading the colors from the file used in the program.
-
-        Returns: None
-        """
-        color_file = self.__engine.get_cpt_file()
-        for model in self.__model_hash.values():
-            model.set_color_file(color_file)
-
-    def update_models_projection_matrix(self) -> None:
-        """
-        Update the projection matrix of the models.
-
-        Returns: None
-        """
-        log.debug("Updating projection matrix of models.")
-        scene_data = self.__engine.get_scene_setting_data()
-
-        for model in self.__model_hash.values():
-            model.calculate_projection_matrix(scene_data, self.__engine.get_zoom_level())
-
-    def update_viewport(self) -> None:
-        """
-        Update the viewport with the new values that exist in the Settings.
-        """
-        log.debug("Updating viewport")
-        self.update_viewport_variables()
-
-        scene_data = self.__engine.get_scene_setting_data()
-        GL.glViewport(scene_data['SCENE_BEGIN_X'], scene_data['SCENE_BEGIN_Y'], scene_data['SCENE_WIDTH_X'],
-                      scene_data['SCENE_HEIGHT_Y'])
-
-        self.update_models_projection_matrix()
-
-    def update_viewport_variables(self):
-        """
-        Update the viewport variables.
-
-        Returns: None
-        """
-        viewport_data = self.__engine.get_scene_setting_data()
-        self.__width_viewport = viewport_data['SCENE_WIDTH_X']
-        self.__height_viewport = viewport_data['SCENE_HEIGHT_Y']
-
     def transform_points_using_linear_transformation(self, polygon_id: str, model_id: str, min_height: float,
                                                      max_height: float) -> None:
         """
@@ -714,34 +701,47 @@ class Scene:
                                                       model,
                                                       new_height])
 
-    def calculate_max_min_height(self, model_id: str, polygon_id: str) -> tuple:
+    def update_models_colors(self) -> None:
         """
-        Calculate the maximum and minimum height of the vertices that are inside the polygon.
+        Update the colors of the models reloading the colors from the file used in the program.
 
-        Args:
-            model_id: ID of the model to use.
-            polygon_id: ID of the polygon to use.
-
-        Returns: Tuple with the maximum and minimum height of the vertices inside the polygon.
+        Returns: None
         """
+        color_file = self.__engine.get_cpt_file()
+        for model in self.__model_hash.values():
+            model.set_color_file(color_file)
 
-        # get the important information.
-        model = self.__model_hash[model_id]
-        if not isinstance(model, Map2DModel):
-            raise TypeError('Can not use that model for transforming points. Try using a Map2DModel.')
+    def update_models_projection_matrix(self) -> None:
+        """
+        Update the projection matrix of the models.
 
-        polygon = self.__polygon_hash[polygon_id]
+        Returns: None
+        """
+        log.debug("Updating projection matrix of models.")
+        scene_data = self.__engine.get_scene_setting_data()
 
-        # ask the model and polygon for the parameters to calculate the new height
-        vertices_shape = model.get_vertices_shape()
-        vertex_array = model.get_vertices_array().reshape(vertices_shape)
-        height_array = model.get_height_array().reshape((vertices_shape[0], vertices_shape[1]))
-        polygon_points = polygon.get_point_list()
+        for model in self.__model_hash.values():
+            model.calculate_projection_matrix(scene_data, self.__engine.get_zoom_level())
 
-        if len(polygon_points) < 9:
-            raise PolygonPointNumberError('The polygon used doesnt have at least 3 vertices.')
+    def update_viewport(self) -> None:
+        """
+        Update the viewport with the new values that exist in the Settings.
+        """
+        log.debug("Updating viewport")
+        self.update_viewport_variables()
 
-        if not polygon.is_planar():
-            raise PolygonNotPlanarError('Polygon used is not planar.')
+        scene_data = self.__engine.get_scene_setting_data()
+        GL.glViewport(scene_data['SCENE_BEGIN_X'], scene_data['SCENE_BEGIN_Y'], scene_data['SCENE_WIDTH_X'],
+                      scene_data['SCENE_HEIGHT_Y'])
 
-        return TransformationHelper().get_max_min_inside_polygon(vertex_array, polygon_points, height_array)
+        self.update_models_projection_matrix()
+
+    def update_viewport_variables(self):
+        """
+        Update the viewport variables.
+
+        Returns: None
+        """
+        viewport_data = self.__engine.get_scene_setting_data()
+        self.__width_viewport = viewport_data['SCENE_WIDTH_X']
+        self.__height_viewport = viewport_data['SCENE_HEIGHT_Y']
