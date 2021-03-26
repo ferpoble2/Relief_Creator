@@ -6,6 +6,9 @@ class Engine {
     + scene: Scene
     + window: GLFWWindow
     - __pending_task_list: list
+    - thread_manager: ThreadManager
+    - process_manager: ProcessManager
+
     + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
     + add_zoom()
     + are_frames_fixed(): boolean
@@ -78,7 +81,6 @@ class Engine {
     + update_scene_models_colors()
     + update_scene_values()
     + update_scene_viewport()
-    + update_threads()
 }
 
 @enduml

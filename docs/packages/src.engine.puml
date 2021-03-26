@@ -17,6 +17,8 @@
         package data {
             class decimation
         }
+        class ProcessManager
+        class ThreadManager
     }
 
     Engine o--o Scene
@@ -24,6 +26,8 @@
     Engine o--o Render
     Engine o--o GUIManager
     Engine -u.> Settings
+    Engine o-- ProcessManager
+    Engine o-- ThreadManager
 !endsub
 
 

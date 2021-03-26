@@ -4,7 +4,6 @@ File that contains the program class, class that will be the main class of the p
 
 import glfw
 import easygui
-from threading import Thread
 
 from src.engine.GUI.guimanager import GUIManager
 from src.engine.controller.controller import Controller
@@ -18,6 +17,7 @@ from src.output.shapefile_exporter import ShapefileExporter
 from src.input.shapefile_importer import ShapefileImporter
 from src.output.netcdf_exporter import NetcdfExporter
 from src.engine.process_manager import ProcessManager
+from src.engine.thread_manager import ThreadManager
 
 log = get_logger(module='ENGINE')
 
@@ -38,10 +38,10 @@ class Engine:
         self.scene = Scene()
         self.controller = Controller()
         self.program = None
-        self.process_manager = ProcessManager()
+        self.__process_manager = ProcessManager()
+        self.__thread_manager = ThreadManager()
 
         self.__pending_task_list = []
-        self.__threads_list = []
 
     def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
         """
@@ -597,8 +597,8 @@ class Engine:
         log.debug("Starting main loop.")
         while not glfw.window_should_close(self.window):
             self.update_pending_tasks()
-            self.update_threads()
-            self.process_manager.update_process()
+            self.__thread_manager.update_threads()
+            self.__process_manager.update_process()
             self.render.on_loop([lambda: self.scene.draw()])
 
         glfw.terminate()
@@ -741,21 +741,7 @@ class Engine:
 
         Returns: None
         """
-        # Create and start the thread
-        if then_task_args is None:
-            then_task_args = []
-        if parallel_task_args is None:
-            parallel_task_args = []
-
-        thread = Thread(target=parallel_task, args=parallel_task_args)
-        thread.start()
-
-        # Add thread to the list
-        self.__threads_list.append(
-            {'thread': thread,
-             'then_func': then,
-             'then_args': then_task_args}
-        )
+        self.__thread_manager.set_thread_task(parallel_task, then, parallel_task_args, then_task_args)
 
     def set_process_task(self, parallel_task: callable, then_task: callable, parallel_task_args=None,
                          then_task_args=None) -> None:
@@ -776,10 +762,10 @@ class Engine:
         if then_task_args is None:
             then_task_args = []
 
-        self.process_manager.create_parallel_process(parallel_task,
-                                                     parallel_task_args,
-                                                     then_task,
-                                                     then_task_args)
+        self.__process_manager.create_parallel_process(parallel_task,
+                                                       parallel_task_args,
+                                                       then_task,
+                                                       then_task_args)
 
     def undo_action(self) -> None:
         """
@@ -863,23 +849,6 @@ class Engine:
         Returns: List with the parameters of the polygon.
         """
         return self.scene.get_polygon_params(polygon_id)
-
-    def update_threads(self) -> None:
-        """
-        Checks on the threads of the engine, deleting them if they finished and executing the
-        task configured for them after.
-
-        Returns: None
-        """
-        to_delete = []
-        for thread_pair in self.__threads_list:
-            if not thread_pair['thread'].is_alive():
-                to_delete.append(thread_pair)
-                thread_pair['then_func'](*thread_pair['then_args'])
-
-        for thread_ended in to_delete:
-            log.debug("Thread ended")
-            self.__threads_list.remove(thread_ended)
 
     def export_polygon_with_id(self, polygon_id: str) -> None:
         """

@@ -1,0 +1,11 @@
+@startuml
+
+class ThreadManager{
+    - __thread_list: list
+
+    + update_threads()
+    + set_thread_task(parallel_task, then, parallel_task_args, then_task_args)
+
+}
+
+@enduml
