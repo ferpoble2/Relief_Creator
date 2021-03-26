@@ -1,7 +1,8 @@
 """
 File that contains the functions to read files in NetCDF4 format.
 """
-import logging as log
+from src.utils import get_logger
+
 import numpy as np
 from netCDF4 import Dataset
 
@@ -9,6 +10,8 @@ from netCDF4 import Dataset
 LONGITUDE_KEYS = ['x', 'lon']
 LATITUDE_KEYS = ['y', 'lat']
 HEIGHT_KEYS = ['z']
+
+log = get_logger(module='NETCDF')
 
 
 def get_variables_from_grp(grp, key_values: list) -> list:
