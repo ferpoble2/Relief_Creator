@@ -999,8 +999,7 @@ class Engine:
                                    'Model')
 
         if file is None:
-            log.debug("Directory not selected.")
-            return
+            raise ValueError('Directory not selected')
 
         # ask the scene for information
         vertices = self.scene.get_map2dmodel_vertices_array(model_id)

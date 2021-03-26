@@ -107,6 +107,8 @@ class MainMenuBar(Frame):
                     imgui.close_current_popup()
                 except TypeError:
                     self._GUI_manager.set_modal_text('Error', 'This model can not be exported.')
+                except ValueError:
+                    self._GUI_manager.set_modal_text('Error', 'You must select a directory to save the model.')
 
             imgui.end_menu()
 
