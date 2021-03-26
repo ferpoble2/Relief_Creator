@@ -9,6 +9,7 @@
 package tools {
     class Tools
     class ReliefTools
+    class PolygonTools
 }
 
 Tools *-- ReliefTools
@@ -18,7 +19,7 @@ Tools *-- ReliefTools
 !if (%false())
     !startsub EXTERNAL
        Tools -u-|> Frame
-       Tools .> NotEnoughPointsError
+       PolygonTools .> NotEnoughPointsError
        ReliefTools .> PolygonPointNumberError
        ReliefTools .> PolygonNotPlanarError
     !endsub
@@ -27,7 +28,7 @@ Tools *-- ReliefTools
 ReliefTools .> src.error.PolygonPointNumberError
 ReliefTools .> src.error.PolygonNotPlanarError
 Tools -u-|> src.engine.gui.frames.Frame
-Tools .> src.error.NotEnoughPointsError
+PolygonTools .> src.error.NotEnoughPointsError
 hide members
 
 @enduml
