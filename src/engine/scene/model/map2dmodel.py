@@ -216,9 +216,9 @@ class Map2DModel(Model):
         index_maximum_x = new_index_maximum_x
         index_minimum_x = new_index_minimum_x
 
-        log.debug(f"index_minimun_x: {index_minimum_x}")
+        log.debug(f"index_minimum_x: {index_minimum_x}")
         log.debug(f"index_maximum_x: {index_maximum_x}")
-        log.debug(f"index_minimun_y: {index_minimum_y}")
+        log.debug(f"index_minimum_y: {index_minimum_y}")
         log.debug(f"index_maximum_y: {index_maximum_y}")
         log.debug(f"len x {len(self.__x)}")
         log.debug(f"len y {len(self.__y)}")
@@ -239,9 +239,12 @@ class Map2DModel(Model):
         # first part of the triangles
         # ---------------------------
 
-        index_1 = self.__get_vertex_index(other_cols, other_rows)
-        index_2 = self.__get_vertex_index(other_cols + step_x, other_rows)
-        index_3 = self.__get_vertex_index(other_cols, other_rows + step_y)
+        # noinspection PyTypeChecker
+        index_1: np.ndarray = self.__get_vertex_index(other_cols, other_rows)
+        # noinspection PyTypeChecker
+        index_2: np.ndarray = self.__get_vertex_index(other_cols + step_x, other_rows)
+        # noinspection PyTypeChecker
+        index_3: np.ndarray = self.__get_vertex_index(other_cols, other_rows + step_y)
 
         index_1 = index_1.reshape(-1)
         index_2 = index_2.reshape(-1)
@@ -249,9 +252,12 @@ class Map2DModel(Model):
 
         # second part of the triangles
         # ---------------------------
-        index_4 = self.__get_vertex_index(other_cols + step_x, other_rows)
-        index_5 = self.__get_vertex_index(other_cols + step_x, other_rows + step_y)
-        index_6 = self.__get_vertex_index(other_cols, other_rows + step_y)
+        # noinspection PyTypeChecker
+        index_4: np.ndarray = self.__get_vertex_index(other_cols + step_x, other_rows)
+        # noinspection PyTypeChecker
+        index_5: np.ndarray = self.__get_vertex_index(other_cols + step_x, other_rows + step_y)
+        # noinspection PyTypeChecker
+        index_6: np.ndarray = self.__get_vertex_index(other_cols, other_rows + step_y)
 
         index_4 = index_4.reshape(-1)
         index_5 = index_5.reshape(-1)
@@ -308,6 +314,7 @@ class Map2DModel(Model):
                 vertices.append(z_value)
         return vertices
 
+    # noinspection PyUnresolvedReferences
     def __get_index_closest_value(self, list_to_evaluate: list, value: float) -> 'ndarray[int]':
         """
         Get the index of the closest element in the array to the value.
@@ -325,7 +332,7 @@ class Map2DModel(Model):
         Get the vertex index in the buffer given the x and y position.
 
         The positions are given as in a cartesian plane.
-        THe 0,0 exist.
+        The 0,0 exist.
 
         Args:
             x_pos: Position X of the vertex
@@ -589,6 +596,7 @@ class Map2DModel(Model):
         """
         log.debug("Optimizing gpu memory of the model deleting triangles")
 
+        # noinspection PyMissingOrEmptyDocstring
         def parallel_routine():
             # Delete the triangles from the list
             log.debug("Deleting repeated triangles")
@@ -622,6 +630,7 @@ class Map2DModel(Model):
 
             self.__triangles_to_delete = []
 
+        # noinspection PyMissingOrEmptyDocstring
         def then_routine():
             # Set the new vertices on the engine
             self.set_indices(np.array(self.__indices, dtype=np.uint32))
@@ -644,6 +653,7 @@ class Map2DModel(Model):
         """
         self.__new_indices = None
 
+        # noinspection PyMissingOrEmptyDocstring
         def parallel_tasks():
             log.debug("Coordinates actually showing on the screen:")
             log.debug(f"left: {self.__left_coordinate}")
@@ -653,9 +663,9 @@ class Map2DModel(Model):
 
             # Calculate the definition to use in the reload
             # ---------------------------------------------
-            elements_on_screen_x = abs(self.__get_index_closest_value(self.__x, self.__right_coordinate) - \
+            elements_on_screen_x = abs(self.__get_index_closest_value(self.__x, self.__right_coordinate) -
                                        self.__get_index_closest_value(self.__x, self.__left_coordinate))
-            elements_on_screen_y = abs(self.__get_index_closest_value(self.__y, self.__top_coordinate) - \
+            elements_on_screen_y = abs(self.__get_index_closest_value(self.__y, self.__top_coordinate) -
                                        self.__get_index_closest_value(self.__y, self.__bottom_coordinate))
 
             log.debug(f"Number of vertices on screen axis X: {elements_on_screen_x}")
@@ -686,6 +696,7 @@ class Map2DModel(Model):
                                                             self.__top_coordinate,
                                                             self.__bottom_coordinate)
 
+        # noinspection PyMissingOrEmptyDocstring
         def then_routine():
             # Set the new indices
             # -------------------
