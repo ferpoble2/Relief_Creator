@@ -10,6 +10,9 @@ import queue
 class ProcessManager:
     """
     Class in charge of the management of the process.
+
+    WARNING: The use of this module can be slow since it has to copy all the variables to another memory to
+    execute the new process. (use threads if this step is too slow)
     """
 
     def __init__(self):
@@ -21,6 +24,8 @@ class ProcessManager:
     def true_parallel_task(self, q, function, *args) -> None:
         """
         Function to really use as the parallel process.
+
+        This function should be private but due to a bug in the multiprocessing module it has to be public.
 
         Args:
             q: Queue to use for communicating.
@@ -81,6 +86,7 @@ class ProcessManager:
             self.__process_list.remove(process)
 
 
+# the class should pass this code
 if __name__ == '__main__':
 
     import time
