@@ -120,10 +120,11 @@ class Scene:
         x_dist_pixel = position_x - scene_settings['SCENE_BEGIN_X']
         y_dist_pixel = (window_settings['HEIGHT'] - position_y) - scene_settings['SCENE_BEGIN_Y']
 
-        x_pos = map_positions['left'] + (map_positions['right'] - map_positions['left']) * x_dist_pixel / \
-                scene_settings['SCENE_WIDTH_X']
-        y_pos = map_positions['bottom'] + (map_positions['top'] - map_positions['bottom']) * y_dist_pixel / \
-                scene_settings['SCENE_HEIGHT_Y']
+        scene_x = scene_settings['SCENE_WIDTH_X']
+        scene_y = scene_settings['SCENE_HEIGHT_Y']
+
+        x_pos = map_positions['left'] + (map_positions['right'] - map_positions['left']) * x_dist_pixel / scene_x
+        y_pos = map_positions['bottom'] + (map_positions['top'] - map_positions['bottom']) * y_dist_pixel / scene_y
 
         log.debug(f'Calculated position is: {x_pos} {y_pos}')
         return x_pos, y_pos
@@ -272,7 +273,7 @@ class Scene:
         if active_model_id in self.__model_hash:
             return self.__model_hash[active_model_id].get_showed_limits()
 
-    # noinspection SpellCheckingInspection
+    # noinspection SpellCheckingInspection,PyUnresolvedReferences
     def get_map2dmodel_vertices_array(self, model_id: str) -> 'np.ndarray':
         """
         Get the array of vertices of the specified model.
@@ -691,12 +692,9 @@ class Scene:
         # define mutable object to store results to use from the parallel task to the then task
         new_height = [None]
 
-        # define the parallel functions to use
-        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames
-        def parallel_task(self, vertex_array, height_array, polygon_points, max_height, min_height, new_height):
-            self.__engine.set_loading_message('Modifying height...')
-            self.__engine.set_program_loading(True)
-
+        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
+        def parallel_task(new_height: list, vertex_array: 'numpy.array', height_array: 'numpy.array',
+                          polygon_points: list, max_height: float, min_height: float):
             # calculate the new height of the points
             new_height[0] = TransformationHelper().modify_points_inside_polygon_linear(vertex_array,
                                                                                        height_array,
@@ -704,23 +702,23 @@ class Scene:
                                                                                        max_height,
                                                                                        min_height)
 
-        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames
-        def then(self, model, new_height):
+        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
+        def then(new_height: list, engine: 'Engine', model: Map2DModel):
             # tell the polygon the new height of the vertices
             model.set_height_buffer(new_height[0])
-            self.__engine.set_program_loading(False)
+            engine.set_program_loading(False)
 
+        # define the parallel functions to use
         self.__engine.set_thread_task(parallel_task, then,
-                                      parallel_task_args=[self,
+                                      parallel_task_args=[new_height,
                                                           vertex_array,
                                                           height_array,
                                                           polygon_points,
                                                           max_height,
-                                                          min_height,
-                                                          new_height],
-                                      then_task_args=[self,
-                                                      model,
-                                                      new_height])
+                                                          min_height],
+                                      then_task_args=[new_height,
+                                                      self.__engine,
+                                                      model])
 
     def update_models_colors(self) -> None:
         """
