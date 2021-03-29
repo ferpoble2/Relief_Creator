@@ -38,6 +38,7 @@ class ReliefTools:
         """
         # get all the data necessary
         active_polygon_id = self.__gui_manager.get_active_polygon_id()
+        active_model_id = self.__gui_manager.get_active_model_id()
 
         if active_polygon_id not in self.__polygon_data:
             self.__polygon_data[active_polygon_id] = {
@@ -63,25 +64,30 @@ class ReliefTools:
         if imgui.button('Recalculate Information', -1):
             log.debug('Recalculate polygon information')
 
-            try:
-                maximum, minimum = self.__gui_manager.calculate_max_min_height(self.__gui_manager.get_active_model_id(),
-                                                                               active_polygon_id)
-                self.__polygon_data[active_polygon_id]['max_height'] = maximum
-                self.__polygon_data[active_polygon_id]['min_height'] = minimum
+            if active_model_id is None:
+                self.__gui_manager.set_modal_text('Error', 'You must load a model to try to calculate the '
+                                                           'height of the '
+                                                           'points inside it.')
+            else:
+                try:
+                    maximum, minimum = self.__gui_manager.calculate_max_min_height(active_model_id,
+                                                                                   active_polygon_id)
+                    self.__polygon_data[active_polygon_id]['max_height'] = maximum
+                    self.__polygon_data[active_polygon_id]['min_height'] = minimum
 
-            except TypeError:
-                self.__gui_manager.set_modal_text('Error',
-                                                  'The current model is not supported to use to update the '
-                                                  'height of the vertices, try using another type of model.')
+                except TypeError:
+                    self.__gui_manager.set_modal_text('Error',
+                                                      'The current model is not supported to use to update the '
+                                                      'height of the vertices, try using another type of model.')
 
-            except PolygonPointNumberError:
-                self.__gui_manager.set_modal_text('Error',
-                                                  'The polygon must have at least 3 points to be able to'
-                                                  'modify the heights.')
+                except PolygonPointNumberError:
+                    self.__gui_manager.set_modal_text('Error',
+                                                      'The polygon must have at least 3 points to be able to'
+                                                      'modify the heights.')
 
-            except PolygonNotPlanarError:
-                self.__gui_manager.set_modal_text('Error',
-                                                  'The polygon is not planar. Try using a planar polygon.')
+                except PolygonNotPlanarError:
+                    self.__gui_manager.set_modal_text('Error',
+                                                      'The polygon is not planar. Try using a planar polygon.')
 
         clicked, self.__current_combo_option = imgui.combo(
             "Transformation", self.__current_combo_option, self.__combo_options
@@ -94,11 +100,15 @@ class ReliefTools:
             if self.__min_height_value >= self.__max_height_value:
                 self.__gui_manager.set_modal_text('Error', 'The new minimum value is higher or equal to'
                                                            ' the maximum value.')
+            elif active_model_id is None:
+                self.__gui_manager.set_modal_text('Error', 'You must load a model to try to calculate the '
+                                                           'height of the '
+                                                           'points inside it.')
             else:
                 if self.__current_combo_option == 0:
                     try:
                         self.__gui_manager.change_points_height(active_polygon_id,
-                                                                self.__gui_manager.get_active_model_id(),
+                                                                active_model_id,
                                                                 min_height=self.__min_height_value,
                                                                 max_height=self.__max_height_value,
                                                                 interpolation_type='linear')
