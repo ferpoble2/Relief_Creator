@@ -273,6 +273,23 @@ class Scene:
         if active_model_id in self.__model_hash:
             return self.__model_hash[active_model_id].get_showed_limits()
 
+    def get_active_polygon_id(self) -> str:
+        """
+                Get the id of the active polygon on the program.
+
+                Returns: the id of the active polygon.
+                """
+        return self.__engine.get_active_polygon_id()
+
+    def get_float_bytes(self) -> int:
+        """
+                Get the float bytes used in a float to render.
+                Ask the engine for this information (that is stored in the settings).
+
+                Returns: Number of bytes used for store float numbers.
+                """
+        return self.__engine.get_float_bytes()
+
     # noinspection SpellCheckingInspection,PyUnresolvedReferences
     def get_map2dmodel_vertices_array(self, model_id: str) -> 'np.ndarray':
         """
@@ -294,23 +311,6 @@ class Scene:
 
         vertices_array[:, :, 2] = heights
         return vertices_array
-
-    def get_active_polygon_id(self) -> str:
-        """
-        Get the id of the active polygon on the program.
-
-        Returns: the id of the active polygon.
-        """
-        return self.__engine.get_active_polygon_id()
-
-    def get_float_bytes(self) -> int:
-        """
-        Get the float bytes used in a float to render.
-        Ask the engine for this information (that is stored in the settings).
-
-        Returns: Number of bytes used for store float numbers.
-        """
-        return self.__engine.get_float_bytes()
 
     def get_point_list_from_polygon(self, polygon_id: str) -> list:
         """
@@ -611,18 +611,6 @@ class Scene:
         for model in self.__model_hash.values():
             model.polygon_mode = polygon_mode
 
-    def set_thread_task(self, parallel_task, then):
-        """
-        Set a parallel task in the engine.
-
-        Args:
-            parallel_task: Task to execute in parallel
-            then: Task to execute after the parallel task
-
-        Returns: None
-        """
-        self.__engine.set_thread_task(parallel_task, then)
-
     def set_polygon_name(self, polygon_id: str, new_name: str) -> None:
         """
         Change the name of a polygon.
@@ -652,6 +640,18 @@ class Scene:
             return
         except KeyError:
             raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
+
+    def set_thread_task(self, parallel_task, then):
+        """
+        Set a parallel task in the engine.
+
+        Args:
+            parallel_task: Task to execute in parallel
+            then: Task to execute after the parallel task
+
+        Returns: None
+        """
+        self.__engine.set_thread_task(parallel_task, then)
 
     def transform_points_using_linear_transformation(self, polygon_id: str, model_id: str, min_height: float,
                                                      max_height: float) -> None:
