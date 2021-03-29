@@ -4,6 +4,7 @@ File that contains the class shapefileExporter.
 import shapefile
 
 from src.error.not_enought_points_error import NotEnoughPointsError
+from src.utils import is_clockwise
 
 
 class ShapefileExporter:
@@ -42,23 +43,6 @@ class ShapefileExporter:
                 pair_used = []
         return new_list
 
-    def __is_clockwise(self, points):
-        """
-        Check if a list of 2D points are in CW order or not.
-
-        Args:
-            points: List of 2D points [(1.x,1.y),(2.x,2.y),...]
-
-        Returns: Boolean indicating if points are CW or not.
-        """
-
-        # points is your list (or array) of 2d points.
-        assert len(points) > 0
-        s = 0.0
-        for p1, p2 in zip(points, points[1:] + [points[0]]):
-            s += (p2[0] - p1[0]) * (p2[1] + p1[1])
-        return s > 0.0
-
     def export_list_of_polygons(self, list_of_points: list, list_of_parameters: list, list_of_polygon_names: list,
                                 directory: str) -> None:
         """
@@ -89,7 +73,7 @@ class ShapefileExporter:
 
             # sort the points to be counter clockwise
             points = self.__delete_z_axis(list_of_points[ind])
-            if self.__is_clockwise(points):
+            if is_clockwise(points):
                 points.reverse()  # polygons must be defined CCW
             processed_point_list.append(points)
 
@@ -174,7 +158,7 @@ class ShapefileExporter:
 
         # Save the polygons
         points = self.__delete_z_axis(list_of_points)
-        if self.__is_clockwise(points):
+        if is_clockwise(points):
             points.reverse()  # polygons must be defined CCW
 
         params = list(parameters.values())
