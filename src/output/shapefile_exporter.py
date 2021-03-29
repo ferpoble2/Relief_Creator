@@ -73,8 +73,15 @@ class ShapefileExporter:
 
             # sort the points to be counter clockwise
             points = self.__delete_z_axis(list_of_points[ind])
-            if is_clockwise(points):
-                points.reverse()  # polygons must be defined CCW
+            if is_clockwise(points):  # polygons must be defined CCW
+                new_points = []
+                for point_ind in range(int(len(points) / 2)):
+                    last_y = points.pop()
+                    last_x = points.pop()
+                    new_points.append(last_x)
+                    new_points.append(last_y)
+                points = new_points
+
             processed_point_list.append(points)
 
             # store all the keys and the type of the parameter in another dictionary
@@ -158,8 +165,14 @@ class ShapefileExporter:
 
         # Save the polygons
         points = self.__delete_z_axis(list_of_points)
-        if is_clockwise(points):
-            points.reverse()  # polygons must be defined CCW
+        if is_clockwise(points):  # polygons must be defined CCW
+            new_points = []
+            for point_ind in range(int(len(points) / 2)):
+                last_y = points.pop()
+                last_x = points.pop()
+                new_points.append(last_x)
+                new_points.append(last_y)
+            points = new_points
 
         params = list(parameters.values())
         w.record(*params)
