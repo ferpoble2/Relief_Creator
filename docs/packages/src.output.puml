@@ -14,12 +14,12 @@ package output {
 
 !if (%false())
     !startsub EXTERNAL
-
+        ShapefileExporter .> src.utils
     !endsub
 !endif
 
 ' Code that will affect only the current diagram
 ' can be messy since will not be imported
-
+ShapefileExporter .> src.utils
 
 @enduml

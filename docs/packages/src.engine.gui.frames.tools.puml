@@ -10,9 +10,12 @@ package tools {
     class Tools
     class ReliefTools
     class PolygonTools
+    class InterpolationTools
 }
 
 Tools *-- ReliefTools
+Tools *-- PolygonTools
+Tools *-- InterpolationTools
 !endsub
 
 

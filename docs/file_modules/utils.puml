@@ -11,5 +11,6 @@ class utils <<$file>> {
     + interpolate(value, value_min, value_max, target_min, target_max, convert) : float
     + get_logger(log_level, log_file_level, module, directory) : logger
     + is_numeric(value) : boolean
+    + is_clockwise(points): boolean
 }
 @enduml
