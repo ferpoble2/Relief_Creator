@@ -976,7 +976,7 @@ class Engine:
         # ask the output to write the file
         NetcdfExporter().export_model_vertices_to_netcdf_file(vertices, file)
 
-    def interpolate_points(self, polygon_id: str, model_id: str, distance: str) -> None:
+    def interpolate_points(self, polygon_id: str, model_id: str, distance: float) -> None:
         """
         Ask the scene to interpolate the points using the specified parameters.
 
