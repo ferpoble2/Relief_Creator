@@ -222,7 +222,7 @@ class PolygonTools:
 
             try:
                 self.__GUI_manager.export_polygon_with_id(polygon_id)
-                self.__GUI_manager.set_modal_text('Information', 'Polygons exported successfully.')
+                self.__GUI_manager.set_modal_text('Information', 'Polygon exported successfully.')
                 imgui.close_current_popup()
 
             except NotEnoughPointsError as e:
