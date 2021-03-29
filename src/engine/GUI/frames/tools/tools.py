@@ -9,6 +9,7 @@ from src.utils import get_logger
 
 from src.engine.GUI.frames.tools.relief_tools import ReliefTools
 from src.engine.GUI.frames.tools.polygon_tools import PolygonTools
+from src.engine.GUI.frames.tools.interpolation_tools import InterpolationTools
 
 log = get_logger(module="TOOLS")
 
@@ -37,6 +38,7 @@ class Tools(Frame):
         # object in charge of render the relief tools
         self.__relief_tools = ReliefTools(gui_manager)
         self.__polygon_tools = PolygonTools(gui_manager, self.__button_margin_width)
+        self.__interpolation_tools = InterpolationTools(gui_manager)
 
     def __show_active_tool(self):
         """
@@ -143,5 +145,8 @@ class Tools(Frame):
         if self._GUI_manager.get_active_polygon_id() is not None:
             imgui.separator()
             self.__relief_tools.render()
+
+            imgui.separator()
+            self.__interpolation_tools.render()
 
         imgui.end()
