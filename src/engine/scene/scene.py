@@ -709,6 +709,8 @@ class Scene:
             engine.set_program_loading(False)
 
         # define the parallel functions to use
+        self.__engine.set_loading_message('Changing height...')
+        self.__engine.set_program_loading(True)
         self.__engine.set_thread_task(parallel_task, then,
                                       parallel_task_args=[new_height,
                                                           vertex_array,
