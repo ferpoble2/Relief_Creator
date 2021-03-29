@@ -26,4 +26,8 @@ class InterpolationTools:
         Render the interpolation tools to modify the borders of the polygons modifications.
         Returns: None
         """
-        imgui.button('alizar')
+        self.__gui_manager.set_tool_title_font()
+        imgui.text('Interpolation Tools')
+        self.__gui_manager.set_regular_font()
+
+
