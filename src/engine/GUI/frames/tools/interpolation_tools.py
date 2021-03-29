@@ -43,4 +43,6 @@ class InterpolationTools:
 
         if imgui.button('Interpolate', -1):
             log.debug('Interpolating points.')
-
+            self.__gui_manager.interpolate_points(self.__gui_manager.get_active_polygon_id(),
+                                                  self.__gui_manager.get_active_model_id(),
+                                                  self.__distance_current_value)

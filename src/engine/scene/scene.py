@@ -787,7 +787,7 @@ class Scene:
         # get the points to modify
         vertices_shape = model.get_vertices_shape()
         vertices = model.get_vertices_array().reshape(vertices_shape)
-        height = model.get_height_array().reshape(vertices_shape)
+        height = model.get_height_array().reshape((vertices_shape[0], vertices_shape[1]))
         polygon_points = polygon.get_point_list()
 
         # modify the points
