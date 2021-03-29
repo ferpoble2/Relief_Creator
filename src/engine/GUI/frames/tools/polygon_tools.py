@@ -222,10 +222,13 @@ class PolygonTools:
 
             try:
                 self.__GUI_manager.export_polygon_with_id(polygon_id)
+                self.__GUI_manager.set_modal_text('Information', 'Polygons exported successfully.')
+                imgui.close_current_popup()
 
             except NotEnoughPointsError as e:
                 log.exception(e)
                 self.__GUI_manager.set_modal_text("Error", "The polygon does not have enough points.")
+                imgui.close_current_popup()
 
         return clicked_selectable
 
@@ -260,11 +263,12 @@ class PolygonTools:
             if imgui.is_item_clicked():
                 try:
                     self.__GUI_manager.export_polygons_inside_folder(folder_id)
+                    self.__GUI_manager.set_modal_text('Information', 'Polygons exported successfully.')
+                    imgui.close_current_popup()
 
                 except NotEnoughPointsError:
                     self.__GUI_manager.set_modal_text('Error', 'One or more polygons does not have enough '
                                                                'points to be exported.')
-                    self.__GUI_manager.set_modal_text('Information', 'Polygons exported successfully.')
                     imgui.close_current_popup()
 
             imgui.separator()
