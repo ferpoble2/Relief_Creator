@@ -5,7 +5,6 @@ import numpy as np
 from shapely.geometry.polygon import LinearRing as LinearRing
 from typing import List
 from matplotlib import path
-from scipy import interpolate as interpolate_2d_array
 
 from src.utils import interpolate
 from src.utils import is_clockwise
@@ -64,14 +63,14 @@ class TransformationHelper:
         """
 
         # generate the polygon
-        points_2d = []
+        points_xy = []
         for point_ind in range(len(polygon_points)):
             if point_ind % 3 == 0:
-                points_2d.append((polygon_points[point_ind], polygon_points[point_ind + 1]))
+                points_xy.append((polygon_points[point_ind], polygon_points[point_ind + 1]))
         # get a mask for the points inside
         xv = points[:, :, 0]
         yv = points[:, :, 1]
-        p = path.Path(points_2d)
+        p = path.Path(points_xy)
 
         # noinspection PyTypeChecker
         flags = p.contains_points(np.hstack((xv.flatten()[:, np.newaxis], yv.flatten()[:, np.newaxis])))
@@ -90,6 +89,12 @@ class TransformationHelper:
         Returns: Array interpolated.
         """
         raise NotImplementedError()
+
+        # TODO: implement a fast way of interpolating:
+        #  help links:
+        #  https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.interp2d.html
+        #  https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.RectBivariateSpline.html#scipy.interpolate.RectBivariateSpline
+        #  or any other thing that can help from the gmt library
 
     def modify_points_inside_polygon_linear(self, points: np.ndarray,
                                             height: np.ndarray,
@@ -142,7 +147,7 @@ class TransformationHelper:
         if is_clockwise(points_no_z_axis):  # points must be in CCW direction
             points_no_z_axis.reverse()
 
-        # create a polygon external to the one proportionated
+        # create a polygon external to the one proportionate
         closed_polygon = LinearRing(points_no_z_axis)
         exterior_polygon = closed_polygon.buffer(distance).exterior
 
@@ -167,10 +172,11 @@ class TransformationHelper:
         log.debug('Interpolating using numpy')
         heights = self.__interpolate_nan(heights)
 
-        log.debug('Ploting')
-        import matplotlib.pyplot as plt
-        plt.imshow(heights)
-        plt.show()
+        # TODO: delete this after the code for interpolate is complete
+        log.debug('Plotting')
+        import matplotlib.pyplot as plot
+        plot.imshow(heights)
+        plot.show()
 
         return heights
 
@@ -194,27 +200,30 @@ class TransformationHelper:
 
 
 if __name__ == '__main__':
-    # points_2d = [[0, 0], [0, 1], [0, 2], [1, 1], [1, 0]]
-    #
-    # # check if the points are already CW
-    # if is_clockwise(points_2d):  # points must be in CCW direction
-    #     points_2d.reverse()
-    #
-    # linear_ring = LinearRing(points_2d)
-    #
-    # points_2d.append(points_2d[0])  # make it closed
-    # linear_ring2 = linear_ring.buffer(8)
-    #
-    # import matplotlib.pyplot as plt
-    #
-    # exterior = linear_ring2.exterior
-    #
-    # x, y = linear_ring.xy
-    # x2, y2 = exterior.xy
-    #
-    # plt.plot(x, y, color='red')
-    # plt.plot(x2, y2, color='green')
-    # plt.show()
+
+    # noinspection PyUnreachableCode
+    if False:
+        points_2d = [[0, 0], [0, 1], [0, 2], [1, 1], [1, 0]]
+
+        # check if the points are already CW
+        if is_clockwise(points_2d):  # points must be in CCW direction
+            points_2d.reverse()
+
+        linear_ring = LinearRing(points_2d)
+
+        points_2d.append(points_2d[0])  # make it closed
+        linear_ring2 = linear_ring.buffer(8)
+
+        import matplotlib.pyplot as plt
+
+        exterior = linear_ring2.exterior
+
+        x, y = linear_ring.xy
+        x2, y2 = exterior.xy
+
+        plt.plot(x, y, color='red')
+        plt.plot(x2, y2, color='green')
+        plt.show()
 
     import numpy as np
     from scipy import interpolate
@@ -233,9 +242,9 @@ if __name__ == '__main__':
     # get only the valid values
     x1 = xx[~array.mask]
     y1 = yy[~array.mask]
-    newarr = array[~array.mask]
+    new_array = array[~array.mask]
 
-    GD1 = interpolate.griddata((x1, y1), newarr.ravel(),
+    GD1 = interpolate.griddata((x1, y1), new_array.ravel(),
                                (xx, yy),
                                method='linear')
 
