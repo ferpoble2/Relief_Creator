@@ -21,6 +21,11 @@ class InterpolationTools:
         """
         self.__gui_manager = gui_manager
 
+        self.__combo_options = ['Linear']
+        self.__current_combo_option = 0
+
+        self.__distance_current_value = 0
+
     def render(self) -> None:
         """
         Render the interpolation tools to modify the borders of the polygons modifications.
@@ -30,4 +35,12 @@ class InterpolationTools:
         imgui.text('Interpolation Tools')
         self.__gui_manager.set_regular_font()
 
+        clicked, self.__current_combo_option = imgui.combo(
+            "Type", self.__current_combo_option, self.__combo_options
+        )
+
+        _, self.__distance_current_value = imgui.input_float('Distance', self.__distance_current_value)
+
+        if imgui.button('Interpolate', -1):
+            log.debug('Interpolating points.')
 
