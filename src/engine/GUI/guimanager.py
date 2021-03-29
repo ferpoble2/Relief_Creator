@@ -882,7 +882,7 @@ class GUIManager:
         """
         self.__engine.undo_action()
 
-    def interpolate_points(self, polygon_id: str, model_id: str, distance: str) -> None:
+    def interpolate_points(self, polygon_id: str, model_id: str, distance: float) -> None:
         """
         Call the engine to interpolate the points using the specified polygons and the specified distance.
 
