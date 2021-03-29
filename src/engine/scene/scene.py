@@ -764,3 +764,37 @@ class Scene:
         viewport_data = self.__engine.get_scene_setting_data()
         self.__width_viewport = viewport_data['SCENE_WIDTH_X']
         self.__height_viewport = viewport_data['SCENE_HEIGHT_Y']
+
+    def interpolate_points(self, polygon_id: str, model_id: str, distance: float) -> None:
+        """
+        Interpolate the points at the exterior of the polygon using a linear interpolation method.
+
+        Args:
+            polygon_id: ID of the polygon to use.
+            model_id: ID of the model to use.
+            distance: Distance to use for the interpolation.
+
+        Returns: None
+        """
+
+        # get the data necessary for the interpolation
+        polygon = self.__polygon_hash[polygon_id]
+        model = self.__model_hash[model_id]
+
+        if not isinstance(model, Map2DModel):
+            raise TypeError(f'Can not interpolate using model of type {type(model)}, try using a Map2DModel.')
+
+        # get the points to modify
+        vertices_shape = model.get_vertices_shape()
+        vertices = model.get_vertices_array().reshape(vertices_shape)
+        height = model.get_height_array().reshape(vertices_shape)
+        polygon_points = polygon.get_point_list()
+
+        # modify the points
+        new_height = TransformationHelper().interpolate_points_external_to_polygon(vertices,
+                                                                                   polygon_points,
+                                                                                   height,
+                                                                                   distance)
+
+        # save the changes to the model
+        model.set_height_buffer(new_height)
