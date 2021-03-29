@@ -73,32 +73,22 @@ class GUIManager:
         for frame in self.__component_list:
             frame.add_new_polygon(polygon_id)
 
-    def change_points_height(self, polygon_id: str, model_id: str, min_height: float, max_height: float,
-                             interpolation_type: 'str' = 'linear') -> None:
+    def add_imported_polygon(self, polygon_id: str) -> None:
         """
-        Call the engine to change the height of the points inside the specified polygon.
+        Add the polygon to the folder that stores the imported polygons and update all the frames with the new
+        polygon.
 
-        Call a different function depending on the type of interpolation.
-        Types can have the following values:
-            - linear
-
+        If the folder do not exist, then it is created.
 
         Args:
-            model_id: ID of the model to use for the interpolation.
-            polygon_id: ID of the polygon to use for interpolation.
-            min_height: Min height of the points after the interpolation.
-            max_height: Max height of the points after the interpolation.
-            interpolation_type: Type of interpolation to use.
+            polygon_id: ID of the polygon to add.
 
         Returns: None
         """
+        self.__polygon_folder_manager.add_polygon_to_imported_polygon_folder(polygon_id)
 
-        if interpolation_type == 'linear':
-            self.__engine.transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
-            return
-
-        raise WrongInterpolationTypeError(
-            f'Interpolation of type {interpolation_type} is not admitted by the program.')
+        # update gui
+        self.__update_frames_with_new_polygon(polygon_id)
 
     def add_polygon_to_gui(self, polygon_id: str) -> None:
         """
@@ -127,23 +117,6 @@ class GUIManager:
         """
         self.__polygon_folder_manager.add_polygon_to_folder(folder_id, polygon_id)
 
-    def add_imported_polygon(self, polygon_id: str) -> None:
-        """
-        Add the polygon to the folder that stores the imported polygons and update all the frames with the new
-        polygon.
-
-        If the folder do not exist, then it is created.
-
-        Args:
-            polygon_id: ID of the polygon to add.
-
-        Returns: None
-        """
-        self.__polygon_folder_manager.add_polygon_to_imported_polygon_folder(polygon_id)
-
-        # update gui
-        self.__update_frames_with_new_polygon(polygon_id)
-
     def add_zoom(self) -> None:
         """
         Add zoom to the current map being watched.
@@ -159,6 +132,18 @@ class GUIManager:
         Returns: if frames are fixed or not.
         """
         return self.__engine.are_frames_fixed()
+
+    def calculate_max_min_height(self, model_id: str, polygon_id: str) -> tuple:
+        """
+        Ask the engine for max and min values of the vertices that are inside the polygon.
+
+        Args:
+            model_id: ID of the model to use.
+            polygon_id: ID of the polygon to use.
+
+        Returns: tuple with the max and min value.
+        """
+        return self.__engine.calculate_max_min_height(model_id, polygon_id)
 
     def change_color_file_with_dialog(self) -> None:
         """
@@ -200,6 +185,33 @@ class GUIManager:
         Returns: None
         """
         self.__engine.change_dot_color_of_polygon(polygon_id, color)
+
+    def change_points_height(self, polygon_id: str, model_id: str, min_height: float, max_height: float,
+                             interpolation_type: 'str' = 'linear') -> None:
+        """
+        Call the engine to change the height of the points inside the specified polygon.
+
+        Call a different function depending on the type of interpolation.
+        Types can have the following values:
+            - linear
+
+
+        Args:
+            model_id: ID of the model to use for the interpolation.
+            polygon_id: ID of the polygon to use for interpolation.
+            min_height: Min height of the points after the interpolation.
+            max_height: Max height of the points after the interpolation.
+            interpolation_type: Type of interpolation to use.
+
+        Returns: None
+        """
+
+        if interpolation_type == 'linear':
+            self.__engine.transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
+            return
+
+        raise WrongInterpolationTypeError(
+            f'Interpolation of type {interpolation_type} is not admitted by the program.')
 
     def change_quality(self, quality: int) -> None:
         """
@@ -274,6 +286,18 @@ class GUIManager:
         """
         self.__polygon_folder_manager.delete_folder(folder_id)
 
+    def delete_polygon_parameter(self, polygon_id: str, key: str) -> None:
+        """
+        Delete a parameter from a polygon.
+
+        Args:
+            polygon_id: ID of the polygon.
+            key: key to delete.
+
+        Returns: None
+        """
+        self.__engine.delete_parameter_from_polygon(polygon_id, key)
+
     def draw_frames(self) -> None:
         """
         Draw the components of the GUI (This dont render them).
@@ -289,6 +313,17 @@ class GUIManager:
         # check for the mouse component
         self.__is_mouse_inside_frame = imgui.get_io().want_capture_mouse
 
+    def export_model_as_netcdf(self, model_id: str) -> None:
+        """
+        Ask the engine to export the model with the specified ID as  a netcdf file.
+
+        Args:
+            model_id: ID of the model to export.
+
+        Returns: None
+        """
+        self.__engine.export_model_as_netcdf(model_id)
+
     def export_polygon_with_id(self, polygon_id: str) -> None:
         """
         Ask the engine to export the polygon with the given ID
@@ -299,6 +334,18 @@ class GUIManager:
         Returns: None
         """
         self.__engine.export_polygon_with_id(polygon_id)
+
+    def export_polygons_inside_folder(self, polygon_folder_id: str) -> None:
+        """
+        Ask the engine to export a list of polygons to a shapefile file.
+
+        Args:
+            polygon_folder_id: ID of the folder containing the polygons.
+
+        Returns: None
+        """
+        self.__engine.export_polygon_list_id(self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id),
+                                             self.__polygon_folder_manager.get_name_of_folder(polygon_folder_id))
 
     def fix_frames_position(self, value: bool) -> None:
         """
@@ -704,14 +751,27 @@ class GUIManager:
         imgui.pop_font()
         imgui.push_font(self.__font_bold)
 
-    def set_tool_title_font(self) -> None:
+    def set_confirmation_modal(self, modal_title: str, msg: str, yes_function: callable, no_function: callable) -> None:
         """
-        Set the font to use for the tool titles.
+        Opens a confirmation modal in the screen with two options (yes and no), after clicking each one execute the
+        functions given.
+
+        Args:
+            modal_title: Title of the modal.
+            msg: Message to use in the modal.
+            yes_function: Function to execute when pressed yes.
+            no_function: Function to execute when pressed no.
 
         Returns: None
         """
-        imgui.pop_font()
-        imgui.push_font(self.__font_tool_title)
+        log.debug('Setting confirmation modal')
+
+        for frame in self.__component_list:
+            if isinstance(frame, ConfirmationModal):
+                frame.set_confirmation_text(modal_title, msg, yes_function, no_function)
+                return
+
+        raise AssertionError('There is not a frame of class ConfirmationModal in the program.')
 
     def set_loading_message(self, new_msg: str) -> None:
         """
@@ -747,28 +807,6 @@ class GUIManager:
                 return
 
         raise AssertionError('There is not a frame from the TextModal class to set a modal message.')
-
-    def set_confirmation_modal(self, modal_title: str, msg: str, yes_function: callable, no_function: callable) -> None:
-        """
-        Opens a confirmation modal in the screen with two options (yes and no), after clicking each one execute the
-        functions given.
-
-        Args:
-            modal_title: Title of the modal.
-            msg: Message to use in the modal.
-            yes_function: Function to execute when pressed yes.
-            no_function: Function to execute when pressed no.
-
-        Returns: None
-        """
-        log.debug('Setting confirmation modal')
-
-        for frame in self.__component_list:
-            if isinstance(frame, ConfirmationModal):
-                frame.set_confirmation_text(modal_title, msg, yes_function, no_function)
-                return
-
-        raise AssertionError('There is not a frame of class ConfirmationModal in the program.')
 
     def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
@@ -827,6 +865,15 @@ class GUIManager:
         imgui.pop_font()
         imgui.push_font(self.__font_regular)
 
+    def set_tool_title_font(self) -> None:
+        """
+        Set the font to use for the tool titles.
+
+        Returns: None
+        """
+        imgui.pop_font()
+        imgui.push_font(self.__font_tool_title)
+
     def undo_action(self) -> None:
         """
         Call the engine to undo the most recent action made on the program.
@@ -834,50 +881,3 @@ class GUIManager:
         Returns: None
         """
         self.__engine.undo_action()
-
-    def delete_polygon_parameter(self, polygon_id: str, key: str) -> None:
-        """
-        Delete a parameter from a polygon.
-
-        Args:
-            polygon_id: ID of the polygon.
-            key: key to delete.
-
-        Returns: None
-        """
-        self.__engine.delete_parameter_from_polygon(polygon_id, key)
-
-    def calculate_max_min_height(self, model_id: str, polygon_id: str) -> tuple:
-        """
-        Ask the engine for max and min values of the vertices that are inside the polygon.
-
-        Args:
-            model_id: ID of the model to use.
-            polygon_id: ID of the polygon to use.
-
-        Returns: tuple with the max and min value.
-        """
-        return self.__engine.calculate_max_min_height(model_id, polygon_id)
-
-    def export_polygons_inside_folder(self, polygon_folder_id: str) -> None:
-        """
-        Ask the engine to export a list of polygons to a shapefile file.
-
-        Args:
-            polygon_folder_id: ID of the folder containing the polygons.
-
-        Returns: None
-        """
-        self.__engine.export_polygon_list_id(self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id),
-                                             self.__polygon_folder_manager.get_name_of_folder(polygon_folder_id))
-
-    def export_model_as_netcdf(self, model_id: str) -> None:
-        """
-        Ask the engine to export the model with the specified ID as  a netcdf file.
-
-        Args:
-            model_id: ID of the model to export.
-
-        Returns: None
-        """
-        self.__engine.export_model_as_netcdf(model_id)
