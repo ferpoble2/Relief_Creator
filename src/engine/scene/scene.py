@@ -786,7 +786,7 @@ class Scene:
 
         if not isinstance(model, Map2DModel):
             raise TypeError(
-                f'Can not interpolate using model of type {type_interpolation(model)}, try using a Map2DModel.')
+                f'Can not interpolate using model of type {type(model)}, try using a Map2DModel.')
 
         # get the points to modify
         vertices_shape = model.get_vertices_shape()
@@ -798,7 +798,8 @@ class Scene:
         new_height = TransformationHelper().interpolate_points_external_to_polygon(vertices,
                                                                                    polygon_points,
                                                                                    height,
-                                                                                   distance)
+                                                                                   distance,
+                                                                                   type_interpolation)
 
         # save the changes to the model
         model.set_height_buffer(new_height)
