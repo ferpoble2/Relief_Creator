@@ -49,7 +49,7 @@ class Engine {
     + get_window_setting_data(): dict
     + get_zoom_level(): float
     + initialize(engine)
-    + interpolate_points(polygon_id, model_id, distance)
+    + interpolate_points(polygon_id, model_id, distance, type_interpolation)
     + is_mouse_hovering_frame()
     + is_polygon_planar(polygon_id)
     + is_program_loading(): boolean

@@ -59,7 +59,7 @@ class GUIManager{
     + get_window_width(): int
     + get_zoom_level(): float
     + initialize(window, mode)
-    + interpolate_points(polygon_id, model_id, distance)
+    + interpolate_points(polygon_id, model_id, distance, type_interpolation)
     + is_mouse_inside_frame(): boolean
     + is_polygon_planar()
     + is_program_loading(): boolean
