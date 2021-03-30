@@ -28,8 +28,8 @@ def get_logger(log_level: int = LOG_LEVEL, log_file_level: int = LOG_FILE_LEVEL,
     log.propagate = False
     log.setLevel(log_level)
 
-    formatter = logging.Formatter(f"%(asctime)s - {module} - %(levelname)s: %(message)s",
-                                  datefmt="%m/%d/%Y %I:%M:%S %p")
+    formatter = logging.Formatter(f"%(asctime)s.%(msecs)03d - {module} - %(levelname)s: %(message)s",
+                                  datefmt='%Y-%m-%d,%H:%M:%S')
 
     handlers = []
     if LOG_TO_FILE:
