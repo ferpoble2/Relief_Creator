@@ -190,11 +190,13 @@ class TransformationHelper:
         return height
 
     def interpolate_points_external_to_polygon(self, points_array: np.ndarray, polygon_points: list,
-                                               heights: np.ndarray, distance: float) -> np.ndarray:
+                                               heights: np.ndarray, distance: float,
+                                               type_interpolation: str) -> np.ndarray:
         """
         Interpolate the points that are external to the polygon until a certain distance.
 
         Args:
+            type_interpolation: Type of interpolation to use.
             distance: Limit distance to interpolate the points from.
             points_array: Points of the model. (shape must be (x, y, 3))
             polygon_points: List with the points of the polygon. [x1, y1, z1, x2, y2, z2, ...]
@@ -240,7 +242,7 @@ class TransformationHelper:
 
         # apply the interpolation algorithm from scipy
         log.debug('Interpolating using numpy')
-        heights_cut = self.__interpolate_nan(heights_cut, in_between_mask)
+        heights_cut = self.__interpolate_nan(heights_cut, in_between_mask, type_interpolation)
         heights[min_y_index:max_y_index, min_x_index:max_x_index] = heights_cut
 
         return heights
