@@ -80,6 +80,29 @@ class TransformationHelper:
         return flags
 
     # noinspection PyShadowingNames
+    def __get_bounding_box_indexes(self, points_array: np.ndarray, polygon: LinearRing) -> list:
+        """
+        Get the indices to use in the matrix to get only the values of the matrix that are inside the bounding
+        box of the polygon.
+
+        Args:
+            points_array: Array 2D with shape (x,y,3) with the values of the points.
+            polygon: Polygon to use to get the bounding box.
+
+        Returns: [min_x, max_x, min_y, max_y]
+        """
+
+        # get the bounding box of the nan values
+        (minx, miny, max_x, maxy) = polygon.bounds
+        min_x_index = np.searchsorted(points_array[0, :, 0], minx)
+        max_x_index = np.searchsorted(points_array[0, :, 0], max_x)
+
+        min_y_index = np.searchsorted(points_array[:, 0, 1], miny)
+        max_y_index = np.searchsorted(points_array[:, 0, 1], maxy)
+
+        return [min_x_index, max_x_index, min_y_index, max_y_index]
+
+    # noinspection PyUnresolvedReferences
     def __interpolate_nan(self, array_2d: np.ndarray, nan_mask: np.ndarray,
                           interpolation_type: str = 'linear') -> np.ndarray:
         """
@@ -152,29 +175,6 @@ class TransformationHelper:
         height[flags] = new_height
         return height
 
-    # noinspection PyUnresolvedReferences
-    def __get_bounding_box_indexes(self, points_array: np.ndarray, polygon: LinearRing) -> list:
-        """
-        Get the indices to use in the matrix to get only the values of the matrix that are inside the bounding
-        box of the polygon.
-
-        Args:
-            points_array: Array 2D with shape (x,y,3) with the values of the points.
-            polygon: Polygon to use to get the bounding box.
-
-        Returns: [min_x, max_x, min_y, max_y]
-        """
-
-        # get the bounding box of the nan values
-        (minx, miny, max_x, maxy) = polygon.bounds
-        min_x_index = np.searchsorted(points_array[0, :, 0], minx)
-        max_x_index = np.searchsorted(points_array[0, :, 0], max_x)
-
-        min_y_index = np.searchsorted(points_array[:, 0, 1], miny)
-        max_y_index = np.searchsorted(points_array[:, 0, 1], maxy)
-
-        return [min_x_index, max_x_index, min_y_index, max_y_index]
-
     def interpolate_points_external_to_polygon(self, points_array: np.ndarray, polygon_points: list,
                                                heights: np.ndarray, distance: float) -> np.ndarray:
         """
@@ -222,7 +222,7 @@ class TransformationHelper:
 
         # apply the logical operations
         in_between_mask = mask_external != mask_internal
-        heights_cut[in_between_mask == True] = np.nan # noqa
+        heights_cut[in_between_mask == True] = np.nan  # noqa
 
         # apply the interpolation algorithm from scipy
         log.debug('Interpolating using numpy')
