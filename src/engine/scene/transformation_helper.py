@@ -257,10 +257,18 @@ class TransformationHelper:
 
         Returns: Tuple with the maximum and minimum value
         """
-        flags = self.__generate_mask(points_array, polygon_points)
+        points_no_z_axis = self.__delete_z_axis(polygon_points)
+        closed_polygon = LinearRing(points_no_z_axis)
+        [min_x_index, max_x_index, min_y_index, max_y_index] = self.__get_bounding_box_indexes(points_array,
+                                                                                               closed_polygon)
 
-        maximum = np.max(heights[flags])
-        minimum = np.min(heights[flags])
+        points_array_cut = points_array[min_y_index:max_y_index, min_x_index:max_x_index, :]
+        heights_cut = heights[min_y_index:max_y_index, min_x_index:max_x_index]
+
+        flags = self.__generate_mask(points_array_cut, polygon_points)
+
+        maximum = np.max(heights_cut[flags])
+        minimum = np.min(heights_cut[flags])
 
         return maximum, minimum
 
