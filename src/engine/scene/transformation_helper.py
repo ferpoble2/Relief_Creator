@@ -79,7 +79,7 @@ class TransformationHelper:
         flags = flags.reshape(xv.shape)
         return flags
 
-    # noinspection PyShadowingNames
+    # noinspection PyShadowingNames,PyUnresolvedReferences
     def __get_bounding_box_indexes(self, points_array: np.ndarray, polygon: LinearRing) -> list:
         """
         Get the indices to use in the matrix to get only the values of the matrix that are inside the bounding
@@ -163,16 +163,30 @@ class TransformationHelper:
 
         Returns: numpy.array with the new points
         """
-        flags = self.__generate_mask(points_array, polygon_points)
+
+        # generate polygon and get the bounding box of the indices.
+        points_no_z_axis = self.__delete_z_axis(polygon_points)
+        closed_polygon = LinearRing(points_no_z_axis)
+        [min_x_index, max_x_index, min_y_index, max_y_index] = self.__get_bounding_box_indexes(points_array,
+                                                                                               closed_polygon)
+
+        points_array_cut = points_array[min_y_index:max_y_index, min_x_index:max_x_index, :]
+        height_cut = height[min_y_index:max_y_index, min_x_index:max_x_index]
+
+        log.debug('Generating mask')
+        flags = self.__generate_mask(points_array_cut, polygon_points)
+        log.debug('Mask generated')
 
         # modify the height linearly
-        current_min_height = np.min(height[flags])
-        current_max_height = np.max(height[flags])
+        current_min_height = np.min(height_cut[flags])
+        current_max_height = np.max(height_cut[flags])
 
-        new_height = interpolate(height[flags], current_min_height, current_max_height, new_min_height, new_max_height,
+        new_height = interpolate(height_cut[flags], current_min_height, current_max_height, new_min_height,
+                                 new_max_height,
                                  False)
 
-        height[flags] = new_height
+        height_cut[flags] = new_height
+        height[min_y_index:max_y_index, min_x_index:max_x_index] = height_cut
         return height
 
     def interpolate_points_external_to_polygon(self, points_array: np.ndarray, polygon_points: list,
