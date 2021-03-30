@@ -21,7 +21,7 @@ class InterpolationTools:
         """
         self.__gui_manager = gui_manager
 
-        self.__combo_options = ['Linear']
+        self.__combo_options = ['linear', 'nearest', 'cubic']
         self.__current_combo_option = 0
 
         self.__distance_current_value = 0
@@ -45,4 +45,5 @@ class InterpolationTools:
             log.debug('Interpolating points.')
             self.__gui_manager.interpolate_points(self.__gui_manager.get_active_polygon_id(),
                                                   self.__gui_manager.get_active_model_id(),
-                                                  self.__distance_current_value)
+                                                  self.__distance_current_value,
+                                                  self.__current_combo_option)
