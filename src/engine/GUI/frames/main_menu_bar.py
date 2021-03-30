@@ -8,7 +8,7 @@ import imgui
 import shapefile
 import OpenGL.GL as GL
 
-log = get_logger(module="MAIN MENU BAR")
+log = get_logger(module="MAIN_MENU_BAR")
 
 
 class MainMenuBar(Frame):
