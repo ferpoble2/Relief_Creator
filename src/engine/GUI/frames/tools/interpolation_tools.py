@@ -46,4 +46,4 @@ class InterpolationTools:
             self.__gui_manager.interpolate_points(self.__gui_manager.get_active_polygon_id(),
                                                   self.__gui_manager.get_active_model_id(),
                                                   self.__distance_current_value,
-                                                  self.__current_combo_option)
+                                                  self.__combo_options[self.__current_combo_option])
