@@ -83,6 +83,7 @@ class Map2DModel(Model):
 
         Returns: None
         """
+        log.debug('Add triangles inside zone to delete list...')
 
         # Get the variables and matrix to use
         # --------------------------
@@ -97,6 +98,8 @@ class Map2DModel(Model):
         # find out the indices with triangles inside the zone using masks
         # ---------------------------------------------------------------
         indices_with_coords_array = indices_with_coords_array.reshape((-1, 9)).transpose()
+
+        log.debug('Generating mask with values')
         mask = np.ones(len(indices_with_coords_array[0]), dtype=bool)
 
         mask[np.where(indices_with_coords_array[0] < left_coordinate)[0]] = False
@@ -116,6 +119,7 @@ class Map2DModel(Model):
         mask[np.where(indices_with_coords_array[7] > top_coordinate)[0]] = False
 
         inside = np.where(mask == True)[0]
+        log.debug('Finished creation of mask with values')
 
         # Deprecated Code (using intersection instead of masks)
         # -----------------------------------------------------
@@ -141,7 +145,9 @@ class Map2DModel(Model):
         #
         # inside = np.intersect1d(np.intersect1d(np.intersect1d(all_left, all_right), all_bottom), all_top)
 
+        log.debug('Converting array to list')
         to_delete = list(inside)
+        log.debug('Finished convertion')
 
         # Deprecated Code
         # ---------------
