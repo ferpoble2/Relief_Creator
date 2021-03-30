@@ -171,7 +171,7 @@ class Map2DModel(Model):
                               left_coordinate: float = -180,
                               right_coordinate: float = 180,
                               top_coordinate: float = 90,
-                              bottom_coordinate: float = -90) -> list:
+                              bottom_coordinate: float = -90) -> np.ndarray:
         """
         Generate an index list given an already loaded list of vertices. Method use the list of vertices
         stored in the self.__vertices variable.
@@ -191,7 +191,6 @@ class Map2DModel(Model):
         Returns: List of index
         """
 
-        indices = []
         step_x = max(1, step_x)
         step_y = max(1, step_y)
 
@@ -265,13 +264,24 @@ class Map2DModel(Model):
 
         # add the indices
         # ---------------
-        for ind in range(len(index_1)):
-            indices.append(index_1[ind])
-            indices.append(index_2[ind])
-            indices.append(index_3[ind])
-            indices.append(index_4[ind])
-            indices.append(index_5[ind])
-            indices.append(index_6[ind])
+        # DEPRECATED CODE
+        # for ind in range(len(index_1)):
+        #     indices.append(index_1[ind])
+        #     indices.append(index_2[ind])
+        #     indices.append(index_3[ind])
+        #     indices.append(index_4[ind])
+        #     indices.append(index_5[ind])
+        #     indices.append(index_6[ind])
+
+        log.debug('Joining indices calculated into one array')
+        indices = np.zeros((len(index_1), 6))
+        indices[:, 0] = index_1
+        indices[:, 1] = index_2
+        indices[:, 2] = index_3
+        indices[:, 3] = index_4
+        indices[:, 4] = index_5
+        indices[:, 5] = index_6
+        indices = indices.reshape(-1).astype(np.uint32)
 
         # Deprecated Code
         # ---------------
@@ -700,7 +710,7 @@ class Map2DModel(Model):
         def then_routine():
             # Set the new indices
             # -------------------
-            self.__indices += self.__new_indices
+            self.__indices = np.concatenate((self.__indices, self.__new_indices))
             self.set_indices(np.array(self.__indices, dtype=np.uint32))
 
             # call the then routine

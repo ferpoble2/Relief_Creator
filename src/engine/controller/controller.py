@@ -228,6 +228,9 @@ class Controller:
                     if self.__is_left_ctrl_pressed:
                         self.__load_shapefile_file_with_dialog()
 
+                if key == glfw.KEY_R:
+                    self.__engine.reload_models()
+
             # Check for keys released
             if action == glfw.RELEASE:
 
