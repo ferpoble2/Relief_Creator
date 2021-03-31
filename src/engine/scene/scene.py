@@ -10,10 +10,12 @@ from src.engine.scene.model.polygon import Polygon
 from src.engine.scene.model.model import Model
 from src.input.NetCDF import read_info
 from src.utils import get_logger
+from src.engine.scene.transformation_helper import TransformationHelper
+
+# TODO: this should be just another code in SceneError
 from src.error.non_existent_polygon_error import NonExistentPolygonError
 from src.error.model_transformation_error import ModelTransformationError
 from src.error.scene_error import SceneError
-from src.engine.scene.transformation_helper import TransformationHelper
 from src.error.interpolation_error import InterpolationError
 
 log = get_logger(module="SCENE")
