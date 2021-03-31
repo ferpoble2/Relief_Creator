@@ -697,7 +697,8 @@ class Engine:
 
         # noinspection PyMissingOrEmptyDocstring
         def then_routine():
-            self.program.set_loading(False)
+            self.optimize_gpu_memory()  # async function
+            # self.program.set_loading(False)
 
         self.scene.reload_models_async(then_routine)
 
