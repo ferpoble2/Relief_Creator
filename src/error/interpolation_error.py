@@ -21,6 +21,12 @@ class InterpolationError(SceneError):
             1: 'Not enough points in the polygon to do the interpolation.',
         }
 
+    def __str__(self) -> str:
+        """
+        Returns: Message showed in the console.
+        """
+        return self.get_code_message()
+
     def get_code_message(self) -> str:
         """
         Get the message stored describing the error.
