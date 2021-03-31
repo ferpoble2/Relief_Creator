@@ -796,7 +796,19 @@ class Scene:
 
         new_height = [None]
 
+        # noinspection PyShadowingNames
         def parallel_task(vertices, polygon_points, height, distance, type_interpolation, output_array):
+            """
+            Task to run in parallel in a different thread.
+
+            Args:
+                vertices: Vertices to use to interpolate.
+                polygon_points: List of points of the polygon.
+                height: Array of heights.
+                distance: Distance to use for interpolation.
+                type_interpolation: Type of interpolation to use.
+                output_array: Array to use to store the result.
+            """
             new_calculated_height = TransformationHelper().interpolate_points_external_to_polygon(vertices,
                                                                                                   polygon_points,
                                                                                                   height,
@@ -804,9 +816,17 @@ class Scene:
                                                                                                   type_interpolation)
             output_array[0] = new_calculated_height
 
-        def then_task(model, new_height, engine):
+        def then_task(map2d_model, parallel_task_output_array, engine):
+            """
+            Task to execute after the parallel routine.
+
+            Args:
+                map2d_model: Model to change the heights.
+                parallel_task_output_array: New heights.
+                engine: Engine used in the program.
+            """
             # save the changes to the model
-            model.set_height_buffer(new_height[0])
+            map2d_model.set_height_buffer(parallel_task_output_array[0])
             engine.set_program_loading(False)
 
         self.__engine.set_loading_message('Interpolating points, this may take a while.')
