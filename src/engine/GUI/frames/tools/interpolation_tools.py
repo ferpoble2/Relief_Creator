@@ -5,6 +5,7 @@ File with the class InterpolationTools. Class in charge of render the Interpolat
 import imgui
 
 from src.utils import get_logger
+from src.error.interpolation_error import InterpolationError
 
 log = get_logger(module="INTERPOLATION_TOOLS")
 
@@ -43,7 +44,18 @@ class InterpolationTools:
 
         if imgui.button('Interpolate', -1):
             log.debug('Interpolating points.')
-            self.__gui_manager.interpolate_points(self.__gui_manager.get_active_polygon_id(),
-                                                  self.__gui_manager.get_active_model_id(),
-                                                  self.__distance_current_value,
-                                                  self.__combo_options[self.__current_combo_option])
+            try:
+                self.__gui_manager.interpolate_points(self.__gui_manager.get_active_polygon_id(),
+                                                      self.__gui_manager.get_active_model_id(),
+                                                      self.__distance_current_value,
+                                                      self.__combo_options[self.__current_combo_option])
+            except InterpolationError as e:
+                if e.code == 1:
+                    self.__gui_manager.set_modal_text('Error', 'There is not enough points in the polygon to do'
+                                                               ' the interpolation.')
+                elif e.code == 2:
+                    self.__gui_manager.set_modal_text('Error', 'Distance must be greater than 0 to do the '
+                                                               'interpolation')
+                elif e.code == 3:
+                    self.__gui_manager.set_modal_text('Error', 'Model used for interpolation is not accepted by '
+                                                               'the program.')
