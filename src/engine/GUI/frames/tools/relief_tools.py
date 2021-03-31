@@ -5,8 +5,8 @@ File with the class ReliefTools. Class in charge of render the Relief tools insi
 import imgui
 
 from src.utils import get_logger
-from src.error.polygon_point_number_error import PolygonPointNumberError
-from src.error.polygon_not_planar_error import PolygonNotPlanarError
+
+from src.error.scene_error import SceneError
 from src.error.model_transformation_error import ModelTransformationError
 
 log = get_logger(module="RELIEF_TOOLS")
@@ -76,19 +76,20 @@ class ReliefTools:
                     self.__polygon_data[active_polygon_id]['max_height'] = maximum
                     self.__polygon_data[active_polygon_id]['min_height'] = minimum
 
-                except TypeError:
-                    self.__gui_manager.set_modal_text('Error',
-                                                      'The current model is not supported to use to update the '
-                                                      'height of the vertices, try using another type of model.')
-
-                except PolygonPointNumberError:
-                    self.__gui_manager.set_modal_text('Error',
-                                                      'The polygon must have at least 3 points to be able to'
-                                                      'modify the heights.')
-
-                except PolygonNotPlanarError:
-                    self.__gui_manager.set_modal_text('Error',
-                                                      'The polygon is not planar. Try using a planar polygon.')
+                except SceneError as e:
+                    if e.code == 1:
+                        self.__gui_manager.set_modal_text('Error',
+                                                          'The polygon is not planar. Try using a planar polygon.')
+                    elif e.code == 2:
+                        self.__gui_manager.set_modal_text('Error',
+                                                          'The polygon must have at least 3 points to be able to'
+                                                          'modify the heights.')
+                    elif e.code == 3:
+                        self.__gui_manager.set_modal_text('Error',
+                                                          'The current model is not supported to use to update the '
+                                                          'height of the vertices, try using another type of model.')
+                    else:
+                        raise e
 
         clicked, self.__current_combo_option = imgui.combo(
             "Transformation", self.__current_combo_option, self.__combo_options
@@ -117,7 +118,8 @@ class ReliefTools:
                         if e.code == 4:
                             self.__gui_manager.set_modal_text('Error',
                                                               'The current model is not supported to use to update the '
-                                                              'height of the vertices, try using another type of model.')
+                                                              'height of the vertices, try using another type of '
+                                                              'model.')
                         elif e.code == 2:
                             self.__gui_manager.set_modal_text('Error',
                                                               'The polygon must have at least 3 points to be able to'

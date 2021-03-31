@@ -16,8 +16,6 @@ package error {
     class UnknownDataTypeError
     class WrongInterpolationTypeError
     class ModelTransformationError
-    class PolygonNotPlanarError
-    class PolygonPointNumberError
     class InterpolationError
 }
 
@@ -31,8 +29,6 @@ GUIError <|-- WrongInterpolationTypeError
 GUIError <|-- FolderError
 FolderError <|-- PolygonFolderNotFoundError
 SceneError <|-- ModelTransformationError
-ModelTransformationError <|-- PolygonNotPlanarError
-ModelTransformationError <|-- PolygonPointNumberError
 SceneError <|-- InterpolationError
 !endsub
 hide members

@@ -11,9 +11,8 @@ from src.engine.scene.model.model import Model
 from src.input.NetCDF import read_info
 from src.utils import get_logger
 from src.error.non_existent_polygon_error import NonExistentPolygonError
-from src.error.polygon_point_number_error import PolygonPointNumberError
 from src.error.model_transformation_error import ModelTransformationError
-from src.error.polygon_not_planar_error import PolygonNotPlanarError
+from src.error.scene_error import SceneError
 from src.engine.scene.transformation_helper import TransformationHelper
 from src.error.interpolation_error import InterpolationError
 
@@ -145,7 +144,7 @@ class Scene:
         # get the important information.
         model = self.__model_hash[model_id]
         if not isinstance(model, Map2DModel):
-            raise TypeError('Can not use that model for transforming points. Try using a Map2DModel.')
+            raise SceneError(3)
 
         polygon = self.__polygon_hash[polygon_id]
 
@@ -156,10 +155,10 @@ class Scene:
         polygon_points = polygon.get_point_list()
 
         if len(polygon_points) < 9:
-            raise PolygonPointNumberError('The polygon used doesnt have at least 3 vertices.')
+            raise SceneError(2)
 
         if not polygon.is_planar():
-            raise PolygonNotPlanarError('Polygon used is not planar.')
+            raise SceneError(1)
 
         return TransformationHelper().get_max_min_inside_polygon(vertex_array, polygon_points, height_array)
 

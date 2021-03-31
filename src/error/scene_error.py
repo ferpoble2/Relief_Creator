@@ -17,7 +17,10 @@ class SceneError(Exception):
         """
         self.code = code
         self.codes = {
-            0: 'Default Error'
+            0: 'Default Error',
+            1: 'Polygon used is not planar.',
+            2: 'The polygon used doesnt have at least 3 vertices.',
+            3: 'Can not use that model for transforming points. Try using a Map2DModel.'
         }
 
     def __str__(self) -> str:
