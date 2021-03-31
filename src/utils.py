@@ -4,7 +4,7 @@ File with utils functions for the engine.
 import logging
 import os
 
-LOG_TO_FILE = True
+LOG_TO_FILE = False
 LOG_TO_CONSOLE = True
 
 LOG_LEVEL = logging.DEBUG
