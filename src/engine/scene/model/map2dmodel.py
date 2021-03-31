@@ -648,11 +648,16 @@ class Map2DModel(Model):
             mask[indices_to_delete] = False
 
             log.debug("Applying mask to the indices")
-            arr_indices = np.array(self.__indices)  # time consuming (must optimize)
-            new_indices = arr_indices[mask]
-            self.__indices = new_indices.tolist()  # time consuming (must optimize)
 
-            self.__triangles_to_delete = []
+            # Deprecated code
+            # arr_indices = np.array(self.__indices)  # time consuming (must optimize)
+            # new_indices = arr_indices[mask]
+            # self.__indices = new_indices.tolist()  # time consuming (must optimize)
+
+            self.__indices = self.__indices[mask]
+            log.debug('Ended applying mask to indices')
+
+            self.__triangles_to_delete = np.array([])
 
         # noinspection PyMissingOrEmptyDocstring
         def then_routine():
