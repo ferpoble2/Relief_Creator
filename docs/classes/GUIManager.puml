@@ -84,6 +84,7 @@ class GUIManager{
     + set_polygon_parameter(polygon_id, key, value)
     + set_regular_font()
     + set_tool_title_font()
+    + change_points_height(polygon_id, model_id, min_height, max_height, transformation_type)
     + undo()
 }
 @enduml

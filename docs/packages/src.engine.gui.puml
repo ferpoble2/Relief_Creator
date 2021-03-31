@@ -21,7 +21,6 @@ GUIManager o--o Frame
     !startsub EXTERNAL
         GUIManager o--o Engine
         PolygonFolderManager .> PolygonFolderNotFoundError
-        GUIManager .> WrongInterpolationTypeError
     !endsub
 !endif
 
@@ -30,7 +29,6 @@ GUIManager o--o Frame
 ' can be messy since will not be imported
 GUIManager o--o src.engine.Engine
 PolygonFolderManager .> src.error.PolygonFolderNotFoundError
-GUIManager .> src.error.WrongInterpolationTypeError
 
 ' hide members to make the diagram more legible
 hide members

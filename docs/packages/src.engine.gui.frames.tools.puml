@@ -25,12 +25,14 @@ Tools *-- InterpolationTools
        PolygonTools .> NotEnoughPointsError
        ReliefTools .> PolygonPointNumberError
        ReliefTools .> PolygonNotPlanarError
+       ReliefTools .> ModelTransformationError
        InterpolationTools .> InterpolationError
     !endsub
 !endif
 
 ReliefTools .> src.error.PolygonPointNumberError
 ReliefTools .> src.error.PolygonNotPlanarError
+ReliefTools .> src.error.ModelTransformationError
 Tools -u-|> src.engine.gui.frames.Frame
 PolygonTools .> src.error.NotEnoughPointsError
 InterpolationTools .> src.error.InterpolationError

@@ -904,15 +904,17 @@ class Engine:
         """
         self.__thread_manager.set_thread_task(parallel_task, then, parallel_task_args, then_task_args)
 
-    def transform_points_using_linear_transformation(self,
-                                                     polygon_id: str,
-                                                     model_id: str,
-                                                     min_height: float,
-                                                     max_height: float) -> None:
+    def transform_points(self,
+                         polygon_id: str,
+                         model_id: str,
+                         min_height: float,
+                         max_height: float,
+                         transformation_type: str = 'linear') -> None:
         """
         Ask the scene to interpolate the points of the specified polygon using a linear interpolation.
 
         Args:
+            transformation_type: Type of transformation to do.
             model_id: ID of the model to use for the interpolation.
             polygon_id: ID of the polygon to use.
             min_height: Min height of the points once converted.
@@ -920,7 +922,7 @@ class Engine:
 
         Returns: None
         """
-        self.scene.transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
+        self.scene.transform_points(polygon_id, model_id, min_height, max_height, transformation_type)
 
     def undo_action(self) -> None:
         """

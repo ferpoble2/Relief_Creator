@@ -9,4 +9,18 @@ class ModelTransformationError(SceneError):
     """
     Class to use when there is an error in the transformation process of a model.
     """
-    pass
+
+    def __init__(self, code: int = 0):
+        """
+        Constructor of the class.
+        """
+        super().__init__(code)
+
+        self.codes = {
+            0: 'Error description not selected.',
+            1: 'Transformation type not recognized by the program.',
+            2: 'The polygon used doesnt have at least 3 vertices.',
+            3: 'Polygon used is not planar.',
+            4: 'Can not use that model for transforming points. Try using a Map2DModel.'
+        }
+

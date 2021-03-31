@@ -6,7 +6,6 @@ import OpenGL.constant as OGLConstant
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
 
-from src.error.WrongInterpolationTypeError import WrongInterpolationTypeError
 
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar
 from src.engine.GUI.frames.tools.tools import Tools
@@ -187,7 +186,7 @@ class GUIManager:
         self.__engine.change_dot_color_of_polygon(polygon_id, color)
 
     def change_points_height(self, polygon_id: str, model_id: str, min_height: float, max_height: float,
-                             interpolation_type: 'str' = 'linear') -> None:
+                             transformation_type: 'str' = 'linear') -> None:
         """
         Call the engine to change the height of the points inside the specified polygon.
 
@@ -201,17 +200,12 @@ class GUIManager:
             polygon_id: ID of the polygon to use for interpolation.
             min_height: Min height of the points after the interpolation.
             max_height: Max height of the points after the interpolation.
-            interpolation_type: Type of interpolation to use.
+            transformation_type: Type of interpolation to use.
 
         Returns: None
         """
-
-        if interpolation_type == 'linear':
-            self.__engine.transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
-            return
-
-        raise WrongInterpolationTypeError(
-            f'Interpolation of type {interpolation_type} is not admitted by the program.')
+        self.__engine.transform_points(polygon_id, model_id, min_height, max_height,
+                                       transformation_type)
 
     def change_quality(self, quality: int) -> None:
         """

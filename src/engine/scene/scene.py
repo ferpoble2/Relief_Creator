@@ -12,6 +12,7 @@ from src.input.NetCDF import read_info
 from src.utils import get_logger
 from src.error.non_existent_polygon_error import NonExistentPolygonError
 from src.error.polygon_point_number_error import PolygonPointNumberError
+from src.error.model_transformation_error import ModelTransformationError
 from src.error.polygon_not_planar_error import PolygonNotPlanarError
 from src.engine.scene.transformation_helper import TransformationHelper
 from src.error.interpolation_error import InterpolationError
@@ -727,8 +728,8 @@ class Scene:
         """
         self.__engine.set_thread_task(parallel_task, then)
 
-    def transform_points_using_linear_transformation(self, polygon_id: str, model_id: str, min_height: float,
-                                                     max_height: float) -> None:
+    def transform_points(self, polygon_id: str, model_id: str, min_height: float,
+                         max_height: float, transformation_type: str) -> None:
         """
         Modify the points inside the polygon from the specified model using a linear transformation.
 
@@ -736,6 +737,7 @@ class Scene:
         - Map2DModel
 
         Args:
+            transformation_type: type of transformation to use.
             polygon_id: ID of the polygon to use.
             model_id: Model to modify.
             min_height: Min target height.
@@ -743,11 +745,19 @@ class Scene:
 
         Returns: None
         """
+        if transformation_type == 'linear':
+            self.__transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
+
+        else:
+            raise ModelTransformationError(1)
+
+    def __transform_points_using_linear_transformation(self, polygon_id: str, model_id: str, min_height: float,
+                                                       max_height: float):
 
         # get the important information.
         model = self.__model_hash[model_id]
         if not isinstance(model, Map2DModel):
-            raise TypeError('Can not use that model for transforming points. Try using a Map2DModel.')
+            raise ModelTransformationError(4)
 
         polygon = self.__polygon_hash[polygon_id]
 
@@ -758,10 +768,10 @@ class Scene:
         polygon_points = polygon.get_point_list()
 
         if len(polygon_points) < 9:
-            raise PolygonPointNumberError('The polygon used doesnt have at least 3 vertices.')
+            raise ModelTransformationError(2)
 
         if not polygon.is_planar():
-            raise PolygonNotPlanarError('Polygon used is not planar.')
+            raise ModelTransformationError(3)
 
         # define mutable object to store results to use from the parallel task to the then task
         new_height = [None]

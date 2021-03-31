@@ -7,6 +7,7 @@ import imgui
 from src.utils import get_logger
 from src.error.polygon_point_number_error import PolygonPointNumberError
 from src.error.polygon_not_planar_error import PolygonNotPlanarError
+from src.error.model_transformation_error import ModelTransformationError
 
 log = get_logger(module="RELIEF_TOOLS")
 
@@ -111,17 +112,16 @@ class ReliefTools:
                                                                 active_model_id,
                                                                 min_height=self.__min_height_value,
                                                                 max_height=self.__max_height_value,
-                                                                interpolation_type='linear')
-                    except TypeError:
-                        self.__gui_manager.set_modal_text('Error',
-                                                          'The current model is not supported to use to update the '
-                                                          'height of the vertices, try using another type of model.')
-
-                    except PolygonPointNumberError:
-                        self.__gui_manager.set_modal_text('Error',
-                                                          'The polygon must have at least 3 points to be able to'
-                                                          'modify the heights.')
-
-                    except PolygonNotPlanarError:
-                        self.__gui_manager.set_modal_text('Error',
-                                                          'The polygon is not planar. Try using a planar polygon.')
+                                                                transformation_type='linear')
+                    except ModelTransformationError as e:
+                        if e.code == 4:
+                            self.__gui_manager.set_modal_text('Error',
+                                                              'The current model is not supported to use to update the '
+                                                              'height of the vertices, try using another type of model.')
+                        elif e.code == 2:
+                            self.__gui_manager.set_modal_text('Error',
+                                                              'The polygon must have at least 3 points to be able to'
+                                                              'modify the heights.')
+                        elif e.code == 3:
+                            self.__gui_manager.set_modal_text('Error',
+                                                              'The polygon is not planar. Try using a planar polygon.')
