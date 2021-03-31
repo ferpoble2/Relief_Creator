@@ -794,12 +794,23 @@ class Scene:
         height = model.get_height_array().reshape((vertices_shape[0], vertices_shape[1]))
         polygon_points = polygon.get_point_list()
 
-        # modify the points
-        new_height = TransformationHelper().interpolate_points_external_to_polygon(vertices,
-                                                                                   polygon_points,
-                                                                                   height,
-                                                                                   distance,
-                                                                                   type_interpolation)
+        new_height = [None]
 
-        # save the changes to the model
-        model.set_height_buffer(new_height)
+        def parallel_task(vertices, polygon_points, height, distance, type_interpolation, output_array):
+            new_calculated_height = TransformationHelper().interpolate_points_external_to_polygon(vertices,
+                                                                                                  polygon_points,
+                                                                                                  height,
+                                                                                                  distance,
+                                                                                                  type_interpolation)
+            output_array[0] = new_calculated_height
+
+        def then_task(model, new_height, engine):
+            # save the changes to the model
+            model.set_height_buffer(new_height[0])
+            engine.set_program_loading(False)
+
+        self.__engine.set_loading_message('Interpolating points, this may take a while.')
+        self.__engine.set_program_loading(True)
+        self.__engine.set_thread_task(parallel_task, then_task,
+                                      (vertices, polygon_points, height, distance, type_interpolation, new_height),
+                                      (model, new_height, self.__engine))
