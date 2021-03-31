@@ -35,6 +35,13 @@ class Controller:
 
         self.__is_left_mouse_being_pressed = False
 
+        self.__is_w_pressed = False
+        self.__is_s_pressed = False
+        self.__is_a_pressed = False
+        self.__is_d_pressed = False
+
+        self.__map_movement_velocity = -20
+
     def __change_color_file_with_dialog(self) -> None:
         """
         Change the color file opening a dialog to select the file.
@@ -106,6 +113,7 @@ class Controller:
         Returns: Function to use as callback
         """
 
+        # noinspection PyMissingOrEmptyDocstring
         def cursor_position_callback(window, xpos, ypos):
 
             # get the active tool being used in the program
@@ -129,6 +137,7 @@ class Controller:
         Returns: Function to use as callback
         """
 
+        # noinspection PyMissingOrEmptyDocstring
         def mouse_button_callback(window, button, action, mods):
 
             if button == glfw.MOUSE_BUTTON_LEFT and \
@@ -231,6 +240,16 @@ class Controller:
                 if key == glfw.KEY_R:
                     self.__engine.reload_models()
 
+                # movement of the map
+                if key == glfw.KEY_W:
+                    self.__is_w_pressed = True
+                if key == glfw.KEY_S:
+                    self.__is_s_pressed = True
+                if key == glfw.KEY_A:
+                    self.__is_a_pressed = True
+                if key == glfw.KEY_D:
+                    self.__is_d_pressed = True
+
             # Check for keys released
             if action == glfw.RELEASE:
 
@@ -242,6 +261,26 @@ class Controller:
                 if key == glfw.KEY_LEFT_ALT:
                     log.debug("Left alt released")
                     self.__is_left_alt_pressed = False
+
+                # map movement
+                if key == glfw.KEY_W:
+                    self.__is_w_pressed = False
+                if key == glfw.KEY_S:
+                    self.__is_s_pressed = False
+                if key == glfw.KEY_A:
+                    self.__is_a_pressed = False
+                if key == glfw.KEY_D:
+                    self.__is_d_pressed = False
+
+            # Check for in-frame actions
+            if self.__is_w_pressed:
+                self.__engine.move_scene(0, self.__map_movement_velocity)
+            if self.__is_s_pressed:
+                self.__engine.move_scene(0, -1 * self.__map_movement_velocity)
+            if self.__is_a_pressed:
+                self.__engine.move_scene(-1 * self.__map_movement_velocity, 0)
+            if self.__is_d_pressed:
+                self.__engine.move_scene(self.__map_movement_velocity, 0)
 
             # call the others callbacks defined in the program.
             self.__engine.get_gui_key_callback()(window, key, scancode, action, mods)
