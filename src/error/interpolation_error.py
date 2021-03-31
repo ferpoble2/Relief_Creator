@@ -19,6 +19,8 @@ class InterpolationError(SceneError):
         self.__codes = {
             0: 'Error description not selected.',
             1: 'Not enough points in the polygon to do the interpolation.',
+            2: 'Distance must be greater than 0 to realize the interpolation.',
+            3: 'Can not interpolate model that is not an instance of Map2DModel.'
         }
 
     def __str__(self) -> str:
