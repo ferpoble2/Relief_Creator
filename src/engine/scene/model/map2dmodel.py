@@ -123,7 +123,7 @@ class Map2DModel(Model):
         mask[np.where(indices_with_coords_array[4] > top_coordinate)[0]] = False
         mask[np.where(indices_with_coords_array[7] > top_coordinate)[0]] = False
 
-        inside = np.where(mask == True)[0]
+        inside = np.where(mask == True)[0]  # noqa
         log.debug('Finished creation of mask with values')
 
         # Deprecated Code (using intersection instead of masks)
@@ -153,7 +153,7 @@ class Map2DModel(Model):
         log.debug('Converting array to list')
         # to_delete = list(inside)
         to_delete = inside
-        # log.debug('Finished convertion')
+        # log.debug('Finished conversion')
 
         # Deprecated Code
         # ---------------
@@ -318,7 +318,7 @@ class Map2DModel(Model):
 
         return indices
 
-    def __generate_vertices_list(self, x: list, y: list, z: list, z_value: int = 0) -> list:
+    def __generate_vertices_list(self, x: np.ndarray, y: np.ndarray, z: np.ndarray, z_value: int = 0) -> np.ndarray:
         """
         Generate a list of vertices given the data of a 3D grid.
         The z value of the vertices is set to 0.
@@ -330,12 +330,27 @@ class Map2DModel(Model):
 
         Returns: List with the vertices.
         """
-        vertices = []
-        for row_index in range(len(z)):
-            for col_index in range(len(z[0])):
-                vertices.append(x[col_index])
-                vertices.append(y[row_index])
-                vertices.append(z_value)
+
+        # log.debug('Old for cycle')
+        # vertices = []
+        # for row_index in range(len(z)):
+        #     for col_index in range(len(z[0])):
+        #         vertices.append(x[col_index])
+        #         vertices.append(y[row_index])
+        #         vertices.append(z_value)
+        # log.debug('End of old for cycle')
+
+        log.debug('Creating array of vertices...')
+        x = np.tile(x, (z.shape[0], 1))
+        y = np.tile(y, (z.shape[1], 1))
+        y = y.transpose()
+
+        vertices = np.zeros((z.shape[0], z.shape[1], 3))
+        vertices[:, :, 0] = x
+        vertices[:, :, 1] = y
+        vertices[:, :, 2] = z_value
+        vertices = vertices.reshape(-1)
+        log.debug('End of creation array of vertices')
         return vertices
 
     # noinspection PyUnresolvedReferences
@@ -654,6 +669,7 @@ class Map2DModel(Model):
             # new_indices = arr_indices[mask]
             # self.__indices = new_indices.tolist()  # time consuming (must optimize)
 
+            # noinspection PyTypeChecker
             self.__indices = self.__indices[mask]
             log.debug('Ended applying mask to indices')
 
