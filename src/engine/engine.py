@@ -75,6 +75,18 @@ class Engine:
         """
         return Settings.FIXED_FRAMES
 
+    def calculate_max_min_height(self, model_id: str, polygon_id: str) -> tuple:
+        """
+        Ask the scene for max and min values of the vertices that are inside the polygon.
+
+        Args:
+            model_id: ID of the model to use.
+            polygon_id: ID of the polygon to use.
+
+        Returns: tuple with the max and min value.
+        """
+        return self.scene.calculate_max_min_height(model_id, polygon_id)
+
     def change_color_file_with_dialog(self) -> None:
         """
         Change the color file (CPT file) to the one selected.
@@ -83,63 +95,6 @@ class Engine:
         Returns: None
         """
         self.program.change_cpt_file_with_dialog()
-
-    def load_shapefile_file_with_dialog(self) -> None:
-        """
-        Call the program to open the dialog to load a shapefile file.
-
-        Returns: None
-        """
-        self.program.load_shapefile_file_with_dialog()
-
-    def load_polygon_from_shapefile(self, filename: str) -> None:
-        """
-        Load the data from a shapefile file and tell the scene to create a polygon with it.
-
-        Args:
-            filename: Name of the shapefile file.
-
-        Returns: None
-        """
-        polygons_point_list, polygons_param_list = ShapefileImporter().get_polygon_information(filename)
-
-        for ind in range(len(polygons_point_list)):
-            errors = False
-
-            new_polygon_id = self.scene.create_new_polygon()
-            self.set_active_polygon(new_polygon_id)
-
-            for k, v in list(polygons_param_list[ind].items()):
-                self.set_new_parameter_to_polygon(new_polygon_id, k, v)
-
-            # add the points to the polygon
-            for point in polygons_point_list[ind]:  # shapefile polygons are closed, so we do not need the last point
-
-                try:
-                    self.scene.add_new_vertex_to_active_polygon_using_real_coords(point[0], point[1])
-
-                except LineIntersectionError as e:
-                    log.error(e)
-                    errors = True
-                    self.scene.delete_polygon_by_id(new_polygon_id)
-                    self.set_active_polygon(None)
-                    self.set_modal_text('Error',
-                                        'A polygon in the file has intersected lines, so it will not be loaded.')
-                    break
-
-                except RepeatedPointError as e:
-                    log.error(e)
-                    errors = True
-                    self.scene.delete_polygon_by_id(new_polygon_id)
-                    self.set_active_polygon(None)
-                    self.set_modal_text('Error', 'A polygon loaded has repeated points, so it will not be loaded.')
-                    break
-
-            if not errors:
-                # tell the gui manager that a new polygon was created
-                self.gui_manager.add_imported_polygon(new_polygon_id)
-
-        return
 
     def change_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
@@ -212,6 +167,18 @@ class Engine:
         """
         return self.scene.create_new_polygon()
 
+    def delete_parameter_from_polygon(self, polygon_id: str, key: str) -> None:
+        """
+        Delete a parameter from a polygon.
+
+        Args:
+            polygon_id: ID of the polygon.
+            key: Parameter to be deleted.
+
+        Returns: None
+        """
+        self.scene.delete_polygon_param(polygon_id, key)
+
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
         Delete the polygon with the specified id from the scene
@@ -222,6 +189,87 @@ class Engine:
         Returns: None
         """
         self.scene.delete_polygon_by_id(polygon_id)
+
+    def export_model_as_netcdf(self, model_id: str) -> None:
+        """
+        Save the information of a model in a netcdf file.
+
+        Args:
+            model_id: ID of the model to export.
+
+        Returns: None
+        """
+
+        # select a directory to store the file.
+        file = easygui.filesavebox('Select a directory and filename for the shapefile file.',
+                                   'Relief Creator',
+                                   'Model')
+
+        if file is None:
+            raise ValueError('Directory not selected')
+
+        # ask the scene for information
+        vertices = self.scene.get_map2dmodel_vertices_array(model_id)
+
+        # ask the output to write the file
+        NetcdfExporter().export_model_vertices_to_netcdf_file(vertices, file)
+
+    def export_polygon_list_id(self, polygon_id_list: list, filename='polygons') -> None:
+        """
+        Export the polygons to a shapefile file.
+
+        Args:
+            filename: Name to use as placeholder in the box to store files.
+            polygon_id_list: List with the polygons IDs.
+
+        Returns: None
+        """
+        points_list = []
+        parameters_list = []
+        names_list = []
+        for polygon_id in polygon_id_list:
+            points_list.append(self.scene.get_point_list_from_polygon(polygon_id))
+            parameters_list.append(dict(self.scene.get_polygon_params(polygon_id)))
+            names_list.append(self.scene.get_polygon_name(polygon_id))
+
+        file = easygui.filesavebox('Select a directory and filename for the shapefile file.',
+                                   'Relief Creator',
+                                   filename)
+
+        if file is None:
+            log.debug("Directory not selected.")
+            return
+
+        ShapefileExporter().export_list_of_polygons(points_list,
+                                                    parameters_list,
+                                                    names_list,
+                                                    file)
+
+    def export_polygon_with_id(self, polygon_id: str) -> None:
+        """
+        Export the polygon with the given ID to a shapefile file
+
+        Args:
+            polygon_id: Id of the polygon to export to shapefile
+
+        Returns: None
+        """
+
+        # ask for the points of the polygon
+        points = self.scene.get_point_list_from_polygon(polygon_id)
+        file = easygui.filesavebox('Select a filename and directory for the new polygon',
+                                   'Relief Creator',
+                                   self.scene.get_polygon_name(polygon_id))
+
+        if file is None:
+            log.debug("Directory not selected.")
+            return
+
+        # ask the exporter to export the list of points
+        ShapefileExporter().export_polygon_to_shapefile(points,
+                                                        file,
+                                                        self.scene.get_polygon_name(polygon_id),
+                                                        dict(self.scene.get_polygon_params(polygon_id)))
 
     def fix_frames(self, fix: bool) -> None:
         """
@@ -288,14 +336,6 @@ class Engine:
         """
         return Settings.FONT_SIZE
 
-    def get_tool_title_font_size(self) -> int:
-        """
-        Get the font size to use for the tool titles.
-
-        Returns: Int with the font size to use.
-        """
-        return Settings.TOOL_TITLE_FONT_SIZE
-
     def get_gui_key_callback(self) -> callable:
         """
         Get the key callback used by the gui
@@ -303,6 +343,14 @@ class Engine:
         Returns: Function used as the key callback in the gui
         """
         return self.gui_manager.get_gui_key_callback()
+
+    def get_gui_scroll_callback(self):
+        """
+        Ask the gui manager for the callback used in the scrolling.
+
+        Returns: Function used in the callback.
+        """
+        return self.gui_manager.get_gui_mouse_scroll_callback()
 
     def get_gui_setting_data(self) -> dict:
         """
@@ -323,6 +371,17 @@ class Engine:
         Returns: List with the position of the map.
         """
         return self.program.get_map_position()
+
+    def get_parameters_from_polygon(self, polygon_id: str) -> list:
+        """
+        Ask the scene for the parameters of certain polygon.
+
+        Args:
+            polygon_id: ID of the polygon to ask for
+
+        Returns: List with the parameters of the polygon.
+        """
+        return self.scene.get_polygon_params(polygon_id)
 
     def get_polygon_id_list(self) -> list:
         """
@@ -375,6 +434,14 @@ class Engine:
             'SCENE_BEGIN_X': Settings.SCENE_BEGIN_X, 'SCENE_BEGIN_Y': Settings.SCENE_BEGIN_Y,
             'SCENE_WIDTH_X': Settings.SCENE_WIDTH_X, 'SCENE_HEIGHT_Y': Settings.SCENE_HEIGHT_Y
         }
+
+    def get_tool_title_font_size(self) -> int:
+        """
+        Get the font size to use for the tool titles.
+
+        Returns: Int with the font size to use.
+        """
+        return Settings.TOOL_TITLE_FONT_SIZE
 
     def get_view_mode(self) -> str:
         """
@@ -443,6 +510,28 @@ class Engine:
         # ----------
         self.scene.initialize(engine)
 
+    def interpolate_points(self, polygon_id: str, model_id: str, distance: float, type_interpolation: str) -> None:
+        """
+        Ask the scene to interpolate the points using the specified parameters.
+
+        Args:
+            type_interpolation: Type of interpolation to use.
+            polygon_id: ID of the polygon to use.
+            model_id: ID of the model to use.
+            distance: Distance to use for the interpolation.
+
+        Returns: None
+        """
+        self.scene.interpolate_points(polygon_id, model_id, distance, type_interpolation)
+
+    def is_mouse_hovering_frame(self) -> bool:
+        """
+        Ask the GUIManager if the mouse is hovering a frame.
+
+        Returns: Boolean indicating if mouse is hovering a frame or not.
+        """
+        return self.gui_manager.is_mouse_inside_frame()
+
     def is_polygon_planar(self, polygon_id: str) -> bool:
         """
         Ask to the scene if the polygon is planar or not.
@@ -479,6 +568,63 @@ class Engine:
         """
         self.program.load_netcdf_file_with_dialog()
 
+    def load_polygon_from_shapefile(self, filename: str) -> None:
+        """
+        Load the data from a shapefile file and tell the scene to create a polygon with it.
+
+        Args:
+            filename: Name of the shapefile file.
+
+        Returns: None
+        """
+        polygons_point_list, polygons_param_list = ShapefileImporter().get_polygon_information(filename)
+
+        for ind in range(len(polygons_point_list)):
+            errors = False
+
+            new_polygon_id = self.scene.create_new_polygon()
+            self.set_active_polygon(new_polygon_id)
+
+            for k, v in list(polygons_param_list[ind].items()):
+                self.set_new_parameter_to_polygon(new_polygon_id, k, v)
+
+            # add the points to the polygon
+            for point in polygons_point_list[ind]:  # shapefile polygons are closed, so we do not need the last point
+
+                try:
+                    self.scene.add_new_vertex_to_active_polygon_using_real_coords(point[0], point[1])
+
+                except LineIntersectionError as e:
+                    log.error(e)
+                    errors = True
+                    self.scene.delete_polygon_by_id(new_polygon_id)
+                    self.set_active_polygon(None)
+                    self.set_modal_text('Error',
+                                        'A polygon in the file has intersected lines, so it will not be loaded.')
+                    break
+
+                except RepeatedPointError as e:
+                    log.error(e)
+                    errors = True
+                    self.scene.delete_polygon_by_id(new_polygon_id)
+                    self.set_active_polygon(None)
+                    self.set_modal_text('Error', 'A polygon loaded has repeated points, so it will not be loaded.')
+                    break
+
+            if not errors:
+                # tell the gui manager that a new polygon was created
+                self.gui_manager.add_imported_polygon(new_polygon_id)
+
+        return
+
+    def load_shapefile_file_with_dialog(self) -> None:
+        """
+        Call the program to open the dialog to load a shapefile file.
+
+        Returns: None
+        """
+        self.program.load_shapefile_file_with_dialog()
+
     def move_scene(self, x_movement: int, y_movement: int) -> None:
         """
         Tell the scene to move given the parameters specified.
@@ -508,32 +654,6 @@ class Engine:
             self.program.set_loading(False)
 
         self.scene.optimize_gpu_memory_async(then_routine)
-
-    def transform_points_using_linear_transformation(self,
-                                                     polygon_id: str,
-                                                     model_id: str,
-                                                     min_height: float,
-                                                     max_height: float) -> None:
-        """
-        Ask the scene to interpolate the points of the specified polygon using a linear interpolation.
-
-        Args:
-            model_id: ID of the model to use for the interpolation.
-            polygon_id: ID of the polygon to use.
-            min_height: Min height of the points once converted.
-            max_height: Max height of the points once converted.
-
-        Returns: None
-        """
-        self.scene.transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
-
-    def get_gui_scroll_callback(self):
-        """
-        Ask the gui manager for the callback used in the scrolling.
-
-        Returns: Function used in the callback.
-        """
-        return self.gui_manager.get_gui_mouse_scroll_callback()
 
     def refresh_with_model_2d(self, path_color_file: str, path_model: str, model_id: str = 'main') -> None:
         """
@@ -671,6 +791,19 @@ class Engine:
         """
         self.scene.set_models_polygon_mode(polygon_mode)
 
+    def set_new_parameter_to_polygon(self, polygon_id: str, key: str, value: any) -> None:
+        """
+        Set a new parameter to an existent polygon.
+
+        Args:
+            value: value of the parameter.
+            key: key of the new value.
+            polygon_id: ID of the polygon.
+
+        Returns: None
+        """
+        self.scene.set_polygon_param(polygon_id, key, value)
+
     def set_polygon_name(self, polygon_id: str, new_name: str) -> None:
         """
         Change the name of a polygon.
@@ -682,6 +815,41 @@ class Engine:
         Returns: None
         """
         self.scene.set_polygon_name(polygon_id, new_name)
+
+    def set_process_task(self, parallel_task: callable, then_task: callable, parallel_task_args=None,
+                         then_task_args=None) -> None:
+        """
+        Creates a new process with the given tasks and start it.
+
+        Args:
+            parallel_task: Task to execute in another process.
+            then_task: Task to execute after the process. (the return object from the parallel task will be passed as
+                       first parameter to this function)
+            parallel_task_args: Arguments to give to the parallel task.
+            then_task_args: Arguments to give to the then task.
+
+        Returns: None
+        """
+        if parallel_task_args is None:
+            parallel_task_args = []
+        if then_task_args is None:
+            then_task_args = []
+
+        self.__process_manager.create_parallel_process(parallel_task,
+                                                       parallel_task_args,
+                                                       then_task,
+                                                       then_task_args)
+
+    def set_program_loading(self, new_state: bool = True) -> None:
+        """
+        Tell the program to set the loading state.
+
+        Returns: None
+
+        Args:
+            new_state: Boolean indicating the state of the program (if it is loading or not)
+        """
+        self.program.set_loading(new_state)
 
     def set_task_for_next_frame(self, task: callable) -> None:
         """
@@ -717,17 +885,6 @@ class Engine:
 
         self.set_task_for_next_frame(task_loading)
 
-    def set_program_loading(self, new_state: bool = True) -> None:
-        """
-        Tell the program to set the loading state.
-
-        Returns: None
-
-        Args:
-            new_state: Boolean indicating the state of the program (if it is loading or not)
-        """
-        self.program.set_loading(new_state)
-
     def set_thread_task(self, parallel_task, then, parallel_task_args=None, then_task_args=None) -> None:
         """
         Add and start a new thread with the current task. At the end of the thread, the then
@@ -743,29 +900,23 @@ class Engine:
         """
         self.__thread_manager.set_thread_task(parallel_task, then, parallel_task_args, then_task_args)
 
-    def set_process_task(self, parallel_task: callable, then_task: callable, parallel_task_args=None,
-                         then_task_args=None) -> None:
+    def transform_points_using_linear_transformation(self,
+                                                     polygon_id: str,
+                                                     model_id: str,
+                                                     min_height: float,
+                                                     max_height: float) -> None:
         """
-        Creates a new process with the given tasks and start it.
+        Ask the scene to interpolate the points of the specified polygon using a linear interpolation.
 
         Args:
-            parallel_task: Task to execute in another process.
-            then_task: Task to execute after the process. (the return object from the parallel task will be passed as
-                       first parameter to this function)
-            parallel_task_args: Arguments to give to the parallel task.
-            then_task_args: Arguments to give to the then task.
+            model_id: ID of the model to use for the interpolation.
+            polygon_id: ID of the polygon to use.
+            min_height: Min height of the points once converted.
+            max_height: Max height of the points once converted.
 
         Returns: None
         """
-        if parallel_task_args is None:
-            parallel_task_args = []
-        if then_task_args is None:
-            then_task_args = []
-
-        self.__process_manager.create_parallel_process(parallel_task,
-                                                       parallel_task_args,
-                                                       then_task,
-                                                       then_task_args)
+        self.scene.transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
 
     def undo_action(self) -> None:
         """
@@ -838,154 +989,3 @@ class Engine:
         Update the scene viewport with the new values that exist in the Settings.
         """
         self.scene.update_viewport()
-
-    def get_parameters_from_polygon(self, polygon_id: str) -> list:
-        """
-        Ask the scene for the parameters of certain polygon.
-
-        Args:
-            polygon_id: ID of the polygon to ask for
-
-        Returns: List with the parameters of the polygon.
-        """
-        return self.scene.get_polygon_params(polygon_id)
-
-    def export_polygon_with_id(self, polygon_id: str) -> None:
-        """
-        Export the polygon with the given ID to a shapefile file
-
-        Args:
-            polygon_id: Id of the polygon to export to shapefile
-
-        Returns: None
-        """
-
-        # ask for the points of the polygon
-        points = self.scene.get_point_list_from_polygon(polygon_id)
-        file = easygui.filesavebox('Select a filename and directory for the new polygon',
-                                   'Relief Creator',
-                                   self.scene.get_polygon_name(polygon_id))
-
-        if file is None:
-            log.debug("Directory not selected.")
-            return
-
-        # ask the exporter to export the list of points
-        ShapefileExporter().export_polygon_to_shapefile(points,
-                                                        file,
-                                                        self.scene.get_polygon_name(polygon_id),
-                                                        dict(self.scene.get_polygon_params(polygon_id)))
-
-    def export_polygon_list_id(self, polygon_id_list: list, filename='polygons') -> None:
-        """
-        Export the polygons to a shapefile file.
-
-        Args:
-            filename: Name to use as placeholder in the box to store files.
-            polygon_id_list: List with the polygons IDs.
-
-        Returns: None
-        """
-        points_list = []
-        parameters_list = []
-        names_list = []
-        for polygon_id in polygon_id_list:
-            points_list.append(self.scene.get_point_list_from_polygon(polygon_id))
-            parameters_list.append(dict(self.scene.get_polygon_params(polygon_id)))
-            names_list.append(self.scene.get_polygon_name(polygon_id))
-
-        file = easygui.filesavebox('Select a directory and filename for the shapefile file.',
-                                   'Relief Creator',
-                                   filename)
-
-        if file is None:
-            log.debug("Directory not selected.")
-            return
-
-        ShapefileExporter().export_list_of_polygons(points_list,
-                                                    parameters_list,
-                                                    names_list,
-                                                    file)
-
-    def is_mouse_hovering_frame(self) -> bool:
-        """
-        Ask the GUIManager if the mouse is hovering a frame.
-
-        Returns: Boolean indicating if mouse is hovering a frame or not.
-        """
-        return self.gui_manager.is_mouse_inside_frame()
-
-    def set_new_parameter_to_polygon(self, polygon_id: str, key: str, value: any) -> None:
-        """
-        Set a new parameter to an existent polygon.
-
-        Args:
-            value: value of the parameter.
-            key: key of the new value.
-            polygon_id: ID of the polygon.
-
-        Returns: None
-        """
-        self.scene.set_polygon_param(polygon_id, key, value)
-
-    def delete_parameter_from_polygon(self, polygon_id: str, key: str) -> None:
-        """
-        Delete a parameter from a polygon.
-
-        Args:
-            polygon_id: ID of the polygon.
-            key: Parameter to be deleted.
-
-        Returns: None
-        """
-        self.scene.delete_polygon_param(polygon_id, key)
-
-    def calculate_max_min_height(self, model_id: str, polygon_id: str) -> tuple:
-        """
-        Ask the scene for max and min values of the vertices that are inside the polygon.
-
-        Args:
-            model_id: ID of the model to use.
-            polygon_id: ID of the polygon to use.
-
-        Returns: tuple with the max and min value.
-        """
-        return self.scene.calculate_max_min_height(model_id, polygon_id)
-
-    def export_model_as_netcdf(self, model_id: str) -> None:
-        """
-        Save the information of a model in a netcdf file.
-
-        Args:
-            model_id: ID of the model to export.
-
-        Returns: None
-        """
-
-        # select a directory to store the file.
-        file = easygui.filesavebox('Select a directory and filename for the shapefile file.',
-                                   'Relief Creator',
-                                   'Model')
-
-        if file is None:
-            raise ValueError('Directory not selected')
-
-        # ask the scene for information
-        vertices = self.scene.get_map2dmodel_vertices_array(model_id)
-
-        # ask the output to write the file
-        NetcdfExporter().export_model_vertices_to_netcdf_file(vertices, file)
-
-    def interpolate_points(self, polygon_id: str, model_id: str, distance: float, type_interpolation: str) -> None:
-        """
-        Ask the scene to interpolate the points using the specified parameters.
-
-        Args:
-            type_interpolation: Type of interpolation to use.
-            polygon_id: ID of the polygon to use.
-            model_id: ID of the model to use.
-            distance: Distance to use for the interpolation.
-
-        Returns: None
-        """
-        self.scene.interpolate_points(polygon_id, model_id, distance, type_interpolation)
