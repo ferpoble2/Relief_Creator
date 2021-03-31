@@ -63,7 +63,7 @@ class Map2DModel(Model):
         self.__bottom_coordinate = None
 
         # utilities variables
-        self.__triangles_to_delete = []  # triangles overlapped to delete when optimizing memory
+        self.__triangles_to_delete = np.array([])  # triangles overlapped to delete when optimizing memory
         self.__new_indices = None  # new indices of triangles calculated using parallelism
 
     def __add_triangles_inside_zone_to_delete_list(self,
@@ -87,13 +87,18 @@ class Map2DModel(Model):
 
         # Get the variables and matrix to use
         # --------------------------
-        indices_array = np.array(self.__indices)
-        indices_array = indices_array.reshape(-1)
 
+        log.debug('Converting array in array')
+        indices_array = np.array(self.__indices)
+        log.debug('Finished converting array in array')
+
+        indices_array = indices_array.reshape(-1)
         vertices_array = self.get_vertices_array().reshape((-1, 3))
 
-        indices_with_coords_array = vertices_array[indices_array]
+        log.debug('Apply of masks and reshape')
+        indices_with_coords_array = vertices_array[indices_array]  # time consuming
         indices_with_coords_array = indices_with_coords_array.reshape((-1, 3, 3))
+        log.debug('End of applying masks and reshape')
 
         # find out the indices with triangles inside the zone using masks
         # ---------------------------------------------------------------
@@ -146,8 +151,9 @@ class Map2DModel(Model):
         # inside = np.intersect1d(np.intersect1d(np.intersect1d(all_left, all_right), all_bottom), all_top)
 
         log.debug('Converting array to list')
-        to_delete = list(inside)
-        log.debug('Finished convertion')
+        # to_delete = list(inside)
+        to_delete = inside
+        # log.debug('Finished convertion')
 
         # Deprecated Code
         # ---------------
@@ -169,7 +175,9 @@ class Map2DModel(Model):
 
         # Add triangles to delete to the list of the model
         # ------------------------------------------------
-        self.__triangles_to_delete += to_delete
+        log.debug('Concatenating arrays')
+        self.__triangles_to_delete = np.concatenate((self.__triangles_to_delete, to_delete))
+        log.debug('Ended concatenating arrays')
 
     def __generate_index_list(self,
                               step_x: int,
