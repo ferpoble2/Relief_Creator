@@ -830,5 +830,5 @@ class Scene:
         self.__engine.set_loading_message('Interpolating points, this may take a while.')
         self.__engine.set_program_loading(True)
         self.__engine.set_thread_task(parallel_task, then_task,
-                                      (vertices, polygon_points, height, distance, type_interpolation, new_height),
+                                      (vertices, polygon_points, height, distance, type_interpolation),
                                       (model, self.__engine))
