@@ -14,6 +14,7 @@ from src.error.non_existent_polygon_error import NonExistentPolygonError
 from src.error.polygon_point_number_error import PolygonPointNumberError
 from src.error.polygon_not_planar_error import PolygonNotPlanarError
 from src.engine.scene.transformation_helper import TransformationHelper
+from src.error.interpolation_error import InterpolationError
 
 log = get_logger(module="SCENE")
 
@@ -412,9 +413,16 @@ class Scene:
         polygon = self.__polygon_hash[polygon_id]
         model = self.__model_hash[model_id]
 
+        # check for errors
+        # ----------------
+        if len(polygon.get_point_list()) < 9:
+            raise InterpolationError(1)
+
+        if distance <= 0:
+            raise InterpolationError(2)
+
         if not isinstance(model, Map2DModel):
-            raise TypeError(
-                f'Can not interpolate using model of type {type(model)}, try using a Map2DModel.')
+            raise InterpolationError(3)
 
         # get the points to modify
         vertices_shape = model.get_vertices_shape()
