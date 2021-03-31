@@ -890,6 +890,9 @@ class Engine:
         Add and start a new thread with the current task. At the end of the thread, the then
         function is called.
 
+        If the parallel task return something other than None, then the object returned is given as the first
+        parameter to the then task.
+
         Args:
             then_task_args: List of argument to use in the then task
             parallel_task_args: List of argument to use in the parallel task

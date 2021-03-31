@@ -794,10 +794,8 @@ class Scene:
         height = model.get_height_array().reshape((vertices_shape[0], vertices_shape[1]))
         polygon_points = polygon.get_point_list()
 
-        new_height = [None]
-
         # noinspection PyShadowingNames
-        def parallel_task(vertices, polygon_points, height, distance, type_interpolation, output_array):
+        def parallel_task(vertices, polygon_points, height, distance, type_interpolation):
             """
             Task to run in parallel in a different thread.
 
@@ -807,30 +805,30 @@ class Scene:
                 height: Array of heights.
                 distance: Distance to use for interpolation.
                 type_interpolation: Type of interpolation to use.
-                output_array: Array to use to store the result.
             """
             new_calculated_height = TransformationHelper().interpolate_points_external_to_polygon(vertices,
                                                                                                   polygon_points,
                                                                                                   height,
                                                                                                   distance,
                                                                                                   type_interpolation)
-            output_array[0] = new_calculated_height
+            return new_calculated_height
 
-        def then_task(map2d_model, parallel_task_output_array, engine):
+        # noinspection PyShadowingNames
+        def then_task(new_height, map2d_model, engine):
             """
             Task to execute after the parallel routine.
 
             Args:
                 map2d_model: Model to change the heights.
-                parallel_task_output_array: New heights.
+                new_height: New heights.
                 engine: Engine used in the program.
             """
             # save the changes to the model
-            map2d_model.set_height_buffer(parallel_task_output_array[0])
+            map2d_model.set_height_buffer(new_height)
             engine.set_program_loading(False)
 
         self.__engine.set_loading_message('Interpolating points, this may take a while.')
         self.__engine.set_program_loading(True)
         self.__engine.set_thread_task(parallel_task, then_task,
                                       (vertices, polygon_points, height, distance, type_interpolation, new_height),
-                                      (model, new_height, self.__engine))
+                                      (model, self.__engine))
