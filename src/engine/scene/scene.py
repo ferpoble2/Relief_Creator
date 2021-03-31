@@ -49,6 +49,61 @@ class Scene:
 
         self.__polygon_id_count = 0
 
+    def __transform_points_using_linear_transformation(self, polygon_id: str, model_id: str, min_height: float,
+                                                       max_height: float):
+
+        # get the important information.
+        model = self.__model_hash[model_id]
+        if not isinstance(model, Map2DModel):
+            raise ModelTransformationError(4)
+
+        polygon = self.__polygon_hash[polygon_id]
+
+        # ask the model and polygon for the parameters to calculate the new height
+        vertices_shape = model.get_vertices_shape()
+        vertex_array = model.get_vertices_array().reshape(vertices_shape)
+        height_array = model.get_height_array().reshape((vertices_shape[0], vertices_shape[1]))
+        polygon_points = polygon.get_point_list()
+
+        if len(polygon_points) < 9:
+            raise ModelTransformationError(2)
+
+        if not polygon.is_planar():
+            raise ModelTransformationError(3)
+
+        # define mutable object to store results to use from the parallel task to the then task
+        new_height = [None]
+
+        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
+        def parallel_task(new_height: list, vertex_array: 'numpy.array', height_array: 'numpy.array',
+                          polygon_points: list, max_height: float, min_height: float):
+            # calculate the new height of the points
+            new_height[0] = TransformationHelper().modify_points_inside_polygon_linear(vertex_array,
+                                                                                       height_array,
+                                                                                       polygon_points,
+                                                                                       max_height,
+                                                                                       min_height)
+
+        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
+        def then(new_height: list, engine: 'Engine', model: Map2DModel):
+            # tell the polygon the new height of the vertices
+            model.set_height_buffer(new_height[0])
+            engine.set_program_loading(False)
+
+        # define the parallel functions to use
+        self.__engine.set_loading_message('Changing height...')
+        self.__engine.set_program_loading(True)
+        self.__engine.set_thread_task(parallel_task, then,
+                                      parallel_task_args=[new_height,
+                                                          vertex_array,
+                                                          height_array,
+                                                          polygon_points,
+                                                          max_height,
+                                                          min_height],
+                                      then_task_args=[new_height,
+                                                      self.__engine,
+                                                      model])
+
     def add_model(self, model: Model) -> None:
         """
         Add a model to the hash of models.
@@ -752,61 +807,6 @@ class Scene:
 
         else:
             raise ModelTransformationError(1)
-
-    def __transform_points_using_linear_transformation(self, polygon_id: str, model_id: str, min_height: float,
-                                                       max_height: float):
-
-        # get the important information.
-        model = self.__model_hash[model_id]
-        if not isinstance(model, Map2DModel):
-            raise ModelTransformationError(4)
-
-        polygon = self.__polygon_hash[polygon_id]
-
-        # ask the model and polygon for the parameters to calculate the new height
-        vertices_shape = model.get_vertices_shape()
-        vertex_array = model.get_vertices_array().reshape(vertices_shape)
-        height_array = model.get_height_array().reshape((vertices_shape[0], vertices_shape[1]))
-        polygon_points = polygon.get_point_list()
-
-        if len(polygon_points) < 9:
-            raise ModelTransformationError(2)
-
-        if not polygon.is_planar():
-            raise ModelTransformationError(3)
-
-        # define mutable object to store results to use from the parallel task to the then task
-        new_height = [None]
-
-        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
-        def parallel_task(new_height: list, vertex_array: 'numpy.array', height_array: 'numpy.array',
-                          polygon_points: list, max_height: float, min_height: float):
-            # calculate the new height of the points
-            new_height[0] = TransformationHelper().modify_points_inside_polygon_linear(vertex_array,
-                                                                                       height_array,
-                                                                                       polygon_points,
-                                                                                       max_height,
-                                                                                       min_height)
-
-        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
-        def then(new_height: list, engine: 'Engine', model: Map2DModel):
-            # tell the polygon the new height of the vertices
-            model.set_height_buffer(new_height[0])
-            engine.set_program_loading(False)
-
-        # define the parallel functions to use
-        self.__engine.set_loading_message('Changing height...')
-        self.__engine.set_program_loading(True)
-        self.__engine.set_thread_task(parallel_task, then,
-                                      parallel_task_args=[new_height,
-                                                          vertex_array,
-                                                          height_array,
-                                                          polygon_points,
-                                                          max_height,
-                                                          min_height],
-                                      then_task_args=[new_height,
-                                                      self.__engine,
-                                                      model])
 
     def update_models_colors(self) -> None:
         """
