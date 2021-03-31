@@ -25,6 +25,7 @@ Tools *-- InterpolationTools
        PolygonTools .> NotEnoughPointsError
        ReliefTools .> PolygonPointNumberError
        ReliefTools .> PolygonNotPlanarError
+       InterpolationTools .> InterpolationError
     !endsub
 !endif
 
@@ -32,6 +33,7 @@ ReliefTools .> src.error.PolygonPointNumberError
 ReliefTools .> src.error.PolygonNotPlanarError
 Tools -u-|> src.engine.gui.frames.Frame
 PolygonTools .> src.error.NotEnoughPointsError
+InterpolationTools .> src.error.InterpolationError
 hide members
 
 @enduml
