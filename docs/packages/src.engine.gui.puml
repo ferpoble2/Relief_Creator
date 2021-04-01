@@ -15,7 +15,7 @@ PolygonFolderManager o-- PolygonFolder
 GUIManager o-- PolygonFolderManager
 GUIManager o-- Icon
 GUIManager o--o Frame
-GUIManager .> imgui_wrapper
+GUIManager -u.> imgui_wrapper
 
 !endsub
 
