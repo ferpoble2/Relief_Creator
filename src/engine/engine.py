@@ -995,3 +995,19 @@ class Engine:
         Update the scene viewport with the new values that exist in the Settings.
         """
         self.scene.update_viewport()
+
+    def use_glfw_keyboard_callback(self, should_use: bool) -> None:
+        """
+        Change if the controller should use the glfw keyboard callback or not.
+
+        The GUI callback is not affected.
+
+        Args:
+            should_use: Boolean indicating if the functionality should be used.
+
+        Returns: None
+        """
+        if should_use:
+            self.controller.enable_glfw_keyboard_callback()
+        else:
+            self.controller.disable_glfw_keyboard_callback()
