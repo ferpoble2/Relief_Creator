@@ -48,21 +48,6 @@ class Tools(Frame):
         imgui.text(f"Active tool: {self.__tools_names_dict.get(self._GUI_manager.get_active_tool(), None)}")
         self._GUI_manager.set_regular_font()
 
-    def __show_editing_tools(self, left_frame_width: int) -> None:
-        """
-        Show the editing tools on the frame.
-
-        Args:
-            left_frame_width: width of the frame.
-        """
-        self._GUI_manager.set_tool_title_font()
-        imgui.text("Editing Tools")
-        self._GUI_manager.set_regular_font()
-        if imgui.button("Move Map", width=left_frame_width - self.__button_margin_width):
-            log.debug("Pressed button Move Map")
-            log.debug("-----------------------")
-            self._GUI_manager.set_active_tool('move_map')
-
     def __show_visualization_tools(self, left_frame_width: int) -> None:
         """
         Show the visualization tools on the frame.
@@ -84,14 +69,19 @@ class Tools(Frame):
             log.debug("-----------------------")
             self._GUI_manager.less_zoom()
 
+        if imgui.button("Move Map", width=left_frame_width - self.__button_margin_width):
+            log.debug("Pressed button Move Map")
+            log.debug("-----------------------")
+            self._GUI_manager.set_active_tool('move_map')
+
         if imgui.button("Reload map with zoom", width=left_frame_width - self.__button_margin_width):
             log.debug("Pressed Reload map with zoom button")
             log.debug("-----------------------------------")
             self._GUI_manager.reload_models()
 
-        if imgui.button("Optimize GPU memory", width=left_frame_width - self.__button_margin_width):
-            log.debug("Optimize GPU memory button pressed")
-            self._GUI_manager.optimize_gpu_memory()
+        # if imgui.button("Optimize GPU memory", width=left_frame_width - self.__button_margin_width):
+        #     log.debug("Optimize GPU memory button pressed")
+        #     self._GUI_manager.optimize_gpu_memory()
 
         changed, values = imgui.slider_int("Quality", self.__slide_bar_quality, 1, 30)
         if changed:
@@ -134,9 +124,6 @@ class Tools(Frame):
 
         imgui.separator()
         self.__show_visualization_tools(left_frame_width)
-
-        imgui.separator()
-        self.__show_editing_tools(left_frame_width)
 
         imgui.separator()
         self.__polygon_tools.render(left_frame_width)
