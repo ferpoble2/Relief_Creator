@@ -508,7 +508,8 @@ class PolygonTools:
                 # reset the input text
                 self.__input_text_value = ''
 
-                self.__GUI_manager.enable_glfw_keyboard_callback(True)
+                # close the modal and re-enable the glfw controller
+                self.__GUI_manager.enable_glfw_keyboard_callback()
                 imgui.close_current_popup()
 
             imgui.end_popup()

@@ -3,8 +3,6 @@ Frame that indicate the parameters of the polygons
 """
 
 import imgui
-import psutil
-import os
 
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
@@ -17,9 +15,13 @@ class PolygonInformation(Frame):
     Class that render a frame to store the parameters of the active polygon.
     """
 
+    # noinspection PyUnresolvedReferences
     def __init__(self, gui_manager: 'GUIManager'):
         """
         Constructor of the class.
+
+        Args:
+            gui_manager (src.engine.GUI.GUIManager):
         """
         super().__init__(gui_manager)
         self.__height = 300
@@ -146,6 +148,9 @@ class PolygonInformation(Frame):
             self.__current_variable_type = 0
             self.__current_bool_selected = 0
 
+            # disable keyboard input for glfw
+            self._GUI_manager.disable_glfw_keyboard_callback()
+
         # popup to add a new parameter
         if imgui.begin_popup_modal('Add new parameter')[0]:
 
@@ -180,8 +185,9 @@ class PolygonInformation(Frame):
                 # case parameter already exist
                 if self.__key_string_value in dict_parameters:
 
-                    # close the popup
+                    # close the popup and reactivate the glfw keyboard callback
                     imgui.close_current_popup()
+                    self._GUI_manager.enable_glfw_keyboard_callback()
 
                     # open a modal
                     self._GUI_manager.set_modal_text('Error',
@@ -202,8 +208,9 @@ class PolygonInformation(Frame):
                                                             self.__key_string_value,
                                                             value)
 
-                    # close the popup
+                    # close the popup and reactivate the glfw keyboard callback
                     imgui.close_current_popup()
+                    self._GUI_manager.enable_glfw_keyboard_callback()
 
             imgui.end_popup()
 
@@ -220,6 +227,7 @@ class PolygonInformation(Frame):
         # ask if open it
         if self.__should_open_edit_dialog:
             imgui.open_popup('Edit parameter')
+            self._GUI_manager.enable_glfw_keyboard_callback()
 
             # once open this variable should be changed to false
             self.__should_open_edit_dialog = False
@@ -273,8 +281,9 @@ class PolygonInformation(Frame):
                                                         self.__key_string_value,
                                                         value)
 
-                # reset the variables
+                # close the popup and reactivate the glfw callback
                 imgui.close_current_popup()
+                self._GUI_manager.enable_glfw_keyboard_callback()
 
             imgui.end_popup()
 
