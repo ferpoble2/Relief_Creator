@@ -41,6 +41,8 @@ class InterpolationTools:
         )
 
         _, self.__distance_current_value = imgui.input_float('Distance', self.__distance_current_value)
+        if self.__distance_current_value < 0:
+            self.__distance_current_value = 0
 
         if imgui.button('Interpolate', -1):
             log.debug('Interpolating points.')
