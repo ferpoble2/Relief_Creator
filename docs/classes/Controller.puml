@@ -13,6 +13,8 @@ class Controller {
     - __load_netcdf_file_with_dialog()
     - __load_shapefile_file_with_dialog()
     - __set_mouse_pos(new_x, new_y)
+    + enable_glfw_keyboard_callback()
+    + disable_glfw_keyboard_callback
     + get_cursor_position_callback(): function
     + get_mouse_button_callback(): function
     + get_on_key_callback(): function

@@ -1,7 +1,6 @@
 """
 Controller of the application. Manage all the glfw events that happens in the application.
 """
-import sys
 from typing import Callable
 
 import glfw
@@ -64,10 +63,6 @@ class Controller:
         except TypeError as e:
             log.exception(f"Error reading files: {e}")
             self.__engine.set_modal_text("Error", "Error reading color file (TypeError)")
-
-        except OSError as e:
-            log.exception(f"Error reading files: {e}")
-            self.__engine.set_modal_text("Error", "Error reading color file (OSError)")
 
     def __is_inside_scene(self, mouse_x_pos: int, mouse_y_pos: int) -> bool:
         """
@@ -145,6 +140,26 @@ class Controller:
         """
         self.__mouse_old_pos = (new_x, new_y)
 
+    def enable_glfw_keyboard_callback(self) -> None:
+        """
+        Enable the functionality of the keyboard callback function defined in the glfw call.
+
+        Does not affect to the keyboard callback from imgui.
+
+        Returns: None
+        """
+        self.__glfw_keyboard_callback_enabled = True
+
+    def disable_glfw_keyboard_callback(self) -> None:
+        """
+        Disable the functionality of the keyboard callback function defined in the glfw call.
+
+        Does not affect to the keyboard callback from imgui.
+
+        Returns: None
+        """
+        self.__glfw_keyboard_callback_enabled = False
+
     def get_cursor_position_callback(self):
         """
         Get the mouse movement callback function.
@@ -153,7 +168,7 @@ class Controller:
         """
 
         # noinspection PyMissingOrEmptyDocstring
-        def cursor_position_callback(window, xpos, ypos):
+        def cursor_position_callback(_, x_pos, y_pos):
 
             # get the active tool being used in the program
             active_tool = self.__engine.get_active_tool()
@@ -161,11 +176,11 @@ class Controller:
             if active_tool == 'move_map':
                 if self.__is_left_mouse_being_pressed:
                     log.debug(
-                        f"Cursor movement: {xpos - self.__mouse_old_pos[0]}, {self.__mouse_old_pos[1] - ypos}")
-                    self.__engine.move_scene(xpos - self.__mouse_old_pos[0], self.__mouse_old_pos[1] - ypos)
+                        f"Cursor movement: {x_pos - self.__mouse_old_pos[0]}, {self.__mouse_old_pos[1] - y_pos}")
+                    self.__engine.move_scene(x_pos - self.__mouse_old_pos[0], self.__mouse_old_pos[1] - y_pos)
 
             # update the move position at the end
-            self.__set_mouse_pos(xpos, ypos)
+            self.__set_mouse_pos(x_pos, y_pos)
 
         return cursor_position_callback
 
@@ -177,7 +192,7 @@ class Controller:
         """
 
         # noinspection PyMissingOrEmptyDocstring
-        def mouse_button_callback(window, button, action, mods):
+        def mouse_button_callback(window, button, action, _):
 
             if button == glfw.MOUSE_BUTTON_LEFT and \
                     action == glfw.PRESS and \
@@ -216,6 +231,7 @@ class Controller:
         Returns: Function to call for the mouse wheel.
         """
 
+        # noinspection PyMissingOrEmptyDocstring
         def mouse_wheel_callback(window, x_offset, y_offset):
 
             # do something only if not hovering frames
@@ -238,88 +254,92 @@ class Controller:
         """
 
         # define the on_key callback
+        # noinspection PyMissingOrEmptyDocstring
         def on_key(window, key, scancode, action, mods):
 
-            # Check what to do if a key is pressed
-            if action == glfw.PRESS:
+            # only work if the glfw functionality is enabled
+            if self.__glfw_keyboard_callback_enabled:
 
-                # Do the logic
-                if key == glfw.KEY_LEFT_CONTROL:
-                    log.debug("Left control pressed")
-                    self.__is_left_ctrl_pressed = True
+                # Check what to do if a key is pressed
+                if action == glfw.PRESS:
 
-                if key == glfw.KEY_LEFT_ALT:
-                    log.debug("Left alt pressed")
-                    self.__is_left_alt_pressed = True
+                    # Do the logic
+                    if key == glfw.KEY_LEFT_CONTROL:
+                        log.debug("Left control pressed")
+                        self.__is_left_ctrl_pressed = True
 
-                # Shortcuts of the platform
-                # -------------------------
-                if key == glfw.KEY_O and self.__is_left_ctrl_pressed:
-                    log.debug("Shortcut open file")
-                    self.__load_netcdf_file_with_dialog()
+                    if key == glfw.KEY_LEFT_ALT:
+                        log.debug("Left alt pressed")
+                        self.__is_left_alt_pressed = True
 
-                if key == glfw.KEY_T and self.__is_left_ctrl_pressed:
-                    log.debug("Pressed shortcut to change color file")
-                    self.__change_color_file_with_dialog()
+                    # Shortcuts of the platform
+                    # -------------------------
+                    if key == glfw.KEY_O and self.__is_left_ctrl_pressed:
+                        log.debug("Shortcut open file")
+                        self.__load_netcdf_file_with_dialog()
 
-                if key == glfw.KEY_M:
-                    log.debug("Pressed shortcut to move map")
-                    self.__engine.set_active_tool('move_map')
+                    if key == glfw.KEY_T and self.__is_left_ctrl_pressed:
+                        log.debug("Pressed shortcut to change color file")
+                        self.__change_color_file_with_dialog()
 
-                if key == glfw.KEY_Z:
+                    if key == glfw.KEY_M:
+                        log.debug("Pressed shortcut to move map")
+                        self.__engine.set_active_tool('move_map')
 
-                    if self.__is_left_ctrl_pressed:
-                        log.debug("Pressed ctrl+z")
-                        self.__engine.undo_action()
+                    if key == glfw.KEY_Z:
 
-                if key == glfw.KEY_L:
-                    if self.__is_left_ctrl_pressed:
-                        self.__load_shapefile_file_with_dialog()
+                        if self.__is_left_ctrl_pressed:
+                            log.debug("Pressed ctrl+z")
+                            self.__engine.undo_action()
 
-                if key == glfw.KEY_R:
-                    self.__engine.reload_models()
+                    if key == glfw.KEY_L:
+                        if self.__is_left_ctrl_pressed:
+                            self.__load_shapefile_file_with_dialog()
 
-                # movement of the map
-                if key == glfw.KEY_W:
-                    self.__is_w_pressed = True
-                if key == glfw.KEY_S:
-                    self.__is_s_pressed = True
-                if key == glfw.KEY_A:
-                    self.__is_a_pressed = True
-                if key == glfw.KEY_D:
-                    self.__is_d_pressed = True
+                    if key == glfw.KEY_R:
+                        self.__engine.reload_models()
 
-            # Check for keys released
-            if action == glfw.RELEASE:
+                    # movement of the map
+                    if key == glfw.KEY_W:
+                        self.__is_w_pressed = True
+                    if key == glfw.KEY_S:
+                        self.__is_s_pressed = True
+                    if key == glfw.KEY_A:
+                        self.__is_a_pressed = True
+                    if key == glfw.KEY_D:
+                        self.__is_d_pressed = True
 
-                # Do the logic
-                if key == glfw.KEY_LEFT_CONTROL:
-                    log.debug("Left control released")
-                    self.__is_left_ctrl_pressed = False
+                # Check for keys released
+                if action == glfw.RELEASE:
 
-                if key == glfw.KEY_LEFT_ALT:
-                    log.debug("Left alt released")
-                    self.__is_left_alt_pressed = False
+                    # Do the logic
+                    if key == glfw.KEY_LEFT_CONTROL:
+                        log.debug("Left control released")
+                        self.__is_left_ctrl_pressed = False
 
-                # map movement
-                if key == glfw.KEY_W:
-                    self.__is_w_pressed = False
-                if key == glfw.KEY_S:
-                    self.__is_s_pressed = False
-                if key == glfw.KEY_A:
-                    self.__is_a_pressed = False
-                if key == glfw.KEY_D:
-                    self.__is_d_pressed = False
+                    if key == glfw.KEY_LEFT_ALT:
+                        log.debug("Left alt released")
+                        self.__is_left_alt_pressed = False
 
-            # Check for in-frame actions
-            if self.__is_w_pressed:
-                self.__engine.move_scene(0, self.__map_movement_velocity)
-            if self.__is_s_pressed:
-                self.__engine.move_scene(0, -1 * self.__map_movement_velocity)
-            if self.__is_a_pressed:
-                self.__engine.move_scene(-1 * self.__map_movement_velocity, 0)
-            if self.__is_d_pressed:
-                self.__engine.move_scene(self.__map_movement_velocity, 0)
+                    # map movement
+                    if key == glfw.KEY_W:
+                        self.__is_w_pressed = False
+                    if key == glfw.KEY_S:
+                        self.__is_s_pressed = False
+                    if key == glfw.KEY_A:
+                        self.__is_a_pressed = False
+                    if key == glfw.KEY_D:
+                        self.__is_d_pressed = False
+
+                # Check for in-frame actions
+                if self.__is_w_pressed:
+                    self.__engine.move_scene(0, self.__map_movement_velocity)
+                if self.__is_s_pressed:
+                    self.__engine.move_scene(0, -1 * self.__map_movement_velocity)
+                if self.__is_a_pressed:
+                    self.__engine.move_scene(-1 * self.__map_movement_velocity, 0)
+                if self.__is_d_pressed:
+                    self.__engine.move_scene(self.__map_movement_velocity, 0)
 
             # call the others callbacks defined in the program.
             self.__engine.get_gui_key_callback()(window, key, scancode, action, mods)
@@ -332,7 +352,8 @@ class Controller:
         Returns: Function to use as a callback.
         """
 
-        def on_resize(window, width, height):
+        # noinspection PyMissingOrEmptyDocstring
+        def on_resize(_, width, height):
             log.debug(f"Windows resized to {width}x{height}")
 
             # In case window was minimized, do nothing
@@ -346,6 +367,7 @@ class Controller:
 
         return on_resize
 
+    # noinspection PyUnresolvedReferences
     def init(self, engine: 'Engine') -> None:
         """
         Initialize the Controller component.
