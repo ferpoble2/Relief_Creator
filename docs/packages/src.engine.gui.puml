@@ -6,7 +6,6 @@ package GUI{
     class Icon
     class PolygonFolder
     class PolygonFolderManager
-    !include ../file_modules/imgui_wrapper.puml
 
     !includesub src.engine.gui.frames.puml!INTERNAL
 }
@@ -15,7 +14,6 @@ PolygonFolderManager o-- PolygonFolder
 GUIManager o-- PolygonFolderManager
 GUIManager o-- Icon
 GUIManager o--o Frame
-GUIManager .> imgui_wrapper
 
 !endsub
 
