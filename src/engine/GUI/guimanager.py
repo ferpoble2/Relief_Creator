@@ -888,3 +888,16 @@ class GUIManager:
         Returns: None
         """
         self.__engine.undo_action()
+
+    def use_glfw_keyboard_callback(self, should_use: bool) -> None:
+        """
+        Change if the controller should use the glfw keyboard callback or not.
+
+        The GUI callback is not affected.
+
+        Args:
+            should_use: Boolean indicating if the functionality should be used.
+
+        Returns: None
+        """
+        self.__engine.use_glfw_keyboard_callback(should_use)
