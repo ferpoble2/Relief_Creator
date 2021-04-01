@@ -4,7 +4,7 @@ Test frame for the GUI (default for imgui)
 
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
-import src.engine.GUI.imgui_wrapper as imgui
+import imgui
 
 log = get_logger(module="TEST WINDOW")
 
