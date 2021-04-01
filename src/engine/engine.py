@@ -43,6 +43,33 @@ class Engine:
 
         self.__pending_task_list = []
 
+    def __update_pending_tasks(self) -> None:
+        """
+        Update the pending tasks.
+
+        Subtract one from the frames of the tasks and execute them if the number
+        of frames to wait is zero.
+
+        Returns: None
+        """
+        to_delete = []
+
+        # check on the tasks
+        for task in self.__pending_task_list:
+            log.debug(f"Pending tasks: {self.__pending_task_list}")
+
+            # Subtract one frame from the task
+            task['frames'] -= 1
+
+            # execute it if frames to wait is zero
+            if task['frames'] == 0:
+                task['task']()
+                to_delete.append(task)
+
+        # delete tasks already executed
+        for task in to_delete:
+            self.__pending_task_list.remove(task)
+
     def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
         """
         Ask the scene to add a vertex in the active polygon of the engine.
@@ -717,7 +744,7 @@ class Engine:
         """
         log.debug("Starting main loop.")
         while not glfw.window_should_close(self.window):
-            self.update_pending_tasks()
+            self.__update_pending_tasks()
             self.__thread_manager.update_threads()
             self.__process_manager.update_process()
             self.render.on_loop([lambda: self.scene.draw()])
@@ -946,33 +973,6 @@ class Engine:
 
         else:
             log.debug(f'Tool {active_tool} has no undo action defined.')
-
-    def update_pending_tasks(self) -> None:
-        """
-        Update the pending tasks.
-
-        Subtract one from the frames of the tasks and execute them if the number
-        of frames to wait is zero.
-
-        Returns: None
-        """
-        to_delete = []
-
-        # check on the tasks
-        for task in self.__pending_task_list:
-            log.debug(f"Pending tasks: {self.__pending_task_list}")
-
-            # Subtract one frame from the task
-            task['frames'] -= 1
-
-            # execute it if frames to wait is zero
-            if task['frames'] == 0:
-                task['task']()
-                to_delete.append(task)
-
-        # delete tasks already executed
-        for task in to_delete:
-            self.__pending_task_list.remove(task)
 
     def update_scene_models_colors(self):
         """

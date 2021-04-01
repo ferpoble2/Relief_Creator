@@ -9,6 +9,7 @@ class Engine {
     - thread_manager: ThreadManager
     - process_manager: ProcessManager
 
+    - __update_pending_tasks()
     + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
     + add_zoom()
     + are_frames_fixed(): boolean
@@ -78,7 +79,6 @@ class Engine {
     + set_thread_task(parallel_task, then, parallel_task_args, then_task_args)
     + transform_points(polygon_id, model_id, min_height, max_height, transformation_type)
     + undo_action()
-    + update_pending_tasks()
     + update_scene_models_colors()
     + update_scene_values()
     + update_scene_viewport()
