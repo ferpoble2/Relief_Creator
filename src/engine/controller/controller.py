@@ -257,20 +257,56 @@ class Controller:
         # noinspection PyMissingOrEmptyDocstring
         def on_key(window, key, scancode, action, mods):
 
-            # only work if the glfw functionality is enabled
+            # update the state of the controller variables
+            # work even when glfw callback is disabled
+            if action == glfw.PRESS:
+
+                if key == glfw.KEY_LEFT_CONTROL:
+                    self.__is_left_ctrl_pressed = True
+
+                if key == glfw.KEY_LEFT_ALT:
+                    self.__is_left_alt_pressed = True
+
+                if key == glfw.KEY_W:
+                    self.__is_w_pressed = True
+
+                if key == glfw.KEY_S:
+                    self.__is_s_pressed = True
+
+                if key == glfw.KEY_A:
+                    self.__is_a_pressed = True
+
+                if key == glfw.KEY_D:
+                    self.__is_d_pressed = True
+
+            if action == glfw.RELEASE:
+
+                # Do the logic
+                if key == glfw.KEY_LEFT_CONTROL:
+                    self.__is_left_ctrl_pressed = False
+
+                if key == glfw.KEY_LEFT_ALT:
+                    self.__is_left_alt_pressed = False
+
+                # map movement
+                if key == glfw.KEY_W:
+                    self.__is_w_pressed = False
+
+                if key == glfw.KEY_S:
+                    self.__is_s_pressed = False
+
+                if key == glfw.KEY_A:
+                    self.__is_a_pressed = False
+
+                if key == glfw.KEY_D:
+                    self.__is_d_pressed = False
+
+            # logic: only work if the glfw functionality is enabled
+            # -----------------------------------------------------
             if self.__glfw_keyboard_callback_enabled:
 
                 # Check what to do if a key is pressed
                 if action == glfw.PRESS:
-
-                    # Do the logic
-                    if key == glfw.KEY_LEFT_CONTROL:
-                        log.debug("Left control pressed")
-                        self.__is_left_ctrl_pressed = True
-
-                    if key == glfw.KEY_LEFT_ALT:
-                        log.debug("Left alt pressed")
-                        self.__is_left_alt_pressed = True
 
                     # Shortcuts of the platform
                     # -------------------------
@@ -298,38 +334,6 @@ class Controller:
 
                     if key == glfw.KEY_R:
                         self.__engine.reload_models()
-
-                    # movement of the map
-                    if key == glfw.KEY_W:
-                        self.__is_w_pressed = True
-                    if key == glfw.KEY_S:
-                        self.__is_s_pressed = True
-                    if key == glfw.KEY_A:
-                        self.__is_a_pressed = True
-                    if key == glfw.KEY_D:
-                        self.__is_d_pressed = True
-
-                # Check for keys released
-                if action == glfw.RELEASE:
-
-                    # Do the logic
-                    if key == glfw.KEY_LEFT_CONTROL:
-                        log.debug("Left control released")
-                        self.__is_left_ctrl_pressed = False
-
-                    if key == glfw.KEY_LEFT_ALT:
-                        log.debug("Left alt released")
-                        self.__is_left_alt_pressed = False
-
-                    # map movement
-                    if key == glfw.KEY_W:
-                        self.__is_w_pressed = False
-                    if key == glfw.KEY_S:
-                        self.__is_s_pressed = False
-                    if key == glfw.KEY_A:
-                        self.__is_a_pressed = False
-                    if key == glfw.KEY_D:
-                        self.__is_d_pressed = False
 
                 # Check for in-frame actions
                 if self.__is_w_pressed:
