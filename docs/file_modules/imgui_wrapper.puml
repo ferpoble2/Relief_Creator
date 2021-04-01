@@ -1,0 +1,7 @@
+@startuml
+!$file = "(F,#ff75ff) File"
+class imgui_wrapper  <<$file>>{
+    + close_current_popup_modal(guimanager)
+    + open_popup_modal(gui_manager, popup_id)
+}
+@enduml
