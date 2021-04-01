@@ -86,6 +86,7 @@ class GUIManager{
     + set_regular_font()
     + set_tool_title_font()
     + undo()
-    + use_glfw_keyboard_callback(enable)
+    + enable_glfw_keyboard_callback()
+    + disable_glfw_keyboard_callback()
 }
 @enduml

@@ -485,8 +485,9 @@ class PolygonTools:
             # set the name of the polygon as initial text
             self.__input_text_value = self.__GUI_manager.get_polygon_name(polygon_id)
 
-            # open the pop up
+            # open the pop up and disable the keyboard callback
             imgui.open_popup(f'Rename {polygon_id}')
+            self.__GUI_manager.disable_glfw_keyboard_callback()
 
         if imgui.begin_popup_modal(f'Rename {polygon_id}')[0]:
 
@@ -507,6 +508,7 @@ class PolygonTools:
                 # reset the input text
                 self.__input_text_value = ''
 
+                self.__GUI_manager.enable_glfw_keyboard_callback(True)
                 imgui.close_current_popup()
 
             imgui.end_popup()

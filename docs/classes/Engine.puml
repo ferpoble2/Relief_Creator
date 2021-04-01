@@ -82,7 +82,8 @@ class Engine {
     + update_scene_models_colors()
     + update_scene_values()
     + update_scene_viewport()
-    + use_glfw_keyboard_callback(should_use)
+    + enable_glfw_keyboard_callback()
+    + disable_glfw_keyboard_callback()
 }
 
 @enduml

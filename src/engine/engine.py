@@ -996,18 +996,22 @@ class Engine:
         """
         self.scene.update_viewport()
 
-    def use_glfw_keyboard_callback(self, should_use: bool) -> None:
+    def enable_glfw_keyboard_callback(self) -> None:
         """
-        Change if the controller should use the glfw keyboard callback or not.
+        Enable the glfw callback defined in the controller.
 
         The GUI callback is not affected.
 
-        Args:
-            should_use: Boolean indicating if the functionality should be used.
+        Returns: None
+        """
+        self.controller.enable_glfw_keyboard_callback()
+
+    def disable_glfw_keyboard_callback(self) -> None:
+        """
+        Disable the glfw callback defined in the controller.
+
+        The GUI callback is not affected.
 
         Returns: None
         """
-        if should_use:
-            self.controller.enable_glfw_keyboard_callback()
-        else:
-            self.controller.disable_glfw_keyboard_callback()
+        self.controller.disable_glfw_keyboard_callback()
