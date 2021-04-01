@@ -4,32 +4,42 @@ File module with a wrapper of the imgui functionality.
 Frames must use this module.
 """
 
-from imgui import *
+import imgui
 
 
-def close_current_popup_modal(gui_manager) -> None:
+class ImguiWrapper:
     """
-    Close the current popup modal and set all the configuration necessary to continue with the program.
-
-    Args:
-        gui_manager: Gui manager being used by the program.
-
-    Returns:
-
+    Class that act as a wrapper for the imgui functionality.
     """
-    gui_manager.enable_glfw_keyboard_callback()
-    close_current_popup()
 
+    # noinspection PyUnresolvedReferences
+    def __init__(self, gui_manager: 'GUIManager'):
+        """
+        Constructor of the class.
 
-def open_popup_modal(gui_manager, popup_id: str) -> None:
-    """
-    Open the popup modal with the given name and set all the configuration previous too open it.
+        Args:
+            gui_manager: gui_manager to use.
+        """
+        self.__gui_manager = gui_manager
 
-    Args:
-        gui_manager: Gui manager being used by the program.
-        popup_id: Popup ID
+    def close_current_popup_modal(self) -> None:
+        """
+        Close the current popup modal and set all the configuration necessary to continue with the program.
 
-    Returns: None
-    """
-    gui_manager.disable_glfw_keyboard_callback()
-    open_popup(popup_id)
+        Returns:
+
+        """
+        self.__gui_manager.enable_glfw_keyboard_callback()
+        imgui.close_current_popup()
+
+    def open_popup_modal(self, popup_id: str) -> None:
+        """
+        Open the popup modal with the given name and set all the configuration previous too open it.
+
+        Args:
+            popup_id: Popup ID
+
+        Returns: None
+        """
+        self.__gui_manager.disable_glfw_keyboard_callback()
+        imgui.open_popup(popup_id)
