@@ -1,7 +1,6 @@
 """
 Main Frame class for the others elements to use.
 """
-from src.engine.GUI.imgui_wrapper import ImguiWrapper
 
 
 class Frame:
@@ -16,20 +15,6 @@ class Frame:
         """
         self._position = [100, 100]
         self._GUI_manager = gui_manager
-        self._imgui = ImguiWrapper(gui_manager)
-
-    def add_new_polygon(self, polygon_id) -> None:
-        """
-        Function to call to add a new polygon into the frame.
-
-        Must be defined in child classes.
-
-        Args:
-            polygon_id: ID of the polygon.
-
-        Returns: None
-        """
-        pass
 
     def change_position(self, new_position: list) -> None:
         """
@@ -46,6 +31,19 @@ class Frame:
         Returns: list with the position of the frame.
         """
         return self._position
+
+    def add_new_polygon(self, polygon_id) -> None:
+        """
+        Function to call to add a new polygon into the frame.
+
+        Must be defined in child classes.
+
+        Args:
+            polygon_id: ID of the polygon.
+
+        Returns: None
+        """
+        pass
 
     def render(self) -> None:
         """

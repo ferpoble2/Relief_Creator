@@ -289,7 +289,8 @@ class Engine:
                                    self.scene.get_polygon_name(polygon_id))
 
         if file is None:
-            raise NotADirectoryError('Directory not selected.')
+            log.debug("Directory not selected.")
+            return
 
         # ask the exporter to export the list of points
         ShapefileExporter().export_polygon_to_shapefile(points,

@@ -15,7 +15,6 @@ class ConfirmationModal(Frame):
     Class to render a modal in the application with a specified text.
     """
 
-    # noinspection PyUnresolvedReferences
     def __init__(self, gui_manager: 'GUIManager'):
         """
         Constructor of the class.
@@ -62,7 +61,7 @@ class ConfirmationModal(Frame):
 
             # open the pop up and size it
             # ---------------------------
-            self._imgui.open_popup_modal(self.__modal_title)
+            imgui.open_popup(self.__modal_title)
             self.__should_show = False
 
         if imgui.begin_popup_modal(self.__modal_title)[0]:
@@ -93,7 +92,7 @@ class ConfirmationModal(Frame):
 
                 # close the pop up
                 # ----------------
-                self._imgui.close_current_popup_modal()
+                imgui.close_current_popup()
 
             imgui.end_popup()
 
