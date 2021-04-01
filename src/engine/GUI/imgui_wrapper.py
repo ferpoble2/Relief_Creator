@@ -1,5 +1,7 @@
 """
-File with the class ImguiWrapper, class that act as a wrapper for the imgui functions.
+File module with a wrapper of the imgui functionality.
+
+Frames must use this module.
 """
 
 from imgui import *
