@@ -23,12 +23,6 @@ package frames {
     ConfirmationModal -u-|> Frame
 !endsub
 
-note as N1
-    All classes in this
-    module depends on the
-    imgui_wrapper module
-end note
-
 
 
 !if (%false())
