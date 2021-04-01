@@ -28,6 +28,8 @@ class Controller:
         self.__scene = None
         self.__engine = None
 
+        self.__glfw_keyboard_callback_enabled = True
+
         # Auxiliary methods
         self.__mouse_old_pos = (0, 0)
         self.__is_left_ctrl_pressed = False
@@ -66,6 +68,31 @@ class Controller:
         except OSError as e:
             log.exception(f"Error reading files: {e}")
             self.__engine.set_modal_text("Error", "Error reading color file (OSError)")
+
+    def __is_inside_scene(self, mouse_x_pos: int, mouse_y_pos: int) -> bool:
+        """
+        Check if the mouse is inside the scene or not.
+
+        Args:
+            mouse_x_pos: X position of the mouse given by glfw
+            mouse_y_pos: Y position of the mouse given by glfw
+
+        Returns: Boolean indicating if mouse is inside the scene
+        """
+        scene_data = self.__engine.get_scene_setting_data()
+        is_inside = True
+
+        # invert the mouse position given by glfw to start at the bottom of the screen
+        mouse_y_pos = self.__engine.get_window_setting_data()['HEIGHT'] - mouse_y_pos
+
+        # check if mouse is inside the scene
+        if mouse_x_pos < scene_data['SCENE_BEGIN_X'] or \
+                mouse_x_pos > scene_data['SCENE_BEGIN_X'] + scene_data['SCENE_WIDTH_X'] or \
+                mouse_y_pos < scene_data['SCENE_BEGIN_Y'] or \
+                mouse_y_pos > scene_data['SCENE_BEGIN_Y'] + scene_data['SCENE_HEIGHT_Y']:
+            is_inside = False
+
+        return is_inside
 
     def __load_netcdf_file_with_dialog(self) -> None:
         """
@@ -106,6 +133,18 @@ class Controller:
                 log.error(e)
                 self.__engine.set_modal_text('Error', 'Error loading file. (ShapefileException)')
 
+    def __set_mouse_pos(self, new_x: int, new_y: int) -> None:
+        """
+        Change the mouse position.
+
+        Args:
+            new_x: New x coordinate
+            new_y: New y coordinate
+
+        Returns: None
+        """
+        self.__mouse_old_pos = (new_x, new_y)
+
     def get_cursor_position_callback(self):
         """
         Get the mouse movement callback function.
@@ -126,7 +165,7 @@ class Controller:
                     self.__engine.move_scene(xpos - self.__mouse_old_pos[0], self.__mouse_old_pos[1] - ypos)
 
             # update the move position at the end
-            self.set_mouse_pos(xpos, ypos)
+            self.__set_mouse_pos(xpos, ypos)
 
         return cursor_position_callback
 
@@ -150,7 +189,7 @@ class Controller:
                 if active_tool == 'create_polygon':
                     pos_x, pos_y = glfw.get_cursor_pos(window)
 
-                    if self.is_inside_scene(pos_x, pos_y):
+                    if self.__is_inside_scene(pos_x, pos_y):
                         log.debug(f"Creating points for active polygon at: {pos_x} {pos_y}")
 
                         # add a point to the polygon or show an error modal if there is errors.
@@ -319,40 +358,3 @@ class Controller:
         self.__render = engine.render
         self.__scene = engine.scene
         self.__engine = engine
-
-    def is_inside_scene(self, mouse_x_pos: int, mouse_y_pos: int) -> bool:
-        """
-        Check if the mouse is inside the scene or not.
-
-        Args:
-            mouse_x_pos: X position of the mouse given by glfw
-            mouse_y_pos: Y position of the mouse given by glfw
-
-        Returns: Boolean indicating if mouse is inside the scene
-        """
-        scene_data = self.__engine.get_scene_setting_data()
-        is_inside = True
-
-        # invert the mouse position given by glfw to start at the bottom of the screen
-        mouse_y_pos = self.__engine.get_window_setting_data()['HEIGHT'] - mouse_y_pos
-
-        # check if mouse is inside the scene
-        if mouse_x_pos < scene_data['SCENE_BEGIN_X'] or \
-                mouse_x_pos > scene_data['SCENE_BEGIN_X'] + scene_data['SCENE_WIDTH_X'] or \
-                mouse_y_pos < scene_data['SCENE_BEGIN_Y'] or \
-                mouse_y_pos > scene_data['SCENE_BEGIN_Y'] + scene_data['SCENE_HEIGHT_Y']:
-            is_inside = False
-
-        return is_inside
-
-    def set_mouse_pos(self, new_x: int, new_y: int) -> None:
-        """
-        Change the mouse position.
-
-        Args:
-            new_x: New x coordinate
-            new_y: New y coordinate
-
-        Returns: None
-        """
-        self.__mouse_old_pos = (new_x, new_y)
