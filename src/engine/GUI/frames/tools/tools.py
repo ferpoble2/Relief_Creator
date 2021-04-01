@@ -2,7 +2,7 @@
 Sample frame for the application GUI.
 """
 
-import src.engine.GUI.imgui_wrapper as imgui
+import imgui
 
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
@@ -37,7 +37,8 @@ class Tools(Frame):
 
         # object in charge of render the relief tools
         self.__relief_tools = ReliefTools(gui_manager)
-        self.__polygon_tools = PolygonTools(gui_manager, self.__button_margin_width)
+        self.__polygon_tools = PolygonTools(gui_manager, self._imgui,
+                                            self.__button_margin_width)
         self.__interpolation_tools = InterpolationTools(gui_manager)
 
     def __show_active_tool(self):

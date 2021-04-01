@@ -4,7 +4,7 @@ Main menu bar frame in the GUI
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
 
-import src.engine.GUI.imgui_wrapper as imgui
+import imgui
 import shapefile
 import OpenGL.GL as GL
 
@@ -16,7 +16,6 @@ class MainMenuBar(Frame):
     Frame that controls the top menu bar of the application.
     """
 
-    # noinspection PyUnresolvedReferences
     def __init__(self, gui_manager: 'GUIManager'):
         """
         Constructor of the class.

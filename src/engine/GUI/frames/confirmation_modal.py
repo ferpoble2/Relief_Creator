@@ -2,7 +2,7 @@
 Frame for the confirmation modals of the application.
 """
 
-import src.engine.GUI.imgui_wrapper as imgui
+import imgui
 
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
@@ -62,7 +62,7 @@ class ConfirmationModal(Frame):
 
             # open the pop up and size it
             # ---------------------------
-            imgui.open_popup_modal(self._GUI_manager, self.__modal_title)
+            self._imgui.open_popup_modal(self.__modal_title)
             self.__should_show = False
 
         if imgui.begin_popup_modal(self.__modal_title)[0]:
@@ -93,7 +93,7 @@ class ConfirmationModal(Frame):
 
                 # close the pop up
                 # ----------------
-                imgui.close_current_popup_modal(self._GUI_manager)
+                self._imgui.close_current_popup_modal()
 
             imgui.end_popup()
 

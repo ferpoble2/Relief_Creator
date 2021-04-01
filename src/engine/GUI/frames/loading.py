@@ -2,7 +2,7 @@
 Sample frame for the application GUI.
 """
 
-import src.engine.GUI.imgui_wrapper as imgui
+import imgui
 
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
@@ -31,13 +31,13 @@ class Loading(Frame):
         """
 
         if self._GUI_manager.is_program_loading():
-            imgui.open_popup_modal(self._GUI_manager, "Loading")
+            self._imgui.open_popup_modal("Loading")
 
         if imgui.begin_popup_modal("Loading")[0]:
             imgui.set_window_size(self.__windows_width, self.__windows_height)
             imgui.text(self.__loading_message)
             if not self._GUI_manager.is_program_loading():
-                imgui.close_current_popup_modal(self._GUI_manager)
+                self._imgui.close_current_popup_modal()
             imgui.end_popup()
 
     def set_loading_message(self, new_msg: str) -> None:

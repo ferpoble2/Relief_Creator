@@ -1,6 +1,7 @@
 """
 Main Frame class for the others elements to use.
 """
+from src.engine.GUI.imgui_wrapper import ImguiWrapper
 
 
 class Frame:
@@ -15,6 +16,7 @@ class Frame:
         """
         self._position = [100, 100]
         self._GUI_manager = gui_manager
+        self._imgui = ImguiWrapper(gui_manager)
 
     def add_new_polygon(self, polygon_id) -> None:
         """

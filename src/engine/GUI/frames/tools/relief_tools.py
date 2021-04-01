@@ -2,7 +2,7 @@
 File with the class ReliefTools. Class in charge of render the Relief tools inside another frame.
 """
 
-import src.engine.GUI.imgui_wrapper as imgui
+import imgui
 
 from src.utils import get_logger
 
