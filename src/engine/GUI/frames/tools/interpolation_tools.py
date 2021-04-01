@@ -2,7 +2,7 @@
 File with the class InterpolationTools. Class in charge of render the Interpolation Tools inside another frame.
 """
 
-import imgui
+import src.engine.GUI.imgui_wrapper as imgui
 
 from src.utils import get_logger
 from src.error.interpolation_error import InterpolationError

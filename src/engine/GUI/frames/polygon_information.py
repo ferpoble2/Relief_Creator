@@ -2,7 +2,7 @@
 Frame that indicate the parameters of the polygons
 """
 
-import imgui
+import src.engine.GUI.imgui_wrapper as imgui
 
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
@@ -137,7 +137,7 @@ class PolygonInformation(Frame):
 
         # in case of opening
         if self.__should_open_add_dialog:
-            self._imgui.open_popup_modal('Add new parameter')
+            imgui.open_popup_modal(self._GUI_manager, 'Add new parameter')
 
             # once open this variable should be changed to false
             self.__key_string_value = 'Name of parameter'
@@ -183,7 +183,7 @@ class PolygonInformation(Frame):
                 if self.__key_string_value in dict_parameters:
 
                     # close the popup and reactivate the glfw keyboard callback
-                    self._imgui.close_current_popup_modal()
+                    imgui.close_current_popup_modal(self._GUI_manager)
 
                     # open a modal
                     self._GUI_manager.set_modal_text('Error',
@@ -205,7 +205,7 @@ class PolygonInformation(Frame):
                                                             value)
 
                     # close the popup and reactivate the glfw keyboard callback
-                    self._imgui.close_current_popup_modal()
+                    imgui.close_current_popup_modal(self._GUI_manager)
 
             imgui.end_popup()
 
@@ -221,7 +221,7 @@ class PolygonInformation(Frame):
 
         # ask if open it
         if self.__should_open_edit_dialog:
-            self._imgui.open_popup_modal('Edit parameter')
+            imgui.open_popup_modal(self._GUI_manager, 'Edit parameter')
 
             # once open this variable should be changed to false
             self.__should_open_edit_dialog = False
@@ -276,7 +276,7 @@ class PolygonInformation(Frame):
                                                         value)
 
                 # close the popup and reactivate the glfw callback
-                self._imgui.close_current_popup_modal()
+                imgui.close_current_popup_modal(self._GUI_manager)
 
             imgui.end_popup()
 

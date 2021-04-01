@@ -2,7 +2,7 @@
 Sample frame for the application GUI.
 """
 
-import imgui
+import src.engine.GUI.imgui_wrapper as imgui
 import psutil
 import os
 
@@ -17,6 +17,7 @@ class Debug(Frame):
     Class that render a sample frame in the application.
     """
 
+    # noinspection PyUnresolvedReferences
     def __init__(self, gui_manager: 'GUIManager'):
         """
         Constructor of the class.
