@@ -48,7 +48,7 @@ class TextModal(Frame):
 
             # open the pop up and size it
             # ---------------------------
-            imgui.open_popup(self.__modal_title)
+            self._imgui.open_popup_modal(self.__modal_title)
             self.__should_show = False
 
         imgui.set_next_window_size(self.__windows_width, -1)
@@ -67,7 +67,7 @@ class TextModal(Frame):
 
                 # close the pop up
                 # ----------------
-                imgui.close_current_popup()
+                self._imgui.close_current_popup_modal()
 
             imgui.end_popup()
 

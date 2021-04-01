@@ -17,10 +17,20 @@ class PolygonTools:
     """
 
     # noinspection PyUnresolvedReferences
-    def __init__(self, gui_manager: 'GUIManager', button_margin_width=17):
+    def __init__(self, gui_manager: 'GUIManager', imgui_wrapper: 'ImguiWrapper', button_margin_width=17):
         """
         Constructor of the class.
+
+        Args:
+            gui_manager: GUIManager to use.
+            button_margin_width: margin to use to render the buttons.
+            imgui_wrapper: wrapper with the functionality of the imgui module.
         """
+
+        # define the functions needed
+        self._imgui = imgui_wrapper
+
+        # variables
         self.__GUI_manager = gui_manager
 
         self.__button_margin_width = button_margin_width
@@ -94,6 +104,12 @@ class PolygonTools:
             # -------------------
             self.__color_pick_should_open = True
 
+        # Open the modal if the condition to show is fulfilled
+        # ----------------------------------------------------
+        if self.__color_pick_should_open:
+            self._imgui.open_popup_modal(f'Select a color for {polygon_id}')
+            self.__color_pick_should_open = False
+
         # Define the modal to show
         # ------------------------
         if imgui.begin_popup_modal(f'Select a color for {polygon_id}')[0]:
@@ -127,15 +143,9 @@ class PolygonTools:
                 # return the normal tool and close the pop up
                 # -------------------------------------------
                 self.__GUI_manager.set_active_tool(self.__tool_before_pop_up)
-                imgui.close_current_popup()
+                self._imgui.close_current_popup_modal()
 
             imgui.end_popup()
-
-        # Open the modal if the condition to show is fulfilled
-        # ----------------------------------------------------
-        if self.__color_pick_should_open:
-            imgui.open_popup(f'Select a color for {polygon_id}')
-            self.__color_pick_should_open = False
 
     def __create_new_polygon(self, folder_id: str = None) -> None:
         """
@@ -225,6 +235,11 @@ class PolygonTools:
                 self.__GUI_manager.set_modal_text('Information', 'Polygon exported successfully.')
                 imgui.close_current_popup()
 
+            except NotADirectoryError as e:
+                log.exception(e)
+                self.__GUI_manager.set_modal_text("Error", "Directory not selected.")
+                imgui.close_current_popup()
+
             except NotEnoughPointsError as e:
                 log.exception(e)
                 self.__GUI_manager.set_modal_text("Error", "The polygon does not have enough points.")
@@ -307,7 +322,7 @@ class PolygonTools:
         # popup modal for renaming the folders
         if self.__open_rename_folder_popup:
             # open the popup
-            imgui.open_popup(f'Rename folder {folder_id}')
+            self._imgui.open_popup_modal(f'Rename folder {folder_id}')
 
             # store the folder name as initial input of the popup
             self.__rename_folder_input_text_value = self.__GUI_manager.get_polygon_folder_name(folder_id)
@@ -328,7 +343,7 @@ class PolygonTools:
 
             if imgui.button('Change name', self.__rename_size_x - self.__button_margin_width):
                 self.__GUI_manager.set_polygon_folder_name(folder_id, self.__rename_folder_input_text_value)
-                imgui.close_current_popup()
+                self._imgui.close_current_popup_modal()
 
             imgui.end_popup()
 
@@ -486,8 +501,7 @@ class PolygonTools:
             self.__input_text_value = self.__GUI_manager.get_polygon_name(polygon_id)
 
             # open the pop up and disable the keyboard callback
-            imgui.open_popup(f'Rename {polygon_id}')
-            self.__GUI_manager.disable_glfw_keyboard_callback()
+            self._imgui.open_popup_modal(f'Rename {polygon_id}')
 
         if imgui.begin_popup_modal(f'Rename {polygon_id}')[0]:
 
@@ -510,7 +524,7 @@ class PolygonTools:
 
                 # close the modal and re-enable the glfw controller
                 self.__GUI_manager.enable_glfw_keyboard_callback()
-                imgui.close_current_popup()
+                self._imgui.close_current_popup_modal()
 
             imgui.end_popup()
 

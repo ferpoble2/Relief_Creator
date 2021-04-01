@@ -7,7 +7,9 @@ class Frame {
 
     + add_new_polygon(polygon_id)
     + change_position(new_position)
+    + close_current_popup_modal()
     + get_position(): list
+    + open_popup_modal(popup_id)
     + render()
 }
 @enduml
