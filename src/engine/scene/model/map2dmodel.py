@@ -238,8 +238,11 @@ class Map2DModel(Model):
 
         # calculate the indices to add to the program using numpy
         # -------------------------------------------------------
-        rows = range(len(self.__y))[index_minimum_y:index_maximum_y + 1:step_y]
-        cols = range(len(self.__x))[index_minimum_x:index_maximum_x + 1:step_x]
+        cushion_rows = step_y - (index_maximum_y - index_minimum_y) % step_y + 1
+        cushion_cols = step_x - (index_maximum_x - index_minimum_x) % step_x + 1
+
+        rows = range(len(self.__y))[index_minimum_y:index_maximum_y + cushion_rows:step_y]
+        cols = range(len(self.__x))[index_minimum_x:index_maximum_x + cushion_cols:step_x]
         len_rows = len(rows)
         len_cols = len(cols)
 
@@ -736,10 +739,11 @@ class Map2DModel(Model):
             # Delete old triangles that are in the same place as the new ones
             # ---------------------------------------------------------------
             self.scene.set_loading_message("Recalculating triangles...")
-            self.__add_triangles_inside_zone_to_delete_list(self.__left_coordinate,
-                                                            self.__right_coordinate,
-                                                            self.__top_coordinate,
-                                                            self.__bottom_coordinate)
+            self.__add_triangles_inside_zone_to_delete_list(
+                self.__x[self.__get_index_closest_value(self.__x, self.__left_coordinate)],
+                self.__x[self.__get_index_closest_value(self.__x, self.__right_coordinate)],
+                self.__top_coordinate,
+                self.__bottom_coordinate)
 
         # noinspection PyMissingOrEmptyDocstring
         def then_routine():
