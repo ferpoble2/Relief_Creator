@@ -6,6 +6,7 @@ This class stores all the information related to the polygons that can be draw o
 from src.engine.scene.model.model import Model
 from src.utils import get_logger
 from src.engine.scene.model.points import Points
+from src.engine.scene.model.plane import Plane
 from src.engine.scene.model.lines import Lines
 from src.engine.scene.model.dashed_lines import DashedLines
 from src.error.line_intersection_error import LineIntersectionError
@@ -14,7 +15,9 @@ from src.error.repeated_point_error import RepeatedPointError
 import numpy as np
 import OpenGL.GL as GL
 from shapely.geometry import LineString
+from shapely.geometry import Polygon as ShapelyPolygon
 from shapely.geometry import Point as ShapelyPoint
+from shapely.ops import triangulate
 
 log = get_logger(module="POLYGON")
 
@@ -196,6 +199,65 @@ class Polygon(Model):
                 self.__is_planar = False
             else:
                 self.__is_planar = True
+
+    def __get_internal_points_in_shapely_format(self) -> ShapelyPolygon:
+        """
+        Get the points in the polygon in the shapely.Polygon format.
+
+        Returns: Polygon with the points of the polygon.
+        """
+        list_of_points = self.get_point_list()
+
+        # delete the z axis from the points
+        new_list = []
+        pair_used = []
+        for component_ind in range(len(list_of_points)):
+            if component_ind % 3 == 0:
+                pair_used.append(list_of_points[component_ind])
+            elif component_ind % 3 == 1:
+                pair_used.append(list_of_points[component_ind])
+            elif component_ind % 3 == 2:
+                new_list.append(pair_used)
+                pair_used = []
+
+        return ShapelyPolygon(new_list)
+
+    def __get_external_polygon_points_in_shapely_format(self, distance: float) -> ShapelyPolygon:
+        """
+        Get the external polygon given the specified distance in shapely.Polygon format.
+
+        Args:
+            distance: Distance to use to calculate the external polygon.
+
+        Returns: External polygon in shapely.Polygon format.
+        """
+        polygon_shapely = self.__get_internal_points_in_shapely_format()
+        external_polygon = polygon_shapely.buffer(distance).exterior
+        return ShapelyPolygon(external_polygon)
+
+    def get_exterior_polygon_points(self, distance: float) -> list:
+        """
+        Get the external polygon generated using the distance specified.
+
+        Polygon is returned in shapely format.
+
+        WARNING: this method create the polygon in each call. Try not to use this in loops.
+
+        Args:
+            distance: Distance to use to generate the external polygon.
+
+        Returns: Points used for the exterior polygon.
+        """
+        external_polygon = self.__get_external_polygon_points_in_shapely_format(distance).exterior
+        x_coords, y_coords = external_polygon.xy
+
+        polygon_exterior = []
+        for x_coordinate, y_coordinate in zip(x_coords, y_coords):
+            polygon_exterior.append(x_coordinate)
+            polygon_exterior.append(y_coordinate)
+            polygon_exterior.append(0.5)
+
+        return polygon_exterior
 
     def add_point(self, x: float, y: float, z: float = 0.5) -> None:
         """
