@@ -12,6 +12,9 @@ class Settings:
     MAX_WIDTH = 99999
     MAX_HEIGHT = 99999
 
+    # Extra reload proportion to use when reloading indices
+    EXTRA_RELOAD_PROPORTION = 1.3
+
     # FRAME OPTIONS
     LEFT_FRAME_WIDTH = 300
     TOP_FRAME_HEIGHT = 0

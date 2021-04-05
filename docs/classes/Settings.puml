@@ -6,6 +6,7 @@ class Settings  {
     {static} + FLOAT_BYTES: int
     {static} + FONT_SIZE: int
     {static} + HEIGHT: int
+    {static} + EXTRA_RELOAD_PROPORTION: float
     {static} + LEFT_FRAME_WIDTH: int
     {static} + TOP_FRAME_HEIGHT: int
     {static} + BOTTOM_FRAME_HEIGHT: int

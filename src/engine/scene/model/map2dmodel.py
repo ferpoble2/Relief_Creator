@@ -729,12 +729,18 @@ class Map2DModel(Model):
             # Generate new list of triangles to add to the model
             # --------------------------------------------------
             self.scene.set_loading_message("Generating new indices...")
+
+            # check for the extra proportion to reload.
+            extra_proportion = self.scene.get_extra_reload_proportion_setting()
+            extra_x = (self.__right_coordinate - self.__left_coordinate) * (extra_proportion - 1)
+            extra_y = (self.__top_coordinate - self.__bottom_coordinate) * (extra_proportion - 1)
+
             self.__new_indices = self.__generate_index_list(step_x + quality,
                                                             step_y + quality,
-                                                            self.__left_coordinate,
-                                                            self.__right_coordinate,
-                                                            self.__top_coordinate,
-                                                            self.__bottom_coordinate)
+                                                            self.__left_coordinate - extra_x,
+                                                            self.__right_coordinate + extra_x,
+                                                            self.__top_coordinate + extra_y,
+                                                            self.__bottom_coordinate - extra_y)
 
             # Delete old triangles that are in the same place as the new ones
             # ---------------------------------------------------------------

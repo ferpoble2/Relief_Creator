@@ -349,6 +349,14 @@ class Scene:
                 """
         return self.__engine.get_float_bytes()
 
+    def get_extra_reload_proportion_setting(self) -> float:
+        """
+        Ask the engine for the value of the extra reload proportion stored in the settings.
+
+        Returns: Float with the value of the proportion to use.
+        """
+        return self.__engine.get_extra_reload_proportion_setting()
+
     # noinspection SpellCheckingInspection,PyUnresolvedReferences
     def get_map2dmodel_vertices_array(self, model_id: str) -> 'np.ndarray':
         """

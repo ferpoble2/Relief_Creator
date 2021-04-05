@@ -437,6 +437,14 @@ class Engine:
         """
         return Settings.QUALITY
 
+    def get_extra_reload_proportion_setting(self) -> float:
+        """
+        Get the extra reload proportion stored in the settings of the program.
+
+        Returns: Float with the value of the extra reload proportion.
+        """
+        return Settings.EXTRA_RELOAD_PROPORTION
+
     def get_render_settings(self):
         """
         Return a dictionary with the settings related to the render.
