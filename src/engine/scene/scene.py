@@ -294,6 +294,7 @@ class Scene:
         try:
             self.__polygon_hash[polygon_id].delete_parameter(key)
         except KeyError:
+            # noinspection PyTypeChecker
             raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
 
     def draw(self) -> None:
@@ -391,6 +392,7 @@ class Scene:
         try:
             return self.__polygon_hash[polygon_id].get_point_list()
         except KeyError:
+            # noinspection PyTypeChecker
             raise NonExistentPolygonError(f"Polygon with ID {polygon_id} does not exist.")
 
     def get_polygon_id_list(self) -> list:
@@ -425,6 +427,7 @@ class Scene:
         try:
             return self.__polygon_hash[polygon_id].get_parameter_list()
         except KeyError:
+            # noinspection PyTypeChecker
             raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
 
     def get_render_settings(self) -> dict:
@@ -495,9 +498,10 @@ class Scene:
         vertices = model.get_vertices_array().reshape(vertices_shape)
         height = model.get_height_array().reshape((vertices_shape[0], vertices_shape[1]))
         polygon_points = polygon.get_point_list()
+        external_polygon_points = polygon.get_exterior_polygon_points(distance)
 
         # noinspection PyShadowingNames
-        def parallel_task(vertices, polygon_points, height, distance, type_interpolation):
+        def parallel_task(vertices, polygon_points, height, external_polygon_points, type_interpolation):
             """
             Task to run in parallel in a different thread.
 
@@ -505,14 +509,15 @@ class Scene:
                 vertices: Vertices to use to interpolate.
                 polygon_points: List of points of the polygon.
                 height: Array of heights.
-                distance: Distance to use for interpolation.
+                external_polygon_points: List of points of the external polygon..
                 type_interpolation: Type of interpolation to use.
             """
-            new_calculated_height = TransformationHelper().interpolate_points_external_to_polygon(vertices,
-                                                                                                  polygon_points,
-                                                                                                  height,
-                                                                                                  distance,
-                                                                                                  type_interpolation)
+            new_calculated_height = TransformationHelper().interpolate_points_external_to_polygon(
+                vertices,
+                polygon_points,
+                height,
+                external_polygon_points,
+                type_interpolation)
             return new_calculated_height
 
         # noinspection PyShadowingNames
@@ -532,7 +537,7 @@ class Scene:
         self.__engine.set_loading_message('Interpolating points, this may take a while.')
         self.__engine.set_program_loading(True)
         self.__engine.set_thread_task(parallel_task, then_task,
-                                      (vertices, polygon_points, height, distance, type_interpolation),
+                                      (vertices, polygon_points, height, external_polygon_points, type_interpolation),
                                       (model, self.__engine))
 
     def is_polygon_planar(self, polygon_id: str) -> bool:
@@ -779,6 +784,7 @@ class Scene:
             self.__polygon_hash[polygon_id].set_new_parameter(key, value)
             return
         except KeyError:
+            # noinspection PyTypeChecker
             raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
 
     def set_thread_task(self, parallel_task, then):

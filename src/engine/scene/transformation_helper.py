@@ -118,6 +118,7 @@ class TransformationHelper:
         log.debug('Interpolating nan')
 
         log.debug('Generating data arrays')
+        # noinspection PyShadowingNames
         grid_x, grid_y = np.mgrid[:array_2d.shape[0], :array_2d.shape[1]]
         data = np.zeros((array_2d.shape[0], array_2d.shape[1], 3))
         data[:, :, 0] = grid_x
@@ -127,12 +128,15 @@ class TransformationHelper:
         nan_mask = nan_mask.reshape(-1)
         data = data.reshape((-1, 3))
 
+        # noinspection PyShadowingNames
         points = data[~nan_mask][:, 0:2]
+        # noinspection PyShadowingNames
         values = data[~nan_mask][:, 2]
 
         points_to_interpolate = data[nan_mask][:, 0:2]
 
         log.debug('Initiated interpolate process using numpy')
+        # noinspection PyShadowingNames
         y = interpolate_scipy.griddata(points, values, points_to_interpolate, method=interpolation_type)
         log.debug('Finished interpolation')
 
@@ -190,14 +194,14 @@ class TransformationHelper:
         return height
 
     def interpolate_points_external_to_polygon(self, points_array: np.ndarray, polygon_points: list,
-                                               heights: np.ndarray, distance: float,
+                                               heights: np.ndarray, external_polygon_points: list,
                                                type_interpolation: str) -> np.ndarray:
         """
         Interpolate the points that are external to the polygon until a certain distance.
 
         Args:
             type_interpolation: Type of interpolation to use.
-            distance: Limit distance to interpolate the points from.
+            external_polygon_points: List with the points of the external polygon. [x1, y1, z1, x2, y2, z2, ...]
             points_array: Points of the model. (shape must be (x, y, 3))
             polygon_points: List with the points of the polygon. [x1, y1, z1, x2, y2, z2, ...]
             heights: Array with the height of the points. must have shape (x, y)
@@ -205,24 +209,14 @@ class TransformationHelper:
         Returns: Array of heights with height of the points external to the polygon modified.
         """
         log.debug('Interpolate points external to polygon')
-
-        points_no_z_axis = self.__delete_z_axis(polygon_points)
+        external_points_no_z_axis = self.__delete_z_axis(external_polygon_points)
 
         # check if the points are already CW
-        if is_clockwise(points_no_z_axis):  # points must be in CCW direction
-            points_no_z_axis.reverse()
+        if is_clockwise(external_points_no_z_axis):  # points must be in CCW direction
+            external_points_no_z_axis.reverse()
 
         # create a polygon external to the one proportionate
-        closed_polygon = LinearRing(points_no_z_axis)
-        exterior_polygon = closed_polygon.buffer(distance).exterior
-
-        x_coords, y_coords = exterior_polygon.xy
-        polygon_exterior = []
-
-        for x_coordinate, y_coordinate in zip(x_coords, y_coords):
-            polygon_exterior.append(x_coordinate)
-            polygon_exterior.append(y_coordinate)
-            polygon_exterior.append(0.5)
+        exterior_polygon = LinearRing(external_points_no_z_axis)
 
         # get the bounding box of the nan values
         min_x_index, max_x_index, min_y_index, max_y_index = self.__get_bounding_box_indexes(points_array,
@@ -233,7 +227,7 @@ class TransformationHelper:
 
         # generate a mask of the internal points
         log.debug('Generating masks')
-        mask_external = self.__generate_mask(points_cut, polygon_exterior)
+        mask_external = self.__generate_mask(points_cut, external_polygon_points)
         mask_internal = self.__generate_mask(points_cut, polygon_points)
 
         # apply the logical operations
