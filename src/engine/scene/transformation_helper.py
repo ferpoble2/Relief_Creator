@@ -8,6 +8,7 @@ from shapely.ops import triangulate
 from typing import List
 from matplotlib import path
 from scipy import interpolate as interpolate_scipy
+from scipy.spatial.distance import cdist
 
 from src.utils import interpolate
 from src.utils import is_clockwise
@@ -287,6 +288,107 @@ class TransformationHelper:
 
         return heights
 
+    def get_interpolation_zone_triangulation(self, internal_polygon_points: list,
+                                             external_polygon_points: list,
+                                             distance: float,
+                                             z_value: float = 0.5):
+        """
+        Get the vertices of the triangles that cover the interpolation area between two polygons.
+
+        Args:
+            internal_polygon_points: Points of the internal polygon to use. [x1, y1, z1, x2, y2, z2, ...]
+            external_polygon_points: Points of the external polygon to use. [x1, y1, z1, x2, y2, z2, ...]
+            distance: Distance used to calculate the external polygon.
+            z_value: Default value for the Z-axis value for the points.
+
+        Returns: list with the points of the triangles that cover the interpolation area.
+        """
+        new_points_internal = self.__insert_redundant_points(distance, internal_polygon_points)
+        new_points_external = self.__insert_redundant_points(distance, external_polygon_points)
+
+        polygon_internal = Polygon(new_points_internal)
+        polygon_internal_coords = list(zip(*polygon_internal.exterior.coords.xy))
+
+        polygon_external = Polygon(new_points_external)
+        polygon_external_coords = list(zip(*polygon_external.exterior.coords.xy))
+
+        triangulation = triangulate(Polygon(new_points_internal + new_points_external))
+        to_return = []
+
+        # clean the triangulation
+        for triangle in triangulation:
+            coords = list(zip(*triangle.exterior.coords.xy))
+
+            # do not add if triangle is completely external
+            if coords[0] in polygon_external_coords and coords[1] in polygon_external_coords and \
+                    coords[2] in polygon_external_coords:
+                should_add = False
+
+            # do not add if triangle is completely internal
+            elif coords[0] in polygon_internal_coords and coords[1] in polygon_internal_coords and \
+                    coords[2] in polygon_internal_coords:
+                should_add = False
+
+                line1 = LineString([(coords[0][0], coords[0][1]),
+                                    (coords[1][0], coords[1][1])])
+                line2 = LineString([(coords[1][0], coords[1][1]),
+                                    (coords[2][0], coords[2][1])])
+                line3 = LineString([(coords[2][0], coords[2][1]),
+                                    (coords[3][0], coords[3][1])])
+
+                # but add it if it is external but with internal vertices (U-shaped polygon)
+                if not (isinstance(polygon_internal.intersection(line1), LineString) and \
+                        isinstance(polygon_internal.intersection(line2), LineString) and \
+                        isinstance(polygon_internal.intersection(line3), LineString)):
+                    should_add = True
+
+            # in any other case, add it.
+            else:
+                should_add = True
+
+            if should_add:
+                to_return.append(coords[0][0])
+                to_return.append(coords[0][1])
+                to_return.append(z_value)
+                to_return.append(coords[1][0])
+                to_return.append(coords[1][1])
+                to_return.append(z_value)
+                to_return.append(coords[2][0])
+                to_return.append(coords[2][1])
+                to_return.append(z_value)
+
+        return to_return
+
+    def __insert_redundant_points(self, distance: float, polygon_points: list):
+        """
+        Insert redundant points in a polygon if a line is longer than the specified distance.
+
+        Args:
+            distance: Distance to use as a limit to check if insert or not new points.
+            polygon_points: List of original points of the polygon. [[x1,y1],[x2,y2],...]
+
+        Returns: List of new points of the polygon. [[x1,y1],[x2,y2],...]
+        """
+        new_points_external = []
+        external_polygon_points_no_z = self.__delete_z_axis(polygon_points)
+        external_polygon_points_no_z_offset = external_polygon_points_no_z[1:] + external_polygon_points_no_z[:1]
+        distance_polygon_points_external = cdist(external_polygon_points_no_z,
+                                                 external_polygon_points_no_z_offset,
+                                                 'euclidean')
+        for point, next_point, index in zip(external_polygon_points_no_z,
+                                            external_polygon_points_no_z_offset,
+                                            range(len(external_polygon_points_no_z))):
+            new_points_external.append(point)
+            if distance_polygon_points_external[index][index] > distance:
+                number_of_divisions = int(distance_polygon_points_external[index][index] / distance)
+
+                for division in range(1, number_of_divisions):
+                    x = point[0] + ((next_point[0] - point[0]) / number_of_divisions) * division
+                    y = point[1] + ((next_point[1] - point[1]) / number_of_divisions) * division
+                    new_points_external.append([x, y])
+
+        return new_points_external
+
     def get_max_min_inside_polygon(self, points_array: np.ndarray, polygon_points: List[float],
                                    heights: np.ndarray) -> tuple:
         """
@@ -313,4 +415,3 @@ class TransformationHelper:
         minimum = np.min(heights_cut[flags])
 
         return maximum, minimum
-

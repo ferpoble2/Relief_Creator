@@ -310,8 +310,7 @@ class Scene:
         for model in self.__model_hash.values():
             model.draw()
         for area_model in self.__interpolation_area_hash.values():
-            area_model['external'].draw()
-            area_model['internal'].draw()
+            area_model.draw()
         for polygon in self.__polygon_hash.values():
             polygon.draw()
 
@@ -888,21 +887,33 @@ class Scene:
         polygon_points = polygon.get_point_list()
         polygon_external_points = polygon.get_exterior_polygon_points(distance)
 
-        log.debug('Get triangulation triangles...')
-        list_of_vertices_external = TransformationHelper().get_inside_polygon_triangulation(polygon_external_points,
-                                                                                            z_value=z_value)
-        list_of_vertices_internal = TransformationHelper().get_inside_polygon_triangulation(polygon_points,
-                                                                                            z_value=z_value)
+        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames
+        def thread_task(polygon_points: list, polygon_external_points: list, distance: float, engine: 'Engine'):
+            engine.set_program_loading(True)
+            engine.set_loading_message('Calculating interpolation area...')
 
-        log.debug('Extracting vertices...')
-        area_model_external = Plane(self)
-        area_model_internal = Plane(self)
-        area_model_internal.set_plane_color((0, 1, 0, 0.3))
+            log.debug('Get triangulation triangles...')
+            triangulation = TransformationHelper().get_interpolation_zone_triangulation(polygon_points,
+                                                                                        polygon_external_points,
+                                                                                        distance)
+            return triangulation
 
-        log.debug('Settings vertices in model...')
-        area_model_external.set_triangles(np.array(list_of_vertices_external))
-        area_model_internal.set_triangles(np.array(list_of_vertices_internal))
+        # noinspection PyMissingOrEmptyDocstring
+        def then_task(triangulation: list, scene: 'Scene'):
+            log.debug('Extracting vertices...')
+            area_model_external = Plane(self)
 
-        log.debug('Adding model to the scene...')
-        self.__interpolation_area_hash[self.__engine.get_active_polygon_id()] = {'internal': area_model_internal,
-                                                                                 'external': area_model_external}
+            log.debug('Settings vertices in model...')
+            area_model_external.set_triangles(np.array(triangulation))
+
+            log.debug('Adding model to the scene...')
+            scene.__interpolation_area_hash[self.__engine.get_active_polygon_id()] = area_model_external
+            scene.__engine.set_program_loading(False)
+
+        self.__engine.set_thread_task(parallel_task=thread_task,
+                                      then=then_task,
+                                      parallel_task_args=(polygon_points,
+                                                          polygon_external_points,
+                                                          distance,
+                                                          self.__engine),
+                                      then_task_args=(self,))

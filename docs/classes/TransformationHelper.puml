@@ -11,6 +11,7 @@ class TransformationHelper {
     + get_max_min_inside_polygon(points, polygon_points, height): tuple
     + interpolate_points_external_to_polygon(points, polygon_points, heights, distance): array
     + modify_points_inside_polygon_linear(points, height, polygon_points, new_max_height, new_min_height)
+    + get_interpolation_zone_triangulation(internal_polygon_points, external_polygon_points, distance, z_value): list
 }
 
 @enduml

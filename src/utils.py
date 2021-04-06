@@ -5,7 +5,7 @@ import logging
 import os
 
 LOG_TO_FILE = False
-LOG_TO_CONSOLE = True
+LOG_TO_CONSOLE = False
 
 LOG_LEVEL = logging.DEBUG
 LOG_FILE_LEVEL = logging.DEBUG
