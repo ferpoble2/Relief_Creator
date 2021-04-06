@@ -82,8 +82,8 @@ class ReliefTools:
                                                           'The polygon is not planar. Try using a planar polygon.')
                     elif e.code == 2:
                         self.__gui_manager.set_modal_text('Error',
-                                                          'The polygon must have at least 3 points to be able to'
-                                                          'modify the heights.')
+                                                          'The polygon must have at least 3 points to be able to '
+                                                          'calculate the information.')
                     elif e.code == 3:
                         self.__gui_manager.set_modal_text('Error',
                                                           'The current model is not supported to use to update the '
@@ -122,7 +122,7 @@ class ReliefTools:
                                                               'model.')
                         elif e.code == 2:
                             self.__gui_manager.set_modal_text('Error',
-                                                              'The polygon must have at least 3 points to be able to'
+                                                              'The polygon must have at least 3 points to be able to '
                                                               'modify the heights.')
                         elif e.code == 3:
                             self.__gui_manager.set_modal_text('Error',
