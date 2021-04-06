@@ -30,3 +30,10 @@ output/
 /src/logs/POLYGON.log
 /src/logs/LINES.log
 /src/logs/Polygon Information.log
+/src/logs/CONFIRMATION_MODAL.log
+/src/logs/INTERPOLATION_TOOLS.log
+/src/logs/MAIN_MENU_BAR.log
+/src/logs/NETCDF.log
+/src/logs/POLYGON_TOOLS.log
+/src/logs/RELIEF_TOOLS.log
+/src/logs/TRANSFORMATION_HELPER.log
