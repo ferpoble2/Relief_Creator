@@ -3,6 +3,8 @@ File with the class TransformationHelper, class in charge of making transformati
 """
 import numpy as np
 from shapely.geometry.polygon import LinearRing as LinearRing
+from shapely.geometry.polygon import Polygon, LineString
+from shapely.ops import triangulate
 from typing import List
 from matplotlib import path
 from scipy import interpolate as interpolate_scipy
@@ -149,6 +151,50 @@ class TransformationHelper:
 
         return data
 
+    def get_inside_polygon_triangulation(self, polygon_points: list, z_value: float = 0.5) -> list:
+        """
+        Get a list of floats representing the vertices of the triangles to cover the interior of the polygon.
+
+        Args:
+            z_value: Value to use as a third component of the vertices.
+            polygon_points: Points of the polygon. (internal area should not be considered in the output)
+
+        Returns: list with vertices of triangles.
+        """
+
+        # get the data clean
+        polygon_points_no_z = self.__delete_z_axis(polygon_points)
+        polygon = Polygon(polygon_points_no_z)
+
+        # triangulate the coordinates
+        triangulation = triangulate(polygon)
+        to_return = []
+
+        # clean the triangulation
+        for triangle in triangulation:
+            coords = list(zip(*triangle.exterior.coords.xy))
+
+            line_1 = LineString([coords[0], coords[1]])
+            line_2 = LineString([coords[1], coords[2]])
+            line_3 = LineString([coords[2], coords[3]])
+
+            if isinstance(polygon.intersection(line_1), LineString) and \
+                    isinstance(polygon.intersection(line_2), LineString) and \
+                    isinstance(polygon.intersection(line_3), LineString):
+                to_return.append(coords[0][0])
+                to_return.append(coords[0][1])
+                to_return.append(z_value)
+
+                to_return.append(coords[1][0])
+                to_return.append(coords[1][1])
+                to_return.append(z_value)
+
+                to_return.append(coords[2][0])
+                to_return.append(coords[2][1])
+                to_return.append(z_value)
+
+        return to_return
+
     def modify_points_inside_polygon_linear(self, points_array: np.ndarray,
                                             height: np.ndarray,
                                             polygon_points: List[float],
@@ -268,117 +314,3 @@ class TransformationHelper:
 
         return maximum, minimum
 
-
-if __name__ == '__main__':
-
-    # noinspection PyUnreachableCode
-    if False:
-        points_2d = [[0, 0], [0, 1], [0, 2], [1, 1], [1, 0]]
-
-        # check if the points are already CW
-        if is_clockwise(points_2d):  # points must be in CCW direction
-            points_2d.reverse()
-
-        linear_ring = LinearRing(points_2d)
-
-        points_2d.append(points_2d[0])  # make it closed
-        linear_ring2 = linear_ring.buffer(8)
-
-        import matplotlib.pyplot as plt
-
-        exterior = linear_ring2.exterior
-
-        x, y = linear_ring.xy
-        x2, y2 = exterior.xy
-
-        plt.plot(x, y, color='red')
-        plt.plot(x2, y2, color='green')
-        plt.show()
-
-    import numpy as np
-    from scipy import interpolate
-    import matplotlib.pyplot as plt
-
-    #
-    # Let's create some random  data
-    array = np.random.random_integers(0, 10, (100, 100)).astype(float)
-    array[:, :] = 10
-    array[0:10, :] = 100
-    array[:, 0:10] = 100
-    array[10:70, 10:70] = np.nan
-
-    array[80, 80:90] = np.nan
-    array[80:90, 90] = np.nan
-    plt.imshow(array)
-    plt.show()
-
-    # x = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-    # y = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-    #
-    # GD1 = interpolate.interp2d(x, y, array)
-    #
-    # Z = GD1(y, x)
-
-    # def nan_helper(y):
-    #     """Helper to handle indices and logical indices of NaNs.
-    #
-    #     Input:
-    #         - y, 1d numpy array with possible NaNs
-    #     Output:
-    #         - nans, logical indices of NaNs
-    #         - index, a function, with signature indices= index(logical_indices),
-    #           to convert logical indices of NaNs to 'equivalent' indices
-    #     Example:
-    #         >>> # linear interpolation of NaNs
-    #         >>> nans, x= nan_helper(y)
-    #         >>> y[nans]= np.interp(x(nans), x(~nans), y[~nans])
-    #     """
-    #
-    #     return np.isnan(y), lambda z: z.nonzero()[0]
-    #
-    # y = array
-    # nans, x = nan_helper(y)
-    # y[nans] = np.interp(x(nans), x(~nans), y[~nans])
-
-    grid_x, grid_y = np.mgrid[10:70, 10:70]
-    points = []
-    values = []
-
-    for row in range(len(array)):
-        for col in range(len(array[0])):
-            if not np.isnan(array[row][col]):
-                points.append([col, row])
-                values.append(array[row][col])
-
-    interpolate_this = [
-        [80, 80],
-        [80, 81],
-        [80, 82],
-        [80, 83],
-        [80, 84],
-        [80, 85],
-        [80, 86],
-        [80, 87],
-        [80, 88],
-        [80, 89],
-        [80, 90],
-        [81, 90],
-        [82, 90],
-        [83, 90],
-        [84, 90],
-        [85, 90],
-        [86, 90],
-        [87, 90],
-        [88, 90],
-        [89, 90],
-    ]
-
-    # noinspection PyTypeChecker
-    y = interpolate.griddata(points, values, interpolate_this, method='cubic')
-    print(y)
-    array[10:70, 10:70] = y
-
-    plt.imshow(array)
-    plt.show()
-    plt.imshow(Z)
-    plt.show()
