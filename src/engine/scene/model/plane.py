@@ -23,7 +23,6 @@ class Plane(Model):
         super().__init__(scene)
 
         self.draw_mode = GL.GL_TRIANGLES
-        self.polygon_mode = GL.GL_LINE
 
         self.update_uniform_values = True
 
@@ -36,6 +35,17 @@ class Plane(Model):
         self.__plane_color = (1, 0, 0, 0.3)
 
         self.set_shaders(self.__vertex_shader_file, self.__fragment_shader_file)
+
+    def set_plane_color(self, new_color: tuple) -> None:
+        """
+        Change the color of the plane.
+
+        Args:
+            new_color: New color to use in the plane. (R,G,B,A)
+
+        Returns: None
+        """
+        self.__plane_color = new_color
 
     def _update_uniforms(self) -> None:
         """
