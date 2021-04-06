@@ -1023,3 +1023,14 @@ class Engine:
         Returns: None
         """
         self.controller.disable_glfw_keyboard_callback()
+
+    def load_preview_interpolation_area(self, distance: float) -> None:
+        """
+        Ask the scene to load the interpolation area for the active polygon.
+
+        Args:
+            distance: Distance to use to calculate the interpolation area.
+
+        Returns: None
+        """
+        self.scene.load_preview_interpolation_area(distance)

@@ -908,3 +908,14 @@ class GUIManager:
         Returns: None
         """
         self.__engine.disable_glfw_keyboard_callback()
+
+    def load_preview_interpolation_area(self, distance: float) -> None:
+        """
+        Ask the engine to load the interpolation area.
+
+        Args:
+            distance: Distance to use to calculate the interpolation area.
+
+        Returns: None
+        """
+        self.__engine.load_preview_interpolation_area(distance)

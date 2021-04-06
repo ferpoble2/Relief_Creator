@@ -34,5 +34,6 @@ package src {
 !include classes/Points.puml
 !include classes/Polygon.puml
 !include classes/Scene.puml
+!include classes/TransformationHelper.puml
 
 @enduml

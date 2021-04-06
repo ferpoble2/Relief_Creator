@@ -44,6 +44,10 @@ class InterpolationTools:
         if self.__distance_current_value < 0:
             self.__distance_current_value = 0
 
+        if imgui.button('Preview Interpolation Area', -1):
+            log.debug('Interpolation Area')
+            self.__gui_manager.load_preview_interpolation_area(self.__distance_current_value)
+
         if imgui.button('Interpolate', -1):
             log.debug('Interpolating points.')
             try:

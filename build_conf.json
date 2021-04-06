@@ -7,7 +7,7 @@
   },
   {
    "optionDest": "filenames",
-   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/main.py"
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria v2/Proyecto_de_Memoria/src/main.py"
   },
   {
    "optionDest": "onefile",
@@ -59,23 +59,23 @@
   },
   {
    "optionDest": "datas",
-   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/logs;logs/"
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria v2/Proyecto_de_Memoria/src/logs;logs/"
   },
   {
    "optionDest": "datas",
-   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/input/test_colors;input/test_colors/"
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria v2/Proyecto_de_Memoria/src/input/test_colors;input/test_colors/"
   },
   {
    "optionDest": "datas",
-   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/input/test_inputs;input/test_inputs/"
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria v2/Proyecto_de_Memoria/src/input/test_inputs;input/test_inputs/"
   },
   {
    "optionDest": "datas",
-   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/venv/Lib/site-packages/glfw/glfw3.dll;."
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria v2/Proyecto_de_Memoria/venv/Lib/site-packages/glfw/glfw3.dll;."
   },
   {
    "optionDest": "datas",
-   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/venv/Lib/site-packages/glfw/msvcr110.dll;."
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria v2/Proyecto_de_Memoria/venv/Lib/site-packages/glfw/msvcr110.dll;."
   },
   {
    "optionDest": "hiddenimports",
@@ -83,19 +83,19 @@
   },
   {
    "optionDest": "datas",
-   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/engine/GUI/fonts;engine/GUI/fonts"
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria v2/Proyecto_de_Memoria/src/engine/GUI/fonts;engine/GUI/fonts"
   },
   {
    "optionDest": "datas",
-   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/engine/shaders;engine/shaders/"
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria v2/Proyecto_de_Memoria/src/engine/shaders;engine/shaders/"
   },
   {
    "optionDest": "datas",
-   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/engine/GUI/icons;engine/GUI/icons"
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria v2/Proyecto_de_Memoria/src/engine/GUI/icons;engine/GUI/icons"
   },
   {
    "optionDest": "datas",
-   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria/src/input/test_polygons;input/test_polygons/"
+   "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria v2/Proyecto_de_Memoria/src/input/test_polygons;input/test_polygons/"
   }
  ],
  "nonPyinstallerOptions": {

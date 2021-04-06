@@ -6,7 +6,6 @@ This class stores all the information related to the polygons that can be draw o
 from src.engine.scene.model.model import Model
 from src.utils import get_logger
 from src.engine.scene.model.points import Points
-from src.engine.scene.model.plane import Plane
 from src.engine.scene.model.lines import Lines
 from src.engine.scene.model.dashed_lines import DashedLines
 from src.error.line_intersection_error import LineIntersectionError

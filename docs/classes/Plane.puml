@@ -1,0 +1,8 @@
+@startuml
+
+class Plane{
+    + set_triangles(vertices)
+    + draw()
+}
+
+@enduml

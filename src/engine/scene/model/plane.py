@@ -23,6 +23,7 @@ class Plane(Model):
         super().__init__(scene)
 
         self.draw_mode = GL.GL_TRIANGLES
+        self.polygon_mode = GL.GL_LINE
 
         self.update_uniform_values = True
 
@@ -56,26 +57,6 @@ class Plane(Model):
                        self.__plane_color[2],
                        self.__plane_color[3])
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_model_projection_matrix())
-
-    def add_triangle(self, vertices: np.ndarray) -> None:
-        """
-        Add a new triangle to the list of triangles and update the vertices.
-
-        Args:
-            vertices: new vertices to add to the model.
-
-        Returns: None
-        """
-        self.__vertices_list = np.concatenate((self.__vertices_list, vertices))
-        num_vertices = len(self.__vertices_list) / 3
-
-        self.__indices_list = np.concatenate((self.__indices_list, [num_vertices - 3,
-                                                                    num_vertices - 2,
-                                                                    num_vertices - 1]))
-
-        # reset the buffers
-        self.set_vertices(self.__vertices_list.astype(dtype=np.float32))
-        self.set_indices(self.__indices_list.astype(dtype=np.uint32))
 
     def set_triangles(self, vertices: np.ndarray) -> None:
         """
