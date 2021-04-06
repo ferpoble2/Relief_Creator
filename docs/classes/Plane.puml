@@ -8,6 +8,7 @@ class Plane{
     - __indices_list: array
 
     + set_triangles(vertices)
+    + set_plane_color(new_color)
     + draw()
 }
 
