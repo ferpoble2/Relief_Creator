@@ -2,11 +2,13 @@
 File that contain the Scene class. This class is in charge of the management of the models of the scene.
 """
 import OpenGL.GL as GL
+import numpy as np
 # noinspection PyPep8Naming
 import OpenGL.constant as OGLConstant
 
 from src.engine.scene.model.map2dmodel import Map2DModel
 from src.engine.scene.model.polygon import Polygon
+from src.engine.scene.model.plane import Plane
 from src.engine.scene.model.model import Model
 from src.input.NetCDF import read_info
 from src.utils import get_logger
@@ -37,6 +39,7 @@ class Scene:
         self.__model_hash = {}
         self.__3d_model_hash = {}
         self.__polygon_hash = {}
+        self.__interpolation_area_hash = {}
         self.__engine = None
 
         self.__width_viewport = None
@@ -306,6 +309,9 @@ class Scene:
         """
         for model in self.__model_hash.values():
             model.draw()
+        for area_model in self.__interpolation_area_hash.values():
+            area_model['external'].draw()
+            area_model['internal'].draw()
         for polygon in self.__polygon_hash.values():
             polygon.draw()
 
@@ -866,3 +872,37 @@ class Scene:
         viewport_data = self.__engine.get_scene_setting_data()
         self.__width_viewport = viewport_data['SCENE_WIDTH_X']
         self.__height_viewport = viewport_data['SCENE_HEIGHT_Y']
+
+    def load_preview_interpolation_area(self, distance: float, z_value: float = 0.5) -> None:
+        """
+        Calculate the interpolation area for the active polygon and draw it on the scene.
+
+        Args:
+            z_value: Value to use for the third component of the vertices in the area polygons.
+            distance: Distance to use to calculate the external area.
+
+        Returns: None
+        """
+        log.debug('Getting polygons...')
+        polygon = self.__polygon_hash[self.__engine.get_active_polygon_id()]
+        polygon_points = polygon.get_point_list()
+        polygon_external_points = polygon.get_exterior_polygon_points(distance)
+
+        log.debug('Get triangulation triangles...')
+        list_of_vertices_external = TransformationHelper().get_inside_polygon_triangulation(polygon_external_points,
+                                                                                            z_value=z_value)
+        list_of_vertices_internal = TransformationHelper().get_inside_polygon_triangulation(polygon_points,
+                                                                                            z_value=z_value)
+
+        log.debug('Extracting vertices...')
+        area_model_external = Plane(self)
+        area_model_internal = Plane(self)
+        area_model_internal.set_plane_color((0, 1, 0, 0.3))
+
+        log.debug('Settings vertices in model...')
+        area_model_external.set_triangles(np.array(list_of_vertices_external))
+        area_model_internal.set_triangles(np.array(list_of_vertices_internal))
+
+        log.debug('Adding model to the scene...')
+        self.__interpolation_area_hash[self.__engine.get_active_polygon_id()] = {'internal': area_model_internal,
+                                                                                 'external': area_model_external}

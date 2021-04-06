@@ -26,7 +26,8 @@
                 + get_zoom_level(): float
                 + initialize(engine)
                 + interpolate_points(polygon_id, model_id, distance, type_interpolation)
-                + is_polygon_planar((polygon_id)
+                + is_polygon_planar(polygon_id)
+                + load_preview_interpolation_area(distance, z_value)
                 + move_models(x_movement, y_movement)
                 + optimize_gpu_memory_async(then)
                 + refresh_with_model_2d(path_color_file, path_model, model_id)
