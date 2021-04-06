@@ -14,6 +14,7 @@ package model {
         class Lines
         class Polygon
         class DashedLines
+        class Plane
     }
 
 Map2DModel -u-|> Model
@@ -21,6 +22,7 @@ Map3DModel -u-|> Model
 Polygon -u-|> Model
 Points -u-|> Model
 Lines -u-|> Model
+Plane -u-|> Model
 DashedLines -u-|> Lines
 Points --o Polygon
 Lines --o Polygon

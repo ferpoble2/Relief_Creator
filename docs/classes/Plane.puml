@@ -1,6 +1,12 @@
 @startuml
 
 class Plane{
+    - __plane_color: tuple
+    - __vertex_shader_file: str
+    - __fragment_shader_file: str
+    - __vertices_list: array
+    - __indices_list: array
+
     + set_triangles(vertices)
     + draw()
 }
