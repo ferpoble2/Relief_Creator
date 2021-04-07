@@ -897,6 +897,7 @@ class GUIManager:
 
         Returns: None
         """
+        log.debug('key callback enabled')
         self.__engine.enable_glfw_keyboard_callback()
 
     def disable_glfw_keyboard_callback(self) -> None:
@@ -907,6 +908,7 @@ class GUIManager:
 
         Returns: None
         """
+        log.debug('key callback disabled')
         self.__engine.disable_glfw_keyboard_callback()
 
     def load_preview_interpolation_area(self, distance: float) -> None:
