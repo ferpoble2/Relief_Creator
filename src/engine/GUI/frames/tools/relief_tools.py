@@ -75,7 +75,6 @@ class ReliefTools:
                 self.__polygon_data[active_polygon_id]['max_height'] = maximum
                 self.__polygon_data[active_polygon_id]['min_height'] = minimum
 
-
         clicked, self.__current_combo_option = imgui.combo(
             "Transformation", self.__current_combo_option, self.__combo_options
         )
@@ -93,22 +92,8 @@ class ReliefTools:
                                                            'points inside it.')
             else:
                 if self.__current_combo_option == 0:
-                    try:
-                        self.__gui_manager.change_points_height(active_polygon_id,
-                                                                active_model_id,
-                                                                min_height=self.__min_height_value,
-                                                                max_height=self.__max_height_value,
-                                                                transformation_type='linear')
-                    except ModelTransformationError as e:
-                        if e.code == 4:
-                            self.__gui_manager.set_modal_text('Error',
-                                                              'The current model is not supported to use to update the '
-                                                              'height of the vertices, try using another type of '
-                                                              'model.')
-                        elif e.code == 2:
-                            self.__gui_manager.set_modal_text('Error',
-                                                              'The polygon must have at least 3 points to be able to '
-                                                              'modify the heights.')
-                        elif e.code == 3:
-                            self.__gui_manager.set_modal_text('Error',
-                                                              'The polygon is not planar. Try using a planar polygon.')
+                    self.__gui_manager.change_points_height(active_polygon_id,
+                                                            active_model_id,
+                                                            min_height=self.__min_height_value,
+                                                            max_height=self.__max_height_value,
+                                                            transformation_type='linear')

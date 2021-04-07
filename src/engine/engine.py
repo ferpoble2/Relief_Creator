@@ -13,6 +13,7 @@ from src.engine.settings import Settings
 from src.utils import get_logger
 from src.error.repeated_point_error import RepeatedPointError
 from src.error.line_intersection_error import LineIntersectionError
+from src.error.model_transformation_error import ModelTransformationError
 from src.error.scene_error import SceneError
 from src.output.shapefile_exporter import ShapefileExporter
 from src.input.shapefile_importer import ShapefileImporter
@@ -1035,7 +1036,22 @@ class Engine:
 
         Returns: None
         """
-        self.scene.transform_points(polygon_id, model_id, min_height, max_height, transformation_type)
+        try:
+            self.scene.transform_points(polygon_id, model_id, min_height, max_height, transformation_type)
+
+        except ModelTransformationError as e:
+            if e.code == 4:
+                self.set_modal_text('Error',
+                                    'The current model is not supported to use to update the '
+                                    'height of the vertices, try using another type of '
+                                    'model.')
+            elif e.code == 2:
+                self.set_modal_text('Error',
+                                    'The polygon must have at least 3 points to be able to '
+                                    'modify the heights.')
+            elif e.code == 3:
+                self.set_modal_text('Error',
+                                    'The polygon is not planar. Try using a planar polygon.')
 
     def undo_action(self) -> None:
         """
