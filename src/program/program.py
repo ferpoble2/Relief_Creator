@@ -175,7 +175,12 @@ class Program:
             log.debug("Directory not selected")
             return
 
-        self.__engine.load_polygon_from_shapefile(path_to_shapefile)
+        # noinspection PyMissingOrEmptyDocstring
+        def task_in_loading():
+            self.__engine.load_polygon_from_shapefile(path_to_shapefile)
+
+        self.__engine.set_loading_message('Loading polygon...')
+        self.__engine.set_task_with_loading_frame(task_in_loading)
 
     def process_arguments(self, arguments: 'argparse.Namespace') -> None:
         """
