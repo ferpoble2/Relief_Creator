@@ -14,6 +14,7 @@ class Program:
     Class that represents the program and its state.
     """
 
+    # noinspection PyUnresolvedReferences
     def __init__(self, engine: 'Engine'):
         """
         Constructor of the class.
@@ -177,6 +178,7 @@ class Program:
         self.__engine.set_loading_message('Loading polygon...')
         self.__engine.set_task_with_loading_frame(task_in_loading)
 
+    # noinspection PyUnresolvedReferences
     def process_arguments(self, arguments: 'argparse.Namespace') -> None:
         """
         Parse the arguments and do the actions related to each command.
