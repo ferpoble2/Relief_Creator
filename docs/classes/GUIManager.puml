@@ -29,6 +29,7 @@ class GUIManager{
     + change_quality(quality)
     + create_new_polygon(): str
     + load_preview_interpolation_area(distance)
+    + remove_interpolation_preview(polygon_id)
     + create_polygon_folder(name): PolygonFolder
     + delete_all_polygons_inside_folder(polygon_folder_id)
     + delete_polygon_by_id(polygon_id)

@@ -48,6 +48,10 @@ class InterpolationTools:
             log.debug('Interpolation Area')
             self.__gui_manager.load_preview_interpolation_area(self.__distance_current_value)
 
+        if imgui.button('Remove preview', -1):
+            log.debug('Delete preview')
+            self.__gui_manager.remove_interpolation_preview(self.__gui_manager.get_active_polygon_id())
+
         if imgui.button('Interpolate', -1):
             log.debug('Interpolating points.')
             try:

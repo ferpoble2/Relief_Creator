@@ -1039,3 +1039,15 @@ class Engine:
         Returns: None
         """
         self.scene.load_preview_interpolation_area(distance)
+
+    def remove_interpolation_preview(self, polygon_id: str) -> None:
+        """
+        Ask the scene to remove the interpolation area of the specified polygon.
+
+        Args:
+            polygon_id: Polygon if of the polygon to remove the area to.
+
+        Returns: None
+        """
+        self.scene.remove_interpolation_preview(polygon_id)
+

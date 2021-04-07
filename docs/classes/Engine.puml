@@ -62,6 +62,7 @@ class Engine {
     + load_polygon_from_shapefile(filename)
     + load_shapefile_file_with_dialog()
     + load_preview_interpolation_area(distance)
+    + remove_interpolation_preview(polygon_id)
     + move_scene(x_movement, y_movement)
     + optimize_gpu_memory()
     + refresh_with_model_2d_async(path_color_file, path_model, model_id, then)

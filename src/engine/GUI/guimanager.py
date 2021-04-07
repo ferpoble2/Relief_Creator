@@ -923,3 +923,16 @@ class GUIManager:
         Returns: None
         """
         self.__engine.load_preview_interpolation_area(distance)
+
+    def remove_interpolation_preview(self, polygon_id: str) -> None:
+        """
+        Ask the engine to remove the interpolation preview of the specified polygon.
+
+        Do nothing if there is no interpolation area being showed.
+
+        Args:
+            polygon_id: Polygon id to delete the area.
+
+        Returns: None
+        """
+        self.__engine.remove_interpolation_preview(polygon_id)

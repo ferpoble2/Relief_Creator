@@ -917,3 +917,16 @@ class Scene:
                                                           distance,
                                                           self.__engine),
                                       then_task_args=(self,))
+
+    def remove_interpolation_preview(self, polygon_id: str) -> None:
+        """
+        Remove the interpolation area of the specified polygon.
+
+        Do nothing if the area does not exists.
+
+        Args:
+            polygon_id: Polygon to remove the area to.
+
+        Returns: None
+        """
+        self.__interpolation_area_hash.pop(polygon_id, None)
