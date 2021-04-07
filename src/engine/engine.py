@@ -637,6 +637,7 @@ class Engine:
         Returns: None
         """
         polygons_point_list, polygons_param_list = ShapefileImporter().get_polygon_information(filename)
+        error_number = 0
 
         for ind in range(len(polygons_point_list)):
             errors = False
@@ -658,8 +659,7 @@ class Engine:
                     errors = True
                     self.scene.delete_polygon_by_id(new_polygon_id)
                     self.set_active_polygon(None)
-                    self.set_modal_text('Error',
-                                        'A polygon in the file has intersected lines, so it will not be loaded.')
+                    error_number += 1
                     break
 
                 except RepeatedPointError as e:
@@ -667,7 +667,7 @@ class Engine:
                     errors = True
                     self.scene.delete_polygon_by_id(new_polygon_id)
                     self.set_active_polygon(None)
-                    self.set_modal_text('Error', 'A polygon loaded has repeated points, so it will not be loaded.')
+                    error_number += 1
                     break
 
             if not errors:
@@ -675,9 +675,10 @@ class Engine:
                 log.debug('add polygon to the gui frames')
                 self.gui_manager.add_imported_polygon(new_polygon_id)
 
-        log.debug('Set the modal text of success...')
-        self.set_modal_text('Information', 'Shapefile loaded successfully')
-        return
+        if error_number == 0:
+            self.set_modal_text('Information', 'Shapefile loaded successfully')
+        else:
+            self.set_modal_text('Information', f'There was {error_number} polygons with errors that were not loaded.')
 
     def load_preview_interpolation_area(self, distance: float) -> None:
         """
