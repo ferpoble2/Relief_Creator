@@ -648,8 +648,11 @@ class Engine:
 
             if not errors:
                 # tell the gui manager that a new polygon was created
+                log.debug('add polygon to the gui frames')
                 self.gui_manager.add_imported_polygon(new_polygon_id)
 
+        log.debug('Set the modal text of success...')
+        self.set_modal_text('Information', 'Shapefile loaded successfully')
         return
 
     def load_shapefile_file_with_dialog(self) -> None:
