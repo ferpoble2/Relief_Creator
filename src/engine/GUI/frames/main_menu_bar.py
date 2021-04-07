@@ -50,16 +50,7 @@ class MainMenuBar(Frame):
         if imgui.begin_menu('File', True):
             imgui.menu_item('Open NetCDF file...', 'Ctrl+O', False, True)
             if imgui.is_item_clicked():
-                try:
-                    self._GUI_manager.load_netcdf_file_with_dialog()
-
-                except KeyError:
-                    log.debug("Error reading files, KeyError")
-                    self._GUI_manager.set_modal_text("Error", "Error reading the selected files (KeyError)")
-
-                except OSError:
-                    log.debug("File not selected or corrupted.")
-                    self._GUI_manager.set_modal_text("Error", "File not selected or corrupted.")
+                self._GUI_manager.load_netcdf_file_with_dialog()
 
             imgui.menu_item('Change CPT file...', 'Ctrl+T', False, True)
             if imgui.is_item_clicked():

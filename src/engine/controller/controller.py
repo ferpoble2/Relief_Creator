@@ -95,16 +95,7 @@ class Controller:
 
         Returns: None
         """
-        try:
-            self.__engine.load_netcdf_file_with_dialog()
-
-        except KeyError as e:
-            log.exception(f"Error reading files, {e}")
-            self.__engine.set_modal_text("Error", "Error reading the selected files (KeyError)")
-
-        except OSError as e:
-            log.exception(f"Error reading files,{e}")
-            self.__engine.set_modal_text("Error", "Error reading the selected files (OSError)")
+        self.__engine.load_netcdf_file_with_dialog()
 
     def __load_shapefile_file_with_dialog(self) -> None:
         """

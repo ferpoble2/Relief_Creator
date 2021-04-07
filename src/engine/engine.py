@@ -755,13 +755,14 @@ class Engine:
         try:
             self.scene.refresh_with_model_2d_async(path_color_file, path_model, model_id, then_routine)
 
-        except OSError as e:
+        except OSError:
             self.program.set_loading(False)
-            raise e
+            self.set_modal_text('Error', 'Error reading selected file. Is the file a netcdf file?')
 
-        except KeyError as e:
+        except KeyError:
             self.program.set_loading(False)
-            raise e
+            self.set_modal_text('Error', 'Error reading selected file. Is the key used in the file inside the '
+                                         'list of keys?')
 
     def reload_models(self) -> None:
         """
