@@ -49,20 +49,7 @@ class Controller:
 
         Returns: None
         """
-        try:
-            self.__engine.change_color_file_with_dialog()
-
-        except KeyError as e:
-            log.exception(f"Error reading files: {e}")
-            self.__engine.set_modal_text("Error", "Error reading color file (KeyError)")
-
-        except IOError as e:
-            log.exception(f"Error reading files: {e}")
-            self.__engine.set_modal_text("Error", "Error reading color file (IOError)")
-
-        except TypeError as e:
-            log.exception(f"Error reading files: {e}")
-            self.__engine.set_modal_text("Error", "Error reading color file (TypeError)")
+        self.__engine.change_color_file_with_dialog()
 
     def __is_inside_scene(self, mouse_x_pos: int, mouse_y_pos: int) -> bool:
         """

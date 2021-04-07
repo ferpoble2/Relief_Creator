@@ -54,21 +54,7 @@ class MainMenuBar(Frame):
 
             imgui.menu_item('Change CPT file...', 'Ctrl+T', False, True)
             if imgui.is_item_clicked():
-
-                try:
-                    self._GUI_manager.change_color_file_with_dialog()
-
-                except KeyError as e:
-                    log.exception(f"Error reading files: {e}")
-                    self._GUI_manager.set_modal_text("Error", "Error reading color file (KeyError)")
-
-                except IOError as e:
-                    log.exception(f"Error reading files: {e}")
-                    self._GUI_manager.set_modal_text("Error", "Error reading color file (IOError)")
-
-                except TypeError as e:
-                    log.exception(f"Error reading files: {e}")
-                    self._GUI_manager.set_modal_text("Error", "Error reading color file (TypeError)")
+                self._GUI_manager.change_color_file_with_dialog()
 
             imgui.separator()
             imgui.menu_item('Load shapefile file...', 'Ctrl+L', False, True)

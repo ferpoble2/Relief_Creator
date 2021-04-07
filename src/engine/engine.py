@@ -143,7 +143,12 @@ class Engine:
 
         Returns: None
         """
-        self.program.change_cpt_file_with_dialog()
+        try:
+            self.program.change_cpt_file_with_dialog()
+        except FileNotFoundError:
+            self.set_modal_text('Error', 'File not loaded.')
+        except IOError:
+            self.set_modal_text('Error', 'File is not a cpt file.')
 
     def change_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
