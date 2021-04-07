@@ -893,7 +893,7 @@ class Scene:
         polygon_points = polygon.get_point_list()
         polygon_external_points = polygon.get_exterior_polygon_points(distance)
 
-        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames
+        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
         def thread_task(polygon_points: list, polygon_external_points: list, distance: float, engine: 'Engine',
                         calculate_area: bool, z_value: float):
             engine.set_program_loading(True)
