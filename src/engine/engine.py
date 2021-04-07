@@ -906,12 +906,13 @@ class Engine:
             'frames': n_frames  # need to be 2 to really wait one full frame
         })
 
-    def set_task_with_loading_frame(self, task: callable) -> None:
+    def set_task_with_loading_frame(self, task: callable, n_frames_to_wait: int = 3) -> None:
         """
         Set a task to be executed at the end of the next frame. Also configures the loading setting of
         the program to show the loading frame on the screen.
 
         Args:
+            n_frames_to_wait: Number of frames to wait before executing the task.
             task: Task to be called in while showing a loading frame.
 
         Returns: None
@@ -923,7 +924,7 @@ class Engine:
             task()
             self.program.set_loading(False)
 
-        self.set_task_for_next_frame(task_loading)
+        self.set_task_for_next_frame(task_loading, n_frames_to_wait)
 
     def set_thread_task(self, parallel_task, then, parallel_task_args=None, then_task_args=None) -> None:
         """
