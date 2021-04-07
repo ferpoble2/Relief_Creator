@@ -57,7 +57,7 @@ class Program:
 
         Returns: None
         """
-        path_color_file = easygui.fileopenbox('Select CPT file...')
+        path_color_file = self.open_openbox_dialog('Select CPT file...')
         log.debug(f"path_color_file: {path_color_file}")
 
         self.set_cpt_file(path_color_file)
@@ -153,7 +153,7 @@ class Program:
         Returns: None
         """
         log.info("Open File Dialog")
-        path_model = easygui.fileopenbox('Select NETCDF file...')
+        path_model = self.open_openbox_dialog('Select NETCDF file...')
         path_color_file = self.get_cpt_file()
 
         log.debug(f"path_model: {path_model}")
@@ -168,12 +168,7 @@ class Program:
 
         Returns: None
         """
-        path_to_shapefile = easygui.fileopenbox('Select a shapefile file...')
-        log.debug(f"Path to shapefile: {path_to_shapefile}")
-
-        if path_to_shapefile is None:
-            log.debug("Directory not selected")
-            return
+        path_to_shapefile = self.open_openbox_dialog('Select a shapefile file...')
 
         # noinspection PyMissingOrEmptyDocstring
         def task_in_loading():
@@ -282,3 +277,22 @@ class Program:
         Returns: None
         """
         self.__map_position = new_position
+
+    def open_openbox_dialog(self, message) -> str:
+        """
+        Open a openfile dialog.
+
+        Raise FileNotFound if file is None.
+
+        Args:
+            message: Message to show in the openbox.
+
+        Returns: File selected by the user.
+        """
+        path_to_file = easygui.fileopenbox(message)
+        log.debug(f"Path to file: {path_to_file}")
+
+        if path_to_file is None:
+            raise FileNotFoundError('File not selected.')
+
+        return path_to_file

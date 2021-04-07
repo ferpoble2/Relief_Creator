@@ -58,8 +58,8 @@ class MainMenuBar(Frame):
                     self._GUI_manager.set_modal_text("Error", "Error reading the selected files (KeyError)")
 
                 except OSError:
-                    log.debug("Error reading files, OSError")
-                    self._GUI_manager.set_modal_text("Error", "Error reading the selected files (OSError)")
+                    log.debug("File not selected or corrupted.")
+                    self._GUI_manager.set_modal_text("Error", "File not selected or corrupted.")
 
             imgui.menu_item('Change CPT file...', 'Ctrl+T', False, True)
             if imgui.is_item_clicked():

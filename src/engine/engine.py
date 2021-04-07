@@ -621,7 +621,11 @@ class Engine:
 
         Returns: None
         """
-        self.program.load_netcdf_file_with_dialog()
+        try:
+            self.program.load_netcdf_file_with_dialog()
+        except FileNotFoundError as e:
+            log.exception(e)
+            self.set_modal_text('Error', 'File not loaded.')
 
     def load_polygon_from_shapefile(self, filename: str) -> None:
         """
@@ -692,7 +696,11 @@ class Engine:
 
         Returns: None
         """
-        self.program.load_shapefile_file_with_dialog()
+        try:
+            self.program.load_shapefile_file_with_dialog()
+        except FileNotFoundError as e:
+            log.exception(e)
+            self.set_modal_text('Error', 'File not loaded.')
 
     def move_scene(self, x_movement: int, y_movement: int) -> None:
         """
