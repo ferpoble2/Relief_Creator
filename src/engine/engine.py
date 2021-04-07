@@ -664,6 +664,15 @@ class Engine:
         Returns: None
         """
         polygons_point_list, polygons_param_list = ShapefileImporter().get_polygon_information(filename)
+
+        if polygons_point_list is None and polygons_param_list is None:
+            self.set_modal_text('Error', 'An error happened while loading file.')
+            return
+
+        if self.get_active_model_id() is None:
+            self.set_modal_text('Error', 'Please load a model before loading polygons.')
+            return
+
         error_number = 0
 
         for ind in range(len(polygons_point_list)):

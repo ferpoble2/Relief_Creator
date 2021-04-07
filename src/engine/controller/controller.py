@@ -92,19 +92,7 @@ class Controller:
 
         Returns: None
         """
-
-        # check that a map is loaded in the program
-        if self.__engine.get_active_model_id() is None:
-            self.__engine.set_modal_text('Error', 'Load a netcdf file before loading a polygon.')
-
-        # in case all check pass
-        else:
-            try:
-                self.__engine.load_shapefile_file_with_dialog()
-
-            except shapefile.ShapefileException as e:
-                log.error(e)
-                self.__engine.set_modal_text('Error', 'Error loading file. (ShapefileException)')
+        self.__engine.load_shapefile_file_with_dialog()
 
     def __set_mouse_pos(self, new_x: int, new_y: int) -> None:
         """

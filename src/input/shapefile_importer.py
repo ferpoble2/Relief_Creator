@@ -21,6 +21,8 @@ class ShapefileImporter:
         """
         Retrieve the information stored in a shapefile file.
 
+        Return (None, None) if there was a problem while getting the information from the file.
+
         Convert parameters to the types accepted by the program.
             - str
             - float
@@ -28,7 +30,10 @@ class ShapefileImporter:
 
         Returns: (list, list) A tuple with the points of the polygons and the parameters stored in them.
         """
-        sf = shapefile.Reader(filename)
+        try:
+            sf = shapefile.Reader(filename)
+        except shapefile.ShapefileException:
+            return None, None
 
         point_list = []
         parameter_list = []
