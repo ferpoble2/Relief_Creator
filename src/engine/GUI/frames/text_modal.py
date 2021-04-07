@@ -33,24 +33,27 @@ class TextModal(Frame):
         # auxiliary variables
         # -------------------
         self.__tool_before_pop_up = None
+        self.__first_frame_call = False
 
     def render(self) -> None:
         """
         Render a modal with the specified text.
         Returns: None
         """
-
-        if self.__should_show:
+        if self.__first_frame_call:
             # stores the active tool and deactivate it
             # ----------------------------------------
             self.__tool_before_pop_up = self._GUI_manager.get_active_tool()
             self._GUI_manager.set_active_tool(None)
 
-            # open the pop up and size it
-            # ---------------------------
-            imgui.open_popup(self.__modal_title)
+            # disable keyboard input
             self._GUI_manager.disable_glfw_keyboard_callback()
-            self.__should_show = False
+
+            # already passed the first frame call
+            self.__first_frame_call = False
+
+        if self.__should_show:
+            imgui.open_popup(self.__modal_title)
 
         imgui.set_next_window_size(self.__windows_width, -1)
         imgui.set_next_window_position(imgui.get_io().display_size.x * 0.5,
@@ -68,6 +71,7 @@ class TextModal(Frame):
 
                 # close the pop up
                 # ----------------
+                self.__should_show = False
                 imgui.close_current_popup()
                 self._GUI_manager.enable_glfw_keyboard_callback()
 
@@ -85,5 +89,6 @@ class TextModal(Frame):
         """
         log.debug("Modal set to show")
         self.__should_show = True
+        self.__first_frame_call = True
         self.__modal_title = modal_title
         self.__msg = msg
