@@ -92,7 +92,6 @@ class MainMenuBar(Frame):
                 else:
                     try:
                         self._GUI_manager.load_shapefile_file_with_dialog()
-                        imgui.close_current_popup()
 
                     except shapefile.ShapefileException as e:
                         log.error(e)
