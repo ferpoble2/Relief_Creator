@@ -361,7 +361,7 @@ class TransformationHelper:
 
     def __insert_redundant_points(self, distance: float, polygon_points: list):
         """
-        Insert redundant points in a polygon if a line is longer than the specified distance.
+        Insert redundant points in a line of the polygon if the line is longer than the specified distance.
 
         Args:
             distance: Distance to use as a limit to check if insert or not new points.
@@ -369,12 +369,19 @@ class TransformationHelper:
 
         Returns: List of new points of the polygon. [[x1,y1],[x2,y2],...]
         """
-        new_points_external = []
+
+        # delete repeated point at the end.
+        if polygon_points[-3:] == polygon_points[:3]:
+            polygon_points.pop()
+            polygon_points.pop()
+            polygon_points.pop()
+
         external_polygon_points_no_z = self.__delete_z_axis(polygon_points)
         external_polygon_points_no_z_offset = external_polygon_points_no_z[1:] + external_polygon_points_no_z[:1]
         distance_polygon_points_external = cdist(external_polygon_points_no_z,
                                                  external_polygon_points_no_z_offset,
                                                  'euclidean')
+        new_points_external = []
         for point, next_point, index in zip(external_polygon_points_no_z,
                                             external_polygon_points_no_z_offset,
                                             range(len(external_polygon_points_no_z))):
