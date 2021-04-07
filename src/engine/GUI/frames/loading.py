@@ -23,9 +23,10 @@ class Loading(Frame):
         self.__loading_message = "Please wait a moment..."
         self.__windows_width, self.__windows_height = 300, 100
 
-    def render(self) -> None:
+    def post_render(self) -> None:
         """
-        Render the loading text when the program is in a loading state.
+        Implement all the logic related to the popup to show when the program is loading.
+
         Returns: None
         """
 
@@ -42,6 +43,13 @@ class Loading(Frame):
                 self._GUI_manager.enable_glfw_keyboard_callback()
 
             imgui.end_popup()
+
+    def render(self) -> None:
+        """
+        Do nothing since this frame does not have any windows to render.
+        Returns: None
+        """
+        pass
 
     def set_loading_message(self, new_msg: str) -> None:
         """

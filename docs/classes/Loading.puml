@@ -4,6 +4,7 @@ class Loading {
     - __windows_width: int
     - __windows_height: int
     + render()
+    + post_render()
     + set_loading_message(new_msg)
 }
 

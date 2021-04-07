@@ -9,5 +9,6 @@ class Frame {
     + change_position(new_position)
     + get_position(): list
     + render()
+    + post_render()
 }
 @enduml

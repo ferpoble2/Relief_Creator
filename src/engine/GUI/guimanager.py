@@ -301,6 +301,8 @@ class GUIManager:
         with imgui.font(self.__font_regular):
             for frame in self.__component_list:
                 frame.render()
+            for frame in self.__component_list:
+                frame.post_render()
         imgui.end_frame()
 
         # check for the mouse component
