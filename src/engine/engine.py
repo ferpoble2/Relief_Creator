@@ -890,11 +890,12 @@ class Engine:
         """
         self.program.set_loading(new_state)
 
-    def set_task_for_next_frame(self, task: callable) -> None:
+    def set_task_for_next_frame(self, task: callable, n_frames: int = 2) -> None:
         """
         Add a task to do in the next frame.
 
         Args:
+            n_frames: Number of frames to wait.
             task: Callable to call in the next frame.
 
         Returns: None
@@ -902,7 +903,7 @@ class Engine:
         log.debug("Setting task for next frame")
         self.__pending_task_list.append({
             'task': task,
-            'frames': 2  # need to be 2 to really wait one full frame
+            'frames': n_frames  # need to be 2 to really wait one full frame
         })
 
     def set_task_with_loading_frame(self, task: callable) -> None:
