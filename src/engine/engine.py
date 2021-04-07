@@ -217,6 +217,26 @@ class Engine:
         """
         self.scene.delete_polygon_by_id(polygon_id)
 
+    def disable_glfw_keyboard_callback(self) -> None:
+        """
+        Disable the glfw callback defined in the controller.
+
+        The GUI callback is not affected.
+
+        Returns: None
+        """
+        self.controller.disable_glfw_keyboard_callback()
+
+    def enable_glfw_keyboard_callback(self) -> None:
+        """
+        Enable the glfw callback defined in the controller.
+
+        The GUI callback is not affected.
+
+        Returns: None
+        """
+        self.controller.enable_glfw_keyboard_callback()
+
     def export_model_as_netcdf(self, model_id: str) -> None:
         """
         Save the information of a model in a netcdf file.
@@ -348,6 +368,14 @@ class Engine:
         """
         return self.program.get_cpt_file()
 
+    def get_extra_reload_proportion_setting(self) -> float:
+        """
+        Get the extra reload proportion stored in the settings of the program.
+
+        Returns: Float with the value of the extra reload proportion.
+        """
+        return Settings.EXTRA_RELOAD_PROPORTION
+
     def get_float_bytes(self) -> int:
         """
         Return the number of bytes used to represent a float number in opengl.
@@ -436,14 +464,6 @@ class Engine:
         Returns: Quality setting
         """
         return Settings.QUALITY
-
-    def get_extra_reload_proportion_setting(self) -> float:
-        """
-        Get the extra reload proportion stored in the settings of the program.
-
-        Returns: Float with the value of the extra reload proportion.
-        """
-        return Settings.EXTRA_RELOAD_PROPORTION
 
     def get_render_settings(self):
         """
@@ -655,6 +675,17 @@ class Engine:
         self.set_modal_text('Information', 'Shapefile loaded successfully')
         return
 
+    def load_preview_interpolation_area(self, distance: float) -> None:
+        """
+        Ask the scene to load the interpolation area for the active polygon.
+
+        Args:
+            distance: Distance to use to calculate the interpolation area.
+
+        Returns: None
+        """
+        self.scene.load_preview_interpolation_area(distance)
+
     def load_shapefile_file_with_dialog(self) -> None:
         """
         Call the program to open the dialog to load a shapefile file.
@@ -739,6 +770,17 @@ class Engine:
             # self.program.set_loading(False)
 
         self.scene.reload_models_async(then_routine)
+
+    def remove_interpolation_preview(self, polygon_id: str) -> None:
+        """
+        Ask the scene to remove the interpolation area of the specified polygon.
+
+        Args:
+            polygon_id: Polygon if of the polygon to remove the area to.
+
+        Returns: None
+        """
+        self.scene.remove_interpolation_preview(polygon_id)
 
     def reset_zoom_level(self) -> None:
         """
@@ -1008,46 +1050,3 @@ class Engine:
         Update the scene viewport with the new values that exist in the Settings.
         """
         self.scene.update_viewport()
-
-    def enable_glfw_keyboard_callback(self) -> None:
-        """
-        Enable the glfw callback defined in the controller.
-
-        The GUI callback is not affected.
-
-        Returns: None
-        """
-        self.controller.enable_glfw_keyboard_callback()
-
-    def disable_glfw_keyboard_callback(self) -> None:
-        """
-        Disable the glfw callback defined in the controller.
-
-        The GUI callback is not affected.
-
-        Returns: None
-        """
-        self.controller.disable_glfw_keyboard_callback()
-
-    def load_preview_interpolation_area(self, distance: float) -> None:
-        """
-        Ask the scene to load the interpolation area for the active polygon.
-
-        Args:
-            distance: Distance to use to calculate the interpolation area.
-
-        Returns: None
-        """
-        self.scene.load_preview_interpolation_area(distance)
-
-    def remove_interpolation_preview(self, polygon_id: str) -> None:
-        """
-        Ask the scene to remove the interpolation area of the specified polygon.
-
-        Args:
-            polygon_id: Polygon if of the polygon to remove the area to.
-
-        Returns: None
-        """
-        self.scene.remove_interpolation_preview(polygon_id)
-
