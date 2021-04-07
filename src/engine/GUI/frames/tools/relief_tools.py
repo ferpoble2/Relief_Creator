@@ -70,26 +70,11 @@ class ReliefTools:
                                                            'height of the '
                                                            'points inside it.')
             else:
-                try:
-                    maximum, minimum = self.__gui_manager.calculate_max_min_height(active_model_id,
-                                                                                   active_polygon_id)
-                    self.__polygon_data[active_polygon_id]['max_height'] = maximum
-                    self.__polygon_data[active_polygon_id]['min_height'] = minimum
+                maximum, minimum = self.__gui_manager.calculate_max_min_height(active_model_id,
+                                                                               active_polygon_id)
+                self.__polygon_data[active_polygon_id]['max_height'] = maximum
+                self.__polygon_data[active_polygon_id]['min_height'] = minimum
 
-                except SceneError as e:
-                    if e.code == 1:
-                        self.__gui_manager.set_modal_text('Error',
-                                                          'The polygon is not planar. Try using a planar polygon.')
-                    elif e.code == 2:
-                        self.__gui_manager.set_modal_text('Error',
-                                                          'The polygon must have at least 3 points to be able to '
-                                                          'calculate the information.')
-                    elif e.code == 3:
-                        self.__gui_manager.set_modal_text('Error',
-                                                          'The current model is not supported to use to update the '
-                                                          'height of the vertices, try using another type of model.')
-                    else:
-                        raise e
 
         clicked, self.__current_combo_option = imgui.combo(
             "Transformation", self.__current_combo_option, self.__combo_options

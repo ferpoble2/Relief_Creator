@@ -13,6 +13,7 @@ from src.engine.settings import Settings
 from src.utils import get_logger
 from src.error.repeated_point_error import RepeatedPointError
 from src.error.line_intersection_error import LineIntersectionError
+from src.error.scene_error import SceneError
 from src.output.shapefile_exporter import ShapefileExporter
 from src.input.shapefile_importer import ShapefileImporter
 from src.output.netcdf_exporter import NetcdfExporter
@@ -112,7 +113,27 @@ class Engine:
 
         Returns: tuple with the max and min value.
         """
-        return self.scene.calculate_max_min_height(model_id, polygon_id)
+
+        try:
+            return self.scene.calculate_max_min_height(model_id, polygon_id)
+
+        except SceneError as e:
+            if e.code == 1:
+                self.set_modal_text('Error',
+                                    'The polygon is not planar. Try using a planar polygon.')
+                return None, None
+            elif e.code == 2:
+                self.set_modal_text('Error',
+                                    'The polygon must have at least 3 points to be able to '
+                                    'calculate the information.')
+                return None, None
+            elif e.code == 3:
+                self.set_modal_text('Error',
+                                    'The current model is not supported to use to update the '
+                                    'height of the vertices, try using another type of model.')
+                return None, None
+            else:
+                raise e
 
     def change_color_file_with_dialog(self) -> None:
         """
