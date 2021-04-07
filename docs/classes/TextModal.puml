@@ -9,6 +9,7 @@ class TextModal {
     - __msg: str
 
     + render()
+    + post_render()
     + set_modal_text(modal_title, msg)
 }
 
