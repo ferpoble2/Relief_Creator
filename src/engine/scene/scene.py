@@ -849,7 +849,7 @@ class Scene:
         scene_data = self.__engine.get_scene_setting_data()
 
         for model in self.__model_hash.values():
-            model.calculate_projection_matrix(scene_data, self.__engine.get_zoom_level())
+            model.calculate_projection_matrix(scene_data, self.get_zoom_level())
 
     def update_viewport(self) -> None:
         """
