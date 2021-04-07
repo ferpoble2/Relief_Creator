@@ -5,13 +5,19 @@ import logging
 import os
 
 LOG_TO_FILE = False
-LOG_TO_CONSOLE = False
+LOG_TO_CONSOLE = True
 
 LOG_LEVEL = logging.DEBUG
 LOG_FILE_LEVEL = logging.DEBUG
 
-LOG_ONLY_LISTED_MODULES = False
-LOG_LIST_MODULES = ['TOOLS']
+LOG_ONLY_LISTED_MODULES = True
+LOG_LIST_MODULES = [
+    'CONTROLLER',
+    'ENGINE',
+    'PROGRAM',
+    'SCENE',
+    'TEXT_MODAL'
+]
 
 
 def get_logger(log_level: int = LOG_LEVEL, log_file_level: int = LOG_FILE_LEVEL, module: str = 'GLOBAL',
