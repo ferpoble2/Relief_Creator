@@ -28,6 +28,8 @@ This is a list of shortcuts implemented in the program to make the usage of it m
 - WASD: Movement of the loaded map
 - R: Reload the map with the current resolution
 
+NOTE: shortcuts does not work when there is a popup in the program.
+
 # Instructions for developers
 
 To install the dependencies of the program run the following command in the root folder of the project:
