@@ -11,7 +11,6 @@ from src.program.parser import get_command_line_arguments
 if __name__ == '__main__':
     engine = Engine()
     program = Program(engine)
-    program.initialize(program)
 
     program.process_arguments(get_command_line_arguments())
     program.run()
