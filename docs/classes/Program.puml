@@ -8,6 +8,7 @@ class Program {
     - __loading: boolean
     - __map_position: list
     - __zoom_level: float
+    - __view_mode: str
 
     + add_zoom()
     + change_cpt_file_with_dialog()
@@ -29,5 +30,8 @@ class Program {
     + set_active_tool(new_tool)
     + set_cpt_file(new_file)
     + set_loading(is_loading)
+    + get_view_mode(): str
+    + set_view_mode_2D()
+    + set_view_mode_3D()
 }
 @enduml

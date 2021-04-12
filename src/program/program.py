@@ -40,6 +40,34 @@ class Program:
         self.__active_tool = None
         self.__active_polygon = None
 
+        self.__view_mode = '2D'
+
+    def get_view_mode(self) -> str:
+        """
+        Get the view mode used by the program.
+
+        Values can be 2D or 3D in string format.
+
+        Returns: view mode being used.
+        """
+        return self.__view_mode
+
+    def set_view_mode_2D(self) -> None:
+        """
+        Set the view mode of the program to 2D.
+
+        Returns: None
+        """
+        self.__view_mode = '2D'
+
+    def set_view_mode_3D(self) -> None:
+        """
+        Set the view mode of the program to 3D.
+
+        Returns: None
+        """
+        self.__view_mode = '3D'
+
     def add_zoom(self) -> None:
         """
         Increase on 1 the level of zoom.
