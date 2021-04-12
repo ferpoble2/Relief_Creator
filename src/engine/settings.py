@@ -35,8 +35,6 @@ class Settings:
     SCENE_WIDTH_X = WIDTH - LEFT_FRAME_WIDTH
     SCENE_HEIGHT_Y = HEIGHT - MAIN_MENU_BAR_HEIGHT
 
-    VIEW_MODE = '2D'
-
     # GUI settings
     FONT_SIZE = 18
     TOOL_TITLE_FONT_SIZE = 25

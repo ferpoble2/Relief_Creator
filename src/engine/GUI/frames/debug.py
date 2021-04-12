@@ -36,7 +36,7 @@ class Debug(Frame):
         """
         zoom_level = self._GUI_manager.get_zoom_level()
         position = self._GUI_manager.get_map_position()
-        view_mode = self._GUI_manager.get_view_mode()
+        view_mode = self._GUI_manager.get_program_view_mode()
         active_tool = self._GUI_manager.get_active_tool()
         active_polygon = self._GUI_manager.get_active_polygon_id()
         active_model = self._GUI_manager.get_active_model_id()

@@ -1,7 +1,8 @@
 @startuml
 'https://plantuml.com/class-diagram
 class GUIManager{
-    - __component_list: list
+    - __component_list_2D: list
+    - __component_list_3D: list
     - __engine: Engine
     - __font_bold: IMGUI.font
     - __font_regular: IMGUI.font
@@ -57,7 +58,6 @@ class GUIManager{
     + get_polygon_parameters(polygon_id): list
     + get_polygons_id_from_polygon_folder(polygon_folder_id): list
     + get_quality(): int
-    + get_view_mode(): str
     + get_window_height(): int
     + get_window_width(): int
     + get_zoom_level(): float

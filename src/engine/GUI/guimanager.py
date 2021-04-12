@@ -35,7 +35,8 @@ class GUIManager:
         """
         self.__implementation = None
         self.__glfw_window = None
-        self.__component_list = []
+        self.__component_list_2D = []
+        self.__component_list_3D = []
         self.__io = None
         self.__font_regular = None
         self.__font_bold = None
@@ -68,7 +69,7 @@ class GUIManager:
 
         Returns: None
         """
-        for frame in self.__component_list:
+        for frame in self.__component_list_2D + self.__component_list_3D:
             frame.add_new_polygon(polygon_id)
 
     def add_imported_polygon(self, polygon_id: str) -> None:
@@ -297,11 +298,17 @@ class GUIManager:
 
         Returns: None
         """
+
+        if self.__engine.get_program_view_mode() == '2D':
+            components_to_draw = self.__component_list_2D
+        else:
+            components_to_draw = self.__component_list_3D
+
         imgui.new_frame()
         with imgui.font(self.__font_regular):
-            for frame in self.__component_list:
+            for frame in components_to_draw:
                 frame.render()
-            for frame in self.__component_list:
+            for frame in components_to_draw:
                 frame.post_render()
         imgui.end_frame()
 
@@ -511,14 +518,6 @@ class GUIManager:
         """
         return self.__engine.get_quality()
 
-    def get_view_mode(self) -> str:
-        """
-        Get the view mode being used in the platform.
-
-        Returns: View mode being used.
-        """
-        return self.__engine.get_view_mode()
-
     def get_window_height(self) -> int:
         """
         Get the window height.
@@ -592,15 +591,33 @@ class GUIManager:
 
         # initialize the components of the manager
         # ----------------------------------------
-        self.__component_list = [
-            MainMenuBar(gui_manager),
-            TestWindow(gui_manager),
-            TextModal(gui_manager),
-            Tools(gui_manager),
-            Debug(gui_manager),
-            Loading(gui_manager),
-            PolygonInformation(gui_manager),
-            ConfirmationModal(gui_manager)
+        main_menu_bar = MainMenuBar(gui_manager)
+        test_window = TestWindow(gui_manager)
+        text_modal = TextModal(gui_manager)
+        tools = Tools(gui_manager)
+        debug = Debug(gui_manager)
+        loading = Loading(gui_manager)
+        polygon_information = PolygonInformation(gui_manager)
+        confirmation_modal = ConfirmationModal(gui_manager)
+
+        self.__component_list_2D = [
+            main_menu_bar,
+            test_window,
+            text_modal,
+            tools,
+            debug,
+            loading,
+            polygon_information,
+            confirmation_modal
+        ]
+
+        self.__component_list_3D = [
+            main_menu_bar,
+            debug,
+            loading,
+            text_modal,
+            confirmation_modal,
+            test_window
         ]
 
     def interpolate_points(self, polygon_id: str, model_id: str, distance: float, type_interpolation: str) -> None:
@@ -775,7 +792,7 @@ class GUIManager:
         """
         log.debug('Setting confirmation modal')
 
-        for frame in self.__component_list:
+        for frame in self.__component_list_2D:
             if isinstance(frame, ConfirmationModal):
                 frame.set_confirmation_text(modal_title, msg, yes_function, no_function)
                 return
@@ -791,7 +808,7 @@ class GUIManager:
 
         Returns: None
         """
-        for frame in self.__component_list:
+        for frame in self.__component_list_2D:
             if isinstance(frame, Loading):
                 frame.set_loading_message(new_msg)
                 return
@@ -810,7 +827,7 @@ class GUIManager:
         """
         log.debug("Setting modal text")
 
-        for frame in self.__component_list:
+        for frame in self.__component_list_2D:
             if isinstance(frame, TextModal):
                 frame.set_modal_text(modal_title, msg)
                 return

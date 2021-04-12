@@ -525,14 +525,6 @@ class Engine:
         """
         return Settings.TOOL_TITLE_FONT_SIZE
 
-    def get_view_mode(self) -> str:
-        """
-        Get the view mode stored in the settings.
-
-        Returns: View mode
-        """
-        return Settings.VIEW_MODE
-
     def get_window_setting_data(self) -> dict:
         """
         Get the window setting data.
