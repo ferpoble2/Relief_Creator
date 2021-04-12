@@ -42,6 +42,8 @@ class Program:
 
         self.__view_mode = '2D'
 
+        # do the logic of the initialization
+        # ----------------------------------
         self.__engine.initialize(self.__engine, self)
 
     def get_view_mode(self) -> str:
