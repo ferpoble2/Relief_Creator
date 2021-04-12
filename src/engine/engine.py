@@ -3,23 +3,25 @@ File that contains the program class, class that will be the main class of the p
 """
 
 import glfw
-import easygui
 
-from src.engine.GUI.guimanager import GUIManager
 from src.engine.controller.controller import Controller
+from src.engine.GUI.guimanager import GUIManager
+from src.engine.process_manager import ProcessManager
 from src.engine.render.render import Render
 from src.engine.scene.scene import Scene
 from src.engine.settings import Settings
-from src.utils import get_logger
-from src.error.repeated_point_error import RepeatedPointError
-from src.error.line_intersection_error import LineIntersectionError
-from src.error.model_transformation_error import ModelTransformationError
-from src.error.scene_error import SceneError
-from src.output.shapefile_exporter import ShapefileExporter
+from src.engine.thread_manager import ThreadManager
+
 from src.input.shapefile_importer import ShapefileImporter
 from src.output.netcdf_exporter import NetcdfExporter
-from src.engine.process_manager import ProcessManager
-from src.engine.thread_manager import ThreadManager
+from src.output.shapefile_exporter import ShapefileExporter
+from src.utils import get_logger
+
+from src.error.line_intersection_error import LineIntersectionError
+from src.error.model_transformation_error import ModelTransformationError
+from src.error.repeated_point_error import RepeatedPointError
+from src.error.scene_error import SceneError
+from src.error.not_enought_points_error import NotEnoughPointsError
 
 log = get_logger(module='ENGINE')
 
@@ -275,12 +277,9 @@ class Engine:
         """
 
         # select a directory to store the file.
-        file = easygui.filesavebox('Select a directory and filename for the shapefile file.',
-                                   'Relief Creator',
-                                   'Model')
-
-        if file is None:
-            raise ValueError('Directory not selected')
+        file = self.program.open_file_save_box_dialog('Select a directory and filename for the shapefile file.',
+                                                      'Relief Creator',
+                                                      'Model')
 
         # ask the scene for information
         vertices = self.scene.get_map2dmodel_vertices_array(model_id)
@@ -306,18 +305,25 @@ class Engine:
             parameters_list.append(dict(self.scene.get_polygon_params(polygon_id)))
             names_list.append(self.scene.get_polygon_name(polygon_id))
 
-        file = easygui.filesavebox('Select a directory and filename for the shapefile file.',
-                                   'Relief Creator',
-                                   filename)
-
-        if file is None:
-            log.debug("Directory not selected.")
+        try:
+            file = self.program.open_file_save_box_dialog('Select a directory and filename for the shapefile file.',
+                                                          'Relief Creator',
+                                                          filename)
+        except ValueError:
+            self.set_modal_text('Error', 'Polygons not exported.')
             return
 
-        ShapefileExporter().export_list_of_polygons(points_list,
-                                                    parameters_list,
-                                                    names_list,
-                                                    file)
+        try:
+            ShapefileExporter().export_list_of_polygons(points_list,
+                                                        parameters_list,
+                                                        names_list,
+                                                        file)
+        except NotEnoughPointsError:
+            self.set_modal_text('Error', 'One or more polygons does not have enough '
+                                         'points to be exported.')
+            return
+
+        self.set_modal_text('Information', 'Polygons exported successfully.')
 
     def export_polygon_with_id(self, polygon_id: str) -> None:
         """
@@ -331,19 +337,26 @@ class Engine:
 
         # ask for the points of the polygon
         points = self.scene.get_point_list_from_polygon(polygon_id)
-        file = easygui.filesavebox('Select a filename and directory for the new polygon',
-                                   'Relief Creator',
-                                   self.scene.get_polygon_name(polygon_id))
 
-        if file is None:
-            log.debug("Directory not selected.")
+        try:
+            file = self.program.open_file_save_box_dialog('Select a filename and directory for the new polygon',
+                                                          'Relief Creator',
+                                                          self.scene.get_polygon_name(polygon_id))
+        except ValueError:
+            self.set_modal_text('Error', 'Polygon not exported.')
             return
 
         # ask the exporter to export the list of points
-        ShapefileExporter().export_polygon_to_shapefile(points,
-                                                        file,
-                                                        self.scene.get_polygon_name(polygon_id),
-                                                        dict(self.scene.get_polygon_params(polygon_id)))
+        try:
+            ShapefileExporter().export_polygon_to_shapefile(points,
+                                                            file,
+                                                            self.scene.get_polygon_name(polygon_id),
+                                                            dict(self.scene.get_polygon_params(polygon_id)))
+        except NotEnoughPointsError:
+            self.set_modal_text("Error", "The polygon does not have enough points.")
+            return
+
+        self.set_modal_text('Information', 'Polygon exported successfully')
 
     def fix_frames(self, fix: bool) -> None:
         """

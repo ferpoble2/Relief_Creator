@@ -317,3 +317,23 @@ class Program:
             raise FileNotFoundError('File not selected.')
 
         return path_to_file
+
+    def open_file_save_box_dialog(self, message: str, title: str, default_filename: str) -> str:
+        """
+        Open the file save_box dialog to save new file in the selected directory.
+
+        Args:
+            message: Message to show to the user.
+            title: Title of the save box.
+            default_filename: Default name to use in the file.
+
+        Returns: Path to the selected file. (hard path, not relative)
+        """
+        file = easygui.filesavebox(message,
+                                   title,
+                                   default_filename)
+
+        if file is None:
+            raise ValueError('Directory not selected')
+
+        return file

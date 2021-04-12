@@ -17,6 +17,7 @@ class Program {
     + get_active_tool(): str
     + get_cpt_file(): str
     + get_map_position(): list
+    + open_file_save_box_dialog(message, title, default_filename)
     + is_loading(): boolean
     + less_zoom()
     + load_netcdf_file_with_dialog()
