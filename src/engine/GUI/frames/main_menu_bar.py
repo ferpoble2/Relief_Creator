@@ -109,6 +109,15 @@ class MainMenuBar(Frame):
                 log.info("Rendering filled polygons")
                 self._GUI_manager.set_models_polygon_mode(GL.GL_FILL)
 
+            imgui.separator()
+            program_view_mode = self._GUI_manager.get_program_view_mode()
+            if program_view_mode == '3D':
+                imgui.menu_item('Change to 2D view')
+            elif program_view_mode == '2D':
+                imgui.menu_item('Change to 2D view')
+            else:
+                raise ValueError('That mode is not configured yet.')
+
             imgui.end_menu()
 
     def __edit_menu(self):

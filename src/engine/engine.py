@@ -1111,3 +1111,11 @@ class Engine:
         Update the scene viewport with the new values that exist in the Settings.
         """
         self.scene.update_viewport()
+
+    def get_program_view_mode(self) -> str:
+        """
+        Ask the program for the view mode being used.
+
+        Returns: view mode being used by the program.
+        """
+        return self.program.get_view_mode()

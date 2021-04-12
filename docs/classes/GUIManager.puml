@@ -65,6 +65,7 @@ class GUIManager{
     + interpolate_points(polygon_id, model_id, distance, type_interpolation)
     + is_mouse_inside_frame(): boolean
     + is_polygon_planar()
+    + get_program_view_mode(): str
     + is_program_loading(): boolean
     + less_zoom()
     + load_netcdf_file_with_dialog()

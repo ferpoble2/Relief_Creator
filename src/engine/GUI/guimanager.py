@@ -936,3 +936,11 @@ class GUIManager:
         Returns: None
         """
         self.__engine.remove_interpolation_preview(polygon_id)
+
+    def get_program_view_mode(self) -> str:
+        """
+        Ask the engine for the view mode being used for the program.
+
+        Returns: view mode being used by the program.
+        """
+        return self.__engine.get_program_view_mode()
