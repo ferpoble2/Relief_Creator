@@ -6,17 +6,20 @@ import OpenGL.constant as OGLConstant
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
 
-from src.engine.GUI.frames.main_menu_bar import MainMenuBar
-from src.engine.GUI.frames.tools.tools import Tools
+from src.engine.GUI.frames.confirmation_modal import ConfirmationModal
 from src.engine.GUI.frames.debug import Debug
 from src.engine.GUI.frames.loading import Loading
-from src.engine.GUI.frames.text_modal import TextModal
-from src.engine.GUI.frames.test_window import TestWindow
+from src.engine.GUI.frames.main_menu_bar import MainMenuBar
 from src.engine.GUI.frames.polygon_information import PolygonInformation
-from src.engine.GUI.frames.confirmation_modal import ConfirmationModal
-from src.utils import get_logger
+from src.engine.GUI.frames.test_window import TestWindow
+from src.engine.GUI.frames.text_modal import TextModal
+from src.engine.GUI.frames.tools.tools import Tools
+from src.engine.GUI.frames.tools_3D import Tools3D
 from src.engine.GUI.icon import Icon
 from src.engine.GUI.polygon_folder_manager import PolygonFolderManager
+from src.utils import get_logger
+
+from src.type_hinting import *
 
 # noinspection SpellCheckingInspection
 log = get_logger(module='GUIMANAGER')
@@ -545,7 +548,6 @@ class GUIManager:
         """
         return self.__engine.get_zoom_level()
 
-    # noinspection PyUnresolvedReferences
     def initialize(self, window, engine: 'Engine', gui_manager: 'GUIManager') -> None:
         """
         Set the initial configurations of the GUI.
@@ -599,6 +601,7 @@ class GUIManager:
         loading = Loading(gui_manager)
         polygon_information = PolygonInformation(gui_manager)
         confirmation_modal = ConfirmationModal(gui_manager)
+        tools_3d = Tools3D(gui_manager)
 
         self.__component_list_2D = [
             main_menu_bar,
@@ -617,7 +620,8 @@ class GUIManager:
             loading,
             text_modal,
             confirmation_modal,
-            test_window
+            test_window,
+            tools_3d
         ]
 
     def interpolate_points(self, polygon_id: str, model_id: str, distance: float, type_interpolation: str) -> None:

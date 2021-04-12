@@ -1,6 +1,7 @@
 """
 Main Frame class for the others elements to use.
 """
+from src.type_hinting import *
 
 
 class Frame:
@@ -8,7 +9,6 @@ class Frame:
     Class to manager the frame behaviour. New frames must be children of this class.
     """
 
-    # noinspection PyUnresolvedReferences
     def __init__(self, gui_manager: 'GUIManager'):
         """
         Constructor of the class.
