@@ -5,7 +5,6 @@ from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
 
 import imgui
-import shapefile
 import OpenGL.GL as GL
 
 log = get_logger(module="MAIN_MENU_BAR")
@@ -16,6 +15,7 @@ class MainMenuBar(Frame):
     Frame that controls the top menu bar of the application.
     """
 
+    # noinspection PyUnresolvedReferences
     def __init__(self, gui_manager: 'GUIManager'):
         """
         Constructor of the class.
@@ -113,8 +113,14 @@ class MainMenuBar(Frame):
             program_view_mode = self._GUI_manager.get_program_view_mode()
             if program_view_mode == '3D':
                 imgui.menu_item('Change to 2D view')
+                if imgui.is_item_clicked():
+                    self._GUI_manager.set_program_view_mode('2D')
+
             elif program_view_mode == '2D':
-                imgui.menu_item('Change to 2D view')
+                imgui.menu_item('Change to 3D view')
+                if imgui.is_item_clicked():
+                    self._GUI_manager.set_program_view_mode('3D')
+
             else:
                 raise ValueError('That mode is not configured yet.')
 

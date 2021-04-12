@@ -1119,3 +1119,21 @@ class Engine:
         Returns: view mode being used by the program.
         """
         return self.program.get_view_mode()
+
+    def set_program_view_mode(self, mode: str = '2D') -> None:
+        """
+        Set the program view mode to the selected mode.
+
+        Raise ValueError if the mode is an invalid value.
+
+        Args:
+            mode: New mode to change to.
+
+        Returns: None
+        """
+        if mode == '2D':
+            self.program.set_view_mode_2D()
+        elif mode == '3D':
+            self.program.set_view_mode_3D()
+        else:
+            raise ValueError(f'Can not change program view mode to {mode}.')

@@ -70,6 +70,7 @@ class Engine {
     + reload_models()
     + reset_zoom_level()
     + run()
+    + set_program_view_mode(mode)
     + set_active_polygon(polygon_id)
     + set_active_tool(tool)
     + set_loading_message(new_msg)

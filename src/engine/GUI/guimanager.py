@@ -944,3 +944,14 @@ class GUIManager:
         Returns: view mode being used by the program.
         """
         return self.__engine.get_program_view_mode()
+
+    def set_program_view_mode(self, mode: str = '2D') -> None:
+        """
+        Ask the engine to change the view mode to the selected mode.
+
+        Args:
+            mode: New mode to use in the program.
+
+        Returns: None
+        """
+        self.__engine.set_program_view_mode(mode)
