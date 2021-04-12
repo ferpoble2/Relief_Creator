@@ -42,6 +42,8 @@ class Program:
 
         self.__view_mode = '2D'
 
+        self.__engine.initialize(self.__engine, self)
+
     def get_view_mode(self) -> str:
         """
         Get the view mode used by the program.
@@ -140,19 +142,6 @@ class Program:
         Returns: Zoom level
         """
         return self.__zoom_level
-
-    def initialize(self, program: 'Program') -> None:
-        """
-        Initialize the components of the program.
-
-        Args:
-            program: Program to use for the initialization of the components
-
-        Returns:
-
-        """
-        log.debug('Initializing program...')
-        self.__engine.initialize(self.__engine, program)
 
     def is_loading(self) -> bool:
         """

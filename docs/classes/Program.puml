@@ -17,7 +17,6 @@ class Program {
     + get_active_tool(): str
     + get_cpt_file(): str
     + get_map_position(): list
-    + initialize(program)
     + is_loading(): boolean
     + less_zoom()
     + load_netcdf_file_with_dialog()
