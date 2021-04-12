@@ -93,6 +93,8 @@ will use to get the height data.
 To add a new key for the program to use to search for the data, just add a new string with the name of the key at 
 the end of the list that need to be modified.
 
+[comment]: <> (TODO: Add a secttion about how to add a new frame to the engine.)
+
 # About the logging system
 
 The program uses the python `logging` library to generate loggers and then use them to log information about the 
