@@ -39,7 +39,7 @@ class Engine:
         self.render = Render()
         self.gui_manager = GUIManager()
         self.window = None
-        self.scene = Scene()
+        self.scene = Scene(self)
         self.controller = Controller()
         self.program = None
         self.__process_manager = ProcessManager()
@@ -593,9 +593,6 @@ class Engine:
         glfw.set_cursor_pos_callback(self.window, self.controller.get_cursor_position_callback())
         glfw.set_scroll_callback(self.window, self.controller.get_mouse_scroll_callback())
 
-        # SCENE CODE
-        # ----------
-        self.scene.initialize(engine)
 
     def interpolate_points(self, polygon_id: str, model_id: str, distance: float, type_interpolation: str) -> None:
         """

@@ -22,6 +22,8 @@ from src.error.model_transformation_error import ModelTransformationError
 from src.error.scene_error import SceneError
 from src.error.interpolation_error import InterpolationError
 
+from src.type_hinting import *
+
 log = get_logger(module="SCENE")
 
 
@@ -33,7 +35,7 @@ class Scene:
     that they do.
     """
 
-    def __init__(self):
+    def __init__(self, engine: 'Engine' = None):
         """
         Constructor of the class.
         """
@@ -41,7 +43,7 @@ class Scene:
         self.__3d_model_hash = {}
         self.__polygon_hash = {}
         self.__interpolation_area_hash = {}
-        self.__engine = None
+        self.__engine = engine
 
         self.__width_viewport = None
         self.__height_viewport = None
@@ -460,17 +462,6 @@ class Scene:
         Returns:  Zoom level
         """
         return self.__engine.get_zoom_level()
-
-    # noinspection PyUnresolvedReferences
-    def initialize(self, engine: 'Engine') -> None:
-        """
-        Initialize the component in the engine.
-        Args:
-            engine: Engine to use
-
-        Returns: None
-        """
-        self.__engine = engine
 
     def interpolate_points(self, polygon_id: str, model_id: str, distance: float, type_interpolation: str) -> None:
         """
