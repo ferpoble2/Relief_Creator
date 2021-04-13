@@ -29,6 +29,7 @@
                 + is_polygon_planar(polygon_id)
                 + remove_interpolation_preview(polygon_id)
                 + create_and_add_map3Dmodel(model_id, model_2d): str
+                + get_camera_settings(): dict
                 + load_preview_interpolation_area(distance, z_value)
                 + move_models(x_movement, y_movement)
                 + optimize_gpu_memory_async(then)

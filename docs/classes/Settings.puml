@@ -1,5 +1,8 @@
 @startuml
 class Settings  {
+    {static} + FIELD_OF_VIEW: float
+    {static} + PROJECTION_NEAR: float
+    {static} + PROJECTION_FAR: float
     {static} + CLEAR_COLOR: list
     {static} + fix_frames(fix_frames): boolean
     {static} + FIXEX_FRAMES: boolean

@@ -76,6 +76,18 @@ class Engine:
         for task in to_delete:
             self.__pending_task_list.remove(task)
 
+    def get_camera_settings(self) -> dict:
+        """
+        Get all the settings related to the camera.
+
+        Returns: Dictionary with the settings related to the camera.
+        """
+        return {
+            'FIELD_OF_VIEW': Settings.FIELD_OF_VIEW,
+            'PROJECTION_NEAR': Settings.PROJECTION_NEAR,
+            'PROJECTION_FAR': Settings.PROJECTION_FAR
+        }
+
     def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
         """
         Ask the scene to add a vertex in the active polygon of the engine.

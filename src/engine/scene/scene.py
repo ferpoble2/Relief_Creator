@@ -112,6 +112,14 @@ class Scene:
                                                       self.__engine,
                                                       model])
 
+    def get_camera_settings(self) -> dict:
+        """
+        Ask the engine for the settings related to the camera.
+
+        Returns: Dictionary with the settings related to the camera.
+        """
+        return self.__engine.get_camera_settings()
+
     def add_model(self, model: Model) -> None:
         """
         Add a model to the hash of models.
