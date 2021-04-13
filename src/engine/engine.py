@@ -593,7 +593,6 @@ class Engine:
         glfw.set_cursor_pos_callback(self.window, self.controller.get_cursor_position_callback())
         glfw.set_scroll_callback(self.window, self.controller.get_mouse_scroll_callback())
 
-
     def interpolate_points(self, polygon_id: str, model_id: str, distance: float, type_interpolation: str) -> None:
         """
         Ask the scene to interpolate the points using the specified parameters.

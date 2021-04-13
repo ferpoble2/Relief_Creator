@@ -355,15 +355,6 @@ class Scene:
                 """
         return self.__engine.get_active_polygon_id()
 
-    def get_float_bytes(self) -> int:
-        """
-                Get the float bytes used in a float to render.
-                Ask the engine for this information (that is stored in the settings).
-
-                Returns: Number of bytes used for store float numbers.
-                """
-        return self.__engine.get_float_bytes()
-
     def get_extra_reload_proportion_setting(self) -> float:
         """
         Ask the engine for the value of the extra reload proportion stored in the settings.
@@ -371,6 +362,15 @@ class Scene:
         Returns: Float with the value of the proportion to use.
         """
         return self.__engine.get_extra_reload_proportion_setting()
+
+    def get_float_bytes(self) -> int:
+        """
+        Get the float bytes used in a float to render.
+        Ask the engine for this information (that is stored in the settings).
+
+        Returns: Number of bytes used for store float numbers.
+        """
+        return self.__engine.get_float_bytes()
 
     # noinspection SpellCheckingInspection,PyUnresolvedReferences
     def get_map2dmodel_vertices_array(self, model_id: str) -> 'np.ndarray':
@@ -557,6 +557,85 @@ class Scene:
         if polygon_id in self.__polygon_hash:
             return self.__polygon_hash[polygon_id].is_planar()
 
+    def load_preview_interpolation_area(self, distance: float, z_value: float = 0.5,
+                                        generate_area: bool = False) -> None:
+        """
+        Calculate the interpolation area for the active polygon and draw it on the scene.
+
+        WARNING: in case of generating the area, it can be time expensive and in some cases, inaccurate.
+
+        Args:
+            generate_area: Generate the area of the interpolation.
+            z_value: Value to use for the third component of the vertices in the area polygons.
+            distance: Distance to use to calculate the external area.
+
+        Returns: None
+        """
+        log.debug('Getting polygons...')
+        polygon = self.__polygon_hash[self.__engine.get_active_polygon_id()]
+        polygon_points = polygon.get_point_list()
+        polygon_external_points = polygon.get_exterior_polygon_points(distance)
+
+        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
+        def thread_task(polygon_points: list, polygon_external_points: list, distance: float, engine: 'Engine',
+                        calculate_area: bool, z_value: float):
+            engine.set_program_loading(True)
+            engine.set_loading_message('Calculating interpolation area...')
+
+            if calculate_area:
+                log.debug('Get triangulation triangles...')
+                triangulation = TransformationHelper().get_interpolation_zone_triangulation(polygon_points,
+                                                                                            polygon_external_points,
+                                                                                            distance,
+                                                                                            z_value)
+
+            else:
+                triangulation = []
+
+            return triangulation
+
+        # noinspection PyMissingOrEmptyDocstring
+        def then_task(triangulation: list, external_polygon_points: list, scene: 'Scene', calculate_area: bool):
+            # NOTE: triangulation can be a void list
+
+            log.debug('Generating Lines')
+            lines_external = Lines(self)
+            lines_external.set_line_color([1, 0, 0, 0.5])
+            for ind in range(int(len(external_polygon_points) / 3)):
+
+                point_1 = (external_polygon_points[ind * 3],
+                           external_polygon_points[ind * 3 + 1],
+                           external_polygon_points[ind * 3 + 2])
+
+                if ind == len(external_polygon_points) / 3 - 1:
+                    point_2 = (external_polygon_points[0],
+                               external_polygon_points[1],
+                               external_polygon_points[2])
+                else:
+                    point_2 = (external_polygon_points[ind * 3 + 3],
+                               external_polygon_points[ind * 3 + 4],
+                               external_polygon_points[ind * 3 + 5])
+
+                lines_external.add_line(point_1, point_2)
+            scene.__interpolation_area_hash[self.__engine.get_active_polygon_id()] = [lines_external]
+
+            if calculate_area:
+                area_model_external = Plane(self)
+                area_model_external.set_triangles(np.array(triangulation))
+                scene.__interpolation_area_hash[self.__engine.get_active_polygon_id()].append(area_model_external)
+
+            scene.__engine.set_program_loading(False)
+
+        self.__engine.set_thread_task(parallel_task=thread_task,
+                                      then=then_task,
+                                      parallel_task_args=(polygon_points,
+                                                          polygon_external_points,
+                                                          distance,
+                                                          self.__engine,
+                                                          generate_area,
+                                                          z_value),
+                                      then_task_args=(polygon_external_points, self, generate_area))
+
     def move_models(self, x_movement: int, y_movement: int) -> None:
         """
         Move the models on the scene.
@@ -688,6 +767,19 @@ class Scene:
         Returns: None
         """
         self.__model_hash = {}
+
+    def remove_interpolation_preview(self, polygon_id: str) -> None:
+        """
+        Remove the interpolation area of the specified polygon.
+
+        Do nothing if the area does not exists.
+
+        Args:
+            polygon_id: Polygon to remove the area to.
+
+        Returns: None
+        """
+        self.__interpolation_area_hash.pop(polygon_id, None)
 
     def remove_last_point_from_active_polygon(self) -> None:
         """
@@ -875,95 +967,3 @@ class Scene:
         viewport_data = self.__engine.get_scene_setting_data()
         self.__width_viewport = viewport_data['SCENE_WIDTH_X']
         self.__height_viewport = viewport_data['SCENE_HEIGHT_Y']
-
-    def load_preview_interpolation_area(self, distance: float, z_value: float = 0.5,
-                                        generate_area: bool = False) -> None:
-        """
-        Calculate the interpolation area for the active polygon and draw it on the scene.
-
-        WARNING: in case of generating the area, it can be time expensive and in some cases, inaccurate.
-
-        Args:
-            generate_area: Generate the area of the interpolation.
-            z_value: Value to use for the third component of the vertices in the area polygons.
-            distance: Distance to use to calculate the external area.
-
-        Returns: None
-        """
-        log.debug('Getting polygons...')
-        polygon = self.__polygon_hash[self.__engine.get_active_polygon_id()]
-        polygon_points = polygon.get_point_list()
-        polygon_external_points = polygon.get_exterior_polygon_points(distance)
-
-        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
-        def thread_task(polygon_points: list, polygon_external_points: list, distance: float, engine: 'Engine',
-                        calculate_area: bool, z_value: float):
-            engine.set_program_loading(True)
-            engine.set_loading_message('Calculating interpolation area...')
-
-            if calculate_area:
-                log.debug('Get triangulation triangles...')
-                triangulation = TransformationHelper().get_interpolation_zone_triangulation(polygon_points,
-                                                                                            polygon_external_points,
-                                                                                            distance,
-                                                                                            z_value)
-
-            else:
-                triangulation = []
-
-            return triangulation
-
-        # noinspection PyMissingOrEmptyDocstring
-        def then_task(triangulation: list, external_polygon_points: list, scene: 'Scene', calculate_area: bool):
-            # NOTE: triangulation can be a void list
-
-            log.debug('Generating Lines')
-            lines_external = Lines(self)
-            lines_external.set_line_color([1, 0, 0, 0.5])
-            for ind in range(int(len(external_polygon_points) / 3)):
-
-                point_1 = (external_polygon_points[ind * 3],
-                           external_polygon_points[ind * 3 + 1],
-                           external_polygon_points[ind * 3 + 2])
-
-                if ind == len(external_polygon_points) / 3 - 1:
-                    point_2 = (external_polygon_points[0],
-                               external_polygon_points[1],
-                               external_polygon_points[2])
-                else:
-                    point_2 = (external_polygon_points[ind * 3 + 3],
-                               external_polygon_points[ind * 3 + 4],
-                               external_polygon_points[ind * 3 + 5])
-
-                lines_external.add_line(point_1, point_2)
-            scene.__interpolation_area_hash[self.__engine.get_active_polygon_id()] = [lines_external]
-
-            if calculate_area:
-                area_model_external = Plane(self)
-                area_model_external.set_triangles(np.array(triangulation))
-                scene.__interpolation_area_hash[self.__engine.get_active_polygon_id()].append(area_model_external)
-
-            scene.__engine.set_program_loading(False)
-
-        self.__engine.set_thread_task(parallel_task=thread_task,
-                                      then=then_task,
-                                      parallel_task_args=(polygon_points,
-                                                          polygon_external_points,
-                                                          distance,
-                                                          self.__engine,
-                                                          generate_area,
-                                                          z_value),
-                                      then_task_args=(polygon_external_points, self, generate_area))
-
-    def remove_interpolation_preview(self, polygon_id: str) -> None:
-        """
-        Remove the interpolation area of the specified polygon.
-
-        Do nothing if the area does not exists.
-
-        Args:
-            polygon_id: Polygon to remove the area to.
-
-        Returns: None
-        """
-        self.__interpolation_area_hash.pop(polygon_id, None)
