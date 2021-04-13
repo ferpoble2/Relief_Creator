@@ -1,0 +1,5 @@
+@startuml
+class Map3DModel {
+    ~ _update_uniforms()
+}
+@enduml

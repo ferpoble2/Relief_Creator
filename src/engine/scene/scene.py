@@ -7,6 +7,7 @@ import numpy as np
 import OpenGL.constant as OGLConstant
 
 from src.engine.scene.model.map2dmodel import Map2DModel
+from src.engine.scene.model.map3dmodel import Map3DModel
 from src.engine.scene.model.polygon import Polygon
 from src.engine.scene.model.plane import Plane
 from src.engine.scene.model.model import Model
@@ -276,6 +277,23 @@ class Scene:
         self.add_polygon(polygon)
         return new_polygon_id
 
+    # noinspection SpellCheckingInspection
+    def create_and_add_map3Dmodel(self, model_id: str, model_2d: Map2DModel) -> None:
+        """
+        Create a new map3Dmodel object and add it to the scene.
+
+        Returns: Id of the new map3Dmodel
+
+        Args:
+            model_id: Id of the model.
+            model_2d: Model 2D from wich extract the data to use to see the model in 3D.
+        """
+        new_model = Map3DModel(self, model_2d)
+        new_model.id = model_id
+
+        # add the model to the hash
+        self.__3d_model_hash[model_id] = new_model
+
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
         Delete the polygon with the specified id from the scene.
@@ -311,17 +329,25 @@ class Scene:
         Draw the models in the order of the list.
         Returns: None
         """
+
+        # get the active model
+        active_model = self.__engine.get_active_model_id()
+
+        # check if draw the 2D or the 3D of the models.
         if self.__engine.get_program_view_mode() == '2D':
-            for model in self.__model_hash.values():
-                model.draw()
+            if active_model is not None:
+                self.__model_hash[active_model].draw()
             for area_models in self.__interpolation_area_hash.values():
                 for model in area_models:
                     model.draw()
             for polygon in self.__polygon_hash.values():
                 polygon.draw()
         elif self.__engine.get_program_view_mode() == '3D':
-            for model in self.__3d_model_hash.values():
-                model.draw()
+            if active_model in self.__3d_model_hash:
+                self.__3d_model_hash[active_model].draw()
+            else:
+                self.create_and_add_map3Dmodel(active_model,
+                                               self.__model_hash[active_model])
 
     # noinspection PyUnresolvedReferences
     def get_active_model_projection_matrix(self) -> 'np.array':
