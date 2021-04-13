@@ -6,7 +6,7 @@ class Camera{
         - __norm: array
         - __radius: float
         - __phi: float
-        - __rho: float
+        - __theta: float
 
         + get_view_matrix(): array
         + reset_values()
