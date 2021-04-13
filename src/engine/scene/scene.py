@@ -1021,3 +1021,19 @@ class Scene:
         viewport_data = self.__engine.get_scene_setting_data()
         self.__width_viewport = viewport_data['SCENE_WIDTH_X']
         self.__height_viewport = viewport_data['SCENE_HEIGHT_Y']
+
+    def get_camera_closer_to_model(self) -> None:
+        """
+        Make the radius of the camera smaller.
+
+        Returns: None
+        """
+        self.__camera.make_radius_smaller()
+
+    def get_camera_farther_to_model(self):
+        """
+        Make the radius of the camera greater,
+
+        Returns: None
+        """
+        self.__camera.make_radius_bigger()

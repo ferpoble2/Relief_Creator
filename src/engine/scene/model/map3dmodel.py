@@ -53,3 +53,16 @@ class Map3DModel(Model):
         GL.glUniformMatrix4fv(model_location, 1, GL.GL_TRUE, self.__model)
         GL.glUniformMatrix4fv(view_location, 1, GL.GL_TRUE, self.__view)
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.__projection)
+
+    def draw(self) -> None:
+        """
+        Draw the model on the screen.
+
+        Returns: None
+        """
+
+        # update the variables
+        self.__view = self.scene.get_camera_view_matrix()
+
+        # draw
+        super().draw()

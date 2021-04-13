@@ -3,6 +3,7 @@ File with the definition of the camera class, class in charge of the management 
 """
 
 import numpy as np
+from math import sin, cos, pi
 from src.engine.scene.model.tranformations.transformations import lookAt
 
 
@@ -15,13 +16,33 @@ class Camera:
         """
         Constructor of the class.
         """
-        self.__camera_pos = np.array([0, 0, 100])
-        self.__look_at = np.array([0, 0, 0])
-        self.__normal = np.array([0, 1, 0])
-
         self.__radius = 100
         self.__phi = 0  # along the xy plane
         self.__rho = 0  # perpendicular to xy plane
+
+        self.__camera_pos = self.__spherical_to_cartesian(100, 0, 0)
+        self.__look_at = np.array([0, 0, 0])
+        self.__normal = np.array([0, 1, 0])
+
+        # parameters of the camera
+        self.__radius_changing_rate = 5
+
+    def __spherical_to_cartesian(self, radius, phi, rho) -> np.ndarray:
+        """
+        Transform spherical coordinates to cartesian ones.
+
+        Args:
+            radius: Radius to use.
+            phi: phi grades to use. (along xy plane)
+            rho: rho grades to use. (perpendicular to xy plane)
+
+        Returns: Cartesian coordinates.
+        """
+        return np.array([
+            radius * sin(rho) * cos(phi),
+            radius * sin(rho) * sin(phi),
+            radius * cos(rho)
+        ])
 
     def get_view_matrix(self) -> np.ndarray:
         """
@@ -42,3 +63,41 @@ class Camera:
         self.__camera_pos = np.array([0, 0, 100])
         self.__look_at = np.array([0, 0, 0])
         self.__normal = np.array([0, 1, 0])
+
+    def make_radius_smaller(self, change_value: float = None) -> None:
+        """
+        Make the radius of the camera smaller.
+
+        Use the default value if change_value is none.
+
+        Returns: None
+        """
+        if change_value is None:
+            self.__radius -= self.__radius_changing_rate
+        else:
+            self.__radius -= change_value
+
+        # do not allow <0 values for the radius (though its possible)
+        if self.__radius <= 0:
+            self.__radius = self.__radius_changing_rate
+
+        self.__camera_pos = self.__spherical_to_cartesian(self.__radius,
+                                                          self.__phi,
+                                                          self.__rho)
+
+    def make_radius_bigger(self, change_value: float = None) -> None:
+        """
+        Make the radius of the camera bigger.
+
+        Use the default value if change_value is none.
+
+        Returns: None
+        """
+        if change_value is None:
+            self.__radius += self.__radius_changing_rate
+        else:
+            self.__radius += change_value
+
+        self.__camera_pos = self.__spherical_to_cartesian(self.__radius,
+                                                          self.__phi,
+                                                          self.__rho)

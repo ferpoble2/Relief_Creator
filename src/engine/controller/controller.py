@@ -224,7 +224,11 @@ class Controller:
                         self.__engine.less_zoom()
 
                 elif self.__engine.get_program_view_mode() == '3D':
-                    pass
+                    if y_offset > 0:
+                        self.__engine.get_camera_close()
+
+                    if y_offset < 0:
+                        self.__engine.get_camera_far()
 
             self.__engine.get_gui_scroll_callback()(window, x_offset, y_offset)
 

@@ -1,5 +1,6 @@
 @startuml
 class Map3DModel {
     ~ _update_uniforms()
+    + draw()
 }
 @enduml
