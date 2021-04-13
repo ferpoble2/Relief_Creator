@@ -1,0 +1,15 @@
+@startuml
+
+class Camera{
+        - __camera_pos: array
+        - __look_: array
+        - __norm: array
+        - __radius: float
+        - __phi: float
+        - __rho: float
+
+        + get_view_matrix(): array
+        + reset_values()
+}
+
+@enduml

@@ -49,6 +49,8 @@
                 + update_models_projection_matrix()
                 + update_viewport()
                 + update_viewport_variables()
+                + reset_camera_values()
+                + get_camera_view_matrix(): array
 
                 - __3d_model_hash: dictionary
                 - __engine : Engine
@@ -59,6 +61,6 @@
                 - __should_execute_then_optimize_gpu_memory: int
                 - __should_execute_then_reload: int
                 - __width_viewport: int
+                - __camera: Camera
             }
-
 @enduml
