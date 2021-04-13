@@ -10,6 +10,8 @@ from src.utils import get_logger
 from src.error.line_intersection_error import LineIntersectionError
 from src.error.repeated_point_error import RepeatedPointError
 
+from src.type_hinting import *
+
 log = get_logger(module="CONTROLLER")
 
 
@@ -19,13 +21,13 @@ class Controller:
     Controller of the engine, controls all things related to the input of the program.
     """
 
-    def __init__(self):
+    def __init__(self, engine: 'Engine'):
         """
         Constructor of the class.
         """
-        self.__render = None
-        self.__scene = None
-        self.__engine = None
+        self.__render = engine.render
+        self.__scene = engine.scene
+        self.__engine = engine
 
         self.__glfw_keyboard_callback_enabled = True
 
@@ -336,17 +338,3 @@ class Controller:
             self.__scene.update_viewport()
 
         return on_resize
-
-    # noinspection PyUnresolvedReferences
-    def init(self, engine: 'Engine') -> None:
-        """
-        Initialize the Controller component.
-
-        Args:
-            engine: Engine used in the application
-
-        Returns: None
-        """
-        self.__render = engine.render
-        self.__scene = engine.scene
-        self.__engine = engine

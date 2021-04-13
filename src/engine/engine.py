@@ -40,10 +40,12 @@ class Engine:
         self.gui_manager = GUIManager()
         self.window = None
         self.scene = Scene(self)
-        self.controller = Controller()
+        self.controller = Controller(self)
         self.program = None
         self.__process_manager = ProcessManager()
         self.__thread_manager = ThreadManager()
+
+        # note: the order of definition of the components matters.
 
         self.__pending_task_list = []
 
@@ -586,7 +588,6 @@ class Engine:
 
         # CONTROLLER CODE
         # ---------------
-        self.controller.init(engine)
         glfw.set_key_callback(self.window, self.controller.get_on_key_callback())
         glfw.set_window_size_callback(self.window, self.controller.get_resize_callback())
         glfw.set_mouse_button_callback(self.window, self.controller.get_mouse_button_callback())
