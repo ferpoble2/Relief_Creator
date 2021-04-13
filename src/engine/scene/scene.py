@@ -54,6 +54,7 @@ class Scene:
         self.__should_execute_then_optimize_gpu_memory = 0
 
         self.__polygon_id_count = 0
+        self.__model_id_count = 0
 
     def __transform_points_using_linear_transformation(self, polygon_id: str, model_id: str, min_height: float,
                                                        max_height: float):
@@ -310,13 +311,17 @@ class Scene:
         Draw the models in the order of the list.
         Returns: None
         """
-        for model in self.__model_hash.values():
-            model.draw()
-        for area_models in self.__interpolation_area_hash.values():
-            for model in area_models:
+        if self.__engine.get_program_view_mode() == '2D':
+            for model in self.__model_hash.values():
                 model.draw()
-        for polygon in self.__polygon_hash.values():
-            polygon.draw()
+            for area_models in self.__interpolation_area_hash.values():
+                for model in area_models:
+                    model.draw()
+            for polygon in self.__polygon_hash.values():
+                polygon.draw()
+        elif self.__engine.get_program_view_mode() == '3D':
+            for model in self.__3d_model_hash.values():
+                model.draw()
 
     # noinspection PyUnresolvedReferences
     def get_active_model_projection_matrix(self) -> 'np.array':
@@ -594,8 +599,7 @@ class Scene:
         if len(self.__model_hash) == 0:
             then()
 
-    def refresh_with_model_2d_async(self, path_color_file: str, path_model: str, model_id: str = 'main',
-                                    then=lambda: None) -> None:
+    def refresh_with_model_2d_async(self, path_color_file: str, path_model: str, then=lambda x: None) -> None:
         """
         Refresh the scene, removing all the models, and adding the new model specified
         in the input.
@@ -606,9 +610,12 @@ class Scene:
 
         The color file must be in CTP format.
 
+        The 'then' parameter is the logic that will be executed after the process finish loading the model into memory.
+        This parameter is a function that must receive one parameter and will be called with the model id as the
+        value for that parameter.
+
         Args:
-            then: Function to be executed at the end of the async routine
-            model_id: Model ID to use in the model added
+            then: Function to be executed at the end of the async routine. Must receive one parameter (the model id).
             path_color_file: Path to the CTP file with the colors
             path_model: Path to the model to use in the application
 
@@ -628,15 +635,19 @@ class Scene:
             model.set_color_file(path_color_file)
             model.calculate_projection_matrix(self.__engine.get_scene_setting_data())
             model.wireframes = False
-            model.id = model_id
 
+            # even if the model is not in the program anymore, we do not want repeated ids.
+            model.id = self.__model_id_count
+            self.__model_id_count += 1
+
+            # this line have to be removed for the program to accept more than one model at the same time
             self.remove_all_models()
             self.add_model(model)
 
             self.__engine.reset_zoom_level()
 
             # call the then routine
-            then()
+            then(model.id)
 
         log.debug("Setting vertices from grid.")
         model.set_vertices_from_grid_async(X, Y, Z, self.__engine.get_quality(), then_routine)

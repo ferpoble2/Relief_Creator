@@ -771,12 +771,11 @@ class Engine:
 
         self.scene.optimize_gpu_memory_async(then_routine)
 
-    def refresh_with_model_2d(self, path_color_file: str, path_model: str, model_id: str = 'main') -> None:
+    def refresh_with_model_2d(self, path_color_file: str, path_model: str) -> None:
         """
         Refresh the scene creating a 2D model with the parameters given.
 
         Args:
-            model_id: Model id to use in the new model.
             path_color_file: Path to the color file to use.
             path_model: Path to the model file (NetCDF) to use.
 
@@ -784,7 +783,7 @@ class Engine:
         """
 
         # noinspection PyMissingOrEmptyDocstring
-        def then_routine():
+        def then_routine(model_id):
             self.program.set_active_model(model_id)
             self.program.set_loading(False)
 
@@ -792,7 +791,7 @@ class Engine:
         self.set_loading_message("Please wait a moment...")
 
         try:
-            self.scene.refresh_with_model_2d_async(path_color_file, path_model, model_id, then_routine)
+            self.scene.refresh_with_model_2d_async(path_color_file, path_model, then_routine)
 
         except OSError:
             self.program.set_loading(False)
