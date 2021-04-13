@@ -162,33 +162,44 @@ class Controller:
         # noinspection PyMissingOrEmptyDocstring
         def mouse_button_callback(window, button, action, _):
 
-            if button == glfw.MOUSE_BUTTON_LEFT and \
-                    action == glfw.PRESS and \
-                    not self.__engine.is_mouse_hovering_frame():
+            # state of the controller
+            if action == glfw.PRESS:
+                if button == glfw.MOUSE_BUTTON_LEFT:
+                    self.__is_left_mouse_being_pressed = True
 
-                active_tool = self.__engine.get_active_tool()
-                self.__is_left_mouse_being_pressed = True
+            if action == glfw.RELEASE:
+                if button == glfw.MOUSE_BUTTON_LEFT:
+                    self.__is_left_mouse_being_pressed = False
 
-                if active_tool == 'create_polygon':
-                    pos_x, pos_y = glfw.get_cursor_pos(window)
+            # logic of the controller.
+            if not self.__engine.is_mouse_hovering_frame():
 
-                    if self.__is_inside_scene(pos_x, pos_y):
-                        log.debug(f"Creating points for active polygon at: {pos_x} {pos_y}")
+                if self.__engine.get_program_view_mode() == '2D':
 
-                        # add a point to the polygon or show an error modal if there is errors.
-                        try:
-                            self.__engine.add_new_vertex_to_active_polygon_using_window_coords(pos_x, pos_y)
+                    if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
+                        active_tool = self.__engine.get_active_tool()
 
-                        except RepeatedPointError as e:
-                            log.error(e)
-                            self.__engine.set_modal_text('Error', 'Point already exist in polygon.')
+                        if active_tool == 'create_polygon':
+                            pos_x, pos_y = glfw.get_cursor_pos(window)
 
-                        except LineIntersectionError as e:
-                            log.error(e)
-                            self.__engine.set_modal_text('Error', 'Line intersect another one already in the polygon.')
+                            if self.__is_inside_scene(pos_x, pos_y):
+                                log.debug(f"Creating points for active polygon at: {pos_x} {pos_y}")
 
-            if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.RELEASE:
-                self.__is_left_mouse_being_pressed = False
+                                # add a point to the polygon or show an error modal if there is errors.
+                                try:
+                                    self.__engine.add_new_vertex_to_active_polygon_using_window_coords(pos_x, pos_y)
+
+                                except RepeatedPointError as e:
+                                    log.error(e)
+                                    self.__engine.set_modal_text('Error', 'Point already exist in polygon.')
+
+                                except LineIntersectionError as e:
+                                    log.error(e)
+                                    self.__engine.set_modal_text('Error', 'Line intersect another one already '
+                                                                          'in the polygon.')
+
+                elif self.__engine.get_program_view_mode() == '3D':
+                    pass
 
         return mouse_button_callback
 
@@ -204,11 +215,16 @@ class Controller:
 
             # do something only if not hovering frames
             if not self.__engine.is_mouse_hovering_frame():
-                if y_offset > 0:
-                    self.__engine.add_zoom()
 
-                if y_offset < 0:
-                    self.__engine.less_zoom()
+                if self.__engine.get_program_view_mode() == '2D':
+                    if y_offset > 0:
+                        self.__engine.add_zoom()
+
+                    if y_offset < 0:
+                        self.__engine.less_zoom()
+
+                elif self.__engine.get_program_view_mode() == '3D':
+                    pass
 
             self.__engine.get_gui_scroll_callback()(window, x_offset, y_offset)
 
@@ -273,45 +289,50 @@ class Controller:
             # -----------------------------------------------------
             if self.__glfw_keyboard_callback_enabled:
 
-                # Check what to do if a key is pressed
-                if action == glfw.PRESS:
+                if self.__engine.get_program_view_mode() == '2D':
 
-                    # Shortcuts of the platform
-                    # -------------------------
-                    if key == glfw.KEY_O and self.__is_left_ctrl_pressed:
-                        log.debug("Shortcut open file")
-                        self.__load_netcdf_file_with_dialog()
+                    # Check what to do if a key is pressed
+                    if action == glfw.PRESS:
 
-                    if key == glfw.KEY_T and self.__is_left_ctrl_pressed:
-                        log.debug("Pressed shortcut to change color file")
-                        self.__change_color_file_with_dialog()
+                        # Shortcuts of the platform
+                        # -------------------------
+                        if key == glfw.KEY_O and self.__is_left_ctrl_pressed:
+                            log.debug("Shortcut open file")
+                            self.__load_netcdf_file_with_dialog()
 
-                    if key == glfw.KEY_M:
-                        log.debug("Pressed shortcut to move map")
-                        self.__engine.set_active_tool('move_map')
+                        if key == glfw.KEY_T and self.__is_left_ctrl_pressed:
+                            log.debug("Pressed shortcut to change color file")
+                            self.__change_color_file_with_dialog()
 
-                    if key == glfw.KEY_Z:
+                        if key == glfw.KEY_M:
+                            log.debug("Pressed shortcut to move map")
+                            self.__engine.set_active_tool('move_map')
 
-                        if self.__is_left_ctrl_pressed:
-                            log.debug("Pressed ctrl+z")
-                            self.__engine.undo_action()
+                        if key == glfw.KEY_Z:
 
-                    if key == glfw.KEY_L:
-                        if self.__is_left_ctrl_pressed:
-                            self.__load_shapefile_file_with_dialog()
+                            if self.__is_left_ctrl_pressed:
+                                log.debug("Pressed ctrl+z")
+                                self.__engine.undo_action()
 
-                    if key == glfw.KEY_R:
-                        self.__engine.reload_models()
+                        if key == glfw.KEY_L:
+                            if self.__is_left_ctrl_pressed:
+                                self.__load_shapefile_file_with_dialog()
 
-                # Check for in-frame actions
-                if self.__is_w_pressed:
-                    self.__engine.move_scene(0, self.__map_movement_velocity)
-                if self.__is_s_pressed:
-                    self.__engine.move_scene(0, -1 * self.__map_movement_velocity)
-                if self.__is_a_pressed:
-                    self.__engine.move_scene(-1 * self.__map_movement_velocity, 0)
-                if self.__is_d_pressed:
-                    self.__engine.move_scene(self.__map_movement_velocity, 0)
+                        if key == glfw.KEY_R:
+                            self.__engine.reload_models()
+
+                    # Check for in-frame actions
+                    if self.__is_w_pressed:
+                        self.__engine.move_scene(0, self.__map_movement_velocity)
+                    if self.__is_s_pressed:
+                        self.__engine.move_scene(0, -1 * self.__map_movement_velocity)
+                    if self.__is_a_pressed:
+                        self.__engine.move_scene(-1 * self.__map_movement_velocity, 0)
+                    if self.__is_d_pressed:
+                        self.__engine.move_scene(self.__map_movement_velocity, 0)
+
+                elif self.__engine.get_program_view_mode() == '3D':
+                    pass
 
             # call the others callbacks defined in the program.
             self.__engine.get_gui_key_callback()(window, key, scancode, action, mods)
