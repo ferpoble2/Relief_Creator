@@ -129,7 +129,7 @@ class Model:
         GL.glBufferData(
             GL.GL_ELEMENT_ARRAY_BUFFER,
             len(indices) * self.scene.get_float_bytes(),
-            indices,
+            indices.astype(np.uint32),
             GL.GL_STATIC_DRAW,
         )
 
@@ -166,7 +166,7 @@ class Model:
         GL.glBufferData(
             GL.GL_ARRAY_BUFFER,
             len(vertex) * self.scene.get_float_bytes(),
-            vertex,
+            vertex.astype(np.float32),
             GL.GL_STATIC_DRAW,
         )
 
