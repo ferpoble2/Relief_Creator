@@ -3,7 +3,7 @@ File with the definition of the camera class, class in charge of the management 
 """
 
 import numpy as np
-from math import sin, cos
+from math import sin, cos, pi
 from src.engine.scene.model.tranformations.transformations import lookAt
 
 
@@ -18,11 +18,11 @@ class Camera:
         """
         self.__radius = 100
         self.__phi = 0  # along the xy plane
-        self.__theta = 0  # perpendicular to xy plane
+        self.__theta = pi/2  # perpendicular to xy plane
 
         self.__camera_pos = self.__spherical_to_cartesian(self.__radius, self.__phi, self.__theta)
         self.__look_at = np.array([0, 0, 0])
-        self.__normal = np.array([0, 1, 0])
+        self.__normal = np.array([0, 0, 1])
 
     def __spherical_to_cartesian(self, radius, phi, theta) -> np.ndarray:
         """
@@ -77,3 +77,39 @@ class Camera:
         self.__camera_pos = self.__spherical_to_cartesian(self.__radius,
                                                           self.__phi,
                                                           self.__theta)
+
+    def modify_elevation(self, angle) -> None:
+        """
+        Modify the elevation of the camera a given angle.
+
+        Args:
+            angle: angle to add to the elevation of the camera.
+
+        Returns: None
+        """
+
+        self.__theta += angle
+        if self.__theta >= pi or self.__theta <= 0:
+            self.__theta -= angle
+
+        self.__camera_pos = self.__spherical_to_cartesian(self.__radius,
+                                                          self.__phi,
+                                                          self.__theta)
+        print(self.__camera_pos)
+        print(self.__theta / pi)
+
+    def modify_azimuthal_angle(self, angle) -> None:
+        """
+        Modify the azimuthal angle of the camera. (the angle parallel to the xy plane)
+
+        Args:
+            angle: Angle to add to the camera.
+
+        Returns: None
+        """
+        self.__phi += angle
+        self.__camera_pos = self.__spherical_to_cartesian(self.__radius,
+                                                          self.__phi,
+                                                          self.__theta)
+        print(self.__camera_pos)
+        print(self.__phi / pi)

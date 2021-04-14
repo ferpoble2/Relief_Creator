@@ -11,6 +11,8 @@ class Camera{
         + get_view_matrix(): array
         + reset_values()
         + modify_radius(change_value)
+        + modify_elevation(angle)
+        + modify_azimuthal_angle(angle)
         - __spherical_to_cartesian(radius, phi, rho): array
 }
 

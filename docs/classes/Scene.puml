@@ -52,6 +52,8 @@
                 + reset_camera_values()
                 + get_camera_view_matrix(): array
                 + modify_camera_radius(distance)
+                + change_camera_elevation(angle)
+                + change_camera_azimuthal_angle(angle)
 
                 - __3d_model_hash: dictionary
                 - __engine : Engine

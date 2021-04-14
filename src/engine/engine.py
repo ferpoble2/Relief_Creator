@@ -1161,3 +1161,25 @@ class Engine:
         Returns: None
         """
         self.scene.modify_camera_radius(distance)
+
+    def change_camera_elevation(self, angle) -> None:
+        """
+        Ask the scene to change the camera elevation.
+
+        Args:
+            angle: Angle to add to the elevation of the camera.
+
+        Returns: None
+        """
+        self.scene.change_camera_elevation(angle)
+
+    def change_camera_xy_angle(self, angle) -> None:
+        """
+        Ask the scene to change the azimuthal angle of the camera.
+
+        Args:
+            angle: angle to add to the angle of the camera.
+
+        Returns: None
+        """
+        self.scene.change_camera_azimuthal_angle(angle)

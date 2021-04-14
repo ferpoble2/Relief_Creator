@@ -1032,3 +1032,25 @@ class Scene:
         Returns: None
         """
         self.__camera.modify_radius(distance)
+
+    def change_camera_elevation(self, angle):
+        """
+        Change the camera angle elevation.
+
+        Args:
+            angle: Angle to add to the elevation of the camera.
+
+        Returns: None
+        """
+        self.__camera.modify_elevation(angle)
+
+    def change_camera_azimuthal_angle(self, angle):
+        """
+        Change the camera azimuthal angle
+
+        Args:
+            angle: Angle to add to the azimuthal angle.
+
+        Returns: None
+        """
+        self.__camera.modify_azimuthal_angle(angle)

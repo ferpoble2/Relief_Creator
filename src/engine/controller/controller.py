@@ -44,6 +44,8 @@ class Controller:
 
         self.__map_movement_velocity = -20
         self.__radius_movement_velocity = 3
+        self.__elevation_movement_velocity = 0.1
+        self.__azimutal_movement_velocity = 0.1
 
     def __change_color_file_with_dialog(self) -> None:
         """
@@ -225,10 +227,10 @@ class Controller:
 
                 elif self.__engine.get_program_view_mode() == '3D':
                     if y_offset > 0:
-                        self.__engine.modify_camera_radius(self.__radius_movement_velocity)
+                        self.__engine.modify_camera_radius(-1 * self.__radius_movement_velocity)
 
                     if y_offset < 0:
-                        self.__engine.modify_camera_radius(-1 * self.__radius_movement_velocity)
+                        self.__engine.modify_camera_radius(1 * self.__radius_movement_velocity)
 
             self.__engine.get_gui_scroll_callback()(window, x_offset, y_offset)
 
@@ -336,7 +338,14 @@ class Controller:
                         self.__engine.move_scene(self.__map_movement_velocity, 0)
 
                 elif self.__engine.get_program_view_mode() == '3D':
-                    pass
+                    if self.__is_w_pressed:
+                        self.__engine.change_camera_elevation(self.__elevation_movement_velocity)
+                    if self.__is_s_pressed:
+                        self.__engine.change_camera_elevation(-1 * self.__elevation_movement_velocity)
+                    if self.__is_a_pressed:
+                        self.__engine.change_camera_xy_angle(-1 * self.__azimutal_movement_velocity)
+                    if self.__is_d_pressed:
+                        self.__engine.change_camera_xy_angle(self.__azimutal_movement_velocity)
 
             # call the others callbacks defined in the program.
             self.__engine.get_gui_key_callback()(window, key, scancode, action, mods)
