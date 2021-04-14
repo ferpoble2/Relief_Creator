@@ -71,8 +71,9 @@ class Render:
             clear_color[2],
             clear_color[3],
         )
-        GL.glEnable(GL.GL_BLEND);
-        GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+        GL.glEnable(GL.GL_BLEND)
+        GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
+        GL.glEnable(GL.GL_DEPTH_TEST)
 
         # Indicate to openGL about the screen used in glfw to render.
         scene_data = engine.get_scene_setting_data()
@@ -97,7 +98,7 @@ class Render:
             on_frame_tasks = []
 
         self.__GUI.process_input()
-        GL.glClear(GL.GL_COLOR_BUFFER_BIT)
+        GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
         # draw models on screen
         for func in on_frame_tasks:

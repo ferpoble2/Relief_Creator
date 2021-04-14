@@ -17,9 +17,12 @@ class Lines(Model):
     Class in charge of the modeling and drawing lines in the engine.
     """
 
-    def __init__(self, scene):
+    def __init__(self, scene, border_z_offset: float = -0.1):
         """
         Constructor of the class
+
+        Args:
+            border_z_offset: Offset to add to the position of the points of the line to draw the border of the line.
         """
         super().__init__(scene)
 
@@ -37,6 +40,9 @@ class Lines(Model):
         self.__border_color = (0, 0, 0, 1)
         self.__use_border = False
 
+        self.__z_offset_border = border_z_offset
+        self.__z_offset = 0  # this variable is passed to the shader
+
         self.set_shaders(self.__vertex_shader_file, self.__fragment_shader_file)
 
     def _update_uniforms(self) -> None:
@@ -50,6 +56,7 @@ class Lines(Model):
         # ------------------------------------
         projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
         polygon_color_location = GL.glGetUniformLocation(self.shader_program, "lines_color")
+        z_value_location = GL.glGetUniformLocation(self.shader_program, "z_offset")
 
         # set the color and projection matrix to use
         # ------------------------------------------
@@ -58,6 +65,7 @@ class Lines(Model):
                        self.__line_color[1],
                        self.__line_color[2],
                        self.__line_color[3])
+        GL.glUniform1f(z_value_location, self.__z_offset)
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_model_projection_matrix())
 
     def add_line(self, first_point: tuple, second_point: tuple):
@@ -113,14 +121,17 @@ class Lines(Model):
             if self.__use_border:
                 # store the old color
                 old_color = self.__line_color
+                old_z_offset = self.__z_offset
 
                 # change the color and width of the line to draw
                 self.__line_color = self.__border_color
+                self.__z_offset = self.__z_offset_border
                 GL.glLineWidth(active_polygon_line_width)
                 super().draw()
 
                 # return the original color
                 self.__line_color = old_color
+                self.__z_offset = old_z_offset
 
             GL.glLineWidth(polygon_line_width)
             super().draw()

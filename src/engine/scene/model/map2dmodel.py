@@ -380,6 +380,14 @@ class Map2DModel(MapModel):
             GL.glUniform1fv(height_color_location, len(self.__height_limit), self.__height_limit)
             GL.glUniform1i(length_location, len(self.__colors))
 
+    def get_color_file(self) -> str:
+        """
+        Get the color file being used by the model.
+
+        Returns: File being used.
+        """
+        return self.__color_file
+
     def calculate_projection_matrix(self, scene_data: dict, zoom_level: float = 1) -> None:
         """
         Set the projection matrix to show the model in the scene.

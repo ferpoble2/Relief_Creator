@@ -16,7 +16,6 @@ import OpenGL.GL as GL
 from shapely.geometry import LineString
 from shapely.geometry import Polygon as ShapelyPolygon
 from shapely.geometry import Point as ShapelyPoint
-from shapely.ops import triangulate
 
 log = get_logger(module="POLYGON")
 
@@ -484,7 +483,8 @@ class Polygon(Model):
         Update the last line of the polygon.
 
         Args:
-            remove_last_line: True to remove the last line from the line model, False to just add a new line to the model
+            remove_last_line: True to remove the last line from the line model, False to just add a new line to the
+                model.
 
         Returns: None
         """

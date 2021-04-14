@@ -33,6 +33,7 @@
                     ~ _update_uniforms()
                     + calculate_projection_matrix(scene_data, zoom_level)
                     + get_height_array(): array
+                    + get_color_file(): str
                     + get_projection_matrix(): array
                     + get_showed_limits(): dict
                     + get_vertices_shape(): tuple
