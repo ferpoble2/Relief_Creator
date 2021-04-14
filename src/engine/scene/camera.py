@@ -16,9 +16,9 @@ class Camera:
         """
         Constructor of the class.
         """
-        self.__radius = 100
+        self.__radius = 500
         self.__phi = 0  # along the xy plane
-        self.__theta = pi/2  # perpendicular to xy plane
+        self.__theta = 0.1  # perpendicular to xy plane
 
         self.__camera_pos = self.__spherical_to_cartesian(self.__radius, self.__phi, self.__theta)
         self.__look_at = np.array([0, 0, 0])
