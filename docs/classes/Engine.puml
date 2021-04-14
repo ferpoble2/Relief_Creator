@@ -66,8 +66,7 @@ class Engine {
     + move_scene(x_movement, y_movement)
     + optimize_gpu_memory()
     + get_camera_settings(): dict
-    + get_camera_close()
-    + get_camera_far()
+    + modify_camera_radius(distance)
     + refresh_with_model_2d_async(path_color_file, path_model, model_id, then)
     + reload_models()
     + reset_zoom_level()

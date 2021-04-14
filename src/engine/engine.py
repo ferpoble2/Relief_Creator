@@ -1151,19 +1151,13 @@ class Engine:
         else:
             raise ValueError(f'Can not change program view mode to {mode}.')
 
-    def get_camera_close(self) -> None:
+    def modify_camera_radius(self, distance: float) -> None:
         """
         Ask the scene to get the camera closer to the model.
 
-        Returns: None
-        """
-        self.scene.get_camera_closer_to_model()
-
-    def get_camera_far(self) -> None:
-        """
-        Ask the scene to get the camera farther to the model.
+        Args:
+            distance: Distance to get the camera closer.
 
         Returns: None
         """
-        self.scene.get_camera_farther_to_model()
-
+        self.scene.modify_camera_radius(distance)

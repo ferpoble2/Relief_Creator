@@ -51,8 +51,7 @@
                 + update_viewport_variables()
                 + reset_camera_values()
                 + get_camera_view_matrix(): array
-                + get_camera_closer_to_model()
-                + get_camera_farther_to_model()
+                + modify_camera_radius(distance)
 
                 - __3d_model_hash: dictionary
                 - __engine : Engine

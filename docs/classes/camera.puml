@@ -10,8 +10,7 @@ class Camera{
 
         + get_view_matrix(): array
         + reset_values()
-        + make_radius_bigger(change_value)
-        + make_radius_smaller(change_value)
+        + modify_radius(change_value)
         - __spherical_to_cartesian(radius, phi, rho): array
 }
 

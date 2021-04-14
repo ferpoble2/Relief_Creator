@@ -4,7 +4,6 @@ Controller of the application. Manage all the glfw events that happens in the ap
 from typing import Callable
 
 import glfw
-import shapefile
 
 from src.utils import get_logger
 from src.error.line_intersection_error import LineIntersectionError
@@ -44,6 +43,7 @@ class Controller:
         self.__is_d_pressed = False
 
         self.__map_movement_velocity = -20
+        self.__radius_movement_velocity = 3
 
     def __change_color_file_with_dialog(self) -> None:
         """
@@ -225,10 +225,10 @@ class Controller:
 
                 elif self.__engine.get_program_view_mode() == '3D':
                     if y_offset > 0:
-                        self.__engine.get_camera_close()
+                        self.__engine.modify_camera_radius(self.__radius_movement_velocity)
 
                     if y_offset < 0:
-                        self.__engine.get_camera_far()
+                        self.__engine.modify_camera_radius(-1 * self.__radius_movement_velocity)
 
             self.__engine.get_gui_scroll_callback()(window, x_offset, y_offset)
 
