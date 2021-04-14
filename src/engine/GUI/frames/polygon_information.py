@@ -41,6 +41,8 @@ class PolygonInformation(Frame):
 
         self.__current_bool_selected = 0
 
+        self.__input_text_maximum_character_number = 1000
+
     def render(self) -> None:
         """
         Render the frame.
@@ -305,13 +307,13 @@ class PolygonInformation(Frame):
         if self.__current_variable_type == 0:
             _, self.__value_string_value = imgui.input_text(' ',
                                                             self.__value_string_value,
-                                                            50)
+                                                            self.__input_text_maximum_character_number)
 
         # numeric data
         elif self.__current_variable_type == 1:
             _, self.__value_string_value = imgui.input_text(' ',
                                                             self.__value_string_value,
-                                                            50)
+                                                            self.__input_text_maximum_character_number)
             if not self.__check_numeric(self.__value_string_value):
                 imgui.text_colored('Value is not a number', 1, 0, 0)
                 data_errors = True
