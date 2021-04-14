@@ -1,6 +1,22 @@
 @startuml
 class Map3DModel {
+    + hbo: int
+    - __color_file: str
+    - __colors: list
+    - __height_array: array
+    - __height_limit: list
+    - __max_height: float
+    - __min_height: float
+    - __model: array
+    - __normalize_height_limits_by: int
+    - __projection: array
+    - __quality: int
+    - __view: array
+
     ~ _update_uniforms()
+    + set_color_file(filename)
     + draw()
+    - __set_height_buffer()
+
 }
 @enduml
