@@ -249,6 +249,9 @@ class PolygonInformation(Frame):
                 self.__current_variable_type = 2
                 self.__current_bool_selected = 0 if self.__parameter_to_edit[1] else 1
 
+            # disable the input
+            self._GUI_manager.disable_glfw_keyboard_callback()
+
         # popup to edit a parameter
         if imgui.begin_popup_modal('Edit parameter')[0]:
 
