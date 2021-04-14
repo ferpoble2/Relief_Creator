@@ -13,6 +13,10 @@ class Camera{
         + modify_radius(change_value)
         + modify_elevation(angle)
         + modify_azimuthal_angle(angle)
+        + modify_camera_offset(offset_value)
+        + get_elevation_grades(): float
+        + get_azimuthal_grades(): float
+        + get_camera_offset_position(): array
         - __spherical_to_cartesian(radius, phi, rho): array
 }
 
