@@ -32,7 +32,7 @@ class Map3DModel(MapModel):
         self.__height_limit = []
 
         self.__normalize_height_limits_by = 500
-        self.__quality = 5
+        self.__quality = 0
 
         self.__model = identity()
         self.__view = self.scene.get_camera_view_matrix()
