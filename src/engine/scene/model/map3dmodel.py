@@ -4,13 +4,13 @@ File with the definition of the class Map3DModel, class in charge of the 3D repr
 import numpy as np
 import OpenGL.GL as GL
 
-from src.engine.scene.model.model import Model
+from src.engine.scene.model.mapmodel import MapModel
 from src.engine.scene.model.tranformations.transformations import lookAt, perspective, rotationA, translate, identity
 
 from src.type_hinting import *
 
 
-class Map3DModel(Model):
+class Map3DModel(MapModel):
     """
     Class that manage all things related to the representation in 3D of the maps.
     """
@@ -24,10 +24,12 @@ class Map3DModel(Model):
         self.set_shaders("./engine/shaders/model_3d_vertex.glsl",
                          "./engine/shaders/model_3d_fragment.glsl")
 
+        self.__normalize_height_limits_by = 500
+        self.__quality = 5
+
         self.__model = identity()
         self.__view = self.scene.get_camera_view_matrix()
 
-        # TODO: obtener toda esta informacion de los settings.
         scene_settings_data = self.scene.get_scene_setting_data()
         camera_settings_data = self.scene.get_camera_settings()
         self.__projection = perspective(camera_settings_data['FIELD_OF_VIEW'],
@@ -35,18 +37,38 @@ class Map3DModel(Model):
                                         camera_settings_data['PROJECTION_NEAR'],
                                         camera_settings_data['PROJECTION_FAR'])
 
-        # TODO: delete this and use the data from the Map2Dmodel
-        self.set_vertices(np.array([0, 0, 0,
-                                    2, 0, 0,
-                                    0, 1, 0,
-                                    2, 1, 0,
-                                    0.5, 0.5, 5]))
-        self.set_indices(np.array([0, 1, 3,
-                                   0, 3, 2,
-                                   0, 1, 4,
-                                   1, 3, 4,
-                                   3, 2, 4,
-                                   0, 2, 4]))
+        # set the data for the model
+        vertices_shape = model_2d.get_vertices_shape()
+        vertices_array = model_2d.get_vertices_array().copy()
+        vertices_array_reshaped = vertices_array.reshape(vertices_shape)
+
+        height_array = model_2d.get_height_array()
+        height_array = height_array / self.__normalize_height_limits_by
+        height_array = height_array.reshape(model_2d.get_vertices_shape()[:2])
+
+        vertices_array_reshaped[:, :, 2] = height_array
+        self.set_vertices(vertices_array.reshape(-1))
+
+        x_values = vertices_array_reshaped[0, :, 0].reshape(-1)
+        y_values = vertices_array_reshaped[:, 0, 1].reshape(-1)
+        index_array = self._generate_index_list(self.__quality,
+                                                self.__quality,
+                                                x_values,
+                                                y_values)
+        self.set_indices(index_array)
+
+        # # TODO: delete this and use the data from the Map2Dmodel
+        # self.set_vertices(np.array([0, 0, 0,
+        #                             2, 0, 0,
+        #                             0, 1, 0,
+        #                             2, 1, 0,
+        #                             0.5, 0.5, 5]))
+        # self.set_indices(np.array([0, 1, 3,
+        #                            0, 3, 2,
+        #                            0, 1, 4,
+        #                            1, 3, 4,
+        #                            3, 2, 4,
+        #                            0, 2, 4]))
 
     def _update_uniforms(self) -> None:
         """

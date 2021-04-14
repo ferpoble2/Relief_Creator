@@ -7,7 +7,7 @@ import ctypes as ctypes
 import OpenGL.GL as GL
 import numpy as np
 
-from src.engine.scene.model.model import Model
+from src.engine.scene.model.mapmodel import MapModel
 from src.engine.scene.model.tranformations.transformations import ortho
 from src.input.CTP import read_file
 from src.utils import get_logger
@@ -16,7 +16,7 @@ log = get_logger(module='Map2DModel')
 
 
 # noinspection PyMethodMayBeStatic
-class Map2DModel(Model):
+class Map2DModel(MapModel):
     """
     Class that manage all things related to the 2D representation of the maps.
 
@@ -204,122 +204,14 @@ class Map2DModel(Model):
 
         Returns: List of index
         """
-
-        step_x = max(1, step_x)
-        step_y = max(1, step_y)
-
-        # Get the index of the vertices to generate the indexes
-        # -----------------------------------------------------
-        index_minimum_x = self.__get_index_closest_value(self.__x, left_coordinate)
-        index_maximum_x = self.__get_index_closest_value(self.__x, right_coordinate)
-        index_minimum_y = self.__get_index_closest_value(self.__y, bottom_coordinate)
-        index_maximum_y = self.__get_index_closest_value(self.__y, top_coordinate)
-
-        # Sort the result from the calculus
-        # ---------------------------------
-        new_index_minimum_y = min(index_maximum_y, index_minimum_y)
-        new_index_maximum_y = max(index_maximum_y, index_minimum_y)
-        new_index_maximum_x = max(index_maximum_x, index_minimum_x)
-        new_index_minimum_x = min(index_maximum_x, index_minimum_x)
-
-        # Assign the correct values to the variables
-        # ------------------------------------------
-        index_minimum_y = new_index_minimum_y
-        index_maximum_y = new_index_maximum_y
-        index_maximum_x = new_index_maximum_x
-        index_minimum_x = new_index_minimum_x
-
-        log.debug(f"index_minimum_x: {index_minimum_x}")
-        log.debug(f"index_maximum_x: {index_maximum_x}")
-        log.debug(f"index_minimum_y: {index_minimum_y}")
-        log.debug(f"index_maximum_y: {index_maximum_y}")
-        log.debug(f"len x {len(self.__x)}")
-        log.debug(f"len y {len(self.__y)}")
-
-        # calculate the indices to add to the program using numpy
-        # -------------------------------------------------------
-        cushion_rows = step_y - (index_maximum_y - index_minimum_y) % step_y + 1
-        cushion_cols = step_x - (index_maximum_x - index_minimum_x) % step_x + 1
-
-        rows = range(len(self.__y))[index_minimum_y:index_maximum_y + cushion_rows:step_y]
-        cols = range(len(self.__x))[index_minimum_x:index_maximum_x + cushion_cols:step_x]
-        len_rows = len(rows)
-        len_cols = len(cols)
-
-        rows = np.tile(np.array(rows), (len_cols, 1)).transpose()
-        cols = np.tile(np.array(cols), (len_rows, 1))
-
-        other_cols = cols[:-1, :-1]
-        other_rows = rows[:-1, :-1]
-
-        # first part of the triangles
-        # ---------------------------
-
-        # noinspection PyTypeChecker
-        index_1: np.ndarray = self.__get_vertex_index(other_cols, other_rows)
-        # noinspection PyTypeChecker
-        index_2: np.ndarray = self.__get_vertex_index(other_cols + step_x, other_rows)
-        # noinspection PyTypeChecker
-        index_3: np.ndarray = self.__get_vertex_index(other_cols, other_rows + step_y)
-
-        index_1 = index_1.reshape(-1)
-        index_2 = index_2.reshape(-1)
-        index_3 = index_3.reshape(-1)
-
-        # second part of the triangles
-        # ---------------------------
-        # noinspection PyTypeChecker
-        index_4: np.ndarray = self.__get_vertex_index(other_cols + step_x, other_rows)
-        # noinspection PyTypeChecker
-        index_5: np.ndarray = self.__get_vertex_index(other_cols + step_x, other_rows + step_y)
-        # noinspection PyTypeChecker
-        index_6: np.ndarray = self.__get_vertex_index(other_cols, other_rows + step_y)
-
-        index_4 = index_4.reshape(-1)
-        index_5 = index_5.reshape(-1)
-        index_6 = index_6.reshape(-1)
-
-        # add the indices
-        # ---------------
-        # DEPRECATED CODE
-        # for ind in range(len(index_1)):
-        #     indices.append(index_1[ind])
-        #     indices.append(index_2[ind])
-        #     indices.append(index_3[ind])
-        #     indices.append(index_4[ind])
-        #     indices.append(index_5[ind])
-        #     indices.append(index_6[ind])
-
-        log.debug('Joining indices calculated into one array')
-        indices = np.zeros((len(index_1), 6))
-        indices[:, 0] = index_1
-        indices[:, 1] = index_2
-        indices[:, 2] = index_3
-        indices[:, 3] = index_4
-        indices[:, 4] = index_5
-        indices[:, 5] = index_6
-        indices = indices.reshape(-1).astype(np.uint32)
-
-        # Deprecated Code
-        # ---------------
-        # import time
-        # time_before = time.time()
-        #
-        # for row in range(len(self.__y))[index_minimum_y:index_maximum_y + 1:step_y]:
-        #     for col in range(len(self.__x))[index_minimum_x:index_maximum_x + 1:step_x]:
-        #         if col + step_x < len(self.__x) and row + step_y < len(self.__y):
-        #             indices.append(self.__get_vertex_index(col, row))
-        #             indices.append(self.__get_vertex_index(col + step_x, row))
-        #             indices.append(self.__get_vertex_index(col, row + step_y))
-        #
-        #             indices.append(self.__get_vertex_index(col + step_x, row))
-        #             indices.append(self.__get_vertex_index(col + step_x, row + step_y))
-        #             indices.append(self.__get_vertex_index(col, row + step_y))
-        #             pass
-        #
-        # print(f'Duration of indices: {time.time() - time_before}')
-
-        return indices
+        return self._generate_index_list(step_x,
+                                         step_y,
+                                         self.__x,
+                                         self.__y,
+                                         left_coordinate,
+                                         right_coordinate,
+                                         top_coordinate,
+                                         bottom_coordinate)
 
     def __generate_vertices_list(self, x: np.ndarray, y: np.ndarray, z: np.ndarray, z_value: int = 0) -> np.ndarray:
         """
@@ -367,7 +259,7 @@ class Map2DModel(Model):
 
         Returns: Index of the closest value in the array.
         """
-        return np.argmin(np.abs(np.array(list_to_evaluate) - value))
+        return self._get_index_closest_value(list_to_evaluate, value)
 
     def __get_vertex_index(self, x_pos: int, y_pos: int) -> int:
         """
@@ -382,7 +274,7 @@ class Map2DModel(Model):
 
         Returns: Index of the vertex in the buffer.
         """
-        return y_pos * len(self.__x) + x_pos
+        return self._get_vertex_index(x_pos, y_pos, self.__x)
 
     def __is_triangle_inside_zone(self,
                                   index_triangle: list,

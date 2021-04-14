@@ -1,0 +1,10 @@
+@startuml
+
+class MapModel{
+
+    ~ _get_index_closest_value(list_to_evaluate, value): int
+    ~ _get_vertex_index(x_pos, y_pos, x_value_array): int
+    ~ _generate_index_list(step_x, step_y, x_value_array, y_value_array, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): array
+}
+
+@enduml
