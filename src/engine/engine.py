@@ -22,6 +22,7 @@ from src.error.model_transformation_error import ModelTransformationError
 from src.error.repeated_point_error import RepeatedPointError
 from src.error.scene_error import SceneError
 from src.error.not_enought_points_error import NotEnoughPointsError
+from src.error.netcdf_import_error import NetCDFImportError
 
 log = get_logger(module='ENGINE')
 
@@ -808,6 +809,11 @@ class Engine:
         except OSError:
             self.program.set_loading(False)
             self.set_modal_text('Error', 'Error reading selected file. Is the file a netcdf file?')
+
+        except NetCDFImportError as e:
+            self.program.set_loading(False)
+            self.set_modal_text('Error', f'{e.get_code_message()}\n\n'
+                                         f'Current keys on the file are: {list(e.data)}')
 
         except KeyError:
             self.program.set_loading(False)

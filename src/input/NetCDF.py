@@ -2,6 +2,7 @@
 File that contains the functions to read files in NetCDF4 format.
 """
 from src.utils import get_logger
+from src.error.netcdf_import_error import NetCDFImportError
 
 import numpy as np
 from netCDF4 import Dataset
@@ -9,7 +10,7 @@ from netCDF4 import Dataset
 # Variables to use to check for data in the netcdf files
 LONGITUDE_KEYS = ['x', 'lon']
 LATITUDE_KEYS = ['y', 'lat']
-HEIGHT_KEYS = ['z']
+HEIGHT_KEYS = ['z', 'Band1']
 
 log = get_logger(module='NETCDF')
 
@@ -31,7 +32,7 @@ def get_variables_from_grp(grp, key_values: list) -> list:
         if key in grp_keys:
             return grp.variables[key]
 
-    raise KeyError("grp object does not have a key listed in the possible key values list")
+    raise NetCDFImportError(1, grp_keys)
 
 
 def read_info(file_name: str):
@@ -55,28 +56,25 @@ def read_info(file_name: str):
 
 
 if __name__ == "__main__":
-    log.basicConfig(format="%(asctime)s - %(message)s", level=log.DEBUG)
-
-    filename = "test_inputs/OF_20Ma_AHS_WORLD_NewAfrica.nc"
-
+    filename = "test_inputs/IF_ETOPO_HHC_60Ma_60.00Ma.nc"
     rootgrp = Dataset(filename, "r", format="NETCDF4")
 
-    log.debug("Dimensiones del archivo:")
-    log.debug(rootgrp.dimensions)
+    print("Dimensiones del archivo:")
+    print(rootgrp.dimensions)
 
-    log.debug("Grupos del archivo:")
-    log.debug(rootgrp.groups)
+    print("Grupos del archivo:")
+    print(rootgrp.groups)
 
-    log.debug("Variables del archivo:")
-    log.debug(rootgrp.variables)
+    print("Variables del archivo:")
+    print(rootgrp.variables)
 
     X, Y, Z = read_info(filename)
 
-    log.info("X values")
-    log.info(X)
+    print("X values")
+    print(X)
 
-    log.info("Y values")
-    log.info(Y)
+    print("Y values")
+    print(Y)
 
-    log.info("Z values.")
-    log.info(Z)
+    print("Z values.")
+    print(Z)
