@@ -482,6 +482,14 @@ class Engine:
         """
         return self.program.get_map_position()
 
+    def get_camera_data(self) -> dict:
+        """
+        Ask the scene for the camera data.
+
+        Returns: Dictionary with the data related to the camera.
+        """
+        return self.scene.get_camera_data()
+
     def get_parameters_from_polygon(self, polygon_id: str) -> list:
         """
         Ask the scene for the parameters of certain polygon.

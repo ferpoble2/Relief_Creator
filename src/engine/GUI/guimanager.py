@@ -976,3 +976,11 @@ class GUIManager:
         Returns: None
         """
         self.__engine.set_program_view_mode(mode)
+
+    def get_camera_data(self) -> dict:
+        """
+        Ask the engine for the data related to the camera.
+
+        Returns: Data related to the camera.
+        """
+        return self.__engine.get_camera_data()

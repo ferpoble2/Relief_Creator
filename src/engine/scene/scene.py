@@ -1060,3 +1060,17 @@ class Scene:
         Returns: None
         """
         self.__camera.modify_azimuthal_angle(angle)
+
+    def get_camera_data(self) -> dict:
+        """
+        Get and returns the data related to the camera.
+
+        Returns: dictionary with the data being used used by the camera.
+        """
+
+        return {
+            'position': self.__camera.get_camera_offset_position(),
+            'azimuthal': self.__camera.get_azimuthal_grades(),
+            'elevation': self.__camera.get_elevation_grades(),
+            'radius': self.__camera.get_radius()
+        }

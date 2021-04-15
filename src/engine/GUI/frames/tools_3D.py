@@ -40,5 +40,25 @@ class Tools3D(Frame):
         else:
             imgui.begin('Tools 3D')
 
-        imgui.text('Tools 3D')
+        self._GUI_manager.set_tool_title_font()
+        imgui.text('Camera Information')
+        self._GUI_manager.set_regular_font()
+
+        camera_data = self._GUI_manager.get_camera_data()
+
+        imgui.text(f'Elevation angle: {int(camera_data["elevation"])}°')
+        imgui.text(f'Azimuthal angle: {int(camera_data["azimuthal"])}°')
+        imgui.text(f'Radius: {camera_data["radius"]}')
+        imgui.text(f'Position: {camera_data["position"]}')
+
+        imgui.separator()
+
+        self._GUI_manager.set_tool_title_font()
+        imgui.text('Controls')
+        self._GUI_manager.set_regular_font()
+
+        imgui.text_wrapped('W/S: Change elevation. \n'
+                           'A/D: Change azimuthal angle. \n'
+                           'Scroll: Get closer/farther.')
+
         imgui.end()

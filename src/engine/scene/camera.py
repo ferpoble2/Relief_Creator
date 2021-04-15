@@ -154,3 +154,11 @@ class Camera:
         Returns: Offset being used by the camera.
         """
         return self.__camera_position_offset
+
+    def get_radius(self) -> float:
+        """
+        Get the radius being used by the camera.
+
+        Returns: Radius being used.
+        """
+        return self.__radius
