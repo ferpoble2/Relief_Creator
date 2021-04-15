@@ -49,9 +49,9 @@ class Controller:
 
         self.__map_movement_velocity = -20
         self.__radius_movement_velocity = 3
-        self.__elevation_movement_velocity = 0.1
-        self.__azimuthal_movement_velocity = 0.1
-        self.__camera_movement_velocity = 5
+        self.__elevation_movement_velocity = 0.01
+        self.__azimuthal_movement_velocity = 0.01
+        self.__camera_movement_velocity = 1
 
     def __change_color_file_with_dialog(self) -> None:
         """

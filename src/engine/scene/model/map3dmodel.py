@@ -31,7 +31,7 @@ class Map3DModel(MapModel):
         self.__colors = []
         self.__height_limit = []
 
-        self.__normalize_height_limits_by = 500
+        self.__normalize_height_limits_by = 1/6000
         self.__quality = 0
 
         self.__model = identity()
@@ -56,7 +56,7 @@ class Map3DModel(MapModel):
         self.__max_height = max(height_array)
         self.__min_height = min(height_array)
 
-        height_array = height_array / self.__normalize_height_limits_by
+        height_array = height_array * self.__normalize_height_limits_by
         height_array = height_array.reshape(model_2d.get_vertices_shape()[:2])
 
         vertices_array_reshaped[:, :, 2] = height_array
