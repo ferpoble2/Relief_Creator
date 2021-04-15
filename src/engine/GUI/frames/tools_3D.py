@@ -56,16 +56,6 @@ class Tools3D(Frame):
         imgui.separator()
 
         self._GUI_manager.set_tool_title_font()
-        imgui.text('Controls')
-        self._GUI_manager.set_regular_font()
-
-        imgui.text_wrapped('W/S: Change elevation. \n'
-                           'A/D: Change azimuthal angle. \n'
-                           'Scroll: Get closer/farther.')
-
-        imgui.separator()
-
-        self._GUI_manager.set_tool_title_font()
         imgui.text('View Tools')
         self._GUI_manager.set_regular_font()
 

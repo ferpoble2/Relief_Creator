@@ -21,12 +21,21 @@ This is a list of shortcuts implemented in the program to make the usage of it m
 
 - CTRL + O: Load a netcdf file on the program.
 - CTRL + T: Loaf a ctp file on the program.
-- M: Change to `Move Map` tool.
 - CTRL + Z: Undo the last action (Not in all tools).
 - CTRL + L: Load a shapefile file into the program.
 
+
+In 2D mode:
 - WASD: Movement of the loaded map
 - R: Reload the map with the current resolution
+- M: Change to `Move Map` tool.
+
+In 3D mode:
+- W/S: Change elevation.
+- A/D: Change azimuthal angle.
+- Scroll: Get closer/farther.
+- UP/DOWN: Move the camera in the y-axis.
+- LEFT/RIGHT: Move the camera in the x-axis.
 
 NOTE: shortcuts does not work when there is a popup in the program.
 

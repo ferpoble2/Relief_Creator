@@ -325,6 +325,21 @@ class Controller:
             # -----------------------------------------------------
             if self.__glfw_keyboard_callback_enabled:
 
+                # shortcuts shared between 2D and 3D modes
+                # ----------------------------------------
+                if action == glfw.PRESS:
+                    if key == glfw.KEY_O and self.__is_left_ctrl_pressed:
+                        log.debug("Shortcut open file")
+                        self.__load_netcdf_file_with_dialog()
+
+                    if key == glfw.KEY_T and self.__is_left_ctrl_pressed:
+                        log.debug("Pressed shortcut to change color file")
+                        self.__change_color_file_with_dialog()
+
+                    if key == glfw.KEY_L:
+                        if self.__is_left_ctrl_pressed:
+                            self.__load_shapefile_file_with_dialog()
+
                 if self.__engine.get_program_view_mode() == '2D':
 
                     # Check what to do if a key is pressed
@@ -332,27 +347,14 @@ class Controller:
 
                         # Shortcuts of the platform
                         # -------------------------
-                        if key == glfw.KEY_O and self.__is_left_ctrl_pressed:
-                            log.debug("Shortcut open file")
-                            self.__load_netcdf_file_with_dialog()
-
-                        if key == glfw.KEY_T and self.__is_left_ctrl_pressed:
-                            log.debug("Pressed shortcut to change color file")
-                            self.__change_color_file_with_dialog()
-
                         if key == glfw.KEY_M:
                             log.debug("Pressed shortcut to move map")
                             self.__engine.set_active_tool('move_map')
 
                         if key == glfw.KEY_Z:
-
                             if self.__is_left_ctrl_pressed:
                                 log.debug("Pressed ctrl+z")
                                 self.__engine.undo_action()
-
-                        if key == glfw.KEY_L:
-                            if self.__is_left_ctrl_pressed:
-                                self.__load_shapefile_file_with_dialog()
 
                         if key == glfw.KEY_R:
                             self.__engine.reload_models()
