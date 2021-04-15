@@ -17,7 +17,7 @@ class Camera:
         Constructor of the class.
         """
         self.__radius = 500
-        self.__phi = 0  # along the xy plane
+        self.__phi = -pi/2  # along the xy plane
         self.__theta = 0.1  # perpendicular to xy plane
 
         self.__camera_position_offset = np.array([0, 0, 0])

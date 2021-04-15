@@ -316,11 +316,17 @@ class Scene:
             model_id: Id of the model.
             model_2d: Model 2D from wich extract the data to use to see the model in 3D.
         """
-        new_model = Map3DModel(self, model_2d)
-        new_model.id = model_id
 
-        # add the model to the hash
-        self.__3d_model_hash[model_id] = new_model
+        # noinspection PyMissingOrEmptyDocstring
+        def task_loading():
+            new_model = Map3DModel(self, model_2d)
+            new_model.id = model_id
+
+            # add the model to the hash
+            self.__3d_model_hash[model_id] = new_model
+
+        self.__engine.set_loading_message('Generating 3D model...')
+        self.__engine.set_task_with_loading_frame(task_loading, 2)
 
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
@@ -1027,7 +1033,7 @@ class Scene:
         Make the radius of the camera smaller.
 
         Args:
-            distance: distance to add or substract from the camera radius.
+            distance: distance to add or subtract from the camera radius.
 
         Returns: None
         """
