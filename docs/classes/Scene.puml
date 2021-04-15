@@ -54,6 +54,7 @@
                 + modify_camera_radius(distance)
                 + change_camera_elevation(angle)
                 + change_camera_azimuthal_angle(angle)
+                + move_camera(movement)
 
                 - __3d_model_hash: dictionary
                 - __engine : Engine

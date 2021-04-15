@@ -69,6 +69,7 @@ class Engine {
     + modify_camera_radius(distance)
     + change_camera_elevation(angle)
     + change_camera_xy_angle(angle)
+    + move_camera_position(movement)
     + refresh_with_model_2d_async(path_color_file, path_model, model_id, then)
     + reload_models()
     + reset_zoom_level()

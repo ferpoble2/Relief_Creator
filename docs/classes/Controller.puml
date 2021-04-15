@@ -7,6 +7,17 @@ class Controller {
     - __is_left_alt_pressed: boolean
     - __is_left_ctrl_pressed: boolean
     - __is_left_mouse_being_pressed: boolean
+    - __is_left_key_pressed: boolean
+    - __is_right_key_pressed: boolean
+    - __is_up_key_pressed: boolean
+    - __is_down_key_pressed: boolean
+
+    - __map_movement_velocity: float
+    - __radius_movement_velocity: float
+    - __elevation_movement_velocity: float
+    - __azimuthal_movement_velocity: float
+    - __camera_movement_velocity: float
+
 
     - __change_color_file_with_dialog()
     - __is_inside_scene(mouse_x_pos, mouse_y_pos): boolean

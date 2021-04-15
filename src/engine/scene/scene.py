@@ -26,7 +26,6 @@ from src.error.model_transformation_error import ModelTransformationError
 from src.error.scene_error import SceneError
 from src.error.interpolation_error import InterpolationError
 
-
 log = get_logger(module="SCENE")
 
 
@@ -1074,3 +1073,16 @@ class Scene:
             'elevation': self.__camera.get_elevation_grades(),
             'radius': self.__camera.get_radius()
         }
+
+    def move_camera(self, movement: tuple) -> None:
+        """
+        Move the camera the specified values given in the input.
+
+        The movement moves the camera and also the point where it is looking at.
+
+        Args:
+            movement: Tuple of 3 values with the movement to do on the camera.
+
+        Returns: None
+        """
+        self.__camera.modify_camera_offset(movement)

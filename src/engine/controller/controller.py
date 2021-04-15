@@ -42,10 +42,16 @@ class Controller:
         self.__is_a_pressed = False
         self.__is_d_pressed = False
 
+        self.__is_left_key_pressed = False
+        self.__is_right_key_pressed = False
+        self.__is_up_key_pressed = False
+        self.__is_down_key_pressed = False
+
         self.__map_movement_velocity = -20
         self.__radius_movement_velocity = 3
         self.__elevation_movement_velocity = 0.1
-        self.__azimutal_movement_velocity = 0.1
+        self.__azimuthal_movement_velocity = 0.1
+        self.__camera_movement_velocity = 5
 
     def __change_color_file_with_dialog(self) -> None:
         """
@@ -269,6 +275,18 @@ class Controller:
                 if key == glfw.KEY_D:
                     self.__is_d_pressed = True
 
+                if key == glfw.KEY_LEFT:
+                    self.__is_left_key_pressed = True
+
+                if key == glfw.KEY_RIGHT:
+                    self.__is_right_key_pressed = True
+
+                if key == glfw.KEY_UP:
+                    self.__is_up_key_pressed = True
+
+                if key == glfw.KEY_DOWN:
+                    self.__is_down_key_pressed = True
+
             if action == glfw.RELEASE:
 
                 # Do the logic
@@ -290,6 +308,18 @@ class Controller:
 
                 if key == glfw.KEY_D:
                     self.__is_d_pressed = False
+
+                if key == glfw.KEY_LEFT:
+                    self.__is_left_key_pressed = False
+
+                if key == glfw.KEY_RIGHT:
+                    self.__is_right_key_pressed = False
+
+                if key == glfw.KEY_UP:
+                    self.__is_up_key_pressed = False
+
+                if key == glfw.KEY_DOWN:
+                    self.__is_down_key_pressed = False
 
             # logic: only work if the glfw functionality is enabled
             # -----------------------------------------------------
@@ -343,9 +373,18 @@ class Controller:
                     if self.__is_s_pressed:
                         self.__engine.change_camera_elevation(-1 * self.__elevation_movement_velocity)
                     if self.__is_a_pressed:
-                        self.__engine.change_camera_xy_angle(-1 * self.__azimutal_movement_velocity)
+                        self.__engine.change_camera_xy_angle(-1 * self.__azimuthal_movement_velocity)
                     if self.__is_d_pressed:
-                        self.__engine.change_camera_xy_angle(self.__azimutal_movement_velocity)
+                        self.__engine.change_camera_xy_angle(self.__azimuthal_movement_velocity)
+
+                    if self.__is_up_key_pressed:
+                        self.__engine.move_camera_position((0, self.__camera_movement_velocity, 0))
+                    if self.__is_down_key_pressed:
+                        self.__engine.move_camera_position((0, -1 * self.__camera_movement_velocity, 0))
+                    if self.__is_left_key_pressed:
+                        self.__engine.move_camera_position((-1 * self.__camera_movement_velocity, 0, 0))
+                    if self.__is_right_key_pressed:
+                        self.__engine.move_camera_position((self.__camera_movement_velocity, 0, 0))
 
             # call the others callbacks defined in the program.
             self.__engine.get_gui_key_callback()(window, key, scancode, action, mods)

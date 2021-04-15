@@ -1197,3 +1197,14 @@ class Engine:
         Returns: None
         """
         self.scene.change_camera_azimuthal_angle(angle)
+
+    def move_camera_position(self, movement: tuple) -> None:
+        """
+        Ask the scene to move the camera position the given movement.
+
+        Args:
+            movement: offset to add to the position of the camera. Tuple must have 3 values.
+
+        Returns: None
+        """
+        self.scene.move_camera(movement)
