@@ -31,10 +31,9 @@ class GUIManager:
     Class to manage all the UI configurations and functions.
     """
 
-    def __init__(self):
+    def __init__(self, engine: 'Engine' = None):
         """
         Constructor of the class.
-
         """
         self.__implementation = None
         self.__glfw_window = None
@@ -51,7 +50,7 @@ class GUIManager:
 
         self.__icons_dict = None
 
-        self.__engine = None
+        self.__engine = engine
 
     def __load_icons(self) -> None:
         """
@@ -588,8 +587,6 @@ class GUIManager:
         self.__load_icons()
         self.get_gui_mouse_scroll_callback()
 
-        # set the engine
-        self.__engine = engine
 
         # initialize the components of the manager
         # ----------------------------------------
@@ -984,3 +981,22 @@ class GUIManager:
         Returns: Data related to the camera.
         """
         return self.__engine.get_camera_data()
+
+    def get_height_normalization_factor_of_active_3D_model(self) -> float:
+        """
+        Ask the engine for the normalization factor being used for the active 3D model.
+
+        Returns: Normalization height factor being used by the active model.
+        """
+        return self.__engine.get_height_normalization_factor_of_active_3D_model()
+
+    def change_current_3D_model_normalization_factor(self, normalization_height_value: float) -> None:
+        """
+        Ask the engine to change the current normalization factor being used for the active 3d model.
+
+        Args:
+            normalization_height_value: new normalization factor
+
+        Returns: None
+        """
+        self.__engine.change_current_3D_model_normalization_factor(normalization_height_value)

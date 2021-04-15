@@ -97,8 +97,6 @@ class Camera:
         self.__camera_pos = self.__spherical_to_cartesian(self.__radius,
                                                           self.__phi,
                                                           self.__theta)
-        print(self.__camera_pos)
-        print(self.__theta / pi)
 
     def modify_azimuthal_angle(self, angle) -> None:
         """

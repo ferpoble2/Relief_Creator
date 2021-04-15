@@ -31,6 +31,7 @@ class Map3DModel(MapModel):
         self.__colors = []
         self.__height_limit = []
 
+        self.__model_2D_used = model_2d
         self.__normalize_height_limits_by = 1/6000
         self.__quality = 0
 
@@ -40,6 +41,8 @@ class Map3DModel(MapModel):
         self.hbo = GL.glGenBuffers(1)
         self.__height_array = model_2d.get_height_array()
 
+        self.__vertices_shape = model_2d.get_vertices_shape()
+
         scene_settings_data = self.scene.get_scene_setting_data()
         camera_settings_data = self.scene.get_camera_settings()
         self.__projection = perspective(camera_settings_data['FIELD_OF_VIEW'],
@@ -48,7 +51,8 @@ class Map3DModel(MapModel):
                                         camera_settings_data['PROJECTION_FAR'])
 
         # set the data for the model
-        vertices_shape = model_2d.get_vertices_shape()
+        # --------------------------
+        vertices_shape = self.__vertices_shape
         vertices_array = model_2d.get_vertices_array().copy()
         vertices_array_reshaped = vertices_array.reshape(vertices_shape)
 
@@ -156,6 +160,39 @@ class Map3DModel(MapModel):
             GL.glUniform3fv(colors_location, len(self.__colors), self.__colors)
             GL.glUniform1fv(height_color_location, len(self.__height_limit), self.__height_limit)
             GL.glUniform1i(length_location, len(self.__colors))
+
+    def change_height_normalization_factor(self, new_value) -> None:
+        """
+        Change the normalization factor used to modify the heights of the model.
+
+        Do nothing if the new factor is the same than the previous one.
+
+        Args:
+            new_value: New interpolation factor.
+
+        Returns: None
+        """
+        if self.__normalize_height_limits_by == new_value:
+            return
+
+        # change the value
+        self.__normalize_height_limits_by = new_value
+
+        # modify the vertices array to fit the new heights
+        height_array = self.__height_array * self.__normalize_height_limits_by
+        height_array = height_array.reshape(self.__vertices_shape[:2])
+
+        vertices_array = self.get_vertices_array().reshape(self.__vertices_shape)
+        vertices_array[:, :, 2] = height_array
+        self.set_vertices(vertices_array.reshape(-1))
+
+    def get_normalization_height_factor(self) -> float:
+        """
+        Get the normalization height factor being used by the model.
+
+        Returns: factor being used
+        """
+        return self.__normalize_height_limits_by
 
     def draw(self) -> None:
         """

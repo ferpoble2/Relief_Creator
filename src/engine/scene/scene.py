@@ -1086,3 +1086,29 @@ class Scene:
         Returns: None
         """
         self.__camera.modify_camera_offset(movement)
+
+    def get_height_normalization_factor(self, model_3d_id: str) -> float:
+        """
+        Get the height normalization factor of the 3d model specified.
+
+        If model is not in the list of 3D models, then KeyError is raised.
+
+        Args:
+            model_3d_id: Id of the model too ask for the height normalization factor.
+
+        Returns: Factor being used by the model.
+        """
+        model = self.__3d_model_hash[model_3d_id]
+        return model.get_normalization_height_factor()
+
+    def change_normalization_height_factor(self, active_model: str, new_factor: float) -> None:
+        """
+        Change the height normalization factor of the specified model.
+
+        Args:
+            active_model: ID of the 3D model to change the height normalization factor.
+            new_factor: New factor to use in the model.
+
+        Returns: None
+        """
+        self.__3d_model_hash[active_model].change_height_normalization_factor(new_factor)

@@ -25,6 +25,8 @@ class Tools3D(Frame):
         self.__double_button_margin_width = 13
         self.__button_margin_width = 17
 
+        self.__normalization_height_value = 0
+
     def render(self) -> None:
         """
         Draw the components of the frame into the GUI.
@@ -60,5 +62,35 @@ class Tools3D(Frame):
         imgui.text_wrapped('W/S: Change elevation. \n'
                            'A/D: Change azimuthal angle. \n'
                            'Scroll: Get closer/farther.')
+
+        imgui.separator()
+
+        self._GUI_manager.set_tool_title_font()
+        imgui.text('View Tools')
+        self._GUI_manager.set_regular_font()
+
+        imgui.text('Height normalization factor')
+        imgui.text(f'Current value: {self._GUI_manager.get_height_normalization_factor_of_active_3D_model()}')
+        _, self.__normalization_height_value = imgui.input_float('New factor',
+                                                                 self.__normalization_height_value,
+                                                                 format='%.6f')
+        self.__normalization_height_value = max(self.__normalization_height_value, 0)
+
+        # show tooltip when mouse is hover
+        if imgui.is_item_hovered():
+            imgui.begin_tooltip()
+            imgui.text('Models usually use different units for the height and for the position of the points.\n\n'
+                       'Change this value to modify the factor used to normalize the height coordinates.')
+            imgui.end_tooltip()
+
+        # disable input if writing a value on the input
+        if imgui.is_item_active():
+            self._GUI_manager.disable_glfw_keyboard_callback()
+        else:
+            self._GUI_manager.enable_glfw_keyboard_callback()
+
+        # apply changes
+        if imgui.button('Change Factor', -1):
+            self._GUI_manager.change_current_3D_model_normalization_factor(self.__normalization_height_value)
 
         imgui.end()

@@ -38,7 +38,7 @@ class Engine:
         Constructor of the program.
         """
         self.render = Render()
-        self.gui_manager = GUIManager()
+        self.gui_manager = GUIManager(self)
         self.window = None
         self.scene = Scene(self)
         self.controller = Controller(self)
@@ -1208,3 +1208,29 @@ class Engine:
         Returns: None
         """
         self.scene.move_camera(movement)
+
+    def get_height_normalization_factor_of_active_3D_model(self) -> float:
+        """
+        Ask the scene for the normalization factor being used by the active 3D model.
+
+        Return -1 if the model is not in the list of models of the scene.
+
+        Returns: normalization factor being used by the model
+        """
+        try:
+            active_model = self.get_active_model_id()
+            return self.scene.get_height_normalization_factor(active_model)
+        except KeyError:
+            return -1
+
+    def change_current_3D_model_normalization_factor(self, new_factor: float) -> None:
+        """
+        Ask the scene to change the height normalization factor of the current 3D model.
+
+        Args:
+            new_factor: new height normalization factor to use in the model.
+
+        Returns: None
+        """
+        active_model = self.get_active_model_id()
+        self.scene.change_normalization_height_factor(active_model, new_factor)

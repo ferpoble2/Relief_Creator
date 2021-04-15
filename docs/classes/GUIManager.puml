@@ -23,6 +23,8 @@ class GUIManager{
     + add_zoom()
     + are_frame_fixed()
     + calculate_max_min_height(model_id, polygon_id): tuple
+    + get_height_normalization_factor_of_active_3D_model(): float
+    + change_current_3D_model_normalization_factor(normalization_height_value)
     + change_color_file_with_dialog()
     + change_color_of_polygon(polygon_id, color)
     + change_dot_color_of_polygon(polygon_id, color)
