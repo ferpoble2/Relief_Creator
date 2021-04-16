@@ -30,41 +30,46 @@ class MainMenuBar(Frame):
         Render the main menu bar on the screen.
         Returns: None
         """
+        current_model = self._GUI_manager.get_active_model_id()
+        model_loaded = current_model is not None
 
         if imgui.begin_main_menu_bar():
             # first menu dropdown
-            self.__file_menu()
+            self.__file_menu(model_loaded)
 
             # second menu dropdown
-            self.__edit_menu()
+            self.__edit_menu(model_loaded)
 
             # third menu dropdown
-            self.__view_menu()
+            self.__view_menu(model_loaded)
 
             imgui.end_main_menu_bar()
 
-    def __file_menu(self):
+    def __file_menu(self, model_loaded: bool):
         """
         Options that appear on the File option of the main menu bar.
+
+        Args:
+            model_loaded: Boolean indicating if there is a model loaded in the program.
         """
         if imgui.begin_menu('File', True):
             imgui.menu_item('Open NetCDF file...', 'Ctrl+O', False, True)
             if imgui.is_item_clicked():
                 self._GUI_manager.load_netcdf_file_with_dialog()
 
-            imgui.menu_item('Change CPT file...', 'Ctrl+T', False, True)
-            if imgui.is_item_clicked():
+            imgui.menu_item('Change CPT file...', 'Ctrl+T', False, model_loaded)
+            if imgui.is_item_clicked() and model_loaded:
                 self._GUI_manager.change_color_file_with_dialog()
 
             imgui.separator()
-            imgui.menu_item('Load shapefile file...', 'Ctrl+L', False, True)
-            if imgui.is_item_clicked():
+            imgui.menu_item('Load shapefile file...', 'Ctrl+L', False, model_loaded)
+            if imgui.is_item_clicked() and model_loaded:
                 log.debug('Clicked load shapefile...')
                 self._GUI_manager.load_shapefile_file_with_dialog()
 
             imgui.separator()
-            imgui.menu_item('Export current model...')
-            if imgui.is_item_clicked():
+            imgui.menu_item('Export current model...', enabled=model_loaded)
+            if imgui.is_item_clicked() and model_loaded:
                 try:
                     self._GUI_manager.export_model_as_netcdf(self._GUI_manager.get_active_model_id())
                     self._GUI_manager.set_modal_text('Information', 'Model exported successfully')
@@ -76,9 +81,12 @@ class MainMenuBar(Frame):
 
             imgui.end_menu()
 
-    def __view_menu(self):
+    def __view_menu(self, model_loaded: bool):
         """
         Options that appear on the View option from the main menu bar
+
+        Args:
+            model_loaded: Boolean specifying if there is a model loaded in the program.
         """
         if imgui.begin_menu('View'):
 
@@ -94,31 +102,31 @@ class MainMenuBar(Frame):
 
             imgui.separator()
 
-            imgui.menu_item('Use points')
-            if imgui.is_item_clicked():
+            imgui.menu_item('Use points', enabled=model_loaded)
+            if imgui.is_item_clicked() and model_loaded:
                 log.info("Rendering points")
                 self._GUI_manager.set_models_polygon_mode(GL.GL_POINT)
 
-            imgui.menu_item('Use wireframes')
-            if imgui.is_item_clicked():
+            imgui.menu_item('Use wireframes', enabled=model_loaded)
+            if imgui.is_item_clicked() and model_loaded:
                 log.info("Rendering wireframes")
                 self._GUI_manager.set_models_polygon_mode(GL.GL_LINE)
 
-            imgui.menu_item('Fill polygons')
-            if imgui.is_item_clicked():
+            imgui.menu_item('Fill polygons', enabled=model_loaded)
+            if imgui.is_item_clicked() and model_loaded:
                 log.info("Rendering filled polygons")
                 self._GUI_manager.set_models_polygon_mode(GL.GL_FILL)
 
             imgui.separator()
             program_view_mode = self._GUI_manager.get_program_view_mode()
             if program_view_mode == '3D':
-                imgui.menu_item('Change to 2D view')
-                if imgui.is_item_clicked():
+                imgui.menu_item('Change to 2D view', enabled=model_loaded)
+                if imgui.is_item_clicked() and model_loaded:
                     self._GUI_manager.set_program_view_mode('2D')
 
             elif program_view_mode == '2D':
-                imgui.menu_item('Change to 3D view')
-                if imgui.is_item_clicked():
+                imgui.menu_item('Change to 3D view', enabled=model_loaded)
+                if imgui.is_item_clicked() and model_loaded:
                     self._GUI_manager.set_program_view_mode('3D')
 
             else:
@@ -126,17 +134,15 @@ class MainMenuBar(Frame):
 
             imgui.end_menu()
 
-    def __edit_menu(self):
+    def __edit_menu(self, model_loaded: bool):
         """
         Options that appear when opening the Edit option from the main menu bar.
+
+        Args:
+            model_loaded: Boolean indicating if there is a model loaded in the program.
         """
         if imgui.begin_menu('Edit', True):
-            imgui.menu_item('Undo', 'CTRL+Z', False, True)
-            if imgui.is_item_clicked():
+            imgui.menu_item('Undo', 'CTRL+Z', False, model_loaded)
+            if imgui.is_item_clicked() and model_loaded:
                 self._GUI_manager.undo_action()
-
-            imgui.separator()
-            imgui.menu_item('Zoom In', None, False, True)
-            imgui.menu_item('Zoom Out', None, False, True)
-
             imgui.end_menu()
