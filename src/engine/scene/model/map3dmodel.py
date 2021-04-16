@@ -9,8 +9,11 @@ import OpenGL.GL as GL
 from input.CTP import read_file
 from src.engine.scene.model.mapmodel import MapModel
 from src.engine.scene.model.tranformations.transformations import lookAt, perspective, rotationA, translate, identity
+from src.utils import get_logger
 
 from src.type_hinting import *
+
+log = get_logger(module='MAP3DMODEL')
 
 
 class Map3DModel(MapModel):
@@ -32,7 +35,7 @@ class Map3DModel(MapModel):
         self.__height_limit = []
 
         self.__model_2D_used = model_2d
-        self.__normalize_height_limits_by = 1/6000
+        self.__normalize_height_limits_by = 1 / 6000
         self.__quality = 0
 
         self.__model = identity()
@@ -101,6 +104,38 @@ class Map3DModel(MapModel):
         GL.glEnableVertexAttribArray(1)
 
         return
+
+    def update_values_from_2D_model(self) -> None:
+        """
+        Update the vertices and height arrays from the 2D model.
+
+        Returns: None
+        """
+        log.debug('Updating GPU arrays...')
+        self.__vertices_shape = self.__model_2D_used.get_vertices_shape()
+        vertices_shape = self.__vertices_shape
+        vertices_array = self.__model_2D_used.get_vertices_array().copy()
+        vertices_array_reshaped = vertices_array.reshape(vertices_shape)
+
+        height_array = self.__height_array
+        self.__max_height = max(height_array)
+        self.__min_height = min(height_array)
+
+        height_array = height_array * self.__normalize_height_limits_by
+        height_array = height_array.reshape(self.__vertices_shape[:2])
+
+        vertices_array_reshaped[:, :, 2] = height_array
+        self.set_vertices(vertices_array.reshape(-1))
+
+        log.debug('Updating indices...')
+        x_values = vertices_array_reshaped[0, :, 0].reshape(-1)
+        y_values = vertices_array_reshaped[:, 0, 1].reshape(-1)
+        index_array = self._generate_index_list(self.__quality,
+                                                self.__quality,
+                                                x_values,
+                                                y_values)
+        self.set_indices(index_array)
+        self.__set_height_buffer()
 
     def set_color_file(self, filename: str) -> None:
         """

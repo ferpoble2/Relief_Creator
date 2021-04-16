@@ -32,6 +32,7 @@
                 + get_camera_settings(): dict
                 + get_height_normalization_factor(model_3d_id): float
                 + change_normalization_height_factor(active_model, new_factor)
+                + update_3D_model(model_id)
                 + load_preview_interpolation_area(distance, z_value)
                 + move_models(x_movement, y_movement)
                 + optimize_gpu_memory_async(then)

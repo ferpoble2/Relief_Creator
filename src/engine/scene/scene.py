@@ -318,6 +318,7 @@ class Scene:
 
         # noinspection PyMissingOrEmptyDocstring
         def task_loading():
+            self.reset_camera_values()
             new_model = Map3DModel(self, model_2d)
             new_model.id = model_id
 
@@ -1112,3 +1113,14 @@ class Scene:
         Returns: None
         """
         self.__3d_model_hash[active_model].change_height_normalization_factor(new_factor)
+
+    def update_3D_model(self, model_id: str) -> None:
+        """
+        Ask the 3D model to update its values from the 2D model.
+
+        Args:
+            model_id: id of the model to update.
+
+        Returns: None
+        """
+        self.__3d_model_hash[model_id].update_values_from_2D_model()

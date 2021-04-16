@@ -83,4 +83,7 @@ class Tools3D(Frame):
         if imgui.button('Change Factor', -1):
             self._GUI_manager.change_current_3D_model_normalization_factor(self.__normalization_height_value)
 
+        if imgui.button('Reload data from map 2D', -1):
+            self._GUI_manager.update_current_3D_model()
+
         imgui.end()

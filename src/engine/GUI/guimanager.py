@@ -1000,3 +1000,11 @@ class GUIManager:
         Returns: None
         """
         self.__engine.change_current_3D_model_normalization_factor(normalization_height_value)
+
+    def update_current_3D_model(self) -> None:
+        """
+        Ask the engine to update the current 3D model.
+
+        Returns: None
+        """
+        self.__engine.update_current_3D_model()

@@ -1234,3 +1234,17 @@ class Engine:
         """
         active_model = self.get_active_model_id()
         self.scene.change_normalization_height_factor(active_model, new_factor)
+
+    def update_current_3D_model(self) -> None:
+        """
+        Ask the scene to update the 3D model.
+
+        Returns: None
+        """
+
+        # noinspection PyMissingOrEmptyDocstring
+        def loading_task():
+            self.scene.update_3D_model(self.program.get_active_model())
+
+        self.set_loading_message('Getting data from the map 2D...')
+        self.set_task_with_loading_frame(loading_task)

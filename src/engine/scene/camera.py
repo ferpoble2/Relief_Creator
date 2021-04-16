@@ -59,9 +59,13 @@ class Camera:
 
         Returns: None
         """
-        self.__camera_pos = np.array([0, 0, 100])
+        self.__radius = 500
+        self.__phi = -pi / 2  # along the xy plane
+        self.__theta = 0.1  # perpendicular to xy plane
+
+        self.__camera_pos = self.__spherical_to_cartesian(self.__radius, self.__phi, self.__theta)
         self.__look_at = np.array([0, 0, 0])
-        self.__normal = np.array([0, 1, 0])
+        self.__normal = np.array([0, 0, 1])
 
     def modify_radius(self, change_value: float = 1) -> None:
         """
