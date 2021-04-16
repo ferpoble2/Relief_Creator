@@ -1005,6 +1005,9 @@ class Scene:
         for model in self.__model_hash.values():
             model.calculate_projection_matrix(scene_data, self.get_zoom_level())
 
+        for model in self.__3d_model_hash.values():
+            model.calculate_projection_matrix()
+
     def update_viewport(self) -> None:
         """
         Update the viewport with the new values that exist in the Settings.

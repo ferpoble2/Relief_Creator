@@ -16,7 +16,8 @@ LOG_LIST_MODULES = [
     'ENGINE',
     'PROGRAM',
     'SCENE',
-    'TEXT_MODAL'
+    'TEXT_MODAL',
+    'MAP3DMODEL'
 ]
 
 

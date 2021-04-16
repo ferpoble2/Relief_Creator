@@ -15,6 +15,7 @@ class Map3DModel {
 
     ~ _update_uniforms()
     + set_color_file(filename)
+    + calculate_projection_matrix()
     + update_values_from_2D_model()
     + change_height_normalization_factor(new_value)
     + get_normalization_height_factor(): float

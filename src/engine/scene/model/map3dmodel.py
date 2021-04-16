@@ -105,6 +105,20 @@ class Map3DModel(MapModel):
 
         return
 
+    def calculate_projection_matrix(self) -> None:
+        """
+        Recalculate the projection matrix to use to draw the model.
+
+        Returns: None
+        """
+        log.debug('Recalculated projection.')
+        scene_settings_data = self.scene.get_scene_setting_data()
+        camera_settings_data = self.scene.get_camera_settings()
+        self.__projection = perspective(camera_settings_data['FIELD_OF_VIEW'],
+                                        scene_settings_data['SCENE_WIDTH_X'] / scene_settings_data['SCENE_HEIGHT_Y'],
+                                        camera_settings_data['PROJECTION_NEAR'],
+                                        camera_settings_data['PROJECTION_FAR'])
+
     def update_values_from_2D_model(self) -> None:
         """
         Update the vertices and height arrays from the 2D model.
