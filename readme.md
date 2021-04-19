@@ -13,7 +13,7 @@ tools not developed for that purpose.
 
 # Usage
 
-## How to use the platform
+## How to use the program
 
 ### Shortcuts
 
@@ -29,6 +29,7 @@ In 2D mode:
 - WASD: Movement of the loaded map
 - R: Reload the map with the current resolution
 - M: Change to `Move Map` tool.
+- Scroll: Zoom In/Out
 
 In 3D mode:
 - W/S: Change elevation.
@@ -78,6 +79,14 @@ Note: The name from above is not showed in the tools frame of the program but is
 The program uses two types of controllers to maage the input from the user, one is the controller that the library `imgui` uses to process the inputs of the user related to the GUI, and the other is the one stored in the class `Controller`.
 
 Both controllers are used in the program, the controller stored in the class `Controller` is the one in charge of calling the controller from `imgui`whenever is necessary.
+
+# About the camera
+
+For the 3D rendering, the program uses a 3D camera that uses spherical coordinates.
+
+In this program, the coordinates used are (r,phi,theta), where the phi angle correspond to the azimuthal angle (parallel to the xy plane) and the theta angle correspond with the elevation angle.
+
+Something to consider is that the elevation angle (theta) starts from the top, this means that the point (1,0,0) in spherical coordinates correspond to the point (0,0,1) in cartesian coordinates.
 
 # Reading NetCDF files
 
