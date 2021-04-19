@@ -340,6 +340,10 @@ class Scene:
         if polygon_id in self.__polygon_hash:
             self.__polygon_hash.pop(polygon_id)
 
+            # delete the interpolation area if they have
+            if polygon_id in self.__interpolation_area_hash:
+                self.__interpolation_area_hash.pop(polygon_id)
+
     def delete_polygon_param(self, polygon_id: str, key: str) -> None:
         """
         Delete a parameter from the polygon.
