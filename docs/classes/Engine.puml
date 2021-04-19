@@ -73,6 +73,7 @@ class Engine {
     + get_height_normalization_factor_of_active_3D_model(): float
     + change_current_3D_model_normalization_factor(new_factor)
     + update_current_3D_model()
+    + reset_camera_values()
     + refresh_with_model_2d_async(path_color_file, path_model, model_id, then)
     + reload_models()
     + reset_zoom_level()

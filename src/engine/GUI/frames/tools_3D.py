@@ -53,6 +53,9 @@ class Tools3D(Frame):
         imgui.text(f'Radius: {camera_data["radius"]}')
         imgui.text(f'Position: {camera_data["position"]}')
 
+        if imgui.button('Reset Camera', -1):
+            self._GUI_manager.reset_camera_values()
+
         imgui.separator()
 
         self._GUI_manager.set_tool_title_font()

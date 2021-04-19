@@ -1248,3 +1248,11 @@ class Engine:
 
         self.set_loading_message('Getting data from the map 2D...')
         self.set_task_with_loading_frame(loading_task)
+
+    def reset_camera_values(self) -> None:
+        """
+        Ask the scene to reset the values of the camera.
+
+        Returns: None
+        """
+        self.scene.reset_camera_values()

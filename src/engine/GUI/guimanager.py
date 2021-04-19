@@ -716,20 +716,6 @@ class GUIManager:
         """
         self.__implementation.process_inputs()
 
-    def refresh_scene_with_model_2d(self, path_color_file: str, path_model: str, model_id: str = 'main') -> None:
-        """
-        Refresh the scene with the model 2D specified.
-
-        Args:
-            model_id: Id to use in the model.
-            path_color_file: Path to CTP file.
-            path_model: Path to the netCDF with the info of the model
-
-        Returns: None
-
-        """
-        self.__engine.refresh_with_model_2d(path_color_file, path_model, model_id)
-
     def reload_models(self):
         """
         Ask the Scene to reload the models to better the definitions.
@@ -1008,3 +994,11 @@ class GUIManager:
         Returns: None
         """
         self.__engine.update_current_3D_model()
+
+    def reset_camera_values(self) -> None:
+        """
+        Ask the engine to reset the values of the camera to it's initial values.
+
+        Returns: None
+        """
+        self.__engine.reset_camera_values()

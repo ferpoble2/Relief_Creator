@@ -77,7 +77,7 @@ class GUIManager{
     + move_polygon_to_polygon_folder(polygon_id, folder_id)
     + optimize_gpu_memory()
     + process_input()
-    + refresh_scene_with_model_2d(path_color_file, path_model, model_id)
+    + reset_camera_values()
     + reload_models()
     + render()
     + set_active_polygon(polygon_id)
