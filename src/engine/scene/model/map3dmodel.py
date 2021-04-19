@@ -42,7 +42,7 @@ class Map3DModel(MapModel):
         self.__view = self.scene.get_camera_view_matrix()
 
         self.hbo = GL.glGenBuffers(1)
-        self.__height_array = model_2d.get_height_array()
+        self.__height_array = model_2d.get_height_array().copy()
 
         self.__vertices_shape = model_2d.get_vertices_shape()
 
@@ -126,18 +126,27 @@ class Map3DModel(MapModel):
         Returns: None
         """
         log.debug('Updating GPU arrays...')
-        self.__vertices_shape = self.__model_2D_used.get_vertices_shape()
-        vertices_shape = self.__vertices_shape
-        vertices_array = self.__model_2D_used.get_vertices_array().copy()
-        vertices_array_reshaped = vertices_array.reshape(vertices_shape)
 
+        # get the shape of the model
+        self.__vertices_shape = self.__model_2D_used.get_vertices_shape()
+
+        # get a copy of the arrays to not modify the originals
+        vertices_array = self.__model_2D_used.get_vertices_array().copy()
+        self.__height_array = self.__model_2D_used.get_height_array().copy()
+
+        # reshape the vertices to work with them
+        vertices_array_reshaped = vertices_array.reshape(self.__vertices_shape)
+
+        # reshape the heights to work with them along the vertices
         height_array = self.__height_array
         self.__max_height = max(height_array)
         self.__min_height = min(height_array)
 
+        # normalize heights
         height_array = height_array * self.__normalize_height_limits_by
         height_array = height_array.reshape(self.__vertices_shape[:2])
 
+        # create arrays
         vertices_array_reshaped[:, :, 2] = height_array
         self.set_vertices(vertices_array.reshape(-1))
 
@@ -148,6 +157,8 @@ class Map3DModel(MapModel):
                                                 self.__quality,
                                                 x_values,
                                                 y_values)
+
+        # set the arrays in the GPU
         self.set_indices(index_array)
         self.__set_height_buffer()
 

@@ -33,6 +33,7 @@
                 + get_height_normalization_factor(model_3d_id): float
                 + change_normalization_height_factor(active_model, new_factor)
                 + update_3D_model(model_id)
+                + apply_smoothing_algorithm(polygon_id, model_id, distance_to_polygon)
                 + load_preview_interpolation_area(distance, z_value)
                 + move_models(x_movement, y_movement)
                 + optimize_gpu_memory_async(then)

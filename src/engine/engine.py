@@ -1256,3 +1256,16 @@ class Engine:
         Returns: None
         """
         self.scene.reset_camera_values()
+
+    def apply_smoothing(self, polygon_id: str, model_id: str, distance_to_polygon: float) -> None:
+        """
+        Ask the scene to apply smoothing over the indicated polygon.
+
+        Args:
+            polygon_id: Polygon to use to apply smoothing.
+            model_id: Model to use.
+            distance_to_polygon: Distance to generate the external polygon and the smoothing area.
+
+        Returns: None
+        """
+        self.scene.apply_smoothing_algorithm(polygon_id, model_id, distance_to_polygon)

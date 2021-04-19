@@ -7,6 +7,8 @@ import imgui
 from src.utils import get_logger
 from src.error.interpolation_error import InterpolationError
 
+from type_hinting import *
+
 log = get_logger(module="INTERPOLATION_TOOLS")
 
 
@@ -69,3 +71,8 @@ class InterpolationTools:
                 elif e.code == 3:
                     self.__gui_manager.set_modal_text('Error', 'Model used for interpolation is not accepted by '
                                                                'the program.')
+
+        if imgui.button('Apply Smoothing Algorithm',-1):
+            self.__gui_manager.apply_smoothing(self.__gui_manager.get_active_polygon_id(),
+                                               self.__gui_manager.get_active_model_id(),
+                                               self.__distance_current_value)

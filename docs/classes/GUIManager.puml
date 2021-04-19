@@ -78,6 +78,7 @@ class GUIManager{
     + optimize_gpu_memory()
     + process_input()
     + reset_camera_values()
+    + apply_smoothing(polygon_id, model_id, distance_to_polygon)
     + reload_models()
     + render()
     + set_active_polygon(polygon_id)

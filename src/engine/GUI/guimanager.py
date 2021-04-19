@@ -1002,3 +1002,16 @@ class GUIManager:
         Returns: None
         """
         self.__engine.reset_camera_values()
+
+    def apply_smoothing(self, polygon_id: str, model_id: str, distance_to_polygon: float) -> None:
+        """
+        Ask the engine to apply a smoothing algorithm over the interpolation area of the polygon.
+
+        Args:
+            polygon_id: id of the polygon to use for the smoothing.
+            model_id: id of the model to use for the smoothing.
+            distance_to_polygon: distance to use for the compute of the external polygon and the smoothing area.
+
+        Returns: None
+        """
+        self.__engine.apply_smoothing(polygon_id, model_id, distance_to_polygon)

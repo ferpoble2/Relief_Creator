@@ -9,6 +9,7 @@ from typing import List
 from matplotlib import path
 from scipy import interpolate as interpolate_scipy
 from scipy.spatial.distance import cdist
+from skimage.filters import gaussian as gaussian_filter
 
 from src.utils import interpolate
 from src.utils import is_clockwise
@@ -422,3 +423,48 @@ class TransformationHelper:
         minimum = np.min(heights_cut[flags])
 
         return maximum, minimum
+
+    def apply_smoothing_over_area(self, internal_polygon_points: list,
+                                  external_polygon_points: list,
+                                  points_array: np.ndarray,
+                                  heights: np.ndarray) -> np.ndarray:
+        """
+        Apply a smoothing algorithm in the area between the polygon and the external polygon.
+
+        This method does not modify the original arrays.
+
+        Args:
+            points_array: Arrays with the coordinates of the points. must have shape (x,y,3)
+            internal_polygon_points: Points of the internal polygon. [x1, y1, z1, x2, y2, z2, ...]
+            external_polygon_points: Points of the external polygon. [x1, y1, z1, x2, y2, z2, ...]
+            heights: Array with the height of the points. must have shape (x, y)
+
+        Returns: Array with the new heights.
+        """
+        external_points_no_z_axis = self.__delete_z_axis(external_polygon_points)
+
+        # make a copy to not alter the original heights
+        heights = heights.copy()
+
+        # bounding box
+        # get the bounding box of the nan values
+        min_x_index, max_x_index, min_y_index, max_y_index = self.__get_bounding_box_indexes(
+            points_array,
+            LinearRing(external_points_no_z_axis))
+
+        # bounding box of the points and height (we need one extra pixel)
+        points_cut = points_array[min_y_index - 1:max_y_index + 1, min_x_index - 1:max_x_index + 1, :]
+        heights_cut = heights[min_y_index - 1:max_y_index + 1, min_x_index - 1:max_x_index + 1]
+
+        # Apply laplace smoothing over one matrix
+        new_heights = gaussian_filter(heights_cut)
+
+        mask = self.__generate_mask(points_cut, internal_polygon_points)
+        mask_external = self.__generate_mask(points_cut, external_polygon_points)
+        mask_in_between = mask != mask_external
+
+        heights_cut[mask_in_between] = new_heights[mask_in_between]
+
+        heights[min_y_index - 1:max_y_index + 1, min_x_index - 1:max_x_index + 1] = heights_cut
+
+        return heights
