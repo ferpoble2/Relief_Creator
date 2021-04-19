@@ -58,23 +58,24 @@ class Tools(Frame):
         self._GUI_manager.set_tool_title_font()
         imgui.text("Visualization Tools")
         self._GUI_manager.set_regular_font()
-        if imgui.button("Zoom in", width=left_frame_width / 2 - self.__double_button_margin_width):
+
+        if imgui.button("Zoom in", width=imgui.get_window_width() / 2 - self.__double_button_margin_width):
             log.debug("Pressed button Zoom in")
             log.debug("----------------------")
             self._GUI_manager.add_zoom()
 
         imgui.same_line()
-        if imgui.button("Zoom out", width=left_frame_width / 2 - self.__double_button_margin_width):
+        if imgui.button("Zoom out", width=imgui.get_window_width() / 2 - self.__double_button_margin_width):
             log.debug("Pressed button Zoom out")
             log.debug("-----------------------")
             self._GUI_manager.less_zoom()
 
-        if imgui.button("Move Map", width=left_frame_width - self.__button_margin_width):
+        if imgui.button("Move Map", -1):
             log.debug("Pressed button Move Map")
             log.debug("-----------------------")
             self._GUI_manager.set_active_tool('move_map')
 
-        if imgui.button("Reload map with zoom", width=left_frame_width - self.__button_margin_width):
+        if imgui.button("Reload map with zoom", -1):
             log.debug("Pressed Reload map with zoom button")
             log.debug("-----------------------------------")
             self._GUI_manager.reload_models()
@@ -127,7 +128,6 @@ class Tools(Frame):
 
         imgui.separator()
         self.__polygon_tools.render(left_frame_width)
-        # self.__show_polygon_tools(left_frame_width)
 
         if self._GUI_manager.get_active_polygon_id() is not None:
             imgui.separator()
