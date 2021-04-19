@@ -514,7 +514,7 @@ class PolygonTools:
         self.__GUI_manager.set_tool_title_font()
         imgui.text("Polygon Tools")
         self.__GUI_manager.set_regular_font()
-        if imgui.button("Create folder", width=left_frame_width - self.__button_margin_width):
+        if imgui.button("Create folder", width=imgui.get_window_width() - self.__button_margin_width):
             self.__create_new_polygon()
 
         self.__generate_polygon_list()
