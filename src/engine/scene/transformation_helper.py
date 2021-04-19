@@ -443,14 +443,14 @@ class TransformationHelper:
         """
         external_points_no_z_axis = self.__delete_z_axis(external_polygon_points)
 
-        # make a copy to not alter the original heights
-        heights = heights.copy()
-
         # bounding box
         # get the bounding box of the nan values
         min_x_index, max_x_index, min_y_index, max_y_index = self.__get_bounding_box_indexes(
             points_array,
             LinearRing(external_points_no_z_axis))
+
+        # make a copy to not alter the original heights
+        heights = heights.copy()
 
         # bounding box of the points and height (we need one extra pixel)
         points_cut = points_array[min_y_index - 1:max_y_index + 1, min_x_index - 1:max_x_index + 1, :]
