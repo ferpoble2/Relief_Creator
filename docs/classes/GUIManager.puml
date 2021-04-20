@@ -79,6 +79,8 @@ class GUIManager{
     + process_input()
     + reset_camera_values()
     + apply_smoothing(polygon_id, model_id, distance_to_polygon)
+    + change_height_unit_current_3D_model(measure_unit)
+    + change_map_position_unit_current_3D_model(measure_unit)
     + reload_models()
     + render()
     + set_active_polygon(polygon_id)

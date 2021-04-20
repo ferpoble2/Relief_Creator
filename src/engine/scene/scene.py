@@ -1164,3 +1164,29 @@ class Scene:
                                                                        heights_model)
 
         model.set_height_buffer(new_heights)
+
+    def change_height_unit_3D_model(self, model_id: str, measure_unit: str) -> None:
+        """
+        Change the measure unit used for the height of the model.
+
+        This has an effect in the factor used to calculate the height at the moment of the rendering in 3D.
+
+        Args:
+            model_id: ID of the model to modify.
+            measure_unit: New unit to use. Values can be ['meters', 'kilometers']
+
+        Returns: None
+        """
+        self.__3d_model_hash[model_id].change_height_measure_unit(measure_unit)
+
+    def change_map_unit_3D_model(self, model_id: str, measure_unit: str) -> None:
+        """
+        Change the measure unit used for the position of the points on the model.
+
+        Args:
+            model_id: id of the model to modify the measure unit.
+            measure_unit: new measure unit to use.
+
+        Returns: None
+        """
+        self.__3d_model_hash[model_id].change_vertices_measure_unit(measure_unit)

@@ -270,6 +270,9 @@ class TransformationHelper:
         min_x_index, max_x_index, min_y_index, max_y_index = self.__get_bounding_box_indexes(points_array,
                                                                                              exterior_polygon)
 
+        # copy the array to not modify the original
+        heights = heights.copy()
+
         points_cut = points_array[min_y_index:max_y_index, min_x_index:max_x_index, :]
         heights_cut = heights[min_y_index:max_y_index, min_x_index:max_x_index]
 
@@ -338,8 +341,8 @@ class TransformationHelper:
                                     (coords[3][0], coords[3][1])])
 
                 # but add it if it is external but with internal vertices (U-shaped polygon)
-                if not (isinstance(polygon_internal.intersection(line1), LineString) and \
-                        isinstance(polygon_internal.intersection(line2), LineString) and \
+                if not (isinstance(polygon_internal.intersection(line1), LineString) and
+                        isinstance(polygon_internal.intersection(line2), LineString) and
                         isinstance(polygon_internal.intersection(line3), LineString)):
                     should_add = True
 

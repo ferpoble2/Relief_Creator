@@ -21,7 +21,8 @@ class Map3DModel(MapModel):
     Class that manage all things related to the representation in 3D of the maps.
     """
 
-    def __init__(self, scene: 'Scene', model_2d: 'Map2DModel'):
+    def __init__(self, scene: 'Scene', model_2d: 'Map2DModel', height_measure_unit: str = 'meters',
+                 vertices_measure_unit: str = 'degrees'):
         """
         Constructor of the class.
         """
@@ -33,6 +34,10 @@ class Map3DModel(MapModel):
         self.__color_file = ''
         self.__colors = []
         self.__height_limit = []
+
+        # measure unit used in the model.
+        self.__height_measure_unit = height_measure_unit
+        self.__vertices_measure_unit = vertices_measure_unit
 
         self.__model_2D_used = model_2d
         self.__normalize_height_limits_by = 1 / 6000
@@ -104,6 +109,28 @@ class Map3DModel(MapModel):
         GL.glEnableVertexAttribArray(1)
 
         return
+
+    def change_height_measure_unit(self, new_measure_unit: str) -> None:
+        """
+        Change the measure unit used in the model.
+
+        Args:
+            new_measure_unit: New measure unit to use in the model.
+
+        Returns: None
+        """
+        self.__height_measure_unit = new_measure_unit
+
+    def change_vertices_measure_unit(self, new_measure_unit: str) -> None:
+        """
+        Change the measure unit used in the model for the points.
+
+        Args:
+            new_measure_unit: New measure unit to use in the model.
+
+        Returns: None
+        """
+        self.__vertices_measure_unit = new_measure_unit
 
     def calculate_projection_matrix(self) -> None:
         """

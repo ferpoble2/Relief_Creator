@@ -14,8 +14,13 @@ class Engine {
     + add_zoom()
     + are_frames_fixed(): boolean
     + calculate_max_min_height(model_id, polygon_id): tuple
+    + change_3D_model_height_unit(model_id, measure_unit)
+    + change_3D_model_position_unit(model_id, measure_unit)
+    + change_camera_elevation(angle)
+    + change_camera_xy_angle(angle)
     + change_color_file_with_dialog()
     + change_color_of_polygon(polygon_id, color)
+    + change_current_3D_model_normalization_factor(new_factor)
     + change_dot_color_of_polygon(polygon_id,  color)
     + change_height_window(height)
     + change_quality(quality)
@@ -32,6 +37,7 @@ class Engine {
     + get_active_model_id()
     + get_active_polygon_id(): str
     + get_active_tool(): str
+    + get_camera_settings(): dict
     + get_clear_color(): list
     + get_cpt_file(): str
     + get_extra_reload_proportion_setting(): float
@@ -41,10 +47,12 @@ class Engine {
     + get_gui_key_callback(): function
     + get_gui_scroll_callback(): function
     + get_gui_setting_data(): dict
+    + get_height_normalization_factor_of_active_3D_model(): float
     + get_map_position(): list
     + get_parameters_from_polygon(polygon_id): list
     + get_polygon_id_list(): list
     + get_polygon_name(polygon_id): str
+    + get_program_view_mode(): str
     + get_quality(): int
     + get_render_settings()
     + get_scene_setting_data(): dict
@@ -59,26 +67,18 @@ class Engine {
     + less_zoom()
     + load_netcdf_file_with_dialog()
     + load_polygon_from_shapefile(filename)
-    + load_shapefile_file_with_dialog()
     + load_preview_interpolation_area(distance)
-    + remove_interpolation_preview(polygon_id)
-    + get_program_view_mode(): str
+    + load_shapefile_file_with_dialog()
+    + modify_camera_radius(distance)
+    + move_camera_position(movement)
     + move_scene(x_movement, y_movement)
     + optimize_gpu_memory()
-    + get_camera_settings(): dict
-    + modify_camera_radius(distance)
-    + change_camera_elevation(angle)
-    + change_camera_xy_angle(angle)
-    + move_camera_position(movement)
-    + get_height_normalization_factor_of_active_3D_model(): float
-    + change_current_3D_model_normalization_factor(new_factor)
-    + update_current_3D_model()
-    + reset_camera_values()
     + refresh_with_model_2d_async(path_color_file, path_model, model_id, then)
     + reload_models()
+    + remove_interpolation_preview(polygon_id)
+    + reset_camera_values()
     + reset_zoom_level()
     + run()
-    + set_program_view_mode(mode)
     + set_active_polygon(polygon_id)
     + set_active_tool(tool)
     + set_loading_message(new_msg)
@@ -89,11 +89,13 @@ class Engine {
     + set_polygon_name(polygon_id, new_name)
     + set_process_task(parallel_task, then_task, parallel_task_args, then_task_args)
     + set_program_loading(new_state)
+    + set_program_view_mode(mode)
     + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
     + set_thread_task(parallel_task, then, parallel_task_args, then_task_args)
     + transform_points(polygon_id, model_id, min_height, max_height, transformation_type)
     + undo_action()
+    + update_current_3D_model()
     + update_scene_models_colors()
     + update_scene_values()
     + update_scene_viewport()

@@ -1269,3 +1269,27 @@ class Engine:
         Returns: None
         """
         self.scene.apply_smoothing_algorithm(polygon_id, model_id, distance_to_polygon)
+
+    def change_3D_model_height_unit(self, model_id: str, measure_unit: str) -> None:
+        """
+        Ask the scene to change the measure unit of the specified model.
+
+        Args:
+            model_id: id of the model to change the measure unit of the height.
+            measure_unit: new measure unit to use in the model.
+
+        Returns: None
+        """
+        self.scene.change_height_unit_3D_model(model_id, measure_unit)
+
+    def change_3D_model_position_unit(self, model_id: str, measure_unit: str) -> None:
+        """
+        Ask the scene to change the measure unit of the points on the model.
+
+        Args:
+            model_id: id of the model to change the measure unit to.
+            measure_unit: new measure unit to use.
+
+        Returns: None
+        """
+        self.scene.change_map_unit_3D_model(model_id, measure_unit)

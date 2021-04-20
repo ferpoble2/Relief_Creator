@@ -20,6 +20,8 @@ class Map3DModel {
     + change_height_normalization_factor(new_value)
     + get_normalization_height_factor(): float
     + draw()
+    + change_height_measure_unit(new_measure_unit)
+    + change_vertices_measure_unit(new_measure_unit)
     - __set_height_buffer()
 
 }

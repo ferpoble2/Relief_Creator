@@ -587,7 +587,6 @@ class GUIManager:
         self.__load_icons()
         self.get_gui_mouse_scroll_callback()
 
-
         # initialize the components of the manager
         # ----------------------------------------
         main_menu_bar = MainMenuBar(gui_manager)
@@ -1015,3 +1014,37 @@ class GUIManager:
         Returns: None
         """
         self.__engine.apply_smoothing(polygon_id, model_id, distance_to_polygon)
+
+    def change_height_unit_current_3D_model(self, measure_unit: str) -> None:
+        """
+        Ask the engine to change the measure unit of the heights of the 3D model.
+
+        Args:
+            measure_unit: String representing the measure unit to change.
+
+        Returns: None
+        """
+
+        if measure_unit == 'Meters':
+            self.__engine.change_3D_model_height_unit(self.get_active_model_id(), 'meters')
+        elif measure_unit == 'Kilometers':
+            self.__engine.change_3D_model_height_unit(self.get_active_model_id(), 'kilometers')
+        else:
+            raise NotImplementedError(f'Measure {measure_unit} not implemented.')
+
+    def change_map_position_unit_current_3D_model(self, measure_unit: str) -> None:
+        """
+        Change the measure unit used for the points on the map on the current 3D model.
+
+        Args:
+            measure_unit: String representing the measure unit to change.
+
+        Returns: None
+        """
+
+        if measure_unit == 'Degrees':
+            self.__engine.change_3D_model_position_unit(self.get_active_model_id(), 'degrees')
+        elif measure_unit == 'UTM':
+            self.__engine.change_3D_model_position_unit(self.get_active_model_id(), 'utm')
+        else:
+            raise NotImplementedError(f'Measure {measure_unit} not implemented.')
