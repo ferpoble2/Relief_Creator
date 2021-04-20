@@ -30,7 +30,7 @@ class Tools3D(Frame):
         self.__heights_measure_units = ['Meters', 'Kilometers']
         self.__heights_measure_units_selected = 0
 
-        self.__map_position_units = ['Degrees', 'UTM']
+        self.__map_position_units = ['Degrees']
         self.__map_position_units_selected = 0
 
     def render(self) -> None:
@@ -72,17 +72,8 @@ class Tools3D(Frame):
         imgui.text(f'Current value: {self._GUI_manager.get_height_normalization_factor_of_active_3D_model()}')
         _, self.__normalization_height_value = imgui.input_float('New factor',
                                                                  self.__normalization_height_value,
-                                                                 format='%.6f')
+                                                                 format='%.0f')
         self.__normalization_height_value = max(self.__normalization_height_value, 0)
-
-        # Deprecated tooltip
-        # ------------------
-        # # show tooltip when mouse is hover
-        # if imgui.is_item_hovered():
-        #     imgui.begin_tooltip()
-        #     imgui.text('Models usually use different units for the height and for the position of the points.\n\n'
-        #                'Change this value to modify the factor used to normalize the height coordinates.')
-        #     imgui.end_tooltip()
 
         # disable input if writing a value on the input
         if imgui.is_item_active():

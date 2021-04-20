@@ -1,0 +1,11 @@
+@startuml
+
+class UnitConverter{
+
+    + meter_to_kilometer(): float
+    + meter_to_degrees(): float
+    + kilometer_to_meter(): float
+
+}
+
+@enduml
