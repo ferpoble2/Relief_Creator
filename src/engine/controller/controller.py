@@ -36,6 +36,7 @@ class Controller:
         self.__is_left_alt_pressed = False
 
         self.__is_left_mouse_being_pressed = False
+        self.__is_mouse_middle_being_pressed = False
 
         self.__is_w_pressed = False
         self.__is_s_pressed = False
@@ -52,6 +53,7 @@ class Controller:
         self.__elevation_movement_velocity = 0.01
         self.__azimuthal_movement_velocity = 0.01
         self.__camera_movement_velocity = 1
+        self.__camera_mouse_movement_factor = 0.01
 
     def __change_color_file_with_dialog(self) -> None:
         """
@@ -149,11 +151,21 @@ class Controller:
             # get the active tool being used in the program
             active_tool = self.__engine.get_active_tool()
 
-            if active_tool == 'move_map':
-                if self.__is_left_mouse_being_pressed:
-                    log.debug(
-                        f"Cursor movement: {x_pos - self.__mouse_old_pos[0]}, {self.__mouse_old_pos[1] - y_pos}")
-                    self.__engine.move_scene(x_pos - self.__mouse_old_pos[0], self.__mouse_old_pos[1] - y_pos)
+            if self.__engine.get_program_view_mode() == '2D':
+
+                if active_tool == 'move_map':
+                    if self.__is_left_mouse_being_pressed:
+                        log.debug(
+                            f"Cursor movement: {x_pos - self.__mouse_old_pos[0]}, {self.__mouse_old_pos[1] - y_pos}")
+                        self.__engine.move_scene(x_pos - self.__mouse_old_pos[0], self.__mouse_old_pos[1] - y_pos)
+
+            if self.__engine.get_program_view_mode() == '3D':
+
+                if self.__is_mouse_middle_being_pressed:
+                    self.__engine.change_camera_elevation(
+                        (self.__mouse_old_pos[1] - y_pos) * self.__camera_mouse_movement_factor)
+                    self.__engine.change_camera_xy_angle(
+                        (self.__mouse_old_pos[0] - x_pos) * self.__camera_mouse_movement_factor)
 
             # update the move position at the end
             self.__set_mouse_pos(x_pos, y_pos)
@@ -175,9 +187,15 @@ class Controller:
                 if button == glfw.MOUSE_BUTTON_LEFT:
                     self.__is_left_mouse_being_pressed = True
 
+                if button == glfw.MOUSE_BUTTON_MIDDLE:
+                    self.__is_mouse_middle_being_pressed = True
+
             if action == glfw.RELEASE:
                 if button == glfw.MOUSE_BUTTON_LEFT:
                     self.__is_left_mouse_being_pressed = False
+
+                if button == glfw.MOUSE_BUTTON_MIDDLE:
+                    self.__is_mouse_middle_being_pressed = False
 
             # logic of the controller.
             if not self.__engine.is_mouse_hovering_frame():
