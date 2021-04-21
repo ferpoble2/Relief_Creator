@@ -456,8 +456,8 @@ class TransformationHelper:
         heights = heights.copy()
 
         # bounding box of the points and height (we need one extra pixel)
-        points_cut = points_array[min_y_index - 1:max_y_index + 1, min_x_index - 1:max_x_index + 1, :]
-        heights_cut = heights[min_y_index - 1:max_y_index + 1, min_x_index - 1:max_x_index + 1]
+        points_cut = points_array[min_y_index:max_y_index, min_x_index:max_x_index, :]
+        heights_cut = heights[min_y_index:max_y_index, min_x_index:max_x_index]
 
         # Apply laplace smoothing over one matrix
         new_heights = gaussian_filter(heights_cut)
@@ -468,6 +468,6 @@ class TransformationHelper:
 
         heights_cut[mask_in_between] = new_heights[mask_in_between]
 
-        heights[min_y_index - 1:max_y_index + 1, min_x_index - 1:max_x_index + 1] = heights_cut
+        heights[min_y_index:max_y_index, min_x_index:max_x_index] = heights_cut
 
         return heights
