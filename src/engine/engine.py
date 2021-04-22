@@ -101,9 +101,21 @@ class Engine:
         """
         try:
             self.scene.add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
+
+        except RepeatedPointError as e:
+            log.error(e)
+            self.set_modal_text('Error', 'Point already exist in polygon.')
+
+        except LineIntersectionError as e:
+            log.error(e)
+            self.set_modal_text('Error', 'Line intersect another one already in the polygon.')
+
         except AssertionError as e:
             log.error(e)
-            self.set_modal_text('Error', f'Error creating polygon. \n\n{e}')
+            self.set_modal_text('Error', f'Error creating polygon.')
+
+
+
 
     def add_zoom(self) -> None:
         """

@@ -79,6 +79,7 @@ class ProcessManager:
                 process['process'].join()
                 process['then_function'](ret, *process['then_function_args'])
                 to_delete.append(process)
+
             except queue.Empty:
                 pass
 
