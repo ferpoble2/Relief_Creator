@@ -70,14 +70,8 @@ class MainMenuBar(Frame):
             imgui.separator()
             imgui.menu_item('Export current model...', enabled=model_loaded)
             if imgui.is_item_clicked() and model_loaded:
-                try:
-                    self._GUI_manager.export_model_as_netcdf(self._GUI_manager.get_active_model_id())
-                    self._GUI_manager.set_modal_text('Information', 'Model exported successfully')
-                    imgui.close_current_popup()
-                except TypeError:
-                    self._GUI_manager.set_modal_text('Error', 'This model can not be exported.')
-                except ValueError:
-                    self._GUI_manager.set_modal_text('Error', 'You must select a directory to save the model.')
+                self._GUI_manager.export_model_as_netcdf(self._GUI_manager.get_active_model_id())
+                imgui.close_current_popup()
 
             imgui.end_menu()
 

@@ -291,16 +291,24 @@ class Engine:
         Returns: None
         """
 
-        # select a directory to store the file.
-        file = self.program.open_file_save_box_dialog('Select a directory and filename for the shapefile file.',
-                                                      'Relief Creator',
-                                                      'Model')
+        try:
+            # select a directory to store the file.
+            file = self.program.open_file_save_box_dialog('Select a directory and filename for the shapefile file.',
+                                                          'Relief Creator',
+                                                          'Model')
 
-        # ask the scene for information
-        vertices = self.scene.get_map2dmodel_vertices_array(model_id)
+            # ask the scene for information
+            vertices = self.scene.get_map2dmodel_vertices_array(model_id)
 
-        # ask the output to write the file
-        NetcdfExporter().export_model_vertices_to_netcdf_file(vertices, file)
+            # ask the output to write the file
+            NetcdfExporter().export_model_vertices_to_netcdf_file(vertices, file)
+            self.set_modal_text('Information', 'Model exported successfully')
+
+        except TypeError:
+            self.set_modal_text('Error', 'This model can not be exported.')
+
+        except ValueError:
+            self.set_modal_text('Error', 'You must select a directory to save the model.')
 
     def export_polygon_list_id(self, polygon_id_list: list, filename='polygons') -> None:
         """
