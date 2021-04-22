@@ -23,6 +23,7 @@ from src.error.repeated_point_error import RepeatedPointError
 from src.error.scene_error import SceneError
 from src.error.not_enought_points_error import NotEnoughPointsError
 from src.error.netcdf_import_error import NetCDFImportError
+from src.error.interpolation_error import InterpolationError
 
 log = get_logger(module='ENGINE')
 
@@ -113,9 +114,6 @@ class Engine:
         except AssertionError as e:
             log.error(e)
             self.set_modal_text('Error', f'Error creating polygon.')
-
-
-
 
     def add_zoom(self) -> None:
         """
@@ -647,7 +645,20 @@ class Engine:
 
         Returns: None
         """
-        self.scene.interpolate_points(polygon_id, model_id, distance, type_interpolation)
+
+        try:
+            self.scene.interpolate_points(polygon_id, model_id, distance, type_interpolation)
+
+        except InterpolationError as e:
+            if e.code == 1:
+                self.set_modal_text('Error', 'There is not enough points in the polygon to do'
+                                             ' the interpolation.')
+            elif e.code == 2:
+                self.set_modal_text('Error', 'Distance must be greater than 0 to do the '
+                                             'interpolation')
+            elif e.code == 3:
+                self.set_modal_text('Error', 'Model used for interpolation is not accepted by '
+                                             'the program.')
 
     def is_mouse_hovering_frame(self) -> bool:
         """
