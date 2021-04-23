@@ -55,8 +55,7 @@ It is recommended to use a virtual environment to install the dependencies: http
 
 # How to build
 
-The application can be built using the command `auto-py-to-exe` (or the equivalent `make build-executable`) and then 
-importng the file `build_conf.json` that is on the root of the project.
+The application can be built using the command `auto-py-to-exe` (or the equivalent `make build-executable`) and then importing the file `build_conf.json` that is on the root of the project. Make sure to create a virtual environment with python and install all the dependencies from the file `requeriments.txt` before launching the program.
 
 The command opens a window application where one can configure how to create a .exe program from python, under the
 settings tab one can import a configuration file, there is where the file `build_conf.json` must be imported.
@@ -64,6 +63,8 @@ settings tab one can import a configuration file, there is where the file `build
 After that just press the button at the end of the GUI application to generate the program.
 
 The program is located in the `output` folder under the name of ReliefeCreator.
+
+IMPORTANT: In the section of additional files, the folders to include must have the full path writen. Due to this, the paths that are written by default must be changed before generating the .exe to the path where the project is in the computer.
 
 # Tools
 
