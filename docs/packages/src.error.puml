@@ -2,6 +2,7 @@
 
 !startsub INTERNAL
 package error {
+    class BaseError
     class PolygonError
     class RepeatedPointError
     class LineIntersectionError
@@ -18,6 +19,11 @@ package error {
     class ModelTransformationError
     class InterpolationError
 }
+
+BaseError <|-- SceneError
+BaseError <|-- PolygonError
+BaseError <|-- ExportError
+BaseError <|-- GUIError
 
 PolygonError <|-- RepeatedPointError
 PolygonError <|-- LineIntersectionError

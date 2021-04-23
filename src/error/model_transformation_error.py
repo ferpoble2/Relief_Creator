@@ -17,7 +17,7 @@ class ModelTransformationError(SceneError):
         super().__init__(code)
 
         self.codes = {
-            0: 'Error description not selected.',
+            0: 'Default Error.',
             1: 'Transformation type not recognized by the program.',
             2: 'The polygon used doesnt have at least 3 vertices.',
             3: 'Polygon used is not planar.',

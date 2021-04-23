@@ -14,7 +14,7 @@ class InterpolationError(SceneError):
         """
         Constructor of the class.
         """
-        self.code = code
+        super(InterpolationError, self).__init__(code)
 
         self.codes = {
             0: 'Error description not selected.',
