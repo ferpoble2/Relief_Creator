@@ -621,7 +621,7 @@ class Scene:
         if polygon_id in self.__polygon_hash:
             return self.__polygon_hash[polygon_id].is_planar()
 
-    def load_preview_interpolation_area(self, distance: float, z_value: float = 0.5,
+    def load_preview_interpolation_area(self, distance: float, polygon_id: str, z_value: float = 0.5,
                                         generate_area: bool = False) -> None:
         """
         Calculate the interpolation area for the active polygon and draw it on the scene.
@@ -629,6 +629,7 @@ class Scene:
         WARNING: in case of generating the area, it can be time expensive and in some cases, inaccurate.
 
         Args:
+            polygon_id: id of the polygon to load the interpolation area.
             generate_area: Generate the area of the interpolation.
             z_value: Value to use for the third component of the vertices in the area polygons.
             distance: Distance to use to calculate the external area.
@@ -636,8 +637,12 @@ class Scene:
         Returns: None
         """
         log.debug('Getting polygons...')
-        polygon = self.__polygon_hash[self.__engine.get_active_polygon_id()]
+        polygon = self.__polygon_hash[polygon_id]
         polygon_points = polygon.get_point_list()
+
+        if len(polygon_points) < 9:
+            raise SceneError(2)
+
         polygon_external_points = polygon.get_exterior_polygon_points(distance)
 
         # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences

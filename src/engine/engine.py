@@ -100,6 +100,14 @@ class Engine:
 
         Returns: None
         """
+        if self.get_active_polygon_id() is None:
+            self.set_modal_text('Error', 'Please select a polygon before adding a new vertex to it.')
+            return
+
+        if self.get_active_model_id() is None:
+            self.set_modal_text('Error', 'Please load a model before adding vertices to the polygon.')
+            return
+
         try:
             self.scene.add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
 
@@ -110,10 +118,6 @@ class Engine:
         except LineIntersectionError as e:
             log.error(e)
             self.set_modal_text('Error', 'Line intersect another one already in the polygon.')
-
-        except AssertionError as e:
-            log.error(e)
-            self.set_modal_text('Error', f'Error creating polygon.')
 
     def add_zoom(self) -> None:
         """
@@ -646,6 +650,14 @@ class Engine:
         Returns: None
         """
 
+        if model_id is None:
+            self.set_modal_text('Error', 'Please load a model before interpolating points.')
+            return
+
+        if polygon_id is None:
+            self.set_modal_text('Error', 'Please select a polygon to use for the interpolation')
+            return
+
         try:
             self.scene.interpolate_points(polygon_id, model_id, distance, type_interpolation)
 
@@ -779,7 +791,14 @@ class Engine:
 
         Returns: None
         """
-        self.scene.load_preview_interpolation_area(distance)
+        try:
+            self.scene.load_preview_interpolation_area(distance, self.get_active_polygon_id())
+
+        except SceneError as e:
+
+            if e.code == 2:
+                self.set_modal_text('Error', 'The polygon must have at least 3 vertices to load the '
+                                             'interpolation area.')
 
     def load_shapefile_file_with_dialog(self) -> None:
         """
@@ -1299,6 +1318,14 @@ class Engine:
 
         Returns: None
         """
+        if model_id is None:
+            self.set_modal_text('Error', 'Please load a model before smoothing.')
+            return
+
+        if polygon_id is None:
+            self.set_modal_text('Error', 'Please select a polygon to use for the interpolation')
+            return
+
         self.scene.apply_smoothing_algorithm(polygon_id, model_id, distance_to_polygon)
 
     def change_3D_model_height_unit(self, model_id: str, measure_unit: str) -> None:
