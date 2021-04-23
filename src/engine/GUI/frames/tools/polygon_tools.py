@@ -6,8 +6,6 @@ import imgui
 
 from src.utils import get_logger
 
-from src.error.not_enought_points_error import NotEnoughPointsError
-
 log = get_logger(module="POLYGON_TOOLS")
 
 

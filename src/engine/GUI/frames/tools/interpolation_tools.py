@@ -5,9 +5,8 @@ File with the class InterpolationTools. Class in charge of render the Interpolat
 import imgui
 
 from src.utils import get_logger
-from src.error.interpolation_error import InterpolationError
 
-from type_hinting import *
+from src.type_hinting import *
 
 log = get_logger(module="INTERPOLATION_TOOLS")
 

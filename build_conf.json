@@ -96,6 +96,10 @@
   {
    "optionDest": "datas",
    "value": "C:/Users/sergi/Nextcloud/Documents/Universidad/Introduccion al trabajo de titulo/Proyecto de Memoria v2/Proyecto_de_Memoria/src/input/test_polygons;input/test_polygons/"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "skimage.filters.rank.core_cy_3d"
   }
  ],
  "nonPyinstallerOptions": {

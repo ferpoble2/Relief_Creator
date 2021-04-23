@@ -601,10 +601,10 @@ class GUIManager:
 
         self.__component_list_2D = [
             main_menu_bar,
-            test_window,
+            # test_window,
             text_modal,
             tools,
-            debug,
+            # debug,
             loading,
             polygon_information,
             confirmation_modal
@@ -612,11 +612,11 @@ class GUIManager:
 
         self.__component_list_3D = [
             main_menu_bar,
-            debug,
+            # debug,
             loading,
             text_modal,
             confirmation_modal,
-            test_window,
+            # test_window,
             tools_3d
         ]
 

@@ -6,7 +6,7 @@ import ctypes as ctypes
 import numpy as np
 import OpenGL.GL as GL
 
-from input.CTP import read_file
+from src.input.CTP import read_file
 from src.engine.scene.model.mapmodel import MapModel
 from src.engine.scene.model.tranformations.transformations import perspective, identity
 from src.engine.scene.unit_converter import UnitConverter
