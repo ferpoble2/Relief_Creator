@@ -18,7 +18,7 @@ package Internal_Package {
 !endif
 
 ' Code that will affect only the current diagram
-' can be messy since will not be imported
+' can be messy since it will not be imported
 PACKAGE1.PACKAGE2.EXTERNAL_CLASS o--o INTERNAL_CLASS
 
 @enduml

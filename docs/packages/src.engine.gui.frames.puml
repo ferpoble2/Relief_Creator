@@ -11,8 +11,10 @@ package frames {
     class TextModal
     class PolygonInformation
     class ConfirmationModal
+    class Tools_3D
 }
 
+    Tools_3D -u-|> Frame
     Debug -u-|> Frame
     Loading -u-|> Frame
     MainMenuBar -u-|> Frame

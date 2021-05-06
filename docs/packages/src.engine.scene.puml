@@ -8,11 +8,13 @@
 package scene {
     class Scene
     class TransformationHelper
+    class UnitConverter
     !includesub src.engine.scene.model.puml!INTERNAL
 }
 
 Scene o--o Model
 Scene .> TransformationHelper
+Map3DModel .> UnitConverter
 !endsub
 
 !if (%false())
@@ -28,8 +30,10 @@ Scene .> TransformationHelper
 ' can be messy since will not be imported
 hide members
 src.engine.Engine o--o Scene
-Scene .> src.error.NonExistentPolygonError
-Scene .> src.input.NetCDF
-Scene .> src.error.SceneError
+Scene -d.> src.error.NonExistentPolygonError
+Scene -d.> src.input.NetCDF
+Scene -d.> src.error.SceneError
+
+left to right direction
 
 @enduml

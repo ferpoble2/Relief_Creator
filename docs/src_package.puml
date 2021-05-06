@@ -5,6 +5,7 @@ title Class diagram for the src package (updated March 4 of 2021)
 
 !includesub packages/src.puml!INTERNAL
 
+hide members
 
 !include file_modules/CTP.puml
 !include file_modules/NetCDF.puml

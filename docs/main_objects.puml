@@ -1,0 +1,20 @@
+@startuml
+
+component Engine
+component Scene
+component GUI
+component Render
+component Controller
+component Input
+component Program
+component Output
+
+Engine -d- Scene
+Engine -d- GUI
+Engine -l- Program
+Engine -d- Render
+Engine -d- Controller
+Engine -u.> Input
+Engine -u.> Output
+
+@enduml
