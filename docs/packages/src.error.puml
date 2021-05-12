@@ -1,5 +1,7 @@
 @startuml
 
+left to right direction
+
 !startsub INTERNAL
 package error {
     class BaseError

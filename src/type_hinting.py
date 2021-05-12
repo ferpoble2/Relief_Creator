@@ -16,3 +16,5 @@ if False:
     from src.engine.engine import Engine
     from src.engine.scene.scene import Scene
     from src.engine.scene.model.map2dmodel import Map2DModel
+
+    import numpy as np

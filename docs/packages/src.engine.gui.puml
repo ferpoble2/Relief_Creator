@@ -27,6 +27,10 @@ GUIManager o--o Frame
 
 ' Code that will affect only the current diagram
 ' can be messy since will not be imported
+left to right direction
+hide members
+hide src.error
+
 GUIManager o--o src.engine.Engine
 PolygonFolderManager .> src.error.PolygonFolderNotFoundError
 

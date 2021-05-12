@@ -3,6 +3,10 @@ Main file of the relief application.
 
 Starts the main program, calling the engine and the logic.
 """
+import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 from src.engine.engine import Engine
 from src.program.program import Program

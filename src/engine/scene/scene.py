@@ -14,7 +14,6 @@ from src.engine.scene.model.polygon import Polygon
 from src.engine.scene.model.plane import Plane
 from src.engine.scene.model.model import Model
 from src.engine.scene.model.lines import Lines
-from src.input.NetCDF import read_info
 from src.utils import get_logger
 from src.engine.scene.transformation_helper import TransformationHelper
 from src.engine.scene.camera import Camera
@@ -772,7 +771,7 @@ class Scene:
         """
 
         log.debug("Reading information from file.")
-        X, Y, Z = read_info(path_model)
+        X, Y, Z = self.__engine.read_netcdf_info(path_model)
 
         log.debug("Generating model")
         model = Map2DModel(self)

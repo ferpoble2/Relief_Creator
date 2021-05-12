@@ -21,7 +21,6 @@ Map3DModel .> UnitConverter
     !startsub EXTERNAL
         Scene o--o Engine
         Scene .> NonExistentPolygonError
-        Scene .> NetCDF
         Scene .> SceneError
     !endsub
 !endif
@@ -29,9 +28,9 @@ Map3DModel .> UnitConverter
 ' Code that will affect only the current diagram
 ' can be messy since will not be imported
 hide members
+hide src.error
 src.engine.Engine o--o Scene
 Scene -d.> src.error.NonExistentPolygonError
-Scene -d.> src.input.NetCDF
 Scene -d.> src.error.SceneError
 
 left to right direction

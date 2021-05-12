@@ -13,6 +13,7 @@ from src.engine.settings import Settings
 from src.engine.thread_manager import ThreadManager
 
 from src.input.shapefile_importer import ShapefileImporter
+from src.input.NetCDF import read_info
 from src.output.netcdf_exporter import NetcdfExporter
 from src.output.shapefile_exporter import ShapefileExporter
 from src.utils import get_logger
@@ -926,6 +927,18 @@ class Engine:
             self.render.on_loop([lambda: self.scene.draw()])
 
         glfw.terminate()
+
+    def read_netcdf_info(self, filename: str) -> ('np.array', 'np.array', 'np.array'):
+        """
+        Read the information of a netcdf file and return its contents.
+
+        Returns: Values of the variables X, Y and Z in the file.
+
+        Args:
+            filename: Path and name of the file to use.
+
+        """
+        return read_info(filename)
 
     def set_active_polygon(self, polygon_id: str or None) -> None:
         """
