@@ -4,7 +4,6 @@ File with test related to the functionality that imports netcdf files.
 
 import unittest
 import numpy as np
-import json
 import os
 
 from src.input.NetCDF import read_info
