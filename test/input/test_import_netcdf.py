@@ -5,6 +5,7 @@ File with test related to the functionality that imports netcdf files.
 import unittest
 import numpy as np
 import json
+import os
 
 from src.input.NetCDF import read_info
 
@@ -32,12 +33,17 @@ class TestImportNetcdfFile(unittest.TestCase):
         self.assertIsInstance(y, np.ndarray)
         self.assertIsInstance(z, np.ndarray)
 
-        with open(FILES_DIRECTORY + 'test_file_1_data.json') as f:
-            data_file_1 = json.load(f)
+        x_array = np.load(os.path.join(FILES_DIRECTORY, 'test_file_1_data_x_array.npy'))
+        y_array = np.load(os.path.join(FILES_DIRECTORY, 'test_file_1_data_y_array.npy'))
 
-            self.assertTrue((x == data_file_1['x']).all())
-            self.assertTrue((y == data_file_1['y']).all())
-            self.assertTrue((z == data_file_1['z']).all())
+        z_array_part_1 = np.load(os.path.join(FILES_DIRECTORY, 'test_file_1_data_z_array_part1.npy'))
+        z_array_part_2 = np.load(os.path.join(FILES_DIRECTORY, 'test_file_1_data_z_array_part2.npy'))
+
+        z_array = np.concatenate((z_array_part_1, z_array_part_2))
+
+        self.assertTrue((x == x_array).all())
+        self.assertTrue((y == y_array).all())
+        self.assertTrue((z == z_array).all())
 
     def test_read_file_real_data_2(self):
         x, y, z = read_info(FILES_DIRECTORY + 'test_file_2.nc')
@@ -47,12 +53,17 @@ class TestImportNetcdfFile(unittest.TestCase):
         self.assertIsInstance(y, np.ndarray)
         self.assertIsInstance(z, np.ndarray)
 
-        with open(FILES_DIRECTORY + 'test_file_2_data.json') as f:
-            data_file_1 = json.load(f)
+        x_array = np.load(os.path.join(FILES_DIRECTORY, 'test_file_2_data_x_array.npy'))
+        y_array = np.load(os.path.join(FILES_DIRECTORY, 'test_file_2_data_y_array.npy'))
 
-            self.assertTrue((x == data_file_1['x']).all())
-            self.assertTrue((y == data_file_1['y']).all())
-            self.assertTrue((z == data_file_1['z']).all())
+        z_array_part_1 = np.load(os.path.join(FILES_DIRECTORY, 'test_file_2_data_z_array_part1.npy'))
+        z_array_part_2 = np.load(os.path.join(FILES_DIRECTORY, 'test_file_2_data_z_array_part2.npy'))
+
+        z_array = np.concatenate((z_array_part_1, z_array_part_2))
+
+        self.assertTrue((x == x_array).all())
+        self.assertTrue((y == y_array).all())
+        self.assertTrue((z == z_array).all())
 
     def test_read_file_real_data_3(self):
         x, y, z = read_info(FILES_DIRECTORY + 'test_file_3.nc')
@@ -62,12 +73,13 @@ class TestImportNetcdfFile(unittest.TestCase):
         self.assertIsInstance(y, np.ndarray)
         self.assertIsInstance(z, np.ndarray)
 
-        with open(FILES_DIRECTORY + 'test_file_3_data.json') as f:
-            data_file_1 = json.load(f)
+        x_array = np.load(os.path.join(FILES_DIRECTORY, 'test_file_3_data_x_array.npy'))
+        y_array = np.load(os.path.join(FILES_DIRECTORY, 'test_file_3_data_y_array.npy'))
+        z_array = np.load(os.path.join(FILES_DIRECTORY, 'test_file_3_data_z_array.npy'))
 
-            self.assertTrue((x == data_file_1['x']).all())
-            self.assertTrue((y == data_file_1['y']).all())
-            self.assertTrue((z == data_file_1['z']).all())
+        self.assertTrue((x == x_array).all())
+        self.assertTrue((y == y_array).all())
+        self.assertTrue((z == z_array).all())
 
 
 if __name__ == '__main__':
