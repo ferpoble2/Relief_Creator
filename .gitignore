@@ -8,6 +8,7 @@ build/
 .idea/
 output/
 !src/output
+!test/output
 /src/logs/GUIMANAGER.log
 /src/imgui.ini
 /src/logs/LOADING_FRAME.log
