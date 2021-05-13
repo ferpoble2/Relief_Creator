@@ -58,3 +58,17 @@ class ShapefileImporter:
                 parameter_list.append(record_dict)
 
         return point_list, parameter_list
+
+if __name__ == '__main__':
+    importer = ShapefileImporter()
+
+    points, parameters = importer.get_polygon_information('../../test/input/files/polygons/Shape_multiple_parameters.shp')
+
+    data = {
+        'points': points,
+        'parameteres': parameters
+    }
+
+    import json
+    with open('../../test/input/files/polygons/shapefile_data_parameters.json', 'w') as f:
+        json.dump(data, f)

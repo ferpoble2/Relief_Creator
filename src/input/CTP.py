@@ -67,5 +67,9 @@ def read_file(file_name: str) -> List[dict]:
 
 
 if __name__ == '__main__':
-    filename = 'test_colors/Ocean_Land_3.cpt'
+    filename = 'test_colors/default.cpt'
     colors = read_file(filename)
+
+    import json
+    with open('../../test/input/files/test_data_CPT_1.json', 'w') as f:
+        json.dump(colors, f)
