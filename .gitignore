@@ -44,3 +44,4 @@ output/
 /src/logs/RELIEF_TOOLS.log
 /src/logs/TRANSFORMATION_HELPER.log
 /src/input/test_inputs/GRD_450MB.grd
+/test/output/files/test_model_temp.nc
