@@ -162,7 +162,7 @@ class PolygonInformation(Frame):
             imgui.same_line()
             _, self.__key_string_value = imgui.input_text('',
                                                           self.__key_string_value,
-                                                          20)
+                                                          10)   # shapefile fields name can not exceed 10 characters
 
             # variable type selectable
             imgui.text('Variable type: ')
