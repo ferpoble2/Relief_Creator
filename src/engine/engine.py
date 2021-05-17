@@ -81,7 +81,7 @@ class Engine:
         for task in to_delete:
             self.__pending_task_list.remove(task)
 
-    def should_use_threads(self, value:bool) -> None:
+    def should_use_threads(self, value: bool) -> None:
         """
         Set if the engine should use threads or not.
 
@@ -340,13 +340,15 @@ class Engine:
         except ValueError:
             self.set_modal_text('Error', 'You must select a directory to save the model.')
 
-    def export_polygon_list_id(self, polygon_id_list: list, filename='polygons') -> None:
+    def export_polygon_list_id(self, polygon_id_list: list, filename_placeholder: str = 'polygons',
+                               directory_filename: str = None) -> None:
         """
         Export the polygons to a shapefile file.
 
         Args:
-            filename: Name to use as placeholder in the box to store files.
+            filename_placeholder: Name to use as placeholder in the box to store files.
             polygon_id_list: List with the polygons IDs.
+            directory_filename: directory and filename to use to store the files.
 
         Returns: None
         """
@@ -359,9 +361,11 @@ class Engine:
             names_list.append(self.scene.get_polygon_name(polygon_id))
 
         try:
-            file = self.program.open_file_save_box_dialog('Select a directory and filename for the shapefile file.',
-                                                          'Relief Creator',
-                                                          filename)
+            if directory_filename is None:
+                directory_filename = self.program.open_file_save_box_dialog(
+                    'Select a directory and filename for the shapefile file.',
+                    'Relief Creator',
+                    filename_placeholder)
         except ValueError:
             self.set_modal_text('Error', 'Polygons not exported.')
             return
@@ -370,7 +374,7 @@ class Engine:
             ShapefileExporter().export_list_of_polygons(points_list,
                                                         parameters_list,
                                                         names_list,
-                                                        file)
+                                                        directory_filename)
         except NotEnoughPointsError:
             self.set_modal_text('Error', 'One or more polygons does not have enough '
                                          'points to be exported.')
