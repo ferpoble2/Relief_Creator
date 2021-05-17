@@ -46,9 +46,9 @@ To install the dependencies of the program run the following command in the root
 
     pip install -r requeriments.txt
 
-To execute the program run the following command inside the src folder:
+To execute the program run the following command:
 
-    python main.py
+    python src/main.py
 
 It is recommended to use a virtual environment to install the dependencies: https://docs.python.org/3/tutorial/venv.html
 

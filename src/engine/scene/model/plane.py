@@ -26,8 +26,8 @@ class Plane(Model):
 
         self.update_uniform_values = True
 
-        self.__vertex_shader_file = './engine/shaders/plane_vertex.glsl'
-        self.__fragment_shader_file = './engine/shaders/plane_fragment.glsl'
+        self.__vertex_shader_file = './src/engine/shaders/plane_vertex.glsl'
+        self.__fragment_shader_file = './src/engine/shaders/plane_fragment.glsl'
 
         self.__vertices_list = np.array([])
         self.__indices_list = np.array([])

@@ -46,8 +46,8 @@ class Points(Model):
 
         self.update_uniform_values = False
 
-        self.__vertex_shader_file = './engine/shaders/point_vertex.glsl'
-        self.__fragment_shader_file = './engine/shaders/point_fragment.glsl'
+        self.__vertex_shader_file = './src/engine/shaders/point_vertex.glsl'
+        self.__fragment_shader_file = './src/engine/shaders/point_fragment.glsl'
 
         self.__point_list = []
         self.__indices_list = []

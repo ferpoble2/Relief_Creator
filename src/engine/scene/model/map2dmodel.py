@@ -677,8 +677,8 @@ class Map2DModel(MapModel):
             raise AssertionError('Did you forget to set the vertices? (set_vertices_from_grid)')
 
         # set the shaders
-        self.set_shaders('./engine/shaders/model_2d_colors_vertex.glsl',
-                         './engine/shaders/model_2d_colors_fragment.glsl')
+        self.set_shaders('./src/engine/shaders/model_2d_colors_vertex.glsl',
+                         './src/engine/shaders/model_2d_colors_fragment.glsl')
         self.__color_file = filename
 
         file_data = read_file(filename)
@@ -770,7 +770,7 @@ class Map2DModel(MapModel):
             # Only select this shader if there is no shader selected.
             if self.shader_program is None:
                 self.set_shaders(
-                    "./engine/shaders/model_2d_vertex.glsl", "./engine/shaders/model_2d_fragment.glsl"
+                    "./src/engine/shaders/model_2d_vertex.glsl", "./src/engine/shaders/model_2d_fragment.glsl"
                 )
 
             # set the height buffer for rendering and store height values

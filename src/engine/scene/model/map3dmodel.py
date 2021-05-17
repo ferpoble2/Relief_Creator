@@ -30,8 +30,8 @@ class Map3DModel(MapModel):
         """
         super().__init__(scene)
 
-        self.set_shaders("./engine/shaders/model_3d_vertex.glsl",
-                         "./engine/shaders/model_3d_fragment.glsl")
+        self.set_shaders("./src/engine/shaders/model_3d_vertex.glsl",
+                         "./src/engine/shaders/model_3d_fragment.glsl")
 
         # variables used for the coloration of the model
         self.__color_file = ''

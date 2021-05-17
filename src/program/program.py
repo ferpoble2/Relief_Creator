@@ -27,7 +27,7 @@ class Program:
 
         # PROGRAM VARIABLES
         # -----------------
-        self.__CPT_file = os.path.join(os.getcwd(), 'input', 'test_colors', 'default.cpt')
+        self.__CPT_file = os.path.join(os.getcwd(), 'src', 'input', 'test_colors', 'default.cpt')
 
         # Map 2d variables
         # ----------------

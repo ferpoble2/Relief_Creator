@@ -25,8 +25,8 @@ class DashedLines(Lines):
         self.dash_size = 10
         self.gap_size = 5
 
-        self.__vertex_shader_file = './engine/shaders/dashed_lines_vertex.glsl'
-        self.__fragment_shader_file = './engine/shaders/dashed_lines_fragment.glsl'
+        self.__vertex_shader_file = './src/engine/shaders/dashed_lines_vertex.glsl'
+        self.__fragment_shader_file = './src/engine/shaders/dashed_lines_fragment.glsl'
 
         line_color = self.get_line_color()
         border_color = self.get_border_color()

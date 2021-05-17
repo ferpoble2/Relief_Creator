@@ -30,8 +30,8 @@ class Lines(Model):
 
         self.update_uniform_values = True
 
-        self.__vertex_shader_file = './engine/shaders/lines_vertex.glsl'
-        self.__fragment_shader_file = './engine/shaders/lines_fragment.glsl'
+        self.__vertex_shader_file = './src/engine/shaders/lines_vertex.glsl'
+        self.__fragment_shader_file = './src/engine/shaders/lines_fragment.glsl'
 
         self.__point_list = []
         self.__indices_list = []

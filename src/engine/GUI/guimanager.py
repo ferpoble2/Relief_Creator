@@ -59,7 +59,7 @@ class GUIManager:
         Returns: None
         """
         self.__icons_dict = {
-            'warning': Icon('./engine/GUI/icons/warning.png')
+            'warning': Icon('./src/engine/GUI/icons/warning.png')
         }
 
     def __update_frames_with_new_polygon(self, polygon_id: str) -> None:
@@ -572,13 +572,13 @@ class GUIManager:
         # Font options
         self.__io = imgui.get_io()
         self.__font_regular = self.__io.fonts.add_font_from_file_ttf(
-            './engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', engine.get_font_size()
+            './src/engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', engine.get_font_size()
         )
         self.__font_bold = self.__io.fonts.add_font_from_file_ttf(
-            './engine/GUI/fonts/open_sans/OpenSans-Bold.ttf', engine.get_font_size()
+            './src/engine/GUI/fonts/open_sans/OpenSans-Bold.ttf', engine.get_font_size()
         )
         self.__font_tool_title = self.__io.fonts.add_font_from_file_ttf(
-            './engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', engine.get_tool_title_font_size()
+            './src/engine/GUI/fonts/open_sans/OpenSans-Regular.ttf', engine.get_tool_title_font_size()
         )
 
         self.__implementation.refresh_font_texture()
