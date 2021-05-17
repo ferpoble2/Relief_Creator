@@ -120,6 +120,7 @@ class ShapefileExporter:
         Will only export the parameters that are from the follow types:
         - str
         - float
+        - int
         - boolean
 
         Any other parameter with another type will be converted to string.
@@ -155,6 +156,8 @@ class ShapefileExporter:
             elif type(v) == float:
                 decimals = len(str(v).split('.')[1])
                 w.field(k, 'N', decimal=decimals)
+            elif type(v) == int:
+                w.field(k, 'N')
             elif type(v) == bool:
                 w.field(k, 'L')
             else:  # in case of unknown data type
