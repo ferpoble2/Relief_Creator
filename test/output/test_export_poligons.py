@@ -125,9 +125,6 @@ class TestExportPolygons(unittest.TestCase):
         polygons, parameters = importer.get_polygon_information(
             os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters_long_names.shp'))
 
-        print(polygons)
-        print(parameters)
-
         expected_value_polygons = [
             [(-1.3703703703703702, 1.8962962962962964), (-1.3674074074074074, 1.8962962962962964),
              (-1.3644444444444443, 1.8962962962962964), (-1.3614814814814813, 1.8962962962962964)]]
