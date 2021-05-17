@@ -2,6 +2,7 @@
 File with the tests related to the functionality that imports CPT files into the program.
 """
 import unittest
+import warnings
 import os
 import json
 
@@ -13,6 +14,8 @@ FILES_DIRECTORY = './test/input/files/'
 class TestReadCPTFile(unittest.TestCase):
 
     def test_reading_normal_files(self):
+        warnings.simplefilter("ignore", ResourceWarning)
+
         with open(os.path.join(FILES_DIRECTORY, 'test_data_CPT_1.json')) as f:
             data_1 = json.load(f)
             data_read = read_file(os.path.join(FILES_DIRECTORY, 'test_cpt_1.cpt'))
