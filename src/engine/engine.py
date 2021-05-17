@@ -843,13 +843,16 @@ class Engine:
 
         self.scene.optimize_gpu_memory_async(then_routine)
 
-    def refresh_with_model_2d(self, path_color_file: str, path_model: str) -> None:
+    def refresh_with_model_2d(self, path_color_file: str, path_model: str, then: callable = lambda: None) -> None:
         """
         Refresh the scene creating a 2D model with the parameters given.
+
+        This method executes asynchronously, to keep executing things in the same thread use the then  function.
 
         Args:
             path_color_file: Path to the color file to use.
             path_model: Path to the model file (NetCDF) to use.
+            then: Function to call after the execution of the method.
 
         Returns: none
         """
@@ -858,6 +861,8 @@ class Engine:
         def then_routine(model_id):
             self.program.set_active_model(model_id)
             self.program.set_loading(False)
+
+            then()
 
         self.program.set_loading(True)
         self.set_loading_message("Please wait a moment...")
