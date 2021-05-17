@@ -142,7 +142,7 @@ class PolygonInformation(Frame):
             imgui.open_popup('Add new parameter')
 
             # once open this variable should be changed to false
-            self.__key_string_value = 'Name of parameter'
+            self.__key_string_value = 'Name'
             self.__value_string_value = 'Value of parameter'
             self.__should_open_add_dialog = False
 
