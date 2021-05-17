@@ -81,7 +81,7 @@ class Engine:
         for task in to_delete:
             self.__pending_task_list.remove(task)
 
-    def set_use_threads(self, new_value:bool) -> None:
+    def should_use_threads(self, value:bool) -> None:
         """
         Set if the engine should use threads or not.
 
@@ -92,7 +92,7 @@ class Engine:
 
         Returns: None
         """
-        self.__use_threads = new_value
+        self.__use_threads = value
 
     def get_camera_settings(self) -> dict:
         """

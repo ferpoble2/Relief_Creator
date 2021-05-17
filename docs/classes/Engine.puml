@@ -28,7 +28,7 @@ class Engine {
     + create_new_polygon(): str
     + delete_parameter_from_polygon(polygon_id, key)
     + delete_polygon_by_id(polygon_id)
-    + set_use_threads(new_value)
+    + should_use_threads(value)
     + disable_glfw_keyboard_callback()
     + enable_glfw_keyboard_callback()
     + export_model_as_netcdf(model_id)
