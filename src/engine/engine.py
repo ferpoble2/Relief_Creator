@@ -45,6 +45,8 @@ class Engine:
         self.scene = Scene(self)
         self.controller = Controller(self)
         self.program = None
+
+        self.__use_threads = True
         self.__process_manager = ProcessManager()
         self.__thread_manager = ThreadManager()
 
@@ -78,6 +80,19 @@ class Engine:
         # delete tasks already executed
         for task in to_delete:
             self.__pending_task_list.remove(task)
+
+    def set_use_threads(self, new_value:bool) -> None:
+        """
+        Set if the engine should use threads or not.
+
+        If not, then threads logic is executed the moment the thread is set.
+
+        Args:
+            new_value: If to use threads or not.
+
+        Returns: None
+        """
+        self.__use_threads = new_value
 
     def get_camera_settings(self) -> dict:
         """
@@ -1129,7 +1144,20 @@ class Engine:
 
         Returns: None
         """
-        self.__thread_manager.set_thread_task(parallel_task, then, parallel_task_args, then_task_args)
+        if self.__use_threads:
+            self.__thread_manager.set_thread_task(parallel_task, then, parallel_task_args, then_task_args)
+        else:
+
+            if parallel_task_args is None:
+                parallel_task_args = []
+            if then_task_args is None:
+                then_task_args = []
+
+            ret_val = parallel_task(*parallel_task_args)
+            if ret_val is not None:
+                then(ret_val, *then_task_args)
+            else:
+                then(*then_task_args)
 
     def transform_points(self,
                          polygon_id: str,
