@@ -122,7 +122,10 @@ class ShapefileExporter:
         - float
         - boolean
 
-        Any other parameter with another type will be converted to string
+        Any other parameter with another type will be converted to string.
+
+        Fieldnames should not be longer than 10 characters (accepted by shapefile standarts). Any name longer than
+        10 characters long will be split and only the first 10 characters will be considered for the name of the field.
 
         Args:
             parameters: Dictionary with the parameters of the polygon.

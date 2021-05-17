@@ -102,6 +102,48 @@ class TestExportPolygons(unittest.TestCase):
         os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters.dbf'))
         os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters.shx'))
 
+    def test_create_and_export_parameters(self):
+        warnings.simplefilter("ignore", ResourceWarning)
+
+        pol = self.engine.create_new_polygon()
+
+        self.engine.set_active_polygon(pol)
+        self.engine.set_new_parameter_to_polygon(pol, 'notcutted', 'some_string')
+        self.engine.set_new_parameter_to_polygon(pol, 'thisnameshouldbecuttedsomewhere', 'A very interesting string')
+
+        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 60)
+        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1, 60)
+        self.engine.add_new_vertex_to_active_polygon_using_window_coords(2, 60)
+        self.engine.add_new_vertex_to_active_polygon_using_window_coords(3, 60)
+
+        # export
+        self.engine.export_polygon_with_id(pol, os.path.join(FILES_DIRECTORY, 'shapefile',
+                                                             'test_shapefile_parameters_long_names'))
+
+        # import and testing
+        importer = ShapefileImporter()
+        polygons, parameters = importer.get_polygon_information(
+            os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters_long_names.shp'))
+
+        print(polygons)
+        print(parameters)
+
+        expected_value_polygons = [
+            [(-1.3703703703703702, 1.8962962962962964), (-1.3674074074074074, 1.8962962962962964),
+             (-1.3644444444444443, 1.8962962962962964), (-1.3614814814814813, 1.8962962962962964)]]
+
+        expected_value_parameters = [
+            {'notcutted': 'some_string',
+             'thisnamesh': 'A very interesting string',
+             'name': 'Polygon 0'}]
+
+        self.assertEqual(polygons, expected_value_polygons, 'Points stored in the polygon are not the expected value.')
+        self.assertEqual(parameters, expected_value_parameters, 'Parameters stored are not the expected.')
+
+        os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters_long_names.shp'))
+        os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters_long_names.dbf'))
+        os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters_long_names.shx'))
+
     def test_create_and_export_multiple(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
