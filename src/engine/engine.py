@@ -363,12 +363,14 @@ class Engine:
 
         self.set_modal_text('Information', 'Polygons exported successfully.')
 
-    def export_polygon_with_id(self, polygon_id: str) -> None:
+    def export_polygon_with_id(self, polygon_id: str, directory_filename: str = None) -> None:
         """
         Export the polygon with the given ID to a shapefile file
 
         Args:
             polygon_id: Id of the polygon to export to shapefile
+            directory_filename: directory and filename to use to store the  shapefile file. If none then a window
+                                to select the directory is opened.
 
         Returns: None
         """
@@ -377,9 +379,11 @@ class Engine:
         points = self.scene.get_point_list_from_polygon(polygon_id)
 
         try:
-            file = self.program.open_file_save_box_dialog('Select a filename and directory for the new polygon',
-                                                          'Relief Creator',
-                                                          self.scene.get_polygon_name(polygon_id))
+            if directory_filename is None:
+                directory_filename = self.program.open_file_save_box_dialog(
+                    'Select a filename and directory for the new polygon',
+                    'Relief Creator',
+                    self.scene.get_polygon_name(polygon_id))
         except ValueError:
             self.set_modal_text('Error', 'Polygon not exported.')
             return
@@ -387,7 +391,7 @@ class Engine:
         # ask the exporter to export the list of points
         try:
             ShapefileExporter().export_polygon_to_shapefile(points,
-                                                            file,
+                                                            directory_filename,
                                                             self.scene.get_polygon_name(polygon_id),
                                                             dict(self.scene.get_polygon_params(polygon_id)))
         except NotEnoughPointsError:
