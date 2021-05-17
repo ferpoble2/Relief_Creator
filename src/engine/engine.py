@@ -678,6 +678,10 @@ class Engine:
             self.set_modal_text('Error', 'Please select a polygon to use for the interpolation')
             return
 
+        if not self.scene.is_polygon_planar(polygon_id):
+            self.set_modal_text('Error', 'Polygon selected is not planar.')
+            return
+
         try:
             self.scene.interpolate_points(polygon_id, model_id, distance, type_interpolation)
 
@@ -811,6 +815,10 @@ class Engine:
 
         Returns: None
         """
+        if not self.scene.is_polygon_planar(self.get_active_polygon_id()):
+            self.set_modal_text('Error', 'Polygon selected is not planar.')
+            return
+
         try:
             self.scene.load_preview_interpolation_area(distance, self.get_active_polygon_id())
 
@@ -1374,6 +1382,10 @@ class Engine:
 
         if polygon_id is None:
             self.set_modal_text('Error', 'Please select a polygon to use for the interpolation')
+            return
+
+        if not self.scene.is_polygon_planar(polygon_id):
+            self.set_modal_text('Error', 'Polygon selected is not planar.')
             return
 
         self.scene.apply_smoothing_algorithm(polygon_id, model_id, distance_to_polygon)
