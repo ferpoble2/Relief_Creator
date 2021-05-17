@@ -148,9 +148,10 @@ class ShapefileExporter:
         # create the fields
         for k, v in list(parameters.items()):
             if type(v) == str:
-                w.field(k, 'C')
+                w.field(k, 'C', size=len(v))
             elif type(v) == float:
-                w.field(k, 'N')
+                decimals = len(str(v).split('.')[1])
+                w.field(k, 'N', decimal=decimals)
             elif type(v) == bool:
                 w.field(k, 'L')
             else:  # in case of unknown data type
