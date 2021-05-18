@@ -53,9 +53,13 @@ class ReliefTools:
 
         Returns: None
         """
-        # TODO: Add button to delete filter
+
+        # variable to store if it is necessary to delete a filter
+        filter_to_remove = None
 
         imgui.text_wrapped('Filters:')
+
+        # render the filters on the GUI
         for filter_ind in range(len(self.__filters)):
             filter_data = self.__filters[filter_ind]
 
@@ -100,8 +104,17 @@ class ReliefTools:
                                                       polygon_list)
                     filter_data.arguments = polygon_list[selected_polygon]
 
+            # button to remove the filter
+            if imgui.button('Remove Filter'):
+                filter_to_remove = filter_data
+
             imgui.pop_id()
 
+        # remove the filter if the button to remove was pressed
+        if filter_to_remove is not None:
+            self.__filters.remove(filter_to_remove)
+
+        # button to add more filters
         if imgui.button('Add filter', -1):
             self.__filters.append(Filter(0, 0))
 
