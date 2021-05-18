@@ -46,11 +46,25 @@ To install the dependencies of the program run the following command in the root
 
     pip install -r requeriments.txt
 
-To execute the program run the following command:
+To execute the program, first you need to add the root directory to the PYTHONPATH variable, in windows, in a console CMD run the following command in the root directory of the project:
+
+	set PYTHONPATH=.
+
+In a system with Linux distribution run the following command:
+
+	export PYTHONPATH=.
+
+If you use a mac, run the following command:
+
+	export PYTHONPATH="."
+
+Then, to execute the program run the following command:
 
     python src/main.py
 
 It is recommended to use a virtual environment to install the dependencies: https://docs.python.org/3/tutorial/venv.html
+
+(If you use windows and use a virtual environment called *venv* then running the command `make run-windows` will run the project)
 
 # How to build
 
@@ -64,6 +78,20 @@ After that just press the button at the end of the GUI application to generate t
 The program is in the `output` folder under the name of ReliefeCreator.
 
 IMPORTANT: In the section of additional files, the folders to include must have the full path writen. Due to this, the paths that are written by default must be changed before generating the .exe to the path where the project is in the computer.
+
+# How to run tests
+
+The project include inside the folder `test` different types of tests that check the functionality of the program. These tests were written using the unit tests library of the Python language.
+
+To run the tests, add the root directory of the project to the PYTHONPATH variable and then execute the following command inside the root folder of the project:
+
+```
+python -m unittest discover .\test
+```
+
+This will run all the tests inside the folder `test`.
+
+All the dependencies of the project must be installed for the tests to run correctly.
 
 # Tools
 
