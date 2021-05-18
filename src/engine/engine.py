@@ -631,6 +631,17 @@ class Engine:
         """
         return self.scene.get_polygon_params(polygon_id)
 
+    def get_points_from_polygon(self, polygon_id) -> list:
+        """
+        Get the list of points of a polygon.
+
+        Args:
+            polygon_id: ID of the polygon to ask for.
+
+        Returns: List with the points of the polygon.
+        """
+        return self.scene.get_polygon_points(polygon_id)
+
     def get_polygon_id_list(self) -> list:
         """
         Get the full list of polygon ids currently being used on the program.

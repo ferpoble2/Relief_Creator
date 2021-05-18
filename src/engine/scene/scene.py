@@ -492,6 +492,17 @@ class Scene:
         if polygon_id in self.__polygon_hash:
             return self.__polygon_hash[polygon_id].get_name()
 
+    def get_polygon_points(self, polygon_id: str) -> list:
+        """
+        Return the list of points of a polygon.
+
+        Args:
+            polygon_id: ID of the polygon.
+
+        Returns: List with the points of the polygon.
+        """
+        return self.__polygon_hash[polygon_id].get_point_list()
+
     def get_polygon_params(self, polygon_id: str) -> list:
         """
         Get the parameters of certain polygon.
