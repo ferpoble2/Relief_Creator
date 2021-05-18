@@ -19,7 +19,7 @@ class Render:
         self.__GUI = None
         self.__engine = None
 
-        self.__previous_time = glfw.get_time()
+        self.__previous_time = 0
         self.__frame_count = 0
         self.__current_time = None
 
