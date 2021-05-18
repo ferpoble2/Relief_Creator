@@ -6,8 +6,12 @@ class ReliefTools {
     - __max_height_value: float
     - __min_height_value: float
     - __polygon_data: dict
+    - __filter_name_list: list
+    - __filters: list
 
+    + filter_menu()
     + render()
+    + transformation_menu(self, active_model_id, active_polygon_id)
 }
 
 @enduml
