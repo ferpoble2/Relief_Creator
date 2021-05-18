@@ -81,31 +81,6 @@ class Engine:
         for task in to_delete:
             self.__pending_task_list.remove(task)
 
-    def should_use_threads(self, value: bool) -> None:
-        """
-        Set if the engine should use threads or not.
-
-        If not, then threads logic is executed the moment the thread is set.
-
-        Args:
-            new_value: If to use threads or not.
-
-        Returns: None
-        """
-        self.__use_threads = value
-
-    def get_camera_settings(self) -> dict:
-        """
-        Get all the settings related to the camera.
-
-        Returns: Dictionary with the settings related to the camera.
-        """
-        return {
-            'FIELD_OF_VIEW': Settings.FIELD_OF_VIEW,
-            'PROJECTION_NEAR': Settings.PROJECTION_NEAR,
-            'PROJECTION_FAR': Settings.PROJECTION_FAR
-        }
-
     def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
         """
         Ask the scene to add a vertex in the active polygon of the engine.
@@ -143,6 +118,31 @@ class Engine:
         """
         self.program.add_zoom()
         self.scene.update_models_projection_matrix()
+
+    def apply_smoothing(self, polygon_id: str, model_id: str, distance_to_polygon: float) -> None:
+        """
+        Ask the scene to apply smoothing over the indicated polygon.
+
+        Args:
+            polygon_id: Polygon to use to apply smoothing.
+            model_id: Model to use.
+            distance_to_polygon: Distance to generate the external polygon and the smoothing area.
+
+        Returns: None
+        """
+        if model_id is None:
+            self.set_modal_text('Error', 'Please load a model before smoothing.')
+            return
+
+        if polygon_id is None:
+            self.set_modal_text('Error', 'Please select a polygon to use for the interpolation')
+            return
+
+        if not self.scene.is_polygon_planar(polygon_id):
+            self.set_modal_text('Error', 'Polygon selected is not planar.')
+            return
+
+        self.scene.apply_smoothing_algorithm(polygon_id, model_id, distance_to_polygon)
 
     def are_frames_fixed(self) -> bool:
         """
@@ -183,6 +183,52 @@ class Engine:
             else:
                 raise e
 
+    def change_3D_model_height_unit(self, model_id: str, measure_unit: str) -> None:
+        """
+        Ask the scene to change the measure unit of the specified model.
+
+        Args:
+            model_id: id of the model to change the measure unit of the height.
+            measure_unit: new measure unit to use in the model.
+
+        Returns: None
+        """
+        self.scene.change_height_unit_3D_model(model_id, measure_unit)
+
+    def change_3D_model_position_unit(self, model_id: str, measure_unit: str) -> None:
+        """
+        Ask the scene to change the measure unit of the points on the model.
+
+        Args:
+            model_id: id of the model to change the measure unit to.
+            measure_unit: new measure unit to use.
+
+        Returns: None
+        """
+        self.scene.change_map_unit_3D_model(model_id, measure_unit)
+
+    def change_camera_elevation(self, angle) -> None:
+        """
+        Ask the scene to change the camera elevation.
+
+        Args:
+            angle: Angle to add to the elevation of the camera.
+
+        Returns: None
+        """
+        self.scene.change_camera_elevation(angle)
+
+    def change_camera_xy_angle(self, angle) -> None:
+        """
+        Ask the scene to change the azimuthal angle of the camera.
+
+        Args:
+            angle: angle to add to the angle of the camera.
+
+        Returns: None
+        """
+        self.scene.change_camera_azimuthal_angle(angle)
+
     def change_color_file_with_dialog(self) -> None:
         """
         Change the color file (CPT file) to the one selected.
@@ -212,6 +258,18 @@ class Engine:
         Returns: None
         """
         self.scene.change_color_of_polygon(polygon_id, color)
+
+    def change_current_3D_model_normalization_factor(self, new_factor: float) -> None:
+        """
+        Ask the scene to change the height normalization factor of the current 3D model.
+
+        Args:
+            new_factor: new height normalization factor to use in the model.
+
+        Returns: None
+        """
+        active_model = self.get_active_model_id()
+        self.scene.change_normalization_height_factor(active_model, new_factor)
 
     def change_dot_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
@@ -453,6 +511,26 @@ class Engine:
         """
         return self.program.get_active_tool()
 
+    def get_camera_data(self) -> dict:
+        """
+        Ask the scene for the camera data.
+
+        Returns: Dictionary with the data related to the camera.
+        """
+        return self.scene.get_camera_data()
+
+    def get_camera_settings(self) -> dict:
+        """
+        Get all the settings related to the camera.
+
+        Returns: Dictionary with the settings related to the camera.
+        """
+        return {
+            'FIELD_OF_VIEW': Settings.FIELD_OF_VIEW,
+            'PROJECTION_NEAR': Settings.PROJECTION_NEAR,
+            'PROJECTION_FAR': Settings.PROJECTION_FAR
+        }
+
     def get_clear_color(self) -> list:
         """
         Get the clear color used.
@@ -520,6 +598,20 @@ class Engine:
             'MAIN_MENU_BAR_HEIGHT': Settings.MAIN_MENU_BAR_HEIGHT
         }
 
+    def get_height_normalization_factor_of_active_3D_model(self) -> float:
+        """
+        Ask the scene for the normalization factor being used by the active 3D model.
+
+        Return -1 if the model is not in the list of models of the scene.
+
+        Returns: normalization factor being used by the model
+        """
+        try:
+            active_model = self.get_active_model_id()
+            return self.scene.get_height_normalization_factor(active_model)
+        except KeyError:
+            return -1
+
     def get_map_position(self) -> list:
         """
         Get the map position on the program.
@@ -527,14 +619,6 @@ class Engine:
         Returns: List with the position of the map.
         """
         return self.program.get_map_position()
-
-    def get_camera_data(self) -> dict:
-        """
-        Ask the scene for the camera data.
-
-        Returns: Dictionary with the data related to the camera.
-        """
-        return self.scene.get_camera_data()
 
     def get_parameters_from_polygon(self, polygon_id: str) -> list:
         """
@@ -565,6 +649,14 @@ class Engine:
         Returns: Name of the polygon
         """
         return self.scene.get_polygon_name(polygon_id)
+
+    def get_program_view_mode(self) -> str:
+        """
+        Ask the program for the view mode being used.
+
+        Returns: view mode being used by the program.
+        """
+        return self.program.get_view_mode()
 
     def get_quality(self) -> int:
         """
@@ -844,6 +936,28 @@ class Engine:
             log.exception(e)
             self.set_modal_text('Error', 'File not loaded.')
 
+    def modify_camera_radius(self, distance: float) -> None:
+        """
+        Ask the scene to get the camera closer to the model.
+
+        Args:
+            distance: Distance to get the camera closer.
+
+        Returns: None
+        """
+        self.scene.modify_camera_radius(distance)
+
+    def move_camera_position(self, movement: tuple) -> None:
+        """
+        Ask the scene to move the camera position the given movement.
+
+        Args:
+            movement: offset to add to the position of the camera. Tuple must have 3 values.
+
+        Returns: None
+        """
+        self.scene.move_camera(movement)
+
     def move_scene(self, x_movement: int, y_movement: int) -> None:
         """
         Tell the scene to move given the parameters specified.
@@ -873,6 +987,18 @@ class Engine:
             self.program.set_loading(False)
 
         self.scene.optimize_gpu_memory_async(then_routine)
+
+    def read_netcdf_info(self, filename: str) -> ('np.array', 'np.array', 'np.array'):
+        """
+        Read the information of a netcdf file and return its contents.
+
+        Returns: Values of the variables X, Y and Z in the file.
+
+        Args:
+            filename: Path and name of the file to use.
+
+        """
+        return read_info(filename)
 
     def refresh_with_model_2d(self, path_color_file: str, path_model: str, then: callable = lambda: None) -> None:
         """
@@ -942,6 +1068,14 @@ class Engine:
         """
         self.scene.remove_interpolation_preview(polygon_id)
 
+    def reset_camera_values(self) -> None:
+        """
+        Ask the scene to reset the values of the camera.
+
+        Returns: None
+        """
+        self.scene.reset_camera_values()
+
     def reset_zoom_level(self) -> None:
         """
         Reset the zoom level of the program.
@@ -963,18 +1097,6 @@ class Engine:
             self.render.on_loop([lambda: self.scene.draw()])
 
         glfw.terminate()
-
-    def read_netcdf_info(self, filename: str) -> ('np.array', 'np.array', 'np.array'):
-        """
-        Read the information of a netcdf file and return its contents.
-
-        Returns: Values of the variables X, Y and Z in the file.
-
-        Args:
-            filename: Path and name of the file to use.
-
-        """
-        return read_info(filename)
 
     def set_active_polygon(self, polygon_id: str or None) -> None:
         """
@@ -1104,6 +1226,24 @@ class Engine:
         """
         self.program.set_loading(new_state)
 
+    def set_program_view_mode(self, mode: str = '2D') -> None:
+        """
+        Set the program view mode to the selected mode.
+
+        Raise ValueError if the mode is an invalid value.
+
+        Args:
+            mode: New mode to change to.
+
+        Returns: None
+        """
+        if mode == '2D':
+            self.program.set_view_mode_2D()
+        elif mode == '3D':
+            self.program.set_view_mode_3D()
+        else:
+            raise ValueError(f'Can not change program view mode to {mode}.')
+
     def set_task_for_next_frame(self, task: callable, n_frames: int = 2) -> None:
         """
         Add a task to do in the next frame.
@@ -1171,6 +1311,19 @@ class Engine:
             else:
                 then(*then_task_args)
 
+    def should_use_threads(self, value: bool) -> None:
+        """
+        Set if the engine should use threads or not.
+
+        If not, then threads logic is executed the moment the thread is set.
+
+        Args:
+            new_value: If to use threads or not.
+
+        Returns: None
+        """
+        self.__use_threads = value
+
     def transform_points(self,
                          polygon_id: str,
                          model_id: str,
@@ -1229,6 +1382,20 @@ class Engine:
         else:
             log.debug(f'Tool {active_tool} has no undo action defined.')
 
+    def update_current_3D_model(self) -> None:
+        """
+        Ask the scene to update the 3D model.
+
+        Returns: None
+        """
+
+        # noinspection PyMissingOrEmptyDocstring
+        def loading_task():
+            self.scene.update_3D_model(self.program.get_active_model())
+
+        self.set_loading_message('Getting data from the map 2D...')
+        self.set_task_with_loading_frame(loading_task)
+
     def update_scene_models_colors(self):
         """
         Update the colors of the models in the scene with the colors that are
@@ -1250,170 +1417,3 @@ class Engine:
         Update the scene viewport with the new values that exist in the Settings.
         """
         self.scene.update_viewport()
-
-    def get_program_view_mode(self) -> str:
-        """
-        Ask the program for the view mode being used.
-
-        Returns: view mode being used by the program.
-        """
-        return self.program.get_view_mode()
-
-    def set_program_view_mode(self, mode: str = '2D') -> None:
-        """
-        Set the program view mode to the selected mode.
-
-        Raise ValueError if the mode is an invalid value.
-
-        Args:
-            mode: New mode to change to.
-
-        Returns: None
-        """
-        if mode == '2D':
-            self.program.set_view_mode_2D()
-        elif mode == '3D':
-            self.program.set_view_mode_3D()
-        else:
-            raise ValueError(f'Can not change program view mode to {mode}.')
-
-    def modify_camera_radius(self, distance: float) -> None:
-        """
-        Ask the scene to get the camera closer to the model.
-
-        Args:
-            distance: Distance to get the camera closer.
-
-        Returns: None
-        """
-        self.scene.modify_camera_radius(distance)
-
-    def change_camera_elevation(self, angle) -> None:
-        """
-        Ask the scene to change the camera elevation.
-
-        Args:
-            angle: Angle to add to the elevation of the camera.
-
-        Returns: None
-        """
-        self.scene.change_camera_elevation(angle)
-
-    def change_camera_xy_angle(self, angle) -> None:
-        """
-        Ask the scene to change the azimuthal angle of the camera.
-
-        Args:
-            angle: angle to add to the angle of the camera.
-
-        Returns: None
-        """
-        self.scene.change_camera_azimuthal_angle(angle)
-
-    def move_camera_position(self, movement: tuple) -> None:
-        """
-        Ask the scene to move the camera position the given movement.
-
-        Args:
-            movement: offset to add to the position of the camera. Tuple must have 3 values.
-
-        Returns: None
-        """
-        self.scene.move_camera(movement)
-
-    def get_height_normalization_factor_of_active_3D_model(self) -> float:
-        """
-        Ask the scene for the normalization factor being used by the active 3D model.
-
-        Return -1 if the model is not in the list of models of the scene.
-
-        Returns: normalization factor being used by the model
-        """
-        try:
-            active_model = self.get_active_model_id()
-            return self.scene.get_height_normalization_factor(active_model)
-        except KeyError:
-            return -1
-
-    def change_current_3D_model_normalization_factor(self, new_factor: float) -> None:
-        """
-        Ask the scene to change the height normalization factor of the current 3D model.
-
-        Args:
-            new_factor: new height normalization factor to use in the model.
-
-        Returns: None
-        """
-        active_model = self.get_active_model_id()
-        self.scene.change_normalization_height_factor(active_model, new_factor)
-
-    def update_current_3D_model(self) -> None:
-        """
-        Ask the scene to update the 3D model.
-
-        Returns: None
-        """
-
-        # noinspection PyMissingOrEmptyDocstring
-        def loading_task():
-            self.scene.update_3D_model(self.program.get_active_model())
-
-        self.set_loading_message('Getting data from the map 2D...')
-        self.set_task_with_loading_frame(loading_task)
-
-    def reset_camera_values(self) -> None:
-        """
-        Ask the scene to reset the values of the camera.
-
-        Returns: None
-        """
-        self.scene.reset_camera_values()
-
-    def apply_smoothing(self, polygon_id: str, model_id: str, distance_to_polygon: float) -> None:
-        """
-        Ask the scene to apply smoothing over the indicated polygon.
-
-        Args:
-            polygon_id: Polygon to use to apply smoothing.
-            model_id: Model to use.
-            distance_to_polygon: Distance to generate the external polygon and the smoothing area.
-
-        Returns: None
-        """
-        if model_id is None:
-            self.set_modal_text('Error', 'Please load a model before smoothing.')
-            return
-
-        if polygon_id is None:
-            self.set_modal_text('Error', 'Please select a polygon to use for the interpolation')
-            return
-
-        if not self.scene.is_polygon_planar(polygon_id):
-            self.set_modal_text('Error', 'Polygon selected is not planar.')
-            return
-
-        self.scene.apply_smoothing_algorithm(polygon_id, model_id, distance_to_polygon)
-
-    def change_3D_model_height_unit(self, model_id: str, measure_unit: str) -> None:
-        """
-        Ask the scene to change the measure unit of the specified model.
-
-        Args:
-            model_id: id of the model to change the measure unit of the height.
-            measure_unit: new measure unit to use in the model.
-
-        Returns: None
-        """
-        self.scene.change_height_unit_3D_model(model_id, measure_unit)
-
-    def change_3D_model_position_unit(self, model_id: str, measure_unit: str) -> None:
-        """
-        Ask the scene to change the measure unit of the points on the model.
-
-        Args:
-            model_id: id of the model to change the measure unit to.
-            measure_unit: new measure unit to use.
-
-        Returns: None
-        """
-        self.scene.change_map_unit_3D_model(model_id, measure_unit)
