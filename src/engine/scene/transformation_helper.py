@@ -160,7 +160,7 @@ class TransformationHelper:
                                 filter_data: list) -> np.ndarray:
         """
         Generates a mask that indicates which data to use for the interpolation.
-        Requires and initial mask to do the modifications over it.
+        Requires and initial mask that indicates the points that can be filtered from the one who do not.
 
         Filter are expected to be received in a list with the following format [(filter_name, arguments),...].
         The list of accepted filters and its arguments are as follows:
@@ -183,9 +183,7 @@ class TransformationHelper:
             filter_arguments = filter_obj[1]
 
             if filter_name == 'height_less_than':  # arguments: int
-
                 indices = np.where(height_array > filter_arguments)
-                print(indices)
                 mask_modified[indices] = False
 
             elif filter_name == 'height_greater_than':  # arguments: int
@@ -193,14 +191,12 @@ class TransformationHelper:
                 mask_modified[indices] = False
 
             elif filter_name == 'is_in':    # arguments: list[float]
-                polygon_mask = self.__generate_mask(points_array,
-                                                    filter_arguments)
+                polygon_mask = self.__generate_mask(points_array, filter_arguments) & points_to_modify
                 indices = np.where(polygon_mask == True)
                 mask_modified[indices] = True
 
             elif filter_name == 'is_not_in':
-                polygon_mask = self.__generate_mask(points_array,
-                                                    filter_arguments)
+                polygon_mask = self.__generate_mask(points_array, filter_arguments) & points_to_modify
                 indices = np.where(polygon_mask == True)
                 mask_modified[indices] = False
 
