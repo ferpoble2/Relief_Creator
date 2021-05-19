@@ -2,6 +2,7 @@
 File that contain the Scene class. This class is in charge of the management of the models of the scene.
 """
 from typing import Dict, List
+import numpy as np
 import OpenGL.GL as GL
 
 # noinspection PyPep8Naming
@@ -47,15 +48,15 @@ class Scene:
         self.__interpolation_area_hash: Dict[str, List['Model']] = {}
         self.__engine: 'Engine' = engine
 
-        self.__width_viewport: float = None
-        self.__height_viewport: float = None
+        self.__width_viewport = 0
+        self.__height_viewport = 0
 
-        self.__camera: Camera = Camera()
+        self.__camera = Camera()
 
         # auxiliary variables
         # -------------------
-        self.__should_execute_then_reload: int = 0  # variable that indicated witch function then to use when there is
-                                                    # more than one model on the scene.
+        self.__should_execute_then_reload = 0  # variable that indicated witch function then to use when there is
+        # more than one model on the scene.
         self.__should_execute_then_optimize_gpu_memory = 0
 
         self.__polygon_id_count = 0
