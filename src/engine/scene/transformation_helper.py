@@ -54,6 +54,60 @@ class TransformationHelper:
                 pair_used = []
         return new_list
 
+    def __generate_filter_masks(self,
+                                points_to_modify: np.ndarray,
+                                points_array: np.ndarray,
+                                height_array: np.ndarray,
+                                filter_data: list) -> np.ndarray:
+        """
+        Generates a mask that indicates which data to use for the interpolation.
+        Requires and initial mask that indicates the points that can be filtered from the one who do not.
+
+        Filter are expected to be received in a list with the following format [(filter_name, arguments),...].
+        The list of accepted filters and its arguments are as follows:
+            height_less_than: int
+            height_greater_than: int
+            is_in: List[float]
+            is_not_in: List[float]
+        Use of a filter not listed before will raise NotImplementedError.
+
+        Args:
+            points_to_modify: Initial mask in which to apply the filters on.
+            points_array: Array with the points and their position.
+            height_array: Array with the height of the points.
+            filter_data: Filters to use to generate the masks.
+
+        Returns: Mask with the filters applied over it.
+        """
+        mask_modified = points_to_modify.copy()
+        for filter_obj in filter_data:
+            filter_name = filter_obj[0]
+            filter_arguments = filter_obj[1]
+
+            if filter_name == 'height_less_than':  # arguments: int
+                indices = np.where(height_array > filter_arguments)
+                mask_modified[indices] = False
+
+            elif filter_name == 'height_greater_than':  # arguments: int
+                indices = np.where(height_array < filter_arguments)
+                mask_modified[indices] = False
+
+            elif filter_name == 'is_in':  # arguments: list[float]
+                polygon_mask = self.__generate_mask(points_array, filter_arguments) & points_to_modify
+                indices = np.where(polygon_mask == True)
+                mask_modified[indices] = True
+
+            elif filter_name == 'is_not_in':
+                polygon_mask = self.__generate_mask(points_array, filter_arguments) & points_to_modify
+                indices = np.where(polygon_mask == True)
+                mask_modified[indices] = False
+
+            else:
+                raise NotImplementedError(f'Functionality to generate the mask of the filter {filter_name} '
+                                          f'not implemented.')
+
+        return mask_modified
+
     def __generate_mask(self, points_array: np.ndarray, polygon_points) -> np.ndarray:
         """
         Generate a mask of the points that are inside the specified polygon.
@@ -107,6 +161,43 @@ class TransformationHelper:
         return [min_x_index, max_x_index, min_y_index, max_y_index]
 
     # noinspection PyUnresolvedReferences
+    def __insert_redundant_points(self, distance: float, polygon_points: list):
+        """
+        Insert redundant points in a line of the polygon if the line is longer than the specified distance.
+
+        Args:
+            distance: Distance to use as a limit to check if insert or not new points.
+            polygon_points: List of original points of the polygon. [[x1,y1],[x2,y2],...]
+
+        Returns: List of new points of the polygon. [[x1,y1],[x2,y2],...]
+        """
+
+        # delete repeated point at the end.
+        if polygon_points[-3:] == polygon_points[:3]:
+            polygon_points.pop()
+            polygon_points.pop()
+            polygon_points.pop()
+
+        external_polygon_points_no_z = self.__delete_z_axis(polygon_points)
+        external_polygon_points_no_z_offset = external_polygon_points_no_z[1:] + external_polygon_points_no_z[:1]
+        distance_polygon_points_external = cdist(np.array(external_polygon_points_no_z),
+                                                 external_polygon_points_no_z_offset,
+                                                 'euclidean')
+        new_points_external = []
+        for point, next_point, index in zip(external_polygon_points_no_z,
+                                            external_polygon_points_no_z_offset,
+                                            range(len(external_polygon_points_no_z))):
+            new_points_external.append(point)
+            if distance_polygon_points_external[index][index] > distance:
+                number_of_divisions = int(distance_polygon_points_external[index][index] / distance)
+
+                for division in range(1, number_of_divisions):
+                    x = point[0] + ((next_point[0] - point[0]) / number_of_divisions) * division
+                    y = point[1] + ((next_point[1] - point[1]) / number_of_divisions) * division
+                    new_points_external.append([x, y])
+
+        return new_points_external
+
     def __interpolate_nan(self, array_2d: np.ndarray, nan_mask: np.ndarray,
                           interpolation_type: str = 'linear') -> np.ndarray:
         """
@@ -153,59 +244,50 @@ class TransformationHelper:
 
         return data
 
-    def __generate_filter_masks(self,
-                                points_to_modify: np.ndarray,
-                                points_array: np.ndarray,
-                                height_array: np.ndarray,
-                                filter_data: list) -> np.ndarray:
+    def apply_smoothing_over_area(self, internal_polygon_points: list,
+                                  external_polygon_points: list,
+                                  points_array: np.ndarray,
+                                  heights: np.ndarray) -> np.ndarray:
         """
-        Generates a mask that indicates which data to use for the interpolation.
-        Requires and initial mask that indicates the points that can be filtered from the one who do not.
+        Apply a smoothing algorithm in the area between the polygon and the external polygon.
 
-        Filter are expected to be received in a list with the following format [(filter_name, arguments),...].
-        The list of accepted filters and its arguments are as follows:
-            height_less_than: int
-            height_greater_than: int
-            is_in: List[float]
-            is_not_in: List[float]
-        Use of a filter not listed before will raise NotImplementedError.
+        This method does not modify the original arrays.
 
         Args:
-            points_to_modify: Initial mask in which to apply the filters on.
-            points_array: Array with the points and their position.
-            height_array: Array with the height of the points.
-            filter_data: Filters to use to generate the masks.
+            points_array: Arrays with the coordinates of the points. must have shape (x,y,3)
+            internal_polygon_points: Points of the internal polygon. [x1, y1, z1, x2, y2, z2, ...]
+            external_polygon_points: Points of the external polygon. [x1, y1, z1, x2, y2, z2, ...]
+            heights: Array with the height of the points. must have shape (x, y)
 
-        Returns: Mask with the filters applied over it.
+        Returns: Array with the new heights.
         """
-        mask_modified = points_to_modify.copy()
-        for filter_obj in filter_data:
-            filter_name = filter_obj[0]
-            filter_arguments = filter_obj[1]
+        external_points_no_z_axis = self.__delete_z_axis(external_polygon_points)
 
-            if filter_name == 'height_less_than':  # arguments: int
-                indices = np.where(height_array > filter_arguments)
-                mask_modified[indices] = False
+        # bounding box
+        # get the bounding box of the nan values
+        min_x_index, max_x_index, min_y_index, max_y_index = self.__get_bounding_box_indexes(
+            points_array,
+            LinearRing(external_points_no_z_axis))
 
-            elif filter_name == 'height_greater_than':  # arguments: int
-                indices = np.where(height_array < filter_arguments)
-                mask_modified[indices] = False
+        # make a copy to not alter the original heights
+        heights = heights.copy()
 
-            elif filter_name == 'is_in':    # arguments: list[float]
-                polygon_mask = self.__generate_mask(points_array, filter_arguments) & points_to_modify
-                indices = np.where(polygon_mask == True)
-                mask_modified[indices] = True
+        # bounding box of the points and height (we need one extra pixel)
+        points_cut = points_array[min_y_index:max_y_index, min_x_index:max_x_index, :]
+        heights_cut = heights[min_y_index:max_y_index, min_x_index:max_x_index]
 
-            elif filter_name == 'is_not_in':
-                polygon_mask = self.__generate_mask(points_array, filter_arguments) & points_to_modify
-                indices = np.where(polygon_mask == True)
-                mask_modified[indices] = False
+        # Apply laplace smoothing over one matrix
+        new_heights = gaussian_filter(heights_cut)
 
-            else:
-                raise NotImplementedError(f'Functionality to generate the mask of the filter {filter_name} '
-                                          f'not implemented.')
+        mask = self.__generate_mask(points_cut, internal_polygon_points)
+        mask_external = self.__generate_mask(points_cut, external_polygon_points)
+        mask_in_between = mask != mask_external
 
-        return mask_modified
+        heights_cut[mask_in_between] = new_heights[mask_in_between]
+
+        heights[min_y_index:max_y_index, min_x_index:max_x_index] = heights_cut
+
+        return heights
 
     def get_inside_polygon_triangulation(self, polygon_points: list, z_value: float = 0.5) -> list:
         """
@@ -250,111 +332,6 @@ class TransformationHelper:
                 to_return.append(z_value)
 
         return to_return
-
-    def modify_points_inside_polygon_linear(self, points_array: np.ndarray,
-                                            height: np.ndarray,
-                                            polygon_points: List[float],
-                                            new_max_height: float,
-                                            new_min_height: float,
-                                            filter_data: list = None) -> np.ndarray:
-        """
-        Modify the points that are inside the polygon changing their height using a linear interpolation
-        given the new specified height.
-
-        Args:
-            filter_data: Filters to use on the transformation to apply. List must have format [(filter_id, args),...].
-            height: Array with the height of the points. must have shape (x, y)
-            points_array: Points to modify (numpy array of points), must have shape (x, y, 3)
-            polygon_points: List of points in the polygon. [x1, y1, z1, x2, y2, z2, ...]
-            new_max_height: New height to interpolate the points
-            new_min_height: New height to interpolate the points
-
-        Returns: numpy.array with the new points
-        """
-        if filter_data is None:
-            filter_data = []
-
-        # generate polygon and get the bounding box of the indices.
-        points_no_z_axis = self.__delete_z_axis(polygon_points)
-        closed_polygon = LinearRing(points_no_z_axis)
-        [min_x_index, max_x_index, min_y_index, max_y_index] = self.__get_bounding_box_indexes(points_array,
-                                                                                               closed_polygon)
-
-        points_array_cut = points_array[min_y_index:max_y_index, min_x_index:max_x_index, :]
-        height_cut = height[min_y_index:max_y_index, min_x_index:max_x_index]
-
-        log.debug('Generating mask')
-        flags = self.__generate_mask(points_array_cut, polygon_points)
-        log.debug('Mask generated')
-
-        # get the masks of the filters and apply them
-        filtered_flags = self.__generate_filter_masks(flags,
-                                                      points_array_cut,
-                                                      height_cut,
-                                                      filter_data)
-
-        # modify the height linearly
-        current_min_height = np.min(height_cut[filtered_flags])
-        current_max_height = np.max(height_cut[filtered_flags])
-
-        new_height = interpolate(height_cut[filtered_flags], current_min_height, current_max_height, new_min_height,
-                                 new_max_height,
-                                 False)
-
-        height_cut[filtered_flags] = new_height
-        height[min_y_index:max_y_index, min_x_index:max_x_index] = height_cut
-        return height
-
-    def interpolate_points_external_to_polygon(self, points_array: np.ndarray, polygon_points: list,
-                                               heights: np.ndarray, external_polygon_points: list,
-                                               type_interpolation: str) -> np.ndarray:
-        """
-        Interpolate the points that are external to the polygon until a certain distance.
-
-        Args:
-            type_interpolation: Type of interpolation to use.
-            external_polygon_points: List with the points of the external polygon. [x1, y1, z1, x2, y2, z2, ...]
-            points_array: Points of the model. (shape must be (x, y, 3))
-            polygon_points: List with the points of the polygon. [x1, y1, z1, x2, y2, z2, ...]
-            heights: Array with the height of the points. must have shape (x, y)
-
-        Returns: Array of heights with height of the points external to the polygon modified.
-        """
-        log.debug('Interpolate points external to polygon')
-        external_points_no_z_axis = self.__delete_z_axis(external_polygon_points)
-
-        # check if the points are already CW
-        if is_clockwise(external_points_no_z_axis):  # points must be in CCW direction
-            external_points_no_z_axis.reverse()
-
-        # create a polygon external to the one proportionate
-        exterior_polygon = LinearRing(external_points_no_z_axis)
-
-        # get the bounding box of the nan values
-        min_x_index, max_x_index, min_y_index, max_y_index = self.__get_bounding_box_indexes(points_array,
-                                                                                             exterior_polygon)
-
-        # copy the array to not modify the original
-        heights = heights.copy()
-
-        points_cut = points_array[min_y_index:max_y_index, min_x_index:max_x_index, :]
-        heights_cut = heights[min_y_index:max_y_index, min_x_index:max_x_index]
-
-        # generate a mask of the internal points
-        log.debug('Generating masks')
-        mask_external = self.__generate_mask(points_cut, external_polygon_points)
-        mask_internal = self.__generate_mask(points_cut, polygon_points)
-
-        # apply the logical operations
-        in_between_mask = mask_external != mask_internal
-        heights_cut[in_between_mask == True] = np.nan  # noqa
-
-        # apply the interpolation algorithm from scipy
-        log.debug('Interpolating using numpy')
-        heights_cut = self.__interpolate_nan(heights_cut, in_between_mask, type_interpolation)
-        heights[min_y_index:max_y_index, min_x_index:max_x_index] = heights_cut
-
-        return heights
 
     def get_interpolation_zone_triangulation(self, internal_polygon_points: list,
                                              external_polygon_points: list,
@@ -427,43 +404,6 @@ class TransformationHelper:
 
         return to_return
 
-    def __insert_redundant_points(self, distance: float, polygon_points: list):
-        """
-        Insert redundant points in a line of the polygon if the line is longer than the specified distance.
-
-        Args:
-            distance: Distance to use as a limit to check if insert or not new points.
-            polygon_points: List of original points of the polygon. [[x1,y1],[x2,y2],...]
-
-        Returns: List of new points of the polygon. [[x1,y1],[x2,y2],...]
-        """
-
-        # delete repeated point at the end.
-        if polygon_points[-3:] == polygon_points[:3]:
-            polygon_points.pop()
-            polygon_points.pop()
-            polygon_points.pop()
-
-        external_polygon_points_no_z = self.__delete_z_axis(polygon_points)
-        external_polygon_points_no_z_offset = external_polygon_points_no_z[1:] + external_polygon_points_no_z[:1]
-        distance_polygon_points_external = cdist(external_polygon_points_no_z,
-                                                 external_polygon_points_no_z_offset,
-                                                 'euclidean')
-        new_points_external = []
-        for point, next_point, index in zip(external_polygon_points_no_z,
-                                            external_polygon_points_no_z_offset,
-                                            range(len(external_polygon_points_no_z))):
-            new_points_external.append(point)
-            if distance_polygon_points_external[index][index] > distance:
-                number_of_divisions = int(distance_polygon_points_external[index][index] / distance)
-
-                for division in range(1, number_of_divisions):
-                    x = point[0] + ((next_point[0] - point[0]) / number_of_divisions) * division
-                    y = point[1] + ((next_point[1] - point[1]) / number_of_divisions) * division
-                    new_points_external.append([x, y])
-
-        return new_points_external
-
     def get_max_min_inside_polygon(self, points_array: np.ndarray, polygon_points: List[float],
                                    heights: np.ndarray) -> tuple:
         """
@@ -491,47 +431,107 @@ class TransformationHelper:
 
         return maximum, minimum
 
-    def apply_smoothing_over_area(self, internal_polygon_points: list,
-                                  external_polygon_points: list,
-                                  points_array: np.ndarray,
-                                  heights: np.ndarray) -> np.ndarray:
+    def interpolate_points_external_to_polygon(self, points_array: np.ndarray, polygon_points: list,
+                                               heights: np.ndarray, external_polygon_points: list,
+                                               type_interpolation: str) -> np.ndarray:
         """
-        Apply a smoothing algorithm in the area between the polygon and the external polygon.
-
-        This method does not modify the original arrays.
+        Interpolate the points that are external to the polygon until a certain distance.
 
         Args:
-            points_array: Arrays with the coordinates of the points. must have shape (x,y,3)
-            internal_polygon_points: Points of the internal polygon. [x1, y1, z1, x2, y2, z2, ...]
-            external_polygon_points: Points of the external polygon. [x1, y1, z1, x2, y2, z2, ...]
+            type_interpolation: Type of interpolation to use.
+            external_polygon_points: List with the points of the external polygon. [x1, y1, z1, x2, y2, z2, ...]
+            points_array: Points of the model. (shape must be (x, y, 3))
+            polygon_points: List with the points of the polygon. [x1, y1, z1, x2, y2, z2, ...]
             heights: Array with the height of the points. must have shape (x, y)
 
-        Returns: Array with the new heights.
+        Returns: Array of heights with height of the points external to the polygon modified.
         """
+        log.debug('Interpolate points external to polygon')
         external_points_no_z_axis = self.__delete_z_axis(external_polygon_points)
 
-        # bounding box
-        # get the bounding box of the nan values
-        min_x_index, max_x_index, min_y_index, max_y_index = self.__get_bounding_box_indexes(
-            points_array,
-            LinearRing(external_points_no_z_axis))
+        # check if the points are already CW
+        if is_clockwise(external_points_no_z_axis):  # points must be in CCW direction
+            external_points_no_z_axis.reverse()
 
-        # make a copy to not alter the original heights
+        # create a polygon external to the one proportionate
+        exterior_polygon = LinearRing(external_points_no_z_axis)
+
+        # get the bounding box of the nan values
+        min_x_index, max_x_index, min_y_index, max_y_index = self.__get_bounding_box_indexes(points_array,
+                                                                                             exterior_polygon)
+
+        # copy the array to not modify the original
         heights = heights.copy()
 
-        # bounding box of the points and height (we need one extra pixel)
         points_cut = points_array[min_y_index:max_y_index, min_x_index:max_x_index, :]
         heights_cut = heights[min_y_index:max_y_index, min_x_index:max_x_index]
 
-        # Apply laplace smoothing over one matrix
-        new_heights = gaussian_filter(heights_cut)
-
-        mask = self.__generate_mask(points_cut, internal_polygon_points)
+        # generate a mask of the internal points
+        log.debug('Generating masks')
         mask_external = self.__generate_mask(points_cut, external_polygon_points)
-        mask_in_between = mask != mask_external
+        mask_internal = self.__generate_mask(points_cut, polygon_points)
 
-        heights_cut[mask_in_between] = new_heights[mask_in_between]
+        # apply the logical operations
+        in_between_mask = mask_external != mask_internal
+        heights_cut[in_between_mask == True] = np.nan  # noqa
 
+        # apply the interpolation algorithm from scipy
+        log.debug('Interpolating using numpy')
+        heights_cut = self.__interpolate_nan(heights_cut, in_between_mask, type_interpolation)
         heights[min_y_index:max_y_index, min_x_index:max_x_index] = heights_cut
 
         return heights
+
+    def modify_points_inside_polygon_linear(self, points_array: np.ndarray,
+                                            height: np.ndarray,
+                                            polygon_points: List[float],
+                                            new_max_height: float,
+                                            new_min_height: float,
+                                            filter_data: list = None) -> np.ndarray:
+        """
+        Modify the points that are inside the polygon changing their height using a linear interpolation
+        given the new specified height.
+
+        Args:
+            filter_data: Filters to use on the transformation to apply. List must have format [(filter_id, args),...].
+            height: Array with the height of the points. must have shape (x, y)
+            points_array: Points to modify (numpy array of points), must have shape (x, y, 3)
+            polygon_points: List of points in the polygon. [x1, y1, z1, x2, y2, z2, ...]
+            new_max_height: New height to interpolate the points
+            new_min_height: New height to interpolate the points
+
+        Returns: numpy.array with the new points
+        """
+        if filter_data is None:
+            filter_data = []
+
+        # generate polygon and get the bounding box of the indices.
+        points_no_z_axis = self.__delete_z_axis(polygon_points)
+        closed_polygon = LinearRing(points_no_z_axis)
+        [min_x_index, max_x_index, min_y_index, max_y_index] = self.__get_bounding_box_indexes(points_array,
+                                                                                               closed_polygon)
+
+        points_array_cut = points_array[min_y_index:max_y_index, min_x_index:max_x_index, :]
+        height_cut = height[min_y_index:max_y_index, min_x_index:max_x_index]
+
+        log.debug('Generating mask')
+        flags = self.__generate_mask(points_array_cut, polygon_points)
+        log.debug('Mask generated')
+
+        # get the masks of the filters and apply them
+        filtered_flags = self.__generate_filter_masks(flags,
+                                                      points_array_cut,
+                                                      height_cut,
+                                                      filter_data)
+
+        # modify the height linearly
+        current_min_height = np.min(height_cut[filtered_flags])
+        current_max_height = np.max(height_cut[filtered_flags])
+
+        new_height = interpolate(height_cut[filtered_flags], current_min_height, current_max_height, new_min_height,
+                                 new_max_height,
+                                 False)
+
+        height_cut[filtered_flags] = new_height
+        height[min_y_index:max_y_index, min_x_index:max_x_index] = height_cut
+        return height
