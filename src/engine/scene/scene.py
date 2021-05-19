@@ -55,8 +55,10 @@ class Scene:
 
         # auxiliary variables
         # -------------------
-        self.__should_execute_then_reload = 0  # variable that indicated witch function then to use when there is
+
+        # variable that indicated witch function then to use when there is
         # more than one model on the scene.
+        self.__should_execute_then_reload = 0
         self.__should_execute_then_optimize_gpu_memory = 0
 
         self.__polygon_id_count = 0
