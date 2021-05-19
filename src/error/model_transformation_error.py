@@ -23,5 +23,5 @@ class ModelTransformationError(SceneError):
             3: 'Polygon used is not planar.',
             4: 'Can not use that model for transforming points. Try using a Map2DModel.',
             5: f'Can not get data of filter. Unrecognized filter {filter_name}',
-            6: 'Polygon not found or selected.'
+            6: 'Polygon to use in a filter not found or selected.'
         }
