@@ -1,6 +1,7 @@
 """
 File that contain the Scene class. This class is in charge of the management of the models of the scene.
 """
+from typing import Dict, List
 import OpenGL.GL as GL
 
 # noinspection PyPep8Naming
@@ -40,20 +41,21 @@ class Scene:
         """
         Constructor of the class.
         """
-        self.__model_hash = {}  # str:Map2DModel
-        self.__3d_model_hash = {}  # str:Map3DModel
-        self.__polygon_hash = {}  # str:Polygon
-        self.__interpolation_area_hash = {}
-        self.__engine = engine
+        self.__model_hash: Dict[str, 'Map2DModel'] = {}
+        self.__3d_model_hash: Dict[str, 'Map3DModel'] = {}
+        self.__polygon_hash: Dict[str, 'Polygon'] = {}
+        self.__interpolation_area_hash: Dict[str, List['Model']] = {}
+        self.__engine: 'Engine' = engine
 
-        self.__width_viewport = None
-        self.__height_viewport = None
+        self.__width_viewport: float = None
+        self.__height_viewport: float = None
 
-        self.__camera = Camera()
+        self.__camera: Camera = Camera()
 
         # auxiliary variables
         # -------------------
-        self.__should_execute_then_reload = 0
+        self.__should_execute_then_reload: int = 0  # variable that indicated witch function then to use when there is
+                                                    # more than one model on the scene.
         self.__should_execute_then_optimize_gpu_memory = 0
 
         self.__polygon_id_count = 0
@@ -1046,8 +1048,16 @@ class Scene:
         # -------------------------------------------------------
         self.__should_execute_then_reload = len(self.__model_hash)
 
-        # noinspection PyMissingOrEmptyDocstring
         def then_routine():
+            """
+            Method that lower the value of the parameter __should_execute_then_reload by one every time that a
+            model finished the method recalculate_vertices_from_grid_async.
+
+            This method is executed so that the THEN method given to the reload_models_async method only runs when all
+            the models finished the execution of their threads.
+
+            Returns: None
+            """
             self.__should_execute_then_reload -= 1
             self.__should_execute_then_reload = max(self.__should_execute_then_reload, 0)
 
@@ -1213,9 +1223,6 @@ class Scene:
                          max_height: float, transformation_type: str, filters=None) -> None:
         """
         Modify the points inside the polygon from the specified model using a linear transformation.
-
-        Only works with the following models:
-        - Map2DModel
 
         Args:
             filters: List with the filters to use in the modification of the points. List must be in the
