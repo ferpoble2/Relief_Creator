@@ -4,6 +4,8 @@ File that contains the program class, class that will be the main class of the p
 
 import glfw
 
+from type_hinting import *
+
 from src.engine.controller.controller import Controller
 from src.engine.GUI.guimanager import GUIManager
 from src.engine.process_manager import ProcessManager
@@ -102,11 +104,11 @@ class Engine:
         try:
             self.scene.add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
 
-        except RepeatedPointError as e:
+        except RepeatedPointError:
             log.info('Handling repeated point.')
             self.set_modal_text('Error', 'Point already exist in polygon.')
 
-        except LineIntersectionError as e:
+        except LineIntersectionError:
             log.info('Handling line intersection.')
             self.set_modal_text('Error', 'Line intersect another one already in the polygon.')
 
@@ -1329,7 +1331,7 @@ class Engine:
         If not, then threads logic is executed the moment the thread is set.
 
         Args:
-            new_value: If to use threads or not.
+            value: If to use threads or not.
 
         Returns: None
         """
