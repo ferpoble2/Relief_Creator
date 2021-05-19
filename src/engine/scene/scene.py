@@ -2,13 +2,13 @@
 File that contain the Scene class. This class is in charge of the management of the models of the scene.
 """
 from typing import Dict, List
-import numpy as np
+from src.type_hinting import *
+
 import OpenGL.GL as GL
+import numpy as np
 
 # noinspection PyPep8Naming
 import OpenGL.constant as OGLConstant
-
-from src.type_hinting import *
 
 from src.engine.scene.model.map2dmodel import Map2DModel
 from src.engine.scene.model.map3dmodel import Map3DModel
@@ -143,8 +143,6 @@ class Scene:
 
         # Get the model to use and the polygon to use for the transformation.
         model = self.__model_hash[model_id]
-        if not isinstance(model, Map2DModel):
-            raise ModelTransformationError(4)
         polygon = self.__polygon_hash[polygon_id]
 
         # ask the model and polygon for the parameters to calculate the new height
@@ -200,7 +198,7 @@ class Scene:
                                                       self.__engine,
                                                       model])
 
-    def add_model(self, model: Model) -> None:
+    def add_model(self, model: Map2DModel) -> None:
         """
         Add a model to the hash of models.
         Args:
@@ -542,7 +540,7 @@ class Scene:
                                                self.__model_hash[active_model])
 
     # noinspection PyUnresolvedReferences
-    def get_active_model_projection_matrix(self) -> 'np.array':
+    def get_active_model_projection_matrix(self) -> np.array:
         """
         Get the projection matrix from the active model.
 
@@ -635,7 +633,7 @@ class Scene:
         return model.get_normalization_height_factor()
 
     # noinspection SpellCheckingInspection
-    def get_map2dmodel_vertices_array(self, model_id: str) -> 'np.ndarray':
+    def get_map2dmodel_vertices_array(self, model_id: str) -> np.ndarray:
         """
         Get the array of vertices of the specified model.
 
