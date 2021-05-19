@@ -1340,11 +1340,14 @@ class Engine:
                          model_id: str,
                          min_height: float,
                          max_height: float,
-                         transformation_type: str = 'linear') -> None:
+                         transformation_type: str = 'linear',
+                         filters=None) -> None:
         """
         Ask the scene to interpolate the points of the specified polygon using a linear interpolation.
 
         Args:
+            filters: List with the filters to use in the modification of the points. List must be in the
+                format [(filter_id, args),...]
             transformation_type: Type of transformation to do.
             model_id: ID of the model to use for the interpolation.
             polygon_id: ID of the polygon to use.
@@ -1353,8 +1356,16 @@ class Engine:
 
         Returns: None
         """
+        if filters is None:
+            filters = []
+
         try:
-            self.scene.transform_points(polygon_id, model_id, min_height, max_height, transformation_type)
+            self.scene.transform_points(polygon_id,
+                                        model_id,
+                                        min_height,
+                                        max_height,
+                                        transformation_type,
+                                        filters)
 
         except ModelTransformationError as e:
             if e.code == 4:

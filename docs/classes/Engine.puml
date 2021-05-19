@@ -94,7 +94,7 @@ class Engine {
     + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
     + set_thread_task(parallel_task, then, parallel_task_args, then_task_args)
-    + transform_points(polygon_id, model_id, min_height, max_height, transformation_type)
+    + transform_points(polygon_id, model_id, min_height, max_height, transformation_type, filters)
     + undo_action()
     + update_current_3D_model()
     + update_scene_models_colors()
