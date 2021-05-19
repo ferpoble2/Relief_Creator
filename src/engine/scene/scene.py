@@ -59,14 +59,74 @@ class Scene:
         self.__polygon_id_count = 0
         self.__model_id_count = 0
 
-    def __transform_points_using_linear_transformation(self, polygon_id: str, model_id: str, min_height: float,
-                                                       max_height: float):
+    def __process_filters(self, filters=None):
+        """
+        Given a list with the filters in the format [(id_filter, args),...], get the data necessary to apply them on
+        a normal process of transformation.
 
-        # get the important information.
+        Args:
+            filters: Filters to use.
+
+        Returns: List with the filters and the data necessary to apply them.
+        """
+
+        if filters is None:
+            filters = []
+
+        filter_data = []
+        for filter_obj in filters:
+            id_filter = filter_obj[0]
+
+            if id_filter == 'height_less_than' or id_filter == 'height_greater_than':
+                height = float(filter_obj[1])
+                filter_data.append((id_filter, height))
+            elif id_filter == 'is_in' or id_filter == 'is_not_in':
+                # get the points of the polygon
+                polygon_id = filter_obj[1]
+
+                # get the points of the polygon, raise and exception if it there is problems in the
+                # retrieve of the information
+                try:
+                    polygon_points = self.get_polygon_points(polygon_id)
+                except SceneError:  # polygon not found
+                    raise ModelTransformationError(6)
+
+                # store the data
+                filter_data.append((id_filter, polygon_points))
+            else:
+                raise ModelTransformationError(5, filter_name=id_filter)
+
+    def __transform_points_using_linear_transformation(self,
+                                                       polygon_id: str,
+                                                       model_id: str,
+                                                       min_height: float,
+                                                       max_height: float,
+                                                       filters: list = None) -> None:
+        """
+        Method that transform the points of the model using the linear transformation and applies all the
+        filter that were passed to it.
+
+        Args:
+            polygon_id: ID of the polygon to use for the transformation.
+            model_id: ID of the model to use.
+            min_height: min height to use for the interpolation.
+            max_height: max height to use for the interpolation.
+            filters: List with the filters to use in the modification of the points. List must be in the
+                format [(filter_id, args),...]
+
+        Returns: None
+        """
+
+        if filters is None:
+            filters = []
+
+        # GET THE DATA FOR THE TRANSFORMATION AND CHECK VALIDITY
+        # ------------------------------------------------------
+
+        # Get the model to use and the polygon to use for the transformation.
         model = self.__model_hash[model_id]
         if not isinstance(model, Map2DModel):
             raise ModelTransformationError(4)
-
         polygon = self.__polygon_hash[polygon_id]
 
         # ask the model and polygon for the parameters to calculate the new height
@@ -81,18 +141,25 @@ class Scene:
         if not polygon.is_planar():
             raise ModelTransformationError(3)
 
+        # check and get the data for the filters
+        filter_data = self.__process_filters(filters)
+
+        # CALL THE THREAD TASK
+        # --------------------
+
         # define mutable object to store results to use from the parallel task to the then task
         new_height = [None]
 
         # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
         def parallel_task(new_height: list, vertex_array: 'numpy.array', height_array: 'numpy.array',
-                          polygon_points: list, max_height: float, min_height: float):
+                          polygon_points: list, max_height: float, min_height: float, filter_data: list):
             # calculate the new height of the points
             new_height[0] = TransformationHelper().modify_points_inside_polygon_linear(vertex_array,
                                                                                        height_array,
                                                                                        polygon_points,
                                                                                        max_height,
-                                                                                       min_height)
+                                                                                       min_height,
+                                                                                       filter_data)
 
         # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
         def then(new_height: list, engine: 'Engine', model: Map2DModel):
@@ -109,7 +176,8 @@ class Scene:
                                                           height_array,
                                                           polygon_points,
                                                           max_height,
-                                                          min_height],
+                                                          min_height,
+                                                          filter_data],
                                       then_task_args=[new_height,
                                                       self.__engine,
                                                       model])
@@ -501,7 +569,11 @@ class Scene:
 
         Returns: List with the points of the polygon.
         """
-        return self.__polygon_hash[polygon_id].get_point_list()
+        try:
+            return self.__polygon_hash[polygon_id].get_point_list()
+
+        except KeyError:
+            raise SceneError(5)
 
     def get_polygon_params(self, polygon_id: str) -> list:
         """
@@ -980,7 +1052,7 @@ class Scene:
         self.__engine.set_thread_task(parallel_task, then)
 
     def transform_points(self, polygon_id: str, model_id: str, min_height: float,
-                         max_height: float, transformation_type: str) -> None:
+                         max_height: float, transformation_type: str, filters=None) -> None:
         """
         Modify the points inside the polygon from the specified model using a linear transformation.
 
@@ -988,6 +1060,8 @@ class Scene:
         - Map2DModel
 
         Args:
+            filters: List with the filters to use in the modification of the points. List must be in the
+                format [(filter_id, args),...]
             transformation_type: type of transformation to use.
             polygon_id: ID of the polygon to use.
             model_id: Model to modify.
@@ -996,8 +1070,16 @@ class Scene:
 
         Returns: None
         """
+        if filters is None:
+            filters = []
+
+        # depending on the type of transformation, calls the respective function to do the transformation.
         if transformation_type == 'linear':
-            self.__transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
+            self.__transform_points_using_linear_transformation(polygon_id,
+                                                                model_id,
+                                                                min_height,
+                                                                max_height,
+                                                                filters)
 
         else:
             raise ModelTransformationError(1)

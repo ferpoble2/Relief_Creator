@@ -1,6 +1,7 @@
 @startuml
             class Scene{
-                - __transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height)
+                - __transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height, filters)
+                - __process_filters(filters): list
                 + add_model(model)
                 + add_new_vertex_to_active_polygon_using_real_coords(x_coord, y_coord)
                 + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
@@ -50,7 +51,7 @@
                 + set_models_polygon_mode(polygon_mode)
                 + set_polygon_name(polygon_id, new_name)
                 + set_polygon_param(polygon_id, key, value)
-                + transform_points(polygon_id, model_id, min_height, max_height, transformation_type)
+                + transform_points(polygon_id, model_id, min_height, max_height, transformation_type, filters)
                 + update_models_colors()
                 + update_models_projection_matrix()
                 + update_viewport()
