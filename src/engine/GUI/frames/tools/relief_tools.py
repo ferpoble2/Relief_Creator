@@ -7,6 +7,7 @@ from dataclasses import dataclass
 
 from typing import List
 
+from src.error.GUI_error import GUIError
 from src.utils import get_logger
 from src.type_hinting import *
 
@@ -19,7 +20,7 @@ class Filter:
     Data class to represent the filters on the GUI.
     """
 
-    name: int  # int representing the filter to use. The description for the filter is in the list of options.
+    id: int  # int representing the filter to use. The description for the filter is in the list of options.
     arguments: any  # arguments to apply the filter, can be a number, a polygon, or anything.
 
 
@@ -44,7 +45,8 @@ class ReliefTools:
         self.__polygon_data = {}
 
         # filter data
-        self.__filter_name_list: List[str] = ['Height <=', 'Height >= ', 'Is is ', 'Is not in ']  # options available
+        # options available.
+        self.__filter_name_list: List[str] = ['Height <=', 'Height >= ', 'Is is ', 'Is not in ']
         self.__filters: List[Filter] = []  # filters to apply on the polygon if the interpolation is triggered
 
     def filter_menu(self):
@@ -67,21 +69,21 @@ class ReliefTools:
             imgui.push_id(f"relief_tools_filter_{filter_ind}")
 
             # Selection of the filter
-            _, filter_data.name = imgui.combo('Filter',
-                                              filter_data.name,
-                                              self.__filter_name_list)
+            _, filter_data.id = imgui.combo('Filter',
+                                            filter_data.id,
+                                            self.__filter_name_list)
 
             # Selection of the argument for the filter.
             # this vary depending on the filter selected
 
             # height <= or height >=
-            if filter_data.name == 0 or filter_data.name == 1:
+            if filter_data.id == 0 or filter_data.id == 1:
                 if not isinstance(filter_data.arguments, float):
                     filter_data.arguments = 0
                 _, filter_data.arguments = imgui.input_float('Value', filter_data.arguments)
 
             # is in or is not in
-            elif filter_data.name == 2 or filter_data.name == 3:
+            elif filter_data.id == 2 or filter_data.id == 3:
                 # get list with the polygons on the program and remove the active one
                 polygon_list = self.__gui_manager.get_polygon_id_list()
                 polygon_list.remove(self.__gui_manager.get_active_polygon_id())
@@ -169,6 +171,28 @@ class ReliefTools:
         # -------------------
         self.transformation_menu(active_model_id, active_polygon_id)
 
+    def get_filters_dictionary_list(self) -> list:
+        """
+        Covert the filters on the windows to a list of dictionaries to pass them to the other components.
+
+        Returns: List with the information of the filters.
+        """
+        filter_dictionary_list = []
+        for filter_obj in self.__filters:
+
+            if filter_obj.id == 0:
+                filter_dictionary_list.append(('height_less_than', filter_obj.arguments))
+            elif filter_obj.id == 1:
+                filter_dictionary_list.append(('height_greater_than', filter_obj.arguments))
+            elif filter_obj.id == 2:
+                filter_dictionary_list.append(('is_in', filter_obj.arguments))
+            elif filter_obj.id == 3:
+                filter_dictionary_list.append(('is_not_in', filter_obj.arguments))
+            else:
+                raise GUIError(code=1)
+
+        return filter_dictionary_list
+
     def transformation_menu(self, active_model_id, active_polygon_id):
         """
         Method with the logic to render the menu that applies the interpolation on the maps.
@@ -200,4 +224,5 @@ class ReliefTools:
                                                             active_model_id,
                                                             min_height=self.__min_height_value,
                                                             max_height=self.__max_height_value,
-                                                            transformation_type='linear')
+                                                            transformation_type='linear',
+                                                            filters=self.get_filters_dictionary_list())
