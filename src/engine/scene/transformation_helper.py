@@ -97,7 +97,7 @@ class TransformationHelper:
                 indices = np.where(polygon_mask == True)
                 mask_modified[indices] = True
 
-            elif filter_name == 'is_not_in':
+            elif filter_name == 'is_not_in':  # arguments: list[float]
                 polygon_mask = self.__generate_mask(points_array, filter_arguments) & points_to_modify
                 indices = np.where(polygon_mask == True)
                 mask_modified[indices] = False
