@@ -20,7 +20,7 @@ class Filter:
     Data class to represent the filters on the GUI.
     """
 
-    id: int  # int representing the filter to use. The description for the filter is in the list of options.
+    selected_type: int  # int representing the filter to use. The description for the filter is in the list of options.
     arguments: any  # arguments to apply the filter, can be a number, a polygon, or anything.
 
 
@@ -69,21 +69,21 @@ class ReliefTools:
             imgui.push_id(f"relief_tools_filter_{filter_ind}")
 
             # Selection of the filter
-            _, filter_data.id = imgui.combo('Filter',
-                                            filter_data.id,
-                                            self.__filter_name_list)
+            _, filter_data.selected_type = imgui.combo('Filter',
+                                                       filter_data.selected_type,
+                                                       self.__filter_name_list)
 
             # Selection of the argument for the filter.
             # this vary depending on the filter selected
 
             # height <= or height >=
-            if filter_data.id == 0 or filter_data.id == 1:
+            if filter_data.selected_type == 0 or filter_data.selected_type == 1:
                 if not isinstance(filter_data.arguments, float):
                     filter_data.arguments = 0
                 _, filter_data.arguments = imgui.input_float('Value', filter_data.arguments)
 
             # is in or is not in
-            elif filter_data.id == 2 or filter_data.id == 3:
+            elif filter_data.selected_type == 2 or filter_data.selected_type == 3:
                 # get list with the polygons on the program and remove the active one
                 polygon_list = self.__gui_manager.get_polygon_id_list()
                 polygon_list.remove(self.__gui_manager.get_active_polygon_id())
@@ -189,16 +189,16 @@ class ReliefTools:
         filter_dictionary_list = []
         for filter_obj in self.__filters:
 
-            if filter_obj.id == 0:
+            if filter_obj.selected_type == 0:
                 filter_dictionary_list.append(('height_less_than', filter_obj.arguments))
-            elif filter_obj.id == 1:
+            elif filter_obj.selected_type == 1:
                 filter_dictionary_list.append(('height_greater_than', filter_obj.arguments))
-            elif filter_obj.id == 2:
+            elif filter_obj.selected_type == 2:
                 filter_dictionary_list.append(('is_in', filter_obj.arguments))
-            elif filter_obj.id == 3:
+            elif filter_obj.selected_type == 3:
                 filter_dictionary_list.append(('is_not_in', filter_obj.arguments))
             else:
-                raise NotImplementedError(f'Conversion of filter with id {filter_obj.id} not implemented.')
+                raise NotImplementedError(f'Conversion of filter with id {filter_obj.selected_type} not implemented.')
 
         return filter_dictionary_list
 
