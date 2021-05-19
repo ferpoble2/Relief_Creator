@@ -153,6 +153,63 @@ class TransformationHelper:
 
         return data
 
+    def __generate_filter_masks(self,
+                                points_to_modify: np.ndarray,
+                                points_array: np.ndarray,
+                                height_array: np.ndarray,
+                                filter_data: list) -> np.ndarray:
+        """
+        Generates a mask that indicates which data to use for the interpolation.
+        Requires and initial mask to do the modifications over it.
+
+        Filter are expected to be received in a list with the following format [(filter_name, arguments),...].
+        The list of accepted filters and its arguments are as follows:
+            height_less_than: int
+            height_greater_than: int
+            is_in: List[float]
+            is_not_in: List[float]
+
+        Args:
+            points_to_modify: Initial mask in which to apply the filters on.
+            points_array: Array with the points and their position.
+            height_array: Array with the height of the points.
+            filter_data: Filters to use to generate the masks.
+
+        Returns: Mask with the filters applied over it.
+        """
+        mask_modified = points_to_modify.copy()
+        for filter_obj in filter_data:
+            filter_name = filter_obj[0]
+            filter_arguments = filter_obj[1]
+
+            if filter_name == 'height_less_than':  # arguments: int
+
+                indices = np.where(height_array > filter_arguments)
+                print(indices)
+                mask_modified[indices] = False
+
+            elif filter_name == 'height_greater_than':  # arguments: int
+                indices = np.where(height_array < filter_arguments)
+                mask_modified[indices] = False
+
+            elif filter_name == 'is_in':    # arguments: list[float]
+                polygon_mask = self.__generate_mask(points_array,
+                                                    filter_arguments)
+                indices = np.where(polygon_mask == True)
+                mask_modified[indices] = True
+
+            elif filter_name == 'is_not_in':
+                polygon_mask = self.__generate_mask(points_array,
+                                                    filter_arguments)
+                indices = np.where(polygon_mask == True)
+                mask_modified[indices] = False
+
+            else:
+                raise NotImplementedError(f'Functionality to generate the mask of the filter {filter_name} '
+                                          f'not implemented.')
+
+        return mask_modified
+
     def get_inside_polygon_triangulation(self, polygon_points: list, z_value: float = 0.5) -> list:
         """
         Get a list of floats representing the vertices of the triangles to cover the interior of the polygon.
@@ -217,6 +274,8 @@ class TransformationHelper:
 
         Returns: numpy.array with the new points
         """
+        if filter_data is None:
+            filter_data = []
 
         # generate polygon and get the bounding box of the indices.
         points_no_z_axis = self.__delete_z_axis(polygon_points)
@@ -231,15 +290,21 @@ class TransformationHelper:
         flags = self.__generate_mask(points_array_cut, polygon_points)
         log.debug('Mask generated')
 
-        # modify the height linearly
-        current_min_height = np.min(height_cut[flags])
-        current_max_height = np.max(height_cut[flags])
+        # get the masks of the filters and apply them
+        filtered_flags = self.__generate_filter_masks(flags,
+                                                      points_array_cut,
+                                                      height_cut,
+                                                      filter_data)
 
-        new_height = interpolate(height_cut[flags], current_min_height, current_max_height, new_min_height,
+        # modify the height linearly
+        current_min_height = np.min(height_cut[filtered_flags])
+        current_max_height = np.max(height_cut[filtered_flags])
+
+        new_height = interpolate(height_cut[filtered_flags], current_min_height, current_max_height, new_min_height,
                                  new_max_height,
                                  False)
 
-        height_cut[flags] = new_height
+        height_cut[filtered_flags] = new_height
         height[min_y_index:max_y_index, min_x_index:max_x_index] = height_cut
         return height
 
