@@ -171,7 +171,7 @@ class ReliefTools:
         # -------------------
         self.transformation_menu(active_model_id, active_polygon_id)
 
-    def get_filters_dictionary_list(self) -> list:
+    def __get_filters_dictionary_list(self) -> list:
         """
         Covert the filters to a list of tuples to pass them to the GUIManager.
 
@@ -234,4 +234,4 @@ class ReliefTools:
                                                             min_height=self.__min_height_value,
                                                             max_height=self.__max_height_value,
                                                             transformation_type='linear',
-                                                            filters=self.get_filters_dictionary_list())
+                                                            filters=self.__get_filters_dictionary_list())

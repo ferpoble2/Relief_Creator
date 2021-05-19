@@ -9,10 +9,10 @@ class ReliefTools {
     - __filter_name_list: list
     - __filters: list
 
+    - __get_filters_dictionary_list(): list
     + filter_menu()
     + render()
     + transformation_menu(self, active_model_id, active_polygon_id)
-    + get_filters_dictionary_list(): list
 }
 
 @enduml
