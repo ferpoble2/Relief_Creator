@@ -45,7 +45,7 @@ class ReliefTools:
         self.__polygon_data = {}
 
         # filter data
-        # options available.
+        # options available. The filter IDs represent their index on this list.
         self.__filter_name_list: List[str] = ['Height <=', 'Height >= ', 'Is is ', 'Is not in ']
         self.__filters: List[Filter] = []  # filters to apply on the polygon if the interpolation is triggered
 
@@ -173,7 +173,16 @@ class ReliefTools:
 
     def get_filters_dictionary_list(self) -> list:
         """
-        Covert the filters on the windows to a list of dictionaries to pass them to the other components.
+        Covert the filters to a list of tuples to pass them to the GUIManager.
+
+        Tuples generated are as follows (filter_id, arguments). THe filter id is the name of the filter used
+        by the program.
+
+        The ID and the corresponding filters is as follows:
+            0: height_less_than
+            1: height_greater_than
+            2: is_in
+            3: is_not_in
 
         Returns: List with the information of the filters.
         """
@@ -189,7 +198,7 @@ class ReliefTools:
             elif filter_obj.id == 3:
                 filter_dictionary_list.append(('is_not_in', filter_obj.arguments))
             else:
-                raise GUIError(code=1)
+                raise NotImplementedError(f'Conversion of filter with id {filter_obj.id} not implemented.')
 
         return filter_dictionary_list
 
