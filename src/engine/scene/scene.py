@@ -41,8 +41,8 @@ class Scene:
         Constructor of the class.
         """
         self.__model_hash = {}  # str:Map2DModel
-        self.__3d_model_hash = {}   # str:Map3DModel
-        self.__polygon_hash = {}    # str:Polygon
+        self.__3d_model_hash = {}  # str:Map3DModel
+        self.__polygon_hash = {}  # str:Polygon
         self.__interpolation_area_hash = {}
         self.__engine = engine
 
