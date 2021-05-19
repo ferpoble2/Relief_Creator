@@ -141,7 +141,7 @@ class Scene:
         if not polygon.is_planar():
             raise ModelTransformationError(3)
 
-        # check and get the data for the filters
+        # process the filter data to apply the transformations.
         filter_data = self.__process_filters(filters)
 
         # CALL THE THREAD TASK
