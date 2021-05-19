@@ -10,7 +10,7 @@ class ModelTransformationError(SceneError):
     Class to use when there is an error in the transformation process of a model.
     """
 
-    def __init__(self, code: int = 0):
+    def __init__(self, code: int = 0, filter_name=''):
         """
         Constructor of the class.
         """
@@ -21,6 +21,7 @@ class ModelTransformationError(SceneError):
             1: 'Transformation type not recognized by the program.',
             2: 'The polygon used doesnt have at least 3 vertices.',
             3: 'Polygon used is not planar.',
-            4: 'Can not use that model for transforming points. Try using a Map2DModel.'
+            4: 'Can not use that model for transforming points. Try using a Map2DModel.',
+            5: f'Can not get data of filter. Unrecognized filter {filter_name}',
+            6: 'Polygon not found or selected.'
         }
-
