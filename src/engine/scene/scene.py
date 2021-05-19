@@ -140,7 +140,6 @@ class Scene:
 
         # GET THE DATA FOR THE TRANSFORMATION AND CHECK VALIDITY
         # ------------------------------------------------------
-
         # Get the model to use and the polygon to use for the transformation.
         model = self.__model_hash[model_id]
         polygon = self.__polygon_hash[polygon_id]
@@ -162,7 +161,6 @@ class Scene:
 
         # CALL THE THREAD TASK
         # --------------------
-
         # define mutable object to store results to use from the parallel task to the then task
         new_height = [None]
 
