@@ -108,7 +108,7 @@ Note: The name from above is not showed in the tools frame of the program but is
 
 # Filters
 
-There is a number of filters that can be applied to the transformations, they are stored as a pair (string, arguments) by the engine. Here is the list of all filters implemented currently in the program:
+There is a number of filters that can be applied to the transformations before modifying the points of the loaded models, they are given to the Scene methods as a list of pairs (ID, Parameters). Here is the list of all filters implemented currently in the program:
 
 |         ID          |     Parameters      |                         Description                          |
 | :-----------------: | :-----------------: | :----------------------------------------------------------: |
@@ -117,7 +117,7 @@ There is a number of filters that can be applied to the transformations, they ar
 |        is_in        | string (polygon id) | Filter all the points that are inside the specified polygon. |
 |      is_not_in      | string (polygon id) | Filter all the points that are not in the specified polygon (are outside the polygon). |
 
-These filters are passed to the Scene class at the time of the interpolation. The Scene get the data necessary to apply the filters before the transformation take place.
+These filters are passed to the Scene class at the time of the interpolation. The Scene is in charge of getting the necessary data to apply the filters correctly on the transformations.
 
 # How to extend the program
 

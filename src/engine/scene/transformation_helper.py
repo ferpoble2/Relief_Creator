@@ -168,6 +168,7 @@ class TransformationHelper:
             height_greater_than: int
             is_in: List[float]
             is_not_in: List[float]
+        Use of a filter not listed before will raise NotImplementedError.
 
         Args:
             points_to_modify: Initial mask in which to apply the filters on.

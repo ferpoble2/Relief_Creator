@@ -66,19 +66,20 @@ class Scene:
 
     def __process_filters(self, filters=None):
         """
-        Given a list with the filters in the format [(id_filter, args),...], get the data and format them in a
-        format suitable for the use in the TransformationHelper.
+        Given a list with the filters in the format [(id_filter, args),...], format them in a format suitable to
+        use in the TransformationHelper class.
 
         The list of accepted filters and its arguments are as follows:
             height_less_than: int
             height_greater_than: int
             is_in: str
             is_not_in: str
+        Use of filters not listed here will raise NotImplementedError.
 
         The expected value on the filters is_is and is_not_in is the id of a polygon.
 
         Args:
-            filters: Filters to use.
+            filters: Filters to use in the format [(id_filter, args),...].
 
         Returns: List with the filters and the data necessary to apply them.
         """
@@ -156,7 +157,7 @@ class Scene:
         if not polygon.is_planar():
             raise ModelTransformationError(3)
 
-        # process the filter data to apply the transformations.
+        # process the filters to format them in a format suitable the TransformationHelper class.
         filter_data = self.__process_filters(filters)
 
         # CALL THE THREAD TASK
