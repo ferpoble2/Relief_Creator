@@ -61,8 +61,16 @@ class Scene:
 
     def __process_filters(self, filters=None):
         """
-        Given a list with the filters in the format [(id_filter, args),...], get the data necessary to apply them on
-        a normal process of transformation.
+        Given a list with the filters in the format [(id_filter, args),...], get the data and format them in a
+        format suitable for the use in the TransformationHelper.
+
+        The list of accepted filters and its arguments are as follows:
+            height_less_than: int
+            height_greater_than: int
+            is_in: str
+            is_not_in: str
+
+        The expected value on the filters is_is and is_not_in is the id of a polygon.
 
         Args:
             filters: Filters to use.
@@ -77,9 +85,12 @@ class Scene:
         for filter_obj in filters:
             id_filter = filter_obj[0]
 
+            # height filters
             if id_filter == 'height_less_than' or id_filter == 'height_greater_than':
                 height = float(filter_obj[1])
                 filter_data.append((id_filter, height))
+
+            # polygon filters
             elif id_filter == 'is_in' or id_filter == 'is_not_in':
                 # get the points of the polygon
                 polygon_id = filter_obj[1]
@@ -95,6 +106,8 @@ class Scene:
                 filter_data.append((id_filter, polygon_points))
             else:
                 raise NotImplementedError(f'Processing process for filter {id_filter} not implemented on the Scene.')
+
+        return filter_data
 
     def __transform_points_using_linear_transformation(self,
                                                        polygon_id: str,
