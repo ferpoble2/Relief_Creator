@@ -94,7 +94,7 @@ class Scene:
                 # store the data
                 filter_data.append((id_filter, polygon_points))
             else:
-                raise ModelTransformationError(5, filter_name=id_filter)
+                raise NotImplementedError(f'Processing process for filter {id_filter} not implemented on the Scene.')
 
     def __transform_points_using_linear_transformation(self,
                                                        polygon_id: str,
