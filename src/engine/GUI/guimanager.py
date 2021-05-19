@@ -187,8 +187,12 @@ class GUIManager:
         """
         self.__engine.change_dot_color_of_polygon(polygon_id, color)
 
-    def change_points_height(self, polygon_id: str, model_id: str, min_height: float, max_height: float,
-                             transformation_type: 'str' = 'linear') -> None:
+    def change_points_height(self, polygon_id: str,
+                             model_id: str,
+                             min_height: float,
+                             max_height: float,
+                             transformation_type: str = 'linear',
+                             filters=None) -> None:
         """
         Call the engine to change the height of the points inside the specified polygon.
 
@@ -198,6 +202,8 @@ class GUIManager:
 
 
         Args:
+            filters: List with the filters to use in the modification of the points. List must be in the
+                format [(filter_id, args),...]
             model_id: ID of the model to use for the interpolation.
             polygon_id: ID of the polygon to use for interpolation.
             min_height: Min height of the points after the interpolation.
@@ -206,8 +212,14 @@ class GUIManager:
 
         Returns: None
         """
-        self.__engine.transform_points(polygon_id, model_id, min_height, max_height,
-                                       transformation_type)
+        if filters is None:
+            filters = []
+        self.__engine.transform_points(polygon_id,
+                                       model_id,
+                                       min_height,
+                                       max_height,
+                                       transformation_type,
+                                       filters)
 
     def change_quality(self, quality: int) -> None:
         """

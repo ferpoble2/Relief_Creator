@@ -48,7 +48,7 @@ class GUIManager{
     + get_active_tool(): str
     + get_cpt_file(): str
     + get_gui_key_callback(): function
-    + change_points_height(polygon_id, model_id, min_height, max_height, transformation_type)
+    + change_points_height(polygon_id, model_id, min_height, max_height, transformation_type, filters)
     + get_gui_mouse_scroll_callback(): function
     + get_icon(icon_name): Icon
     + get_left_frame_width(): int
