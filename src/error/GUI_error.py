@@ -17,5 +17,5 @@ class GUIError(BaseError):
 
         self.codes = {
             0: 'Default Error.',
-            1: 'Filter ID not found on the table of filters.'
+            1: 'Filter ID not found on the list of filters.'
         }
