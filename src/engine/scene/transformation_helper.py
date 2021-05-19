@@ -202,7 +202,7 @@ class TransformationHelper:
                                             polygon_points: List[float],
                                             new_max_height: float,
                                             new_min_height: float,
-                                            filter_data:list = None) -> np.ndarray:
+                                            filter_data: list = None) -> np.ndarray:
         """
         Modify the points that are inside the polygon changing their height using a linear interpolation
         given the new specified height.
