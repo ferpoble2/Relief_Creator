@@ -49,6 +49,37 @@ class ReliefTools:
         self.__filter_name_list: List[str] = ['Height <=', 'Height >= ', 'Is is ', 'Is not in ']
         self.__filters: List[Filter] = []  # filters to apply on the polygon if the interpolation is triggered
 
+    def __get_filters_dictionary_list(self) -> list:
+        """
+        Covert the filters to a list of tuples to pass them to the GUIManager.
+
+        Tuples generated are as follows (filter_id, arguments).
+        The filter id is the name of the filter used globally by the program.
+
+        The ID and the corresponding filters is as follows:
+            0: height_less_than
+            1: height_greater_than
+            2: is_in
+            3: is_not_in
+
+        Returns: List with the information of the filters.
+        """
+        filter_dictionary_list = []
+        for filter_obj in self.__filters:
+
+            if filter_obj.selected_type == 0:
+                filter_dictionary_list.append(('height_less_than', filter_obj.arguments))
+            elif filter_obj.selected_type == 1:
+                filter_dictionary_list.append(('height_greater_than', filter_obj.arguments))
+            elif filter_obj.selected_type == 2:
+                filter_dictionary_list.append(('is_in', filter_obj.arguments))
+            elif filter_obj.selected_type == 3:
+                filter_dictionary_list.append(('is_not_in', filter_obj.arguments))
+            else:
+                raise NotImplementedError(f'Conversion of filter with id {filter_obj.selected_type} not implemented.')
+
+        return filter_dictionary_list
+
     def filter_menu(self):
         """
         Method with the logic to render the filter menu.
@@ -170,37 +201,6 @@ class ReliefTools:
         # Transformation Menu
         # -------------------
         self.transformation_menu(active_model_id, active_polygon_id)
-
-    def __get_filters_dictionary_list(self) -> list:
-        """
-        Covert the filters to a list of tuples to pass them to the GUIManager.
-
-        Tuples generated are as follows (filter_id, arguments).
-        The filter id is the name of the filter used globaly by the program.
-
-        The ID and the corresponding filters is as follows:
-            0: height_less_than
-            1: height_greater_than
-            2: is_in
-            3: is_not_in
-
-        Returns: List with the information of the filters.
-        """
-        filter_dictionary_list = []
-        for filter_obj in self.__filters:
-
-            if filter_obj.selected_type == 0:
-                filter_dictionary_list.append(('height_less_than', filter_obj.arguments))
-            elif filter_obj.selected_type == 1:
-                filter_dictionary_list.append(('height_greater_than', filter_obj.arguments))
-            elif filter_obj.selected_type == 2:
-                filter_dictionary_list.append(('is_in', filter_obj.arguments))
-            elif filter_obj.selected_type == 3:
-                filter_dictionary_list.append(('is_not_in', filter_obj.arguments))
-            else:
-                raise NotImplementedError(f'Conversion of filter with id {filter_obj.selected_type} not implemented.')
-
-        return filter_dictionary_list
 
     def transformation_menu(self, active_model_id, active_polygon_id):
         """
