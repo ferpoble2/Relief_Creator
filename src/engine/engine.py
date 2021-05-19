@@ -1381,6 +1381,13 @@ class Engine:
                 self.set_modal_text('Error',
                                     'The polygon is not planar. Try using a planar polygon.')
 
+            elif e.code == 6:
+                self.set_modal_text('Error',
+                                    'A filter has a non existent polygon or the polygon is not selected.')
+
+            else:
+                raise NotImplementedError(f'ModelTransformationError with code {e.code} not handled.')
+
     def undo_action(self) -> None:
         """
         Undo the most recent action made in the program.
