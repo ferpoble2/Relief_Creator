@@ -7,6 +7,7 @@ class TransformationHelper {
     - __delete_z_axis(list_of_points)
     - __get_bounding_box_indexes(points_array, polygon): list
     - __interpolate_nan(array_2d, interpolation_type): array
+    - __generate_filter_masks(points_to_modify, points_array, height_array, filter_data): array
     + get_inside_polygon_triangulation(polygon_points, z_value): list
     + get_max_min_inside_polygon(points, polygon_points, height): tuple
     + interpolate_points_external_to_polygon(points, polygon_points, heights, distance): array
