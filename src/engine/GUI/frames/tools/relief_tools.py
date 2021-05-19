@@ -175,8 +175,8 @@ class ReliefTools:
         """
         Covert the filters to a list of tuples to pass them to the GUIManager.
 
-        Tuples generated are as follows (filter_id, arguments). THe filter id is the name of the filter used
-        by the program.
+        Tuples generated are as follows (filter_id, arguments).
+        The filter id is the name of the filter used globaly by the program.
 
         The ID and the corresponding filters is as follows:
             0: height_less_than

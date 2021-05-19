@@ -97,12 +97,27 @@ All the dependencies of the project must be installed for the tests to run corre
 
 There is a number of tools that form part of the engine, they are stored as strings by the program class. Here is the list of all tools of the program:
 
-- move_map: Tool that is active when moving the 2D map on the engine.
-- create_polygon: Tool to create polygons on the screen.
+|       ID       |                        Description                        |
+| :------------: | :-------------------------------------------------------: |
+|    move_map    | Tool that is active when moving the 2D map on the engine. |
+| create_polygon |          Tool to create polygons on the screen.           |
 
 Only one tool can be active at a given time.
 
 Note: The name from above is not showed in the tools frame of the program but is the one used by the program.
+
+# Filters
+
+There is a number of filters that can be applied to the transformations, they are stored as a pair (string, arguments) by the engine. Here is the list of all filters implemented currently in the program:
+
+|         ID          |     Parameters      |                         Description                          |
+| :-----------------: | :-----------------: | :----------------------------------------------------------: |
+|  height_less_than   |        float        | Filter all points with height less than the specified value. |
+| height_greater_than |        float        | Filter all points with height greater than the specified value. |
+|        is_in        | string (polygon id) | Filter all the points that are inside the specified polygon. |
+|      is_not_in      | string (polygon id) | Filter all the points that are not in the specified polygon (are outside the polygon). |
+
+These filters are passed to the Scene class at the time of the interpolation. The Scene get the data necessary to apply the filters before the transformation take place.
 
 # How to extend the program
 
