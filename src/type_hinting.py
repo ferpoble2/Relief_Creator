@@ -8,9 +8,10 @@ from src.type_hinting import *
 
 or
 
-from src.type_hinting import SOMECLASS
+from src.type_hinting import some_class
 """
 
+# noinspection PyUnreachableCode
 if False:
     from src.engine.GUI.guimanager import GUIManager
     from src.engine.engine import Engine

@@ -4,7 +4,7 @@ File that contains the program class, class that will be the main class of the p
 
 import glfw
 
-from type_hinting import *
+from src.type_hinting import *
 
 from src.engine.controller.controller import Controller
 from src.engine.GUI.guimanager import GUIManager
