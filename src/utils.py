@@ -22,7 +22,7 @@ LOG_LIST_MODULES = [
 
 
 def get_logger(log_level: int = LOG_LEVEL, log_file_level: int = LOG_FILE_LEVEL, module: str = 'GLOBAL',
-               directory: str = f'{os.getcwd()}/logs') -> logging.Logger:
+               directory: str = f'resources/logs') -> logging.Logger:
     """
     Get the logger of the application to use in the main program.
     Args:
