@@ -20,9 +20,6 @@ from src.utils import get_logger
 from src.engine.scene.transformation_helper import TransformationHelper
 from src.engine.scene.camera import Camera
 
-# TODO: this should be just another code in SceneError
-from src.error.non_existent_polygon_error import NonExistentPolygonError
-
 from src.error.model_transformation_error import ModelTransformationError
 from src.error.scene_error import SceneError
 from src.error.interpolation_error import InterpolationError
@@ -516,7 +513,7 @@ class Scene:
             self.__polygon_hash[polygon_id].delete_parameter(key)
         except KeyError:
             # noinspection PyTypeChecker
-            raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
+            raise SceneError(5)
 
     def draw(self) -> None:
         """
@@ -673,7 +670,7 @@ class Scene:
             return self.__polygon_hash[polygon_id].get_point_list()
         except KeyError:
             # noinspection PyTypeChecker
-            raise NonExistentPolygonError(f"Polygon with ID {polygon_id} does not exist.")
+            raise SceneError(5)
 
     def get_polygon_id_list(self) -> list:
         """
@@ -708,7 +705,7 @@ class Scene:
             return self.__polygon_hash[polygon_id].get_parameter_list()
         except KeyError:
             # noinspection PyTypeChecker
-            raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
+            raise SceneError(5)
 
     def get_polygon_points(self, polygon_id: str) -> list:
         """
@@ -1213,7 +1210,7 @@ class Scene:
             return
         except KeyError:
             # noinspection PyTypeChecker
-            raise NonExistentPolygonError(f'Polygon {polygon_id} does not exist in the program')
+            raise SceneError(5)
 
     def set_thread_task(self, parallel_task, then):
         """

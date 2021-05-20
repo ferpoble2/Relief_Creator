@@ -5,21 +5,20 @@ left to right direction
 !startsub INTERNAL
 package error {
     class BaseError
-    class PolygonError
-    class RepeatedPointError
-    class LineIntersectionError
-    class NonExistentPolygonError
-    class SceneError
     class ExportError
-    class ShapefileExportError
-    class NotEnoughPointsError
     class FolderError
     class GUIError
+    class InterpolationError
+    class LineIntersectionError
+    class ModelTransformationError
+    class NotEnoughPointsError
+    class PolygonError
     class PolygonFolderNotFoundError
+    class RepeatedPointError
+    class SceneError
+    class ShapefileExportError
     class UnknownDataTypeError
     class WrongInterpolationTypeError
-    class ModelTransformationError
-    class InterpolationError
 }
 
 BaseError <|-- SceneError
@@ -29,7 +28,6 @@ BaseError <|-- GUIError
 
 PolygonError <|-- RepeatedPointError
 PolygonError <|-- LineIntersectionError
-SceneError <|-- NonExistentPolygonError
 ExportError <|-- ShapefileExportError
 ShapefileExportError <|-- NotEnoughPointsError
 ShapefileExportError <|-- UnknownDataTypeError
