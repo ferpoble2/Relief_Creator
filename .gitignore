@@ -14,34 +14,8 @@ output/
 !test/output
 
 # Specific files
-/src/logs/GUIMANAGER.log
+*.log
 /src/imgui.ini
-/src/logs/LOADING_FRAME.log
-/src/logs/MAIN.log
-/src/logs/MAIN MENU BAR.log
-/src/logs/Map2DModel.log
-/src/logs/PROGRAM.log
-/src/logs/SAMPLE TEXT.log
-/src/logs/SCENE.log
-/src/logs/TEST WINDOW.log
-/src/logs/TOOLS.log
-/src/logs/CONTROLLER.log
-/src/logs/CTP.log
-/src/logs/DEBUG_FRAME.log
-/src/logs/ENGINE.log
-/src/logs/FRAMES.log
-/src/logs/TEXT_MODAL.log
-/samples/imgui/imgui.ini
-/src/logs/Points.log
-/src/logs/POLYGON.log
-/src/logs/LINES.log
-/src/logs/Polygon Information.log
-/src/logs/CONFIRMATION_MODAL.log
-/src/logs/INTERPOLATION_TOOLS.log
-/src/logs/MAIN_MENU_BAR.log
-/src/logs/NETCDF.log
-/src/logs/POLYGON_TOOLS.log
-/src/logs/RELIEF_TOOLS.log
 /src/logs/TRANSFORMATION_HELPER.log
 /src/input/test_inputs/GRD_450MB.grd
 /test/output/files/test_model_temp.nc
