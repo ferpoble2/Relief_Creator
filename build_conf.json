@@ -59,15 +59,15 @@
   },
   {
    "optionDest": "datas",
-   "value": "<project_directory>/src/logs;logs/"
+   "value": "<project_directory>/src/logs;src/logs/"
   },
   {
    "optionDest": "datas",
-   "value": "<project_directory>/src/input/test_colors;input/test_colors/"
+   "value": "<project_directory>/src/input/test_colors;src/input/test_colors/"
   },
   {
    "optionDest": "datas",
-   "value": "<project_directory>/src/input/test_inputs;input/test_inputs/"
+   "value": "<project_directory>/src/input/test_inputs;src/input/test_inputs/"
   },
   {
    "optionDest": "datas",
@@ -83,19 +83,19 @@
   },
   {
    "optionDest": "datas",
-   "value": "<project_directory>/src/engine/GUI/fonts;engine/GUI/fonts"
+   "value": "<project_directory>/src/engine/GUI/fonts;src/engine/GUI/fonts"
   },
   {
    "optionDest": "datas",
-   "value": "<project_directory>/src/engine/shaders;engine/shaders/"
+   "value": "<project_directory>/src/engine/shaders;src/engine/shaders/"
   },
   {
    "optionDest": "datas",
-   "value": "<project_directory>/src/engine/GUI/icons;engine/GUI/icons"
+   "value": "<project_directory>/src/engine/GUI/icons;src/engine/GUI/icons"
   },
   {
    "optionDest": "datas",
-   "value": "<project_directory>/src/input/test_polygons;input/test_polygons/"
+   "value": "<project_directory>/src/input/test_polygons;src/input/test_polygons/"
   },
   {
    "optionDest": "hiddenimports",
