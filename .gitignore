@@ -20,3 +20,4 @@ output/
 /src/input/test_inputs/GRD_450MB.grd
 /test/output/files/test_model_temp.nc
 /imgui.ini
+/resources/sample_netcdf/GRD_450MB.grd
