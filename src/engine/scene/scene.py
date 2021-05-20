@@ -30,6 +30,7 @@ from src.error.interpolation_error import InterpolationError
 log = get_logger(module="SCENE")
 
 
+# TODO: Scene does too much logic. PolygonManager and ModelManager class are necessary to make class smaller.
 class Scene:
     """
     Class in charge of all the elements that are rendered using Opengl.
