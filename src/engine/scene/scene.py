@@ -101,12 +101,18 @@ class Scene:
                 # get the points of the polygon
                 polygon_id = filter_obj[1]
 
-                # get the points of the polygon, raise and exception if it there is problems in the
-                # retrieve of the information
+                # get the data and check it
+                # -------------------------
+
+                # get vertices of polygon. raise exception if the is problems getting the information.
                 try:
                     polygon_points = self.get_polygon_points(polygon_id)
                 except SceneError:  # polygon not found
                     raise ModelTransformationError(6)
+
+                # check that have at least three vertices
+                if len(polygon_points) < 9:
+                    raise ModelTransformationError(7)
 
                 # store the data
                 filter_data.append((id_filter, polygon_points))
@@ -706,6 +712,7 @@ class Scene:
     def get_polygon_points(self, polygon_id: str) -> list:
         """
         Return the list of points of a polygon.
+        The points are formatted as follows: [x1, y1, z1, x2, y2, z2, ...]
 
         Args:
             polygon_id: ID of the polygon.

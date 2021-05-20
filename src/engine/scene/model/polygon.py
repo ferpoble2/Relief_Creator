@@ -372,6 +372,7 @@ class Polygon(Model):
     def get_point_list(self) -> list:
         """
         Get the list of points.
+        The format of the list is as follows: [x1, y1, z1, x2, y2, z2, ...]
 
         Returns: List of points
         """

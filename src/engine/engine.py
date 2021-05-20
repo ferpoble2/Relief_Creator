@@ -1385,7 +1385,11 @@ class Engine:
 
             elif e.code == 6:
                 self.set_modal_text('Error',
-                                    'A filter has a non existent polygon or the polygon is not selected.')
+                                    'Polygon not selected or invalid in filter.')
+
+            elif e.code == 7:
+                self.set_modal_text('Error',
+                                    'Polygons used in filters must have at least 3 vertices.')
 
             else:
                 raise NotImplementedError(f'ModelTransformationError with code {e.code} not handled.')
