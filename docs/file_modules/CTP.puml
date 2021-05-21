@@ -1,6 +1,7 @@
 @startuml
 !$file = "(F,#ff75ff) File"
 class CTP  <<$file>>{
-    + read_file(filename: str) : dict
+    + read_file(filename) : dict
+    + is_numeric(text) : bool
 }
 @enduml

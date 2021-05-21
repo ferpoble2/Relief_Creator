@@ -112,7 +112,7 @@ class Engine:
             log.info('Handling line intersection.')
             self.set_modal_text('Error', 'Line intersect another one already in the polygon.')
 
-    def add_new_vertex_to_activate_polygon_using_real_coords(self, position_x: int, position_y: int) -> None:
+    def add_new_vertex_to_activate_polygon_using_real_coords(self, position_x: float, position_y: float) -> None:
         """
         Add a new point to the polygon using map coordinates.
 

@@ -2,20 +2,53 @@
 File with utils functions to read CPT files. (file wih the information about how to set the colors of the models).
 """
 from typing import List
+from re import sub
 
 from src.utils import get_logger
 
 log = get_logger(module='CTP')
 
 
+def is_numeric(text: str) -> bool:
+    """
+    Check if a string is numeric or not.
+
+    Args:
+        text: String to analyze.
+
+    Returns:
+        True if the string was numeric, False otherwise.
+
+    """
+    try:
+        float(text)
+        return True
+    except ValueError:
+        return False
+
+
 def read_file(file_name: str) -> List[dict]:
     """
-    Read a CTP file and extracts the colors and the limits associated to them
+    Read a CTP file and extracts the colors and the limits associated to them.
+
+    Return a list of dictionaries with the colors defined in CPT file in the same order as they are defined in the
+    file.
+
+    Important:
+        This method does not delete repeated pairs of height/color that could be stored in the file.
+
+    Example output:
+        [{height: 0, color: [0,0,0]},
+        {height: 100, color: [0,255,0]},
+        {height: 100, color: [0,0,0]},
+        {height: 200, color: [255,0,0]},
+        ...]
 
     Args:
         file_name: Name of the file to read.
 
-    Returns: Dictionary with the limits and the colors associated.
+    Returns:
+        Dictionary with the limits and the colors associated.
 
     """
     log.debug(f'Reading file {file_name}')
@@ -25,51 +58,36 @@ def read_file(file_name: str) -> List[dict]:
     color_pallet = []
     for line in file.readlines():
 
-        # dont consider comments
-        if line[0] == '#':
+        # split the line to get the contents
+        line = line.split()
+
+        # do not consider empty lines
+        if len(line) == 0:
             continue
 
-        # dont consider final lines
-        if line[0].isalpha():
+        # dont consider lines not related to the definition of color
+        if (not is_numeric(line[0])) or (not is_numeric(line[2])):
             continue
 
-        # only consider lines with code
-        if len(line.split('\t')) < 4:
+        # do not consider lines that does not have enough elements to define colors
+        if len(line) < 4:
             continue
-
-        # format values
-        values = line.strip('\n').split('\t')
-        while '' in values:
-            values.remove('')
 
         # append
-        if len(color_pallet) == 0:
-            color_pallet.append({
-                'height': float(values[0]),
-                'color': values[1].split('/')
-            })
-            color_pallet.append({
-                'height': float(values[2]),
-                'color': values[3].split('/')
-            })
-        else:
-            color_pallet.pop()
-            color_pallet.append({
-                'height': float(values[0]),
-                'color': values[1].split('/')
-            })
-            color_pallet.append({
-                'height': float(values[2]),
-                'color': values[3].split('/')
-            })
+        values = line
+        color_pallet.append({
+            'height': float(values[0]),
+            'color': values[1].split('/')
+        })
+        color_pallet.append({
+            'height': float(values[2]),
+            'color': values[3].split('/')
+        })
 
     return color_pallet
 
 
 if __name__ == '__main__':
-    filename = 'test_colors/default.cpt'
+    filename = '../../test/filters/files/colors.cpt'
     colors = read_file(filename)
-
-    import json
-    with open('../../test/input/files/test_data_CPT_1.json', 'w') as f:
-        json.dump(colors, f)
+    print(colors)
