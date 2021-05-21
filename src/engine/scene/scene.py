@@ -211,7 +211,7 @@ class Scene:
         """
         self.__model_hash[model.id] = model
 
-    def add_new_vertex_to_active_polygon_using_real_coords(self, x_coord: float, y_coord: float) -> None:
+    def add_new_vertex_to_active_polygon_using_map_coords(self, x_coord: float, y_coord: float) -> None:
         """
         Add a new point to the active polygon using real coordinates.
 

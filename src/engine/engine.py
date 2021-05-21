@@ -112,6 +112,20 @@ class Engine:
             log.info('Handling line intersection.')
             self.set_modal_text('Error', 'Line intersect another one already in the polygon.')
 
+    def add_new_vertex_to_activate_polygon_using_real_coords(self, position_x: int, position_y: int) -> None:
+        """
+        Add a new point to the polygon using map coordinates.
+
+        The points added using this method will not be modified before adding them to the polygons.
+
+        Args:
+            position_x: Position on the X axis.
+            position_y: Position on the Y axis. (from bottom to top)
+
+        Returns: None
+        """
+        self.scene.add_new_vertex_to_active_polygon_using_map_coords(position_x, position_y)
+
     def add_zoom(self) -> None:
         """
         Add zoom to the current map being watched.
@@ -887,18 +901,16 @@ class Engine:
             for point in polygons_point_list[ind]:  # shapefile polygons are closed, so we do not need the last point
 
                 try:
-                    self.scene.add_new_vertex_to_active_polygon_using_real_coords(point[0], point[1])
+                    self.add_new_vertex_to_activate_polygon_using_real_coords(point[0], point[1])
 
-                except LineIntersectionError as e:
-                    log.error(e)
+                except LineIntersectionError:
                     errors = True
                     self.scene.delete_polygon_by_id(new_polygon_id)
                     self.set_active_polygon(None)
                     error_number += 1
                     break
 
-                except RepeatedPointError as e:
-                    log.error(e)
+                except RepeatedPointError:
                     errors = True
                     self.scene.delete_polygon_by_id(new_polygon_id)
                     self.set_active_polygon(None)
