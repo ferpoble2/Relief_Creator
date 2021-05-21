@@ -16,12 +16,12 @@ class TestReadCPTFile(unittest.TestCase):
 
         with open('resources/test_resources/expected_data/json_data/test_data_CPT_1.json') as f:
             data_1 = json.load(f)
-            data_read = read_file('resources/test_resources/cpt/test_cpt_1.cpt')
+            data_read = read_file('resources/test_resources/cpt/cpt_1.cpt')
             self.assertEqual(data_1, data_read, 'Data read from CPT file is not what is expected.')
 
         with open('resources/test_resources/expected_data/json_data/test_data_CPT_2.json') as f:
             data_2 = json.load(f)
-            data_read = read_file('resources/test_resources/cpt/test_cpt_2.cpt')
+            data_read = read_file('resources/test_resources/cpt/cpt_2.cpt')
             self.assertEqual(data_2, data_read, 'Data read from CPT file is not what is expected.')
 
 
