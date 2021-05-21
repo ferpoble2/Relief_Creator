@@ -62,7 +62,7 @@ class ShapefileImporter:
 if __name__ == '__main__':
     importer = ShapefileImporter()
 
-    points, parameters = importer.get_polygon_information('../../test/input/files/polygons/Shape_multiple_parameters.shp')
+    points, parameters = importer.get_polygon_information('../../test/input/files/polygons/shape_multiple_parameters.shp')
 
     data = {
         'points': points,

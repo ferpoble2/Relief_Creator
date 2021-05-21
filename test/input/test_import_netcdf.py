@@ -12,7 +12,7 @@ from src.input.NetCDF import read_info
 class TestImportNetcdfFile(unittest.TestCase):
 
     def test_read_file(self):
-        x, y, z = read_info('resources/test_resources/netcdf/input_test/test_model.nc')
+        x, y, z = read_info('resources/test_resources/netcdf/test_model.nc')
 
         self.assertIsInstance(x, np.ndarray)
         self.assertIsInstance(y, np.ndarray)
@@ -23,7 +23,7 @@ class TestImportNetcdfFile(unittest.TestCase):
         self.assertTrue((z == np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])).all())
 
     def test_read_file_real_data_1(self):
-        x, y, z = read_info('resources/test_resources/netcdf/input_test/test_file_1.nc')
+        x, y, z = read_info('resources/test_resources/netcdf/test_file_1.nc')
         z = z.reshape(-1)
 
         self.assertIsInstance(x, np.ndarray)
@@ -43,7 +43,7 @@ class TestImportNetcdfFile(unittest.TestCase):
         self.assertTrue((z == z_array).all())
 
     def test_read_file_real_data_2(self):
-        x, y, z = read_info('resources/test_resources/netcdf/input_test/test_file_2.nc')
+        x, y, z = read_info('resources/test_resources/netcdf/test_file_2.nc')
         z = z.reshape(-1)
 
         self.assertIsInstance(x, np.ndarray)
@@ -63,7 +63,7 @@ class TestImportNetcdfFile(unittest.TestCase):
         self.assertTrue((z == z_array).all())
 
     def test_read_file_real_data_3(self):
-        x, y, z = read_info('resources/test_resources/netcdf/input_test/test_file_3.nc')
+        x, y, z = read_info('resources/test_resources/netcdf/test_file_3.nc')
         z = z.reshape(-1)
 
         self.assertIsInstance(x, np.ndarray)

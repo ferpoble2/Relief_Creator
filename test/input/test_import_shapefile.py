@@ -17,7 +17,7 @@ class TestShapefileReading(unittest.TestCase):
 
         shp_importer = ShapefileImporter()
         points, parameters = shp_importer.get_polygon_information('resources/test_resources/polygons/'
-                                                                  'Shape_sin_poligono.prj')
+                                                                  'shape_no_polygon.prj')
 
         self.assertEqual(data['points'], points)
         self.assertEqual(data['parameters'], parameters)
@@ -28,7 +28,7 @@ class TestShapefileReading(unittest.TestCase):
 
         shp_importer = ShapefileImporter()
         points, parameters = shp_importer.get_polygon_information('resources/test_resources/polygons/'
-                                                                  'Shape_Un_poligono.shp')
+                                                                  'shape_one_polygon.shp')
 
         data_points = data['points']
         data_parameters = data['parameters']
@@ -46,7 +46,7 @@ class TestShapefileReading(unittest.TestCase):
 
         shp_importer = ShapefileImporter()
         points, parameters = shp_importer.get_polygon_information('resources/test_resources/polygons/'
-                                                                  'Shape_muchos_poligono.shp')
+                                                                  'shape_many_polygons.shp')
 
         data_points = data['points']
         data_parameters = data['parameters']
@@ -64,7 +64,7 @@ class TestShapefileReading(unittest.TestCase):
 
         shp_importer = ShapefileImporter()
         points, parameters = shp_importer.get_polygon_information('resources/test_resources/polygons/'
-                                                                  'Shape_raros_poligono.shp')
+                                                                  'shape_odd_polygons.shp')
 
         data_points = data['points']
         data_parameters = data['parameters']
@@ -82,7 +82,7 @@ class TestShapefileReading(unittest.TestCase):
 
         shp_importer = ShapefileImporter()
         points, parameters = shp_importer.get_polygon_information('resources/test_resources/polygons/'
-                                                                  'Shape_multiple_parameters.shp')
+                                                                  'shape_multiple_parameters.shp')
 
         data_points = data['points']
         data_parameters = data['parameters']
