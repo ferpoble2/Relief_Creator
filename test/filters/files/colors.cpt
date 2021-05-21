@@ -1,0 +1,11 @@
+#Ocean_Land_2 cpt made 
+#
+# Designed by by Fernando Poblete
+# COLOR_MODEL = RGB
+
+0	000/000/000		100	255/000/000
+100 000/000/000     200 000/255/000
+
+B	0	0	0
+F	128	128	128
+N	180	180	180

@@ -21,3 +21,4 @@ output/
 /test/output/files/test_model_temp.nc
 /imgui.ini
 /resources/sample_netcdf/GRD_450MB.grd
+/test/filters/files/netcdf/temp_filter_1.nc
