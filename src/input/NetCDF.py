@@ -40,12 +40,16 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
     """
     Extract the information of X, Y and Z from a NetCDF4 file.
 
+    Return a tuple with 3 elements in the format (X, Y, Z):
+        X: 1-dimensional array.
+        Y: 1-dimensional array.
+        Z: 2-dimensional array.
+
     Args:
         file_name (str): Filename to analyze.
 
-    Returns:
-        np.array, np.array, np.array: Values of the variables X, Y
-                                      and Z in the file.
+    Returns: 
+        Tuple with the values of the variables X, Y and Z in the file.
     """
     root_grp = Dataset(file_name, "r", format="NETCDF4")
 
