@@ -22,3 +22,4 @@ output/
 /imgui.ini
 /resources/sample_netcdf/GRD_450MB.grd
 /resources/test_resources/expected_data/netcdf/temp_filter_1.nc
+/resources/test_resources/temp/
