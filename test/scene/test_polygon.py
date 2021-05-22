@@ -19,7 +19,7 @@ class TestAddPoints(unittest.TestCase):
         self.engine = Engine()
         self.program = Program(self.engine)
 
-        # intialize variables
+        # initialize variables
         self.engine.should_use_threads(False)
         self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
                                           'resources/test_resources/netcdf/test_model_2.nc')
