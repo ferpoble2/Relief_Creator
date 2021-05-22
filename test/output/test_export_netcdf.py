@@ -3,6 +3,7 @@ File with test related to the functionality of exporting netcdf files.
 """
 import unittest
 import numpy as np
+import os
 
 from src.output.netcdf_exporter import NetcdfExporter
 from src.input.NetCDF import read_info
@@ -25,6 +26,8 @@ class TestExportNetcdfFile(unittest.TestCase):
         self.assertTrue((generated_x == x).all(), f'Data loaded is not equal to data expected. {generated_x} != {x}')
         self.assertTrue((generated_y == y).all(), f'Data loaded is not equal to data expected. {generated_y} != {y}')
         self.assertTrue((generated_z == z).all(), f'Data loaded is not equal to data expected. {generated_z} != {z}')
+
+        os.remove('resources/test_resources/temp/test_model_temp.nc')
 
 
 if __name__ == '__main__':

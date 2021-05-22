@@ -56,6 +56,7 @@ class TestHeightGreaterFilter(unittest.TestCase):
         self.assertTrue((info_written[1] == info_expected[1]).all())
         self.assertTrue((info_written[2] == info_expected[2]).all())
 
+        os.remove('resources/test_resources/temp/temp_filter_1.nc')
 
 if __name__ == '__main__':
     unittest.main()

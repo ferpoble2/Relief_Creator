@@ -91,6 +91,8 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
         z = z.reshape((len(y), len(x)))
         z = np.flipud(z)
 
+    root_grp.close()
+
     return x, y, z
 
 
