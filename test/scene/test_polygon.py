@@ -4,7 +4,6 @@ File with tests related to the polygon class.
 
 import unittest
 import warnings
-import os
 
 from src.engine.engine import Engine
 from src.program.program import Program
@@ -12,7 +11,10 @@ from src.program.program import Program
 
 class TestAddPoints(unittest.TestCase):
 
-    def test_add_points_normal(self):
+    def setUp(self) -> None:
+        """
+        Method that executes before every test.
+        """
         warnings.simplefilter("ignore", ResourceWarning)
 
         # create program
@@ -23,6 +25,9 @@ class TestAddPoints(unittest.TestCase):
         self.engine.should_use_threads(False)
         self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
                                           'resources/test_resources/netcdf/test_model_2.nc')
+
+    def test_add_points_normal(self):
+        warnings.simplefilter("ignore", ResourceWarning)
 
         pol_1 = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol_1)
@@ -55,15 +60,6 @@ class TestAddPoints(unittest.TestCase):
     def test_repeated_point(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        # create program
-        self.engine = Engine()
-        self.program = Program(self.engine)
-
-        # intialize variables
-        self.engine.should_use_threads(False)
-        self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
-                                          'resources/test_resources/netcdf/test_model_2.nc')
-
         pol = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol)
         self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 0)
@@ -76,15 +72,6 @@ class TestAddPoints(unittest.TestCase):
 
     def test_line_intersection(self):
         warnings.simplefilter("ignore", ResourceWarning)
-
-        # create program
-        self.engine = Engine()
-        self.program = Program(self.engine)
-
-        # intialize variables
-        self.engine.should_use_threads(False)
-        self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
-                                          'resources/test_resources/netcdf/test_model_2.nc')
 
         pol = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol)
@@ -108,7 +95,7 @@ class TestPlanarity(unittest.TestCase):
         self.engine = Engine()
         self.program = Program(self.engine)
 
-        # intialize variables
+        # initialize variables
         self.engine.should_use_threads(False)
         self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
                                           'resources/test_resources/netcdf/test_model_2.nc')
