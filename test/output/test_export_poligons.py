@@ -13,22 +13,23 @@ from src.engine.scene.scene import Scene
 from src.engine.engine import Engine
 from src.program.program import Program
 
-FILES_DIRECTORY = './test/output/files/'
-
 
 class TestExportPolygons(unittest.TestCase):
 
     def setUp(self):
+        """
+        Method executed before every test.
+        """
         warnings.simplefilter("ignore", ResourceWarning)
 
         # create program
         self.engine = Engine()
         self.program = Program(self.engine)
 
-        # intialize variables
+        # initialize variables
         self.engine.should_use_threads(False)
-        self.engine.refresh_with_model_2d(os.path.join(FILES_DIRECTORY, 'shapefile', 'default.cpt'),
-                                          os.path.join(FILES_DIRECTORY, 'shapefile', 'test_model.nc'))
+        self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
+                                          'resources/test_resources/netcdf/test_model_2.nc')
 
     def test_create_and_export(self):
         warnings.simplefilter("ignore", ResourceWarning)
@@ -44,11 +45,11 @@ class TestExportPolygons(unittest.TestCase):
         self.engine.add_new_vertex_to_active_polygon_using_window_coords(1, 0)
 
         # export
-        self.engine.export_polygon_with_id(pol, os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_export'))
+        self.engine.export_polygon_with_id(pol, 'resources/test_resources/temp/test_shapefile_export')
 
         # import and read the file
-        polygons, parameters = importer.get_polygon_information(
-            os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_export.shp'))
+        polygons, parameters = importer.get_polygon_information('resources/test_resources/temp/'
+                                                                'test_shapefile_export.shp')
 
         expected_value_polygons = [[(-1.3703703703703702, 2.074074074074074),
                                     (-1.3703703703703702, 2.071111111111111),
@@ -60,9 +61,9 @@ class TestExportPolygons(unittest.TestCase):
         self.assertEqual(polygons, expected_value_polygons, 'Points stored in the polygon are not the expected value.')
         self.assertEqual(parameters, expected_value_parameters, 'Parameters stored are not the expected.')
 
-        os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_export.shp'))
-        os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_export.dbf'))
-        os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_export.shx'))
+        os.remove('resources/test_resources/temp/test_shapefile_export.shp')
+        os.remove('resources/test_resources/temp/test_shapefile_export.dbf')
+        os.remove('resources/test_resources/temp/test_shapefile_export.shx')
 
     def test_create_and_export_parameters(self):
         warnings.simplefilter("ignore", ResourceWarning)
@@ -83,12 +84,13 @@ class TestExportPolygons(unittest.TestCase):
         self.engine.add_new_vertex_to_active_polygon_using_window_coords(3, 0)
 
         # export
-        self.engine.export_polygon_with_id(pol, os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters'))
+        self.engine.export_polygon_with_id(pol, 'resources/test_resources/temp/'
+                                                'test_shapefile_parameters')
 
         # import and testing
         importer = ShapefileImporter()
         polygons, parameters = importer.get_polygon_information(
-            os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters.shp'))
+            'resources/test_resources/temp/test_shapefile_parameters.shp')
 
         expected_value_polygons = [[(-1.3703703703703702, 2.074074074074074), (-1.3674074074074074, 2.074074074074074),
                                     (-1.3644444444444443, 2.074074074074074), (-1.3614814814814813, 2.074074074074074)]]
@@ -98,9 +100,9 @@ class TestExportPolygons(unittest.TestCase):
         self.assertEqual(polygons, expected_value_polygons, 'Points stored in the polygon are not the expected value.')
         self.assertEqual(parameters, expected_value_parameters, 'Parameters stored are not the expected.')
 
-        os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters.shp'))
-        os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters.dbf'))
-        os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters.shx'))
+        os.remove('resources/test_resources/temp/test_shapefile_parameters.shp')
+        os.remove('resources/test_resources/temp/test_shapefile_parameters.dbf')
+        os.remove('resources/test_resources/temp/test_shapefile_parameters.shx')
 
     def test_create_and_export_parameters(self):
         warnings.simplefilter("ignore", ResourceWarning)
@@ -117,13 +119,13 @@ class TestExportPolygons(unittest.TestCase):
         self.engine.add_new_vertex_to_active_polygon_using_window_coords(3, 60)
 
         # export
-        self.engine.export_polygon_with_id(pol, os.path.join(FILES_DIRECTORY, 'shapefile',
-                                                             'test_shapefile_parameters_long_names'))
+        self.engine.export_polygon_with_id(pol, 'resources/test_resources/temp/'
+                                                'test_shapefile_parameters_long_names')
 
         # import and testing
         importer = ShapefileImporter()
-        polygons, parameters = importer.get_polygon_information(
-            os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters_long_names.shp'))
+        polygons, parameters = importer.get_polygon_information('resources/test_resources/temp/'
+                                                                'test_shapefile_parameters_long_names.shp')
 
         expected_value_polygons = [
             [(-1.3703703703703702, 1.8962962962962964), (-1.3674074074074074, 1.8962962962962964),
@@ -137,9 +139,9 @@ class TestExportPolygons(unittest.TestCase):
         self.assertEqual(polygons, expected_value_polygons, 'Points stored in the polygon are not the expected value.')
         self.assertEqual(parameters, expected_value_parameters, 'Parameters stored are not the expected.')
 
-        os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters_long_names.shp'))
-        os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters_long_names.dbf'))
-        os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_parameters_long_names.shx'))
+        os.remove('resources/test_resources/temp/test_shapefile_parameters_long_names.shp')
+        os.remove('resources/test_resources/temp/test_shapefile_parameters_long_names.dbf')
+        os.remove('resources/test_resources/temp/test_shapefile_parameters_long_names.shx')
 
     def test_create_and_export_multiple(self):
         warnings.simplefilter("ignore", ResourceWarning)
@@ -175,12 +177,12 @@ class TestExportPolygons(unittest.TestCase):
 
         # export the polygons
         self.engine.export_polygon_list_id([pol_1, pol_2, pol_3],
-                                           directory_filename=os.path.join(FILES_DIRECTORY, 'shapefile',
-                                                                           'test_shapefile_export_multiple_1'))
+                                           directory_filename='resources/test_resources/temp/'
+                                                              'test_shapefile_export_multiple_1')
 
         # import and read the file
-        polygons, parameters = importer.get_polygon_information(
-            os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_export_multiple_1.shp'))
+        polygons, parameters = importer.get_polygon_information('resources/test_resources/temp/'
+                                                                'test_shapefile_export_multiple_1.shp')
 
         expected_value_polygons = [
             [(-1.3703703703703702, 2.074074074074074), (-1.3703703703703702, 2.071111111111111),
@@ -198,9 +200,9 @@ class TestExportPolygons(unittest.TestCase):
         self.assertEqual(polygons, expected_value_polygons, 'Points stored in the polygon are not the expected value.')
         self.assertEqual(parameters, expected_value_parameters, 'Parameters stored are not the expected.')
 
-        os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_export_multiple_1.shp'))
-        os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_export_multiple_1.dbf'))
-        os.remove(os.path.join(FILES_DIRECTORY, 'shapefile', 'test_shapefile_export_multiple_1.shx'))
+        os.remove('resources/test_resources/temp/test_shapefile_export_multiple_1.shp')
+        os.remove('resources/test_resources/temp/test_shapefile_export_multiple_1.dbf')
+        os.remove('resources/test_resources/temp/test_shapefile_export_multiple_1.shx')
 
 
 if __name__ == '__main__':

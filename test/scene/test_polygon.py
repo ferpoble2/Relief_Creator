@@ -8,12 +8,6 @@ import os
 
 from src.engine.engine import Engine
 from src.program.program import Program
-from src.engine.scene.model.polygon import Polygon
-
-from src.error.repeated_point_error import RepeatedPointError
-from src.error.line_intersection_error import LineIntersectionError
-
-FILES_DIRECTORY = './test/scene/files/'
 
 
 class TestAddPoints(unittest.TestCase):
@@ -27,8 +21,8 @@ class TestAddPoints(unittest.TestCase):
 
         # intialize variables
         self.engine.should_use_threads(False)
-        self.engine.refresh_with_model_2d(os.path.join(FILES_DIRECTORY, 'default.cpt'),
-                                          os.path.join(FILES_DIRECTORY, 'test_model.nc'))
+        self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
+                                          'resources/test_resources/netcdf/test_model_2.nc')
 
         pol_1 = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol_1)
@@ -67,8 +61,8 @@ class TestAddPoints(unittest.TestCase):
 
         # intialize variables
         self.engine.should_use_threads(False)
-        self.engine.refresh_with_model_2d(os.path.join(FILES_DIRECTORY, 'default.cpt'),
-                                          os.path.join(FILES_DIRECTORY, 'test_model.nc'))
+        self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
+                                          'resources/test_resources/netcdf/test_model_2.nc')
 
         pol = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol)
@@ -80,7 +74,6 @@ class TestAddPoints(unittest.TestCase):
         self.assertEqual(self.engine.get_points_from_polygon(pol),
                          [-1.3703703703703702, 2.074074074074074, 0.5])
 
-
     def test_line_intersection(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
@@ -90,8 +83,8 @@ class TestAddPoints(unittest.TestCase):
 
         # intialize variables
         self.engine.should_use_threads(False)
-        self.engine.refresh_with_model_2d(os.path.join(FILES_DIRECTORY, 'default.cpt'),
-                                          os.path.join(FILES_DIRECTORY, 'test_model.nc'))
+        self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
+                                          'resources/test_resources/netcdf/test_model_2.nc')
 
         pol = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol)
@@ -117,26 +110,27 @@ class TestPlanarity(unittest.TestCase):
 
         # intialize variables
         self.engine.should_use_threads(False)
-        self.engine.refresh_with_model_2d(os.path.join(FILES_DIRECTORY, 'default.cpt'),
-                                          os.path.join(FILES_DIRECTORY, 'test_model.nc'))
+        self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
+                                          'resources/test_resources/netcdf/test_model_2.nc')
 
         pol_planar = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol_planar)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0,0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1,0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(2,0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(2,1)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1,1)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0,1)
+        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_window_coords(2, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_window_coords(2, 1)
+        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1, 1)
+        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 1)
         self.assertTrue(self.engine.is_polygon_planar(pol_planar))
 
         pol_not_planar = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol_not_planar)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0,0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1,0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1,-1)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(2,-0.5)
+        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1, -1)
+        self.engine.add_new_vertex_to_active_polygon_using_window_coords(2, -0.5)
         self.assertFalse(self.engine.is_polygon_planar(pol_not_planar))
+
 
 if __name__ == '__main__':
     unittest.main()
