@@ -3,6 +3,7 @@ File that contains the program class, class that will be the main class of the p
 """
 
 import glfw
+from PIL import Image
 
 from src.type_hinting import *
 
@@ -769,6 +770,10 @@ class Engine:
         # ---------
         log.debug("Creating windows.")
         self.window = self.render.init("Relief Creator", engine)
+
+        # icon of the program
+        program_icon = Image.open('resources/icons/program_icons/icon_program.png')
+        glfw.set_window_icon(self.window, 1, [program_icon])
 
         # GUI CODE
         # --------
