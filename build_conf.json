@@ -18,6 +18,10 @@
    "value": true
   },
   {
+   "optionDest": "icon_file",
+   "value": "<project_directory>/resources/icons/program_icons/icon_program.ico"
+  },
+  {
    "optionDest": "name",
    "value": "ReliefeCreator"
   },
@@ -59,15 +63,15 @@
   },
   {
    "optionDest": "datas",
-   "value": "<project_directory>/src/logs;src/logs/"
+   "value": "<project_directory>/resources/logs/;resources/logs/"
   },
   {
    "optionDest": "datas",
-   "value": "<project_directory>/src/input/test_colors;src/input/test_colors/"
+   "value": "<project_directory>/resources/colors/;resources/colors/"
   },
   {
    "optionDest": "datas",
-   "value": "<project_directory>/src/input/test_inputs;src/input/test_inputs/"
+   "value": "<project_directory>/resources/sample_netcdf;resources/sample_netcdf"
   },
   {
    "optionDest": "datas",
@@ -83,7 +87,7 @@
   },
   {
    "optionDest": "datas",
-   "value": "<project_directory>/src/engine/GUI/fonts;src/engine/GUI/fonts"
+   "value": "<project_directory>/resources/fonts;resources/fonts"
   },
   {
    "optionDest": "datas",
@@ -91,11 +95,11 @@
   },
   {
    "optionDest": "datas",
-   "value": "<project_directory>/src/engine/GUI/icons;src/engine/GUI/icons"
+   "value": "<project_directory>/resources/icons;resources/icons"
   },
   {
    "optionDest": "datas",
-   "value": "<project_directory>/src/input/test_polygons;src/input/test_polygons/"
+   "value": "<project_directory>/resources/sample_polygons;resources/sample_polygons"
   },
   {
    "optionDest": "hiddenimports",
