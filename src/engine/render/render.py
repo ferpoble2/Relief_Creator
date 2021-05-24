@@ -19,6 +19,7 @@ class Render:
         self.__GUI = None
         self.__engine = None
 
+        self.__show_framerate = False
         self.__previous_time = 0
         self.__frame_count = 0
         self.__current_time = None
@@ -106,12 +107,13 @@ class Render:
 
         self.__GUI.draw_frames()
 
-        self.__current_time = glfw.get_time()
-        self.__frame_count += 1
-        if self.__current_time - self.__previous_time >= 1:
-            glfw.set_window_title(self.__window, f'Relief Creator - {self.__frame_count}')
-            self.__frame_count = 0
-            self.__previous_time = self.__current_time
+        if self.__show_framerate:
+            self.__current_time = glfw.get_time()
+            self.__frame_count += 1
+            if self.__current_time - self.__previous_time >= 1:
+                glfw.set_window_title(self.__window, f'Relief Creator - {self.__frame_count}')
+                self.__frame_count = 0
+                self.__previous_time = self.__current_time
 
         # Once the render is done, buffers are swapped, showing the complete scene.
         self.__GUI.render()
