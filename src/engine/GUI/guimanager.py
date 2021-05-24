@@ -619,9 +619,11 @@ class GUIManager:
         # initialize the components of the manager
         # ----------------------------------------
         main_menu_bar = MainMenuBar(gui_manager)
+        # noinspection PyUnusedLocal
         test_window = TestWindow(gui_manager)
         text_modal = TextModal(gui_manager)
         tools = Tools(gui_manager)
+        # noinspection PyUnusedLocal
         debug = Debug(gui_manager)
         loading = Loading(gui_manager)
         polygon_information = PolygonInformation(gui_manager)
