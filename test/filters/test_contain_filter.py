@@ -81,7 +81,6 @@ class TestContainsFilter(unittest.TestCase):
 
         # load list of polygons
         self.engine.load_polygon_from_shapefile('resources/test_resources/polygons/shape_three_concentric_polygons.shp')
-        print(self.engine.get_polygon_id_list())
 
         # apply transformation with filters
         self.engine.transform_points(polygon_id='Polygon 0',
