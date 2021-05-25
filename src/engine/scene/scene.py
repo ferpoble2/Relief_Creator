@@ -766,7 +766,12 @@ class Scene:
 
     def interpolate_points(self, polygon_id: str, model_id: str, distance: float, type_interpolation: str) -> None:
         """
-        Interpolate the points at the exterior of the polygon using a linear interpolation method.
+        Interpolate the points at the exterior of the polygon using the given interpolation type.
+
+        Possible interpolation types:
+            - linear
+            - nearest
+            - cubic
 
         Args:
             type_interpolation: Type of interpolation to use.
