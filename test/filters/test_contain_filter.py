@@ -48,7 +48,6 @@ class TestContainsFilter(unittest.TestCase):
         self.engine.refresh_with_model_2d('resources/test_resources/cpt/colors_0_100_200.cpt',
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
-
         # load list of polygons
         self.engine.load_polygon_from_shapefile('resources/test_resources/polygons/shape_two_concentric_polygons.shp')
 
@@ -79,7 +78,6 @@ class TestContainsFilter(unittest.TestCase):
 
         self.engine.refresh_with_model_2d('resources/test_resources/cpt/colors_0_100_200.cpt',
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
-
 
         # load list of polygons
         self.engine.load_polygon_from_shapefile('resources/test_resources/polygons/shape_three_concentric_polygons.shp')
