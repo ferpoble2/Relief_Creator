@@ -809,6 +809,11 @@ class Engine:
         """
         Ask the scene to interpolate the points using the specified parameters.
 
+        Possible interpolation types:
+            - linear
+            - nearest
+            - cubic
+
         Args:
             type_interpolation: Type of interpolation to use.
             polygon_id: ID of the polygon to use.
@@ -1382,7 +1387,7 @@ class Engine:
                          transformation_type: str = 'linear',
                          filters=None) -> None:
         """
-        Ask the scene to interpolate the points of the specified polygon using a linear interpolation.
+        Ask the scene to transform the height of the points of the specified polygon using a linear transformation.
 
         Args:
             filters: List with the filters to use in the modification of the points. List must be in the
