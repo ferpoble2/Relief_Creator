@@ -19,6 +19,7 @@
         }
         class ProcessManager
         class ThreadManager
+        class TaskManager
     }
 
     Engine o--o Scene
@@ -28,6 +29,7 @@
     Engine -u.> Settings
     ProcessManager --o Engine
     ThreadManager --o Engine
+    TaskManager --o Engine
 !endsub
 
 

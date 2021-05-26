@@ -1,0 +1,12 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class TaskManager{
+
+    - __pending_task_list: list
+
+    + update_tasks()
+    + set_task(task, n_frames)
+}
+
+@enduml
