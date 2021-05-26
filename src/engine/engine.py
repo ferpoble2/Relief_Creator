@@ -1272,11 +1272,10 @@ class Engine:
 
     def set_task_for_next_frame(self, task: callable) -> None:
         """
-        Add a task to do in the next frame.
+        Store a function and executes it in the next frame of the application.
 
         Args:
-            n_frames: Number of frames to wait.
-            task: Callable to call in the next frame.
+            task: Function to execute.
 
         Returns: None
         """
@@ -1288,7 +1287,6 @@ class Engine:
         the program to show the loading frame on the screen.
 
         Args:
-            n_frames_to_wait: Number of frames to wait before executing the task.
             task: Task to be called in while showing a loading frame.
 
         Returns: None
@@ -1431,7 +1429,9 @@ class Engine:
 
     def update_current_3D_model(self) -> None:
         """
-        Ask the scene to update the 3D model.
+        Update the 3D model with the information of the model 2D.
+
+        A frame with the loading message is displayed while the process is executed.
 
         Returns: None
         """
