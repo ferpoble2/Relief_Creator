@@ -1270,7 +1270,7 @@ class Engine:
         else:
             raise ValueError(f'Can not change program view mode to {mode}.')
 
-    def set_task_for_next_frame(self, task: callable, n_frames: int = 2) -> None:
+    def set_task_for_next_frame(self, task: callable) -> None:
         """
         Add a task to do in the next frame.
 
@@ -1282,7 +1282,7 @@ class Engine:
         """
         self.__task_manager.set_task(task, 2)
 
-    def set_task_with_loading_frame(self, task: callable, n_frames_to_wait: int = 3) -> None:
+    def set_task_with_loading_frame(self, task: callable) -> None:
         """
         Set a task to be executed at the end of the next frame. Also configures the loading setting of
         the program to show the loading frame on the screen.
