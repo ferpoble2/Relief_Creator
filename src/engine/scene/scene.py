@@ -1251,6 +1251,9 @@ class Scene:
         """
         Modify the points inside the polygon from the specified model using a linear transformation.
 
+        Transformation types available:
+            - linear
+
         Args:
             filters: List with the filters to use in the modification of the points. List must be in the
                 format [(filter_id, args),...]
