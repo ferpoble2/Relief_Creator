@@ -16,11 +16,12 @@
 #  END GPL LICENSE BLOCK
 
 """
-File with the definition of the TaskManager class. Class in charge of the tasks on the program.
+File with the definition of the TaskManager class. Class in charge of the tasks in the program.
 
-Tasks are code or logic that will be executed after the indicated number of frames. This logic is not executed
-in another thread or process. To execute another thread check the ThreadManager class and for another process
-check the ProcessManager class.
+What are tasks?
+    Tasks are code or logic that will be executed after the indicated number of frames. This logic is not executed
+    in another thread or process. To execute another thread check the ThreadManager class and for another process
+    check the ProcessManager class.
 """
 
 
