@@ -5,11 +5,10 @@ class Engine {
     + render: Render
     + scene: Scene
     + window: GLFWWindow
-    - __pending_task_list: list
-    - thread_manager: ThreadManager
-    - process_manager: ProcessManager
+    - __thread_manager: ThreadManager
+    - __process_manager: ProcessManager
+    - __task_manager: TaskManager
 
-    - __update_pending_tasks()
     + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
     + add_zoom()
     + are_frames_fixed(): boolean
@@ -28,7 +27,6 @@ class Engine {
     + create_new_polygon(): str
     + delete_parameter_from_polygon(polygon_id, key)
     + delete_polygon_by_id(polygon_id)
-    + should_use_threads(value)
     + disable_glfw_keyboard_callback()
     + enable_glfw_keyboard_callback()
     + export_model_as_netcdf(model_id)
@@ -94,6 +92,7 @@ class Engine {
     + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
     + set_thread_task(parallel_task, then, parallel_task_args, then_task_args)
+    + should_use_threads(value)
     + transform_points(polygon_id, model_id, min_height, max_height, transformation_type, filters)
     + undo_action()
     + update_current_3D_model()

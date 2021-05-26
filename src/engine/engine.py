@@ -31,6 +31,7 @@ from src.engine.render.render import Render
 from src.engine.scene.scene import Scene
 from src.engine.settings import Settings
 from src.engine.thread_manager import ThreadManager
+from src.engine.task_manager import TaskManager
 
 from src.input.shapefile_importer import ShapefileImporter
 from src.input.NetCDF import read_info
@@ -69,37 +70,7 @@ class Engine:
         self.__use_threads = True
         self.__process_manager = ProcessManager()
         self.__thread_manager = ThreadManager()
-
-        # note: the order of definition of the components matters.
-
-        self.__pending_task_list = []
-
-    def __update_pending_tasks(self) -> None:
-        """
-        Update the pending tasks.
-
-        Subtract one from the frames of the tasks and execute them if the number
-        of frames to wait is zero.
-
-        Returns: None
-        """
-        to_delete = []
-
-        # check on the tasks
-        for task in self.__pending_task_list:
-            log.debug(f"Pending tasks: {self.__pending_task_list}")
-
-            # Subtract one frame from the task
-            task['frames'] -= 1
-
-            # execute it if frames to wait is zero
-            if task['frames'] == 0:
-                task['task']()
-                to_delete.append(task)
-
-        # delete tasks already executed
-        for task in to_delete:
-            self.__pending_task_list.remove(task)
+        self.__task_manager = TaskManager()
 
     def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
         """
@@ -1146,7 +1117,7 @@ class Engine:
         """
         log.debug("Starting main loop.")
         while not glfw.window_should_close(self.window):
-            self.__update_pending_tasks()
+            self.__task_manager.update_tasks()
             self.__thread_manager.update_threads()
             self.__process_manager.update_process()
             self.render.on_loop([lambda: self.scene.draw()])
@@ -1309,11 +1280,7 @@ class Engine:
 
         Returns: None
         """
-        log.debug("Setting task for next frame")
-        self.__pending_task_list.append({
-            'task': task,
-            'frames': n_frames  # need to be 2 to really wait one full frame
-        })
+        self.__task_manager.set_task(task, 2)
 
     def set_task_with_loading_frame(self, task: callable, n_frames_to_wait: int = 3) -> None:
         """
@@ -1333,7 +1300,7 @@ class Engine:
             task()
             self.program.set_loading(False)
 
-        self.set_task_for_next_frame(task_loading, n_frames_to_wait)
+        self.__task_manager.set_task(task_loading, 3)
 
     def set_thread_task(self, parallel_task, then, parallel_task_args=None, then_task_args=None) -> None:
         """
@@ -1468,13 +1435,8 @@ class Engine:
 
         Returns: None
         """
-
-        # noinspection PyMissingOrEmptyDocstring
-        def loading_task():
-            self.scene.update_3D_model(self.program.get_active_model())
-
         self.set_loading_message('Getting data from the map 2D...')
-        self.set_task_with_loading_frame(loading_task)
+        self.set_task_with_loading_frame(lambda: self.scene.update_3D_model(self.program.get_active_model()))
 
     def update_scene_models_colors(self):
         """
