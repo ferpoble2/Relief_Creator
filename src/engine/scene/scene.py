@@ -483,7 +483,7 @@ class Scene:
             self.__3d_model_hash[model_id] = new_model
 
         self.__engine.set_loading_message('Generating 3D model...')
-        self.__engine.set_task_with_loading_frame(task_loading, 2)
+        self.__engine.set_task_with_loading_frame(task_loading)
 
     def create_new_polygon(self) -> str:
         """
