@@ -16,7 +16,10 @@
 # END GPL LICENSE BLOCK
 
 """
-Frame that indicate the parameters of the polygons
+Frame that indicate the parameters of the polygons.
+
+Frame contains tuples with the name and values of the parameters of the polygon that will be stored in the
+shapefile file if they are exported.
 """
 
 import imgui
@@ -30,6 +33,9 @@ log = get_logger(module="Polygon Information")
 class PolygonInformation(Frame):
     """
     Class that render a frame to store the parameters of the active polygon.
+
+    Frame is fixed on the bottom-right corner when fixed, and shows a table with the name and value
+    of the parameters stored in the polygon.
     """
 
     # noinspection PyUnresolvedReferences
@@ -172,6 +178,8 @@ class PolygonInformation(Frame):
 
         # popup to add a new parameter
         if imgui.begin_popup_modal('Add new parameter')[0]:
+            polygon_id = self._GUI_manager.get_active_polygon_id()
+            dict_parameters = dict(self._GUI_manager.get_polygon_parameters(polygon_id))
 
             # name
             # note: the input item text is the id and should be different from the ones that shows at the same time
@@ -179,7 +187,12 @@ class PolygonInformation(Frame):
             imgui.same_line()
             _, self.__key_string_value = imgui.input_text('',
                                                           self.__key_string_value,
-                                                          10)   # shapefile fields name can not exceed 10 characters
+                                                          10)  # shapefile fields name can not exceed 10 characters
+
+            # check if name already exist on polygon
+            repeated_name = True if self.__key_string_value in dict_parameters else False
+            if repeated_name:
+                imgui.text_colored('*Name can not be repeated', 1, 0, 0, 1)
 
             # variable type selectable
             imgui.text('Variable type: ')
@@ -197,39 +210,23 @@ class PolygonInformation(Frame):
 
             # logic of the button
             # -------------------
-            if imgui.button('Done', -1) and not data_errors:  # do nothing if there is data errors
-                polygon_id = self._GUI_manager.get_active_polygon_id()
-                dict_parameters = dict(self._GUI_manager.get_polygon_parameters(polygon_id))
+            if imgui.button('Done', -1) and not data_errors and not repeated_name:  # do nothing if there is data errors
 
-                # case parameter already exist
-                if self.__key_string_value in dict_parameters:
-
-                    # close the popup and reactivate the glfw keyboard callback
-                    imgui.close_current_popup()
-                    self._GUI_manager.enable_glfw_keyboard_callback()
-
-                    # open a modal
-                    self._GUI_manager.set_modal_text('Error',
-                                                     f'{self._GUI_manager.get_polygon_name(polygon_id)} '
-                                                     f'already has a parameter named:'
-                                                     f' {self.__key_string_value}')
-                # case new parameter
+                if self.__current_variable_type == 2:  # boolean
+                    value = self.__convert_value_to_exportable_variable_type(self.__current_bool_selected,
+                                                                             self.__current_variable_type)
                 else:
-                    if self.__current_variable_type == 2:  # boolean
-                        value = self.__convert_value_to_exportable_variable_type(self.__current_bool_selected,
-                                                                                 self.__current_variable_type)
-                    else:
-                        value = self.__convert_value_to_exportable_variable_type(self.__value_string_value,
-                                                                                 self.__current_variable_type)
+                    value = self.__convert_value_to_exportable_variable_type(self.__value_string_value,
+                                                                             self.__current_variable_type)
 
-                    # store the value
-                    self._GUI_manager.set_polygon_parameter(self._GUI_manager.get_active_polygon_id(),
-                                                            self.__key_string_value,
-                                                            value)
+                # store the value
+                self._GUI_manager.set_polygon_parameter(self._GUI_manager.get_active_polygon_id(),
+                                                        self.__key_string_value,
+                                                        value)
 
-                    # close the popup and reactivate the glfw keyboard callback
-                    imgui.close_current_popup()
-                    self._GUI_manager.enable_glfw_keyboard_callback()
+                # close the popup and reactivate the glfw keyboard callback
+                imgui.close_current_popup()
+                self._GUI_manager.enable_glfw_keyboard_callback()
 
             imgui.end_popup()
 
@@ -335,7 +332,7 @@ class PolygonInformation(Frame):
                                                             self.__value_string_value,
                                                             self.__input_text_maximum_character_number)
             if not self.__check_numeric(self.__value_string_value):
-                imgui.text_colored('Value is not a number', 1, 0, 0)
+                imgui.text_colored('*Value is not a number', 1, 0, 0)
                 data_errors = True
 
         # boolean data
