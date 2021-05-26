@@ -66,9 +66,10 @@ class Frame:
         """
         Draw the frames on the screen.
 
-        Note: Due to the implementation of imgui, it is recommendable to implement here all the logic related to the
-        windows that the program will show (imgui.begin(...)/imgui.end()) and to program all the logic related to the
-        popups to the post_render method.
+        Notes:
+            Due to the implementation of imgui, it is recommendable to implement here all the logic related to the
+            windows that the program will show always show (imgui.begin(...)/imgui.end()) and to program all the logic
+            related to the popups to the post_render method.
 
         Returns: None
         """
@@ -76,10 +77,24 @@ class Frame:
 
     def post_render(self) -> None:
         """
-        Logic to execute after the rendering process of all the frames.
+        Method that executes after the rendering process of all the frames.
 
-        Note: Due to the implementation of the module imgui, it is recommendable to implement all the logic
-        related to the popup in this post-render method to make the probability of bugs smaller.
+        Notes:
+            Due to the implementation of the module imgui, it is recommendable to implement all the logic
+            related to the popups in this method to prevent bugs.
+
+        Popup definition example:
+            def render():
+                if ...:
+                    self.should_open_popup = True
+                    
+            def post_render():
+                if self.should_open_popup:
+                    imgui.open_popup('popup_id')
+
+                if imgui.begin_popup_modal("popup_id")[0]:
+                    ...
+                    imgui.end_popup()
 
         Returns: None
         """

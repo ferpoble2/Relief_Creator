@@ -143,13 +143,22 @@ class PolygonInformation(Frame):
             if imgui.button("Add new", -1):
                 self.__should_open_add_dialog = True
 
-            # popup to add a new parameter
-            self.__add_parameter_popup()
-
-            # popup to edit a parameter
-            self.__edit_parameter_popup()
-
             imgui.end()
+
+    def post_render(self) -> None:
+        """
+        Method executed after the rendering process of all components.
+
+        This methods define all the logic related to the popups of the frame.
+
+        Returns: None
+        """
+
+        # popup to add a new parameter
+        self.__add_parameter_popup()
+
+        # popup to edit a parameter
+        self.__edit_parameter_popup()
 
     def __add_parameter_popup(self):
         # popup modal to add
