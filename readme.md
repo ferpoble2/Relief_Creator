@@ -68,16 +68,51 @@ It is recommended to use a virtual environment to install the dependencies: http
 
 # How to build
 
-The application can be built using the command `auto-py-to-exe` (or the equivalent `make build-executable`) and then importing the file `build_conf.json` that is on the root of the project. Make sure to create a virtual environment with python and install all the dependencies from the file `requeriments.txt` before launching the program.
+The application can be built using the command `auto-py-to-exe` (or the equivalent `make build-executable-windows`) and then importing the file `build_conf.json` located on the root of the project. Make sure to create a virtual environment with python and install all the dependencies from the file `requeriments.txt` before launching the program.
 
-The command opens a window application where one can configure how to create a .exe program from python, under the
-settings tab one can import a configuration file, there is where the file `build_conf.json` must be imported.
+The command opens a window application that allows the configuration of the process to create a .exe program from the python source code. 
 
-After that just press the button at the end of the GUI application to generate the program.
+In the settings tab of the program there is a menu that allows the import of previously generated configuration files. The file `build_conf.json` must be imported in this section of the program, loading all the configuration to generate the executable of the program. 
 
-The program is in the `output` folder under the name of ReliefeCreator.
+To build the executable, the program needs the absolute path of the files that it will be using, and thus, before running the program, it is necessary to replace all the paths that contains `<project_directory>` with the absolute path where the project is located.
 
-IMPORTANT: In the section of additional files, the folders to include must have the full path writen. Due to this, the paths that are written by default must be changed before generating the .exe to the path where the project is in the computer.
+After configurating the program,  pressing the button at the end of the program will start the process to generate an executable.
+
+The program will be generated in the `output` folder under the name of ReliefeCreator.
+
+NOTE: After the configuration of the program, at the end of all the options, there will be a text-box with a commnd, this command can be used to generate the executable from a terminal without using the program.
+
+## Using the console
+
+If you want to build the application using the command line, then run the following command with the virtual environment of python activated:
+
+```bash
+pyinstaller --noconfirm --onedir --console --icon "<project_directory>/resources/icons/program_icons/icon_program.ico" --name "ReliefeCreator" --add-data "<project_directory>/resources/logs/;resources/logs/" --add-data "<project_directory>/resources/colors/;resources/colors/" --add-data "<project_directory>/resources/sample_netcdf;resources/sample_netcdf" --add-data "<project_directory>/venv/Lib/site-packages/glfw/glfw3.dll;." --add-data "<project_directory>/venv/Lib/site-packages/glfw/msvcr110.dll;." --hidden-import "cftime" --add-data "<project_directory>/resources/fonts;resources/fonts" --add-data "<project_directory>/src/engine/shaders;src/engine/shaders/" --add-data "<project_directory>/resources/icons;resources/icons" --add-data "<project_directory>/resources/sample_polygons;resources/sample_polygons" --hidden-import "skimage.filters.rank.core_cy_3d"  "<project_directory>/src/main.py"
+```
+
+Make sure to change all strings that contains `<project_directory>` with the absolute path of the directory in which the project  is stored.
+
+# How to change the icon
+
+## Window icon
+
+The icon showed on the window application (the one showed at the top-left corner of the program) is stored in `resources/icons/program_icons/icon_program.png`.
+
+The logic to set the icon is implemented in the method `initialize` of the class `Engine`. It uses the method `set_window_icon` of the `glfw` library to do it.
+
+To change the icon of the program is enough to change the old file with a new one of the same format (PNG). 
+
+Please consider that the image used must have RGBA channels to work.
+
+## Application icon
+
+The icon showed on the application executable (and the one that the OS will use to show on other programs) is stored in `resources/icons/program_icons/icon_program.ico`.
+
+This icon is set on the program on the building process, and thus, there is no logic code related to it.
+
+On the building of the application, in the windows that opens when running `auto-py-to-exe`, there is a section called ICON that allows to select an icon to use for the program. To change the icon used in the program just select another file on the icon section or change the already existent one with another file with the same name and extension.
+
+Please consider that all the application icons must be in format `ICO`.
 
 # How to run tests
 
