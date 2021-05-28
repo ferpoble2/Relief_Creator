@@ -531,6 +531,10 @@ class TransformationHelper:
         points_array_cut = points_array[min_y_index:max_y_index, min_x_index:max_x_index, :]
         height_cut = height[min_y_index:max_y_index, min_x_index:max_x_index]
 
+        # do nothing in case that no points from the map are selected
+        if len(points_array_cut) == 0:
+            return height
+
         log.debug('Generating mask')
         flags = self.__generate_mask(points_array_cut, polygon_points)
         log.debug('Mask generated')
