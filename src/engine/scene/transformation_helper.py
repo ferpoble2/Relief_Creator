@@ -506,18 +506,29 @@ class TransformationHelper:
                                             new_min_height: float,
                                             filter_data: list = None) -> np.ndarray:
         """
-        Modify the points that are inside the polygon changing their height using a linear interpolation
-        given the new specified height.
+        Calculate a new height for the points that are inside a given polygon using a linear transformation
+        algorithm and the specified minimum and maximum heights. This method does not modify the original arrays
+        given as input.
+
+        Also apply the specified masks over the transformation before doing the transformation of the heights,
+        modifying only the points that are selected by the masks.
+
+        The list of accepted filters and its arguments are as follows:
+            height_less_than: int
+            height_greater_than: int
+            is_in: List[float]
+            is_not_in: List[float]
+        Use of a filter not listed before will raise NotImplementedError.
 
         Args:
             filter_data: Filters to use on the transformation to apply. List must have format [(filter_id, args),...].
             height: Array with the height of the points. must have shape (x, y)
-            points_array: Points to modify (numpy array of points), must have shape (x, y, 3)
+            points_array: Points to modify (numpy array of points), must have shape (x, y, 3). z-axis value is not used.
             polygon_points: List of points in the polygon. [x1, y1, z1, x2, y2, z2, ...]
-            new_max_height: New height to interpolate the points
-            new_min_height: New height to interpolate the points
+            new_max_height: New maximum height to use to transform the height of the points.
+            new_min_height: New minimum to use to transform the height of the points.
 
-        Returns: numpy.array with the new points
+        Returns: numpy array with shape (x, y) with the height of the points modified
         """
         if filter_data is None:
             filter_data = []
