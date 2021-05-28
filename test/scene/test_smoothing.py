@@ -25,7 +25,7 @@ import os
 
 from src.engine.engine import Engine
 from src.program.program import Program
-from input.NetCDF import read_info
+from src.input.NetCDF import read_info
 
 
 class TestSmoothing(unittest.TestCase):
