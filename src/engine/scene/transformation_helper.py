@@ -426,12 +426,14 @@ class TransformationHelper:
         """
         Extract the maximum and minimum value of the points that are inside the polygon.
 
+        If no points are inside the polygon, then numpy.nan is returned as maximum and minimum values.
+
         Args:
             points_array: Points of the model. (shape must be (x, y, 3))
             polygon_points: List with the points of the polygon. [x1, y1, z1, x2, y2, z2, ...]
             heights: height: Array with the height of the points. must have shape (x, y)
 
-        Returns: Tuple with the maximum and minimum value
+        Returns: Tuple with the maximum and minimum value (max, min).
         """
         points_no_z_axis = self.__delete_z_axis(polygon_points)
         closed_polygon = LinearRing(points_no_z_axis)
@@ -442,6 +444,10 @@ class TransformationHelper:
         heights_cut = heights[min_y_index:max_y_index, min_x_index:max_x_index]
 
         flags = self.__generate_mask(points_array_cut, polygon_points)
+
+        # return nan if no points are inside the polygon
+        if not heights_cut:
+            return np.nan, np.nan
 
         maximum = np.max(heights_cut[flags])
         minimum = np.min(heights_cut[flags])
