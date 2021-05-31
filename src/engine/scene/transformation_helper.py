@@ -446,7 +446,7 @@ class TransformationHelper:
         flags = self.__generate_mask(points_array_cut, polygon_points)
 
         # return nan if no points are inside the polygon
-        if not heights_cut:
+        if len(heights_cut.reshape(-1)) == 0:
             return np.nan, np.nan
 
         maximum = np.max(heights_cut[flags])
