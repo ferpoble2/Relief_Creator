@@ -425,6 +425,15 @@ class InterpolateExternalPoints(unittest.TestCase):
         """
         self.helper = TransformationHelper()
 
+    def setUp_real_case(self):
+        """
+        Prepare the variables to use in the real case tests.
+
+        These variables are only used in the tests of real cases, and thus, they must not be defined on the
+        setUp method.
+
+        Returns: None
+        """
         x, y, z = read_info('resources/test_resources/netcdf/test_file_1.nc')
         polygon_points, _ = ShapefileImporter().get_polygon_information('resources/test_resources/polygons/'
                                                                         'shape_two_concentric_polygons.shp')
@@ -483,6 +492,7 @@ class InterpolateExternalPoints(unittest.TestCase):
         plt.show()
 
     def test_interpolate_external_points_real_case_linear(self):
+        self.setUp_real_case()
 
         # apply interpolation
         new_height = self.helper.interpolate_points_external_to_polygon(self.points,
@@ -496,6 +506,7 @@ class InterpolateExternalPoints(unittest.TestCase):
                                                              'method modify_points_inside_polygon_linear.')
 
     def test_interpolate_external_points_real_case_nearest(self):
+        self.setUp_real_case()
 
         # apply interpolation
         new_height = self.helper.interpolate_points_external_to_polygon(self.points,
@@ -509,6 +520,7 @@ class InterpolateExternalPoints(unittest.TestCase):
                                                              'method modify_points_inside_polygon_linear.')
 
     def test_interpolate_external_points_real_case_cubic(self):
+        self.setUp_real_case()
 
         # apply interpolation
         new_height = self.helper.interpolate_points_external_to_polygon(self.points,
