@@ -533,6 +533,9 @@ class TransformationHelper:
         if filter_data is None:
             filter_data = []
 
+        points_array = points_array.copy()
+        height = height.copy()
+
         # generate polygon and get the bounding box of the indices.
         points_no_z_axis = self.__delete_z_axis(polygon_points)
         closed_polygon = LinearRing(points_no_z_axis)
