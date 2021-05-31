@@ -100,10 +100,15 @@ def interpolate(value: float, value_min: float, value_max: float, target_min: fl
     if convert:
         value = float(value)
 
+    # check values
+    value_min, value_max = min(value_min, value_max), max(value_min, value_max)
+    target_min, target_max = min(target_min, target_max), max(target_min, target_max)
+
     # case initial interval is just one value.
     if value_min == value_max:
-        return (target_min + target_max)/2.0
+        return (target_min + target_max) / 2.0
 
+    # return corresponding values
     return (value - value_min) * (float(target_max) - target_min) / (float(value_max) - value_min) + target_min
 
 
