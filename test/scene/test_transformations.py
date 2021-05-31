@@ -194,7 +194,8 @@ class TestLinearTransformations(unittest.TestCase):
         y = np.tile(y, width)
 
         x = x.reshape(z.shape)
-        y = y.reshape(z.shape)
+        y = y.reshape((z.shape[1], z.shape[0]))
+        y = y.transpose()
 
         points = np.zeros((height, width, 3))
         points[:, :, 0] = x
@@ -412,6 +413,113 @@ class TestMinMaxPolygon(unittest.TestCase):
                                                               height)
         self.assertEqual((np.nan, np.nan), (max_, min_),
                          'Minimum and maximum values are not the one inside the polygon.')
+
+
+class InterpolateExternalPoints(unittest.TestCase):
+
+    def setUp(self) -> None:
+        """
+        Logic that runs at the beginning of every method.
+
+        Initialize the common variables.
+        """
+        self.helper = TransformationHelper()
+
+        x, y, z = read_info('resources/test_resources/netcdf/test_file_1.nc')
+        polygon_points, _ = ShapefileImporter().get_polygon_information('resources/test_resources/polygons/'
+                                                                        'shape_two_concentric_polygons.shp')
+
+        # get the polygon points
+        polygon_points_formatted = []
+        external_polygon_points_formatted = []
+
+        # polygon[1] is an external polygon to polygon[0]
+        for point in polygon_points[1]:
+            polygon_points_formatted.append(point[0])
+            polygon_points_formatted.append(point[1])
+            polygon_points_formatted.append(0.5)
+
+        # polygon[0] in an internal polygon to polygon[1]
+        for point in polygon_points[0]:
+            external_polygon_points_formatted.append(point[0])
+            external_polygon_points_formatted.append(point[1])
+            external_polygon_points_formatted.append(0.5)
+
+        # format the points of the map
+        width = len(x)
+        height = len(y)
+
+        x = np.tile(x, height)
+        y = np.tile(y, width)
+
+        x = x.reshape(z.shape)
+
+        y = y.reshape((z.shape[1], z.shape[0]))
+        y = y.transpose()
+
+        points = np.zeros((height, width, 3))
+        points[:, :, 0] = x
+        points[:, :, 1] = y
+
+        self.points = points
+        self.polygon_points = polygon_points_formatted
+        self.height = z
+        self.external_polygon_points = external_polygon_points_formatted
+
+    def plot_points(self, points: list) -> None:
+        """
+        Plot the points given using matplotlib.
+
+        Args:
+            points: Points to plot. format: [x1, y1, z1, x2, y2, z2, ...]
+
+        Returns: None
+        """
+        array_points = np.array(points)
+        array_points = array_points.reshape((-1, 3))
+
+        from matplotlib import pyplot as plt
+        plt.scatter(array_points[:, 0], array_points[:, 1])
+        plt.show()
+
+    def test_interpolate_external_points_real_case_linear(self):
+
+        # apply interpolation
+        new_height = self.helper.interpolate_points_external_to_polygon(self.points,
+                                                                        self.polygon_points,
+                                                                        self.height,
+                                                                        self.external_polygon_points,
+                                                                        'linear')
+
+        expected_data = np.load('resources/test_resources/expected_data/npy_data/test_transformation_2.npy')
+        self.assertTrue((new_height == expected_data).all(), 'Expected data is not equal to the one returned by the'
+                                                             'method modify_points_inside_polygon_linear.')
+
+    def test_interpolate_external_points_real_case_nearest(self):
+
+        # apply interpolation
+        new_height = self.helper.interpolate_points_external_to_polygon(self.points,
+                                                                        self.polygon_points,
+                                                                        self.height,
+                                                                        self.external_polygon_points,
+                                                                        'nearest')
+
+        expected_data = np.load('resources/test_resources/expected_data/npy_data/test_transformation_4.npy')
+        self.assertTrue((new_height == expected_data).all(), 'Expected data is not equal to the one returned by the'
+                                                             'method modify_points_inside_polygon_linear.')
+
+    def test_interpolate_external_points_real_case_cubic(self):
+
+        # apply interpolation
+        new_height = self.helper.interpolate_points_external_to_polygon(self.points,
+                                                                        self.polygon_points,
+                                                                        self.height,
+                                                                        self.external_polygon_points,
+                                                                        'cubic')
+
+        expected_data = np.load('resources/test_resources/expected_data/npy_data/test_transformation_3.npy')
+        self.assertTrue((new_height == expected_data).all(), 'Expected data is not equal to the one returned by the'
+                                                             'method modify_points_inside_polygon_linear.')
 
 
 if __name__ == '__main__':
