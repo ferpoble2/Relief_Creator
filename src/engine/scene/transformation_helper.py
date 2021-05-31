@@ -460,6 +460,11 @@ class TransformationHelper:
         """
         Interpolate the points that are external to the polygon until a certain distance.
 
+        Interpolation types are the followings:
+            - linear
+            - nearest
+            - cubic
+
         Args:
             type_interpolation: Type of interpolation to use.
             external_polygon_points: List with the points of the external polygon. [x1, y1, z1, x2, y2, z2, ...]
