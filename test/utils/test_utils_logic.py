@@ -27,6 +27,23 @@ import warnings
 from src.utils import interpolate
 from src.utils import get_logger
 from src.utils import is_numeric
+from src.utils import is_clockwise
+
+
+class TestIsClockwise(unittest.TestCase):
+
+    def test_is_clockwise(self):
+        points = [(1, 1), (1, 0), (0, 0)]
+        self.assertTrue(is_clockwise(points))
+
+    def test_not_clockwise(self):
+        points = [(0, 0), (1, 0), (1, 1)]
+        self.assertFalse(is_clockwise(points))
+
+    def test_error_points(self):
+        points = [(0, 0), (1, 1)]
+        with self.assertRaises(AssertionError):
+            is_clockwise(points)
 
 
 class TestIsNumeric(unittest.TestCase):
