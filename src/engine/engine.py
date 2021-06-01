@@ -43,7 +43,7 @@ from src.error.line_intersection_error import LineIntersectionError
 from src.error.model_transformation_error import ModelTransformationError
 from src.error.repeated_point_error import RepeatedPointError
 from src.error.scene_error import SceneError
-from src.error.not_enought_points_error import NotEnoughPointsError
+from src.error.export_error import ExportError
 from src.error.netcdf_import_error import NetCDFImportError
 from src.error.interpolation_error import InterpolationError
 
@@ -441,10 +441,12 @@ class Engine:
                                                         parameters_list,
                                                         names_list,
                                                         directory_filename)
-        except NotEnoughPointsError:
-            self.set_modal_text('Error', 'One or more polygons does not have enough '
-                                         'points to be exported.')
-            return
+        except ExportError as e:
+            if e.code == 1:
+                self.set_modal_text('Error', 'One or more polygons does not have enough points to be exported.')
+                return
+            else:
+                raise e
 
         self.set_modal_text('Information', 'Polygons exported successfully.')
 
@@ -479,9 +481,13 @@ class Engine:
                                                             directory_filename,
                                                             self.scene.get_polygon_name(polygon_id),
                                                             dict(self.scene.get_polygon_params(polygon_id)))
-        except NotEnoughPointsError:
-            self.set_modal_text("Error", "The polygon does not have enough points.")
-            return
+        except ExportError as e:
+
+            if e.code == 2:
+                self.set_modal_text("Error", "The polygon does not have enough points.")
+                return
+            else:
+                raise e
 
         self.set_modal_text('Information', 'Polygon exported successfully')
 

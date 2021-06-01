@@ -16,8 +16,6 @@ package error {
     class PolygonFolderNotFoundError
     class RepeatedPointError
     class SceneError
-    class ShapefileExportError
-    class UnknownDataTypeError
     class WrongInterpolationTypeError
 }
 
@@ -28,9 +26,6 @@ BaseError <|-- GUIError
 
 PolygonError <|-- RepeatedPointError
 PolygonError <|-- LineIntersectionError
-ExportError <|-- ShapefileExportError
-ShapefileExportError <|-- NotEnoughPointsError
-ShapefileExportError <|-- UnknownDataTypeError
 GUIError <|-- WrongInterpolationTypeError
 GUIError <|-- FolderError
 FolderError <|-- PolygonFolderNotFoundError

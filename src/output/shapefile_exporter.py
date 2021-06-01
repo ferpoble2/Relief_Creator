@@ -20,7 +20,7 @@ File that contains the class shapefileExporter.
 """
 import shapefile
 
-from src.error.not_enought_points_error import NotEnoughPointsError
+from src.error.export_error import ExportError
 from src.utils import is_clockwise
 
 
@@ -85,8 +85,7 @@ class ShapefileExporter:
                 list_of_parameters[ind]['name'] = list_of_polygon_names[ind]
 
             if len(list_of_points[ind]) < 6:
-                raise NotEnoughPointsError('One or more polygons from the list does not have enough points'
-                                           'to export')
+                raise ExportError(1)
 
             # sort the points to be counter clockwise
             points = self.__delete_z_axis(list_of_points[ind])
@@ -162,7 +161,7 @@ class ShapefileExporter:
         if 'name' not in parameters:
             parameters['name'] = polygon_name
         if len(list_of_points) < 6:  # two points
-            raise NotEnoughPointsError('Not enough points to export this polygon.')
+            raise ExportError(2)
 
         w = shapefile.Writer(directory)
 

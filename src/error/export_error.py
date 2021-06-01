@@ -26,4 +26,17 @@ class ExportError(BaseError):
     """
     Base class to use for exportation errors.
     """
-    pass
+
+    def __init__(self, code: int = 0):
+        """
+        Constructor of the class
+
+        Args:
+            code: Code of the error.
+        """
+        self.code = code
+        self.codes = {
+            0: 'Default Error.',
+            1: 'One or more polygon from the list does not have enough points',
+            2: 'Not enough points to export this polygon'
+        }
