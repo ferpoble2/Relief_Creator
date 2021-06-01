@@ -38,12 +38,35 @@ LOG_LIST_MODULES = [
 ]
 
 
-def get_logger(log_level: int = LOG_LEVEL, log_file_level: int = LOG_FILE_LEVEL, module: str = 'GLOBAL',
-               directory: str = f'resources/logs') -> logging.Logger:
+def get_logger(log_level: int = LOG_LEVEL,
+               log_file_level: int = LOG_FILE_LEVEL,
+               module: str = 'GLOBAL',
+               directory: str = f'resources/logs',
+               log_to_file: bool = LOG_TO_FILE,
+               log_to_console: bool = LOG_TO_CONSOLE,
+               log_only_listed_modules: bool = LOG_ONLY_LISTED_MODULES,
+               log_list_modules: list = LOG_LIST_MODULES) -> logging.Logger:
     """
     Get the logger of the application to use in the main program.
+
+    To make use of the logger, use the function as follows:
+        log = get_logger(module='SOME_MODULE')
+        ...
+        log.debug('some debug info')
+
+    Most of the configuration for the logger is set on the module that defines this function. Only change the
+    default values for the method in case you are testing the function or doing another thing outside the main
+    program.
+
     Args:
-        log_level: Level too show in the logs (logging.DEBUG, logging.INFO, ...)
+        log_list_modules: List of modules to log if log_only_listed_modules is true.
+        log_only_listed_modules: If to log only the modules listed on the log_list_modules parameter or not.
+        log_to_console: If to log to console or not.
+        log_to_file: If to log to file or not.
+        directory: Directory to use to create the log file if logging to file.
+        module: Module being logged. (mus be written in uppercase)
+        log_file_level: Level to show in the file logs (logging.DEBUG, logging.INFO, ...)
+        log_level: Level to show in the logs (logging.DEBUG, logging.INFO, ...)
 
     Returns: Logger to use to makes logs.
 
@@ -56,20 +79,20 @@ def get_logger(log_level: int = LOG_LEVEL, log_file_level: int = LOG_FILE_LEVEL,
                                   datefmt='%Y-%m-%d,%H:%M:%S')
 
     handlers = []
-    if LOG_TO_FILE:
+    if log_to_file:
         fh = logging.FileHandler(f'{directory}/{module}.log')
         fh.setLevel(log_file_level)
         fh.setFormatter(formatter)
         handlers.append(fh)
 
-    if LOG_TO_CONSOLE:
+    if log_to_console:
         ch = logging.StreamHandler()
         ch.setLevel(log_level)
         ch.setFormatter(formatter)
         handlers.append(ch)
 
-    if LOG_ONLY_LISTED_MODULES:
-        if module in LOG_LIST_MODULES:
+    if log_only_listed_modules:
+        if module in log_list_modules:
             log.handlers = handlers
     else:
         log.handlers = handlers
