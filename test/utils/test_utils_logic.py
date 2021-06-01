@@ -26,6 +26,21 @@ import warnings
 
 from src.utils import interpolate
 from src.utils import get_logger
+from src.utils import is_numeric
+
+
+class TestIsNumeric(unittest.TestCase):
+
+    def test_string_numeric(self):
+        self.assertTrue(is_numeric('10215'))
+        self.assertTrue(is_numeric('10215.1257'))
+
+    def test_string_not_numeric(self):
+        self.assertFalse(is_numeric('10215notannumber'))
+        self.assertFalse(is_numeric('not a number'))
+        self.assertFalse(is_numeric('10215.1257 number'))
+        self.assertFalse(is_numeric('eight'))
+        self.assertFalse(is_numeric('0x1544'))
 
 
 class TestLogger(unittest.TestCase):
