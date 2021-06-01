@@ -858,8 +858,7 @@ class Scene:
         if polygon_id in self.__polygon_hash:
             return self.__polygon_hash[polygon_id].is_planar()
 
-    def load_preview_interpolation_area(self, distance: float, polygon_id: str, z_value: float = 0.5,
-                                        generate_area: bool = False) -> None:
+    def load_preview_interpolation_area(self, distance: float, polygon_id: str, z_value: float = 0.5) -> None:
         """
         Calculate the interpolation area for the active polygon and draw it on the scene.
 
@@ -867,80 +866,45 @@ class Scene:
 
         Args:
             polygon_id: id of the polygon to load the interpolation area.
-            generate_area: Generate the area of the interpolation.
             z_value: Value to use for the third component of the vertices in the area polygons.
             distance: Distance to use to calculate the external area.
 
         Returns: None
         """
-        log.debug('Getting polygons...')
+        # generating polygon
         polygon = self.__polygon_hash[polygon_id]
         polygon_points = polygon.get_point_list()
 
+        # raise error in case polygon does not have enough points
         if len(polygon_points) < 9:
             raise SceneError(2)
 
         polygon_external_points = polygon.get_exterior_polygon_points(distance)
 
-        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
-        def thread_task(polygon_points: list, polygon_external_points: list, distance: float, engine: 'Engine',
-                        calculate_area: bool, z_value: float):
-            engine.set_program_loading(True)
-            engine.set_loading_message('Calculating interpolation area...')
+        # generating lines model
+        lines_external = Lines(self)
+        lines_external.set_line_color([1, 0, 0, 0.5])
 
-            if calculate_area:
-                log.debug('Get triangulation triangles...')
-                triangulation = TransformationHelper().get_interpolation_zone_triangulation(polygon_points,
-                                                                                            polygon_external_points,
-                                                                                            distance,
-                                                                                            z_value)
+        # Add the lines of the external polygon to the lines model
+        for ind in range(int(len(polygon_external_points) / 3)):
 
+            point_1 = (polygon_external_points[ind * 3],
+                       polygon_external_points[ind * 3 + 1],
+                       polygon_external_points[ind * 3 + 2])
+
+            if ind == len(polygon_external_points) / 3 - 1:
+                point_2 = (polygon_external_points[0],
+                           polygon_external_points[1],
+                           polygon_external_points[2])
             else:
-                triangulation = []
+                point_2 = (polygon_external_points[ind * 3 + 3],
+                           polygon_external_points[ind * 3 + 4],
+                           polygon_external_points[ind * 3 + 5])
 
-            return triangulation
+            lines_external.add_line(point_1, point_2)
 
-        # noinspection PyMissingOrEmptyDocstring
-        def then_task(triangulation: list, external_polygon_points: list, scene: 'Scene', calculate_area: bool):
-            # NOTE: triangulation can be a void list
-
-            log.debug('Generating Lines')
-            lines_external = Lines(self)
-            lines_external.set_line_color([1, 0, 0, 0.5])
-            for ind in range(int(len(external_polygon_points) / 3)):
-
-                point_1 = (external_polygon_points[ind * 3],
-                           external_polygon_points[ind * 3 + 1],
-                           external_polygon_points[ind * 3 + 2])
-
-                if ind == len(external_polygon_points) / 3 - 1:
-                    point_2 = (external_polygon_points[0],
-                               external_polygon_points[1],
-                               external_polygon_points[2])
-                else:
-                    point_2 = (external_polygon_points[ind * 3 + 3],
-                               external_polygon_points[ind * 3 + 4],
-                               external_polygon_points[ind * 3 + 5])
-
-                lines_external.add_line(point_1, point_2)
-            scene.__interpolation_area_hash[self.__engine.get_active_polygon_id()] = [lines_external]
-
-            if calculate_area:
-                area_model_external = Plane(self)
-                area_model_external.set_triangles(np.array(triangulation))
-                scene.__interpolation_area_hash[self.__engine.get_active_polygon_id()].append(area_model_external)
-
-            scene.__engine.set_program_loading(False)
-
-        self.__engine.set_thread_task(parallel_task=thread_task,
-                                      then=then_task,
-                                      parallel_task_args=(polygon_points,
-                                                          polygon_external_points,
-                                                          distance,
-                                                          self.__engine,
-                                                          generate_area,
-                                                          z_value),
-                                      then_task_args=(polygon_external_points, self, generate_area))
+        # Add the model to the hash of interpolation areas
+        self.__interpolation_area_hash[self.__engine.get_active_polygon_id()] = [lines_external]
 
     def modify_camera_radius(self, distance: float) -> None:
         """
