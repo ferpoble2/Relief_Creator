@@ -42,6 +42,36 @@ class TestMixedFilters(unittest.TestCase):
         # initialize variables
         self.engine.should_use_threads(False)
 
+    def test_non_existent_filter(self):
+        warnings.simplefilter("ignore", ResourceWarning)
+
+        self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
+                                          'resources/test_resources/netcdf/test_file_1.nc')
+
+        # load polygon
+        self.engine.load_polygon_from_shapefile('resources/test_resources/polygons/'
+                                                'shape_three_polygons_south_america.shp')
+
+        # create polygon to modify the scene.
+        with self.assertRaises(NotImplementedError):
+            self.engine.transform_points(polygon_id='Polygon 0',
+                                         model_id=self.engine.get_active_model_id(),
+                                         min_height=800,
+                                         max_height=2500,
+                                         transformation_type='linear',
+                                         filters=[('Non_existent_filter', 0)])
+
+        with self.assertRaises(NotImplementedError):
+            self.engine.transform_points(polygon_id='Polygon 0',
+                                         model_id=self.engine.get_active_model_id(),
+                                         min_height=800,
+                                         max_height=2500,
+                                         transformation_type='linear',
+                                         filters=[('height_greater_than', 0),
+                                                  ('height_less_than', 5800),
+                                                  ('Non_existent_filter', 'Polygon 2'),
+                                                  ('is_in', 'Polygon 1')])
+
     def test_height_contain(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
