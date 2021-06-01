@@ -121,7 +121,7 @@ class TestExportPolygons(unittest.TestCase):
         os.remove('resources/test_resources/temp/test_shapefile_parameters.dbf')
         os.remove('resources/test_resources/temp/test_shapefile_parameters.shx')
 
-    def test_create_and_export_parameters(self):
+    def test_create_and_export_string_parameters(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
         pol = self.engine.create_new_polygon()
