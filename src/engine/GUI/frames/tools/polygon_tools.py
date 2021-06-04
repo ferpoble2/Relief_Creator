@@ -67,7 +67,7 @@ class PolygonTools:
         """
         clicked_selectable = False
 
-        if imgui.begin_menu("Change Folder"):
+        if imgui.begin_menu("Change folder"):
             for folder_id in self.__GUI_manager.get_polygon_folder_id_list():
                 imgui.menu_item(self.__GUI_manager.get_polygon_folder_name(folder_id))
                 if imgui.is_item_clicked():
@@ -267,7 +267,7 @@ class PolygonTools:
             imgui.text("Select an action")
 
             imgui.separator()
-            imgui.selectable('Export Polygons')
+            imgui.selectable('Export polygons')
             if imgui.is_item_clicked():
                 self.__GUI_manager.export_polygons_inside_folder(folder_id)
                 imgui.close_current_popup()
@@ -529,7 +529,7 @@ class PolygonTools:
         self.__GUI_manager.set_tool_title_font()
         imgui.text("Polygon Tools")
         self.__GUI_manager.set_regular_font()
-        if imgui.button("Create folder", width=imgui.get_window_width() - self.__button_margin_width):
+        if imgui.button("Create Folder", width=imgui.get_window_width() - self.__button_margin_width):
             self.__create_new_polygon()
 
         self.__generate_polygon_list()

@@ -165,7 +165,7 @@ class ReliefTools:
             self.__filters.remove(filter_to_remove)
 
         # button to add more filters
-        if imgui.button('Add filter', -1):
+        if imgui.button('Add Filter', -1):
             self.__filters.append(Filter(0, 0))
 
     def render(self) -> None:

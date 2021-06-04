@@ -76,13 +76,13 @@ class Tools(Frame):
         imgui.text("Visualization Tools")
         self._GUI_manager.set_regular_font()
 
-        if imgui.button("Zoom in", width=imgui.get_window_width() / 2 - self.__double_button_margin_width):
+        if imgui.button("Zoom In", width=imgui.get_window_width() / 2 - self.__double_button_margin_width):
             log.debug("Pressed button Zoom in")
             log.debug("----------------------")
             self._GUI_manager.add_zoom()
 
         imgui.same_line()
-        if imgui.button("Zoom out", width=imgui.get_window_width() / 2 - self.__double_button_margin_width):
+        if imgui.button("Zoom Out", width=imgui.get_window_width() / 2 - self.__double_button_margin_width):
             log.debug("Pressed button Zoom out")
             log.debug("-----------------------")
             self._GUI_manager.less_zoom()
@@ -92,7 +92,7 @@ class Tools(Frame):
             log.debug("-----------------------")
             self._GUI_manager.set_active_tool('move_map')
 
-        if imgui.button("Reload map with zoom", -1):
+        if imgui.button("Reload Map", -1):
             log.debug("Pressed Reload map with zoom button")
             log.debug("-----------------------------------")
             self._GUI_manager.reload_models()
