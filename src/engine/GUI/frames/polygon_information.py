@@ -140,7 +140,7 @@ class PolygonInformation(Frame):
             imgui.columns(1)
 
             # button to add a new parameter.
-            if imgui.button("Add new", -1):
+            if imgui.button("Add New", -1):
                 self.__should_open_add_dialog = True
 
             imgui.end()
