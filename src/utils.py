@@ -19,7 +19,10 @@
 File with utils functions for the engine.
 """
 import logging
-import os
+
+LONGITUDE_KEYS = ['x', 'lon']
+LATITUDE_KEYS = ['y', 'lat']
+HEIGHT_KEYS = ['z', 'Band1']
 
 LOG_TO_FILE = False
 LOG_TO_CONSOLE = False

@@ -269,7 +269,7 @@ the latitude, longitude and height.
 If at some point, in the moment of loading a file the program hits a KeyError, then is highly probable that the netcdf
 file have keys with another name that the ones the program uses.
 
-At the beginning of the file `src/input/NetCDF.py` there are three variables, `LONGITUDE_KEYS`, `LATITUDE_KEYS` and
+At the beginning of the file `src/utils.py` there are three variables, `LONGITUDE_KEYS`, `LATITUDE_KEYS` and
 `HEIGHT_KEYS`.
 
 The first is the list of keys that the program will use to get the longitude data from the netcdf files, the second is
