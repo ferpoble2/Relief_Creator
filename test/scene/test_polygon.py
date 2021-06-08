@@ -51,55 +51,53 @@ class TestAddPoints(unittest.TestCase):
         self.assertEqual(self.engine.get_points_from_polygon(pol_1),
                          [])
 
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
         self.assertEqual(self.engine.get_points_from_polygon(pol_1),
-                         [-1.3703703703703702, 2.074074074074074, 0.5])
+                         [0, 0, 0.5])
 
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 1)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 1)
         self.assertEqual(self.engine.get_points_from_polygon(pol_1),
-                         [-1.3703703703703702, 2.074074074074074, 0.5,
-                          -1.3703703703703702, 2.071111111111111, 0.5])
+                         [0, 0, 0.5,
+                          0, 1, 0.5])
 
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 2)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 2)
         self.assertEqual(self.engine.get_points_from_polygon(pol_1),
-                         [-1.3703703703703702, 2.074074074074074, 0.5,
-                          -1.3703703703703702, 2.071111111111111, 0.5,
-                          -1.3703703703703702, 2.0681481481481483, 0.5])
+                         [0, 0, 0.5,
+                          0, 1, 0.5,
+                          0, 2, 0.5])
 
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 3)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 3)
         self.assertEqual(self.engine.get_points_from_polygon(pol_1),
-                         [-1.3703703703703702, 2.074074074074074, 0.5,
-                          -1.3703703703703702, 2.071111111111111, 0.5,
-                          -1.3703703703703702, 2.0681481481481483, 0.5,
-                          -1.3703703703703702, 2.065185185185185, 0.5])
+                         [0, 0, 0.5,
+                          0, 1, 0.5,
+                          0, 2, 0.5,
+                          0, 3, 0.5])
 
     def test_repeated_point(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
         pol = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
 
         self.assertEqual(self.engine.get_points_from_polygon(pol),
-                         [-1.3703703703703702, 2.074074074074074, 0.5])
+                         [0, 0, 0.5])
 
     def test_line_intersection(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
         pol = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0.5, 0.5)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0.5, -0.5)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0.5, 0.5)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0.5, -0.5)
 
-        self.assertEqual(self.engine.get_points_from_polygon(pol),
-                         [-1.3703703703703702, 2.074074074074074, 0.5,
-                          -1.3674074074074074, 2.074074074074074, 0.5,
-                          -1.3688888888888888, 2.0725925925925925, 0.5])
+        self.assertEqual([0, 0, 0.5, 1, 0, 0.5, 0.5, 0.5, 0.5],
+                         self.engine.get_points_from_polygon(pol))
 
 
 class TestPlanarity(unittest.TestCase):

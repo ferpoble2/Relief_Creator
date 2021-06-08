@@ -56,10 +56,10 @@ class TestExportPolygons(unittest.TestCase):
 
         # add points
         self.engine.set_active_polygon(pol)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 1)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1, 1)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 1)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 1)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 0)
 
         # export
         self.engine.export_polygon_with_id(pol, 'resources/test_resources/temp/test_shapefile_export')
@@ -68,10 +68,7 @@ class TestExportPolygons(unittest.TestCase):
         polygons, parameters = importer.get_polygon_information('resources/test_resources/temp/'
                                                                 'test_shapefile_export.shp')
 
-        expected_value_polygons = [[(-1.3703703703703702, 2.074074074074074),
-                                    (-1.3703703703703702, 2.071111111111111),
-                                    (-1.3674074074074074, 2.071111111111111),
-                                    (-1.3674074074074074, 2.074074074074074)]]
+        expected_value_polygons = [[(1.0, 0.0), (1.0, 1.0), (0.0, 1.0), (0.0, 0.0)]]
 
         expected_value_parameters = [{'name': 'Polygon 0'}]
 
@@ -95,10 +92,10 @@ class TestExportPolygons(unittest.TestCase):
         self.engine.set_new_parameter_to_polygon(pol, '5', True)
         self.engine.set_new_parameter_to_polygon(pol, '6', False)
 
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(2, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(3, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(2, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(3, 0)
 
         # export
         self.engine.export_polygon_with_id(pol, 'resources/test_resources/temp/'
@@ -109,8 +106,7 @@ class TestExportPolygons(unittest.TestCase):
         polygons, parameters = importer.get_polygon_information(
             'resources/test_resources/temp/test_shapefile_parameters.shp')
 
-        expected_value_polygons = [[(-1.3703703703703702, 2.074074074074074), (-1.3674074074074074, 2.074074074074074),
-                                    (-1.3644444444444443, 2.074074074074074), (-1.3614814814814813, 2.074074074074074)]]
+        expected_value_polygons = [[(0.0, 0.0), (1.0, 0.0), (2.0, 0.0), (3.0, 0.0)]]
         expected_value_parameters = [
             {'1': 'some_string', '2': 10.0, '3': 10.55487, '4': 205.5, '5': True, '6': False, 'name': 'Polygon 0'}]
 
@@ -130,10 +126,10 @@ class TestExportPolygons(unittest.TestCase):
         self.engine.set_new_parameter_to_polygon(pol, 'notcutted', 'some_string')
         self.engine.set_new_parameter_to_polygon(pol, 'thisnameshouldbecuttedsomewhere', 'A very interesting string')
 
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 60)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1, 60)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(2, 60)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(3, 60)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 60)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 60)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(2, 60)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(3, 60)
 
         # export
         self.engine.export_polygon_with_id(pol, 'resources/test_resources/temp/'
@@ -144,9 +140,7 @@ class TestExportPolygons(unittest.TestCase):
         polygons, parameters = importer.get_polygon_information('resources/test_resources/temp/'
                                                                 'test_shapefile_parameters_long_names.shp')
 
-        expected_value_polygons = [
-            [(-1.3703703703703702, 1.8962962962962964), (-1.3674074074074074, 1.8962962962962964),
-             (-1.3644444444444443, 1.8962962962962964), (-1.3614814814814813, 1.8962962962962964)]]
+        expected_value_polygons = [[(0.0, 60.0), (1.0, 60.0), (2.0, 60.0), (3.0, 60.0)]]
 
         expected_value_parameters = [
             {'notcutted': 'some_string',
@@ -170,27 +164,27 @@ class TestExportPolygons(unittest.TestCase):
 
         # add points to the polygons
         self.engine.set_active_polygon(pol_1)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 1)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 2)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 3)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 4)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 5)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 1)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 2)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 3)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 4)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 5)
 
         self.engine.set_active_polygon(pol_2)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(2, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(3, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(4, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(5, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(2, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(3, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(4, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(5, 0)
 
         self.engine.set_active_polygon(pol_3)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(0, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1, 1)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(2, 2)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(2, 0)
-        self.engine.add_new_vertex_to_active_polygon_using_window_coords(1, 0.1)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 1)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(2, 2)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(2, 0)
+        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 0.1)
 
         # export the polygons
         self.engine.export_polygon_list_id([pol_1, pol_2, pol_3],
@@ -201,16 +195,9 @@ class TestExportPolygons(unittest.TestCase):
         polygons, parameters = importer.get_polygon_information('resources/test_resources/temp/'
                                                                 'test_shapefile_export_multiple_1.shp')
 
-        expected_value_polygons = [
-            [(-1.3703703703703702, 2.074074074074074), (-1.3703703703703702, 2.071111111111111),
-             (-1.3703703703703702, 2.0681481481481483), (-1.3703703703703702, 2.065185185185185),
-             (-1.3703703703703702, 2.062222222222222), (-1.3703703703703702, 2.0592592592592593)],
-            [(-1.3555555555555554, 2.074074074074074), (-1.3585185185185185, 2.074074074074074),
-             (-1.3614814814814813, 2.074074074074074), (-1.3644444444444443, 2.074074074074074),
-             (-1.3674074074074074, 2.074074074074074), (-1.3703703703703702, 2.074074074074074)],
-            [(-1.3703703703703702, 2.074074074074074), (-1.3674074074074074, 2.071111111111111),
-             (-1.3644444444444443, 2.0681481481481483), (-1.3644444444444443, 2.074074074074074),
-             (-1.3674074074074074, 2.0737777777777775)]]
+        expected_value_polygons = [[(0.0, 0.0), (0.0, 1.0), (0.0, 2.0), (0.0, 3.0), (0.0, 4.0), (0.0, 5.0)],
+                                   [(0.0, 0.0), (1.0, 0.0), (2.0, 0.0), (3.0, 0.0), (4.0, 0.0), (5.0, 0.0)],
+                                   [(1.0, 0.1), (2.0, 0.0), (2.0, 2.0), (1.0, 1.0), (0.0, 0.0)]]
 
         expected_value_parameters = [{'name': 'Polygon 0'}, {'name': 'Polygon 1'}, {'name': 'Polygon 2'}]
 

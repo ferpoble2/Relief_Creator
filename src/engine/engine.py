@@ -113,7 +113,15 @@ class Engine:
 
         Returns: None
         """
-        self.scene.add_new_vertex_to_active_polygon_using_map_coords(position_x, position_y)
+        try:
+            self.scene.add_new_vertex_to_active_polygon_using_map_coords(position_x, position_y)
+        except RepeatedPointError:
+            log.info('Handling repeated point.')
+            self.set_modal_text('Error', 'Point already exist in polygon.')
+
+        except LineIntersectionError:
+            log.info('Handling line intersection.')
+            self.set_modal_text('Error', 'Line intersect another one already in the polygon.')
 
     def add_zoom(self) -> None:
         """
