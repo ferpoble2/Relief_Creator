@@ -191,11 +191,11 @@ class ReliefTools:
         imgui.columns(2, None, False)
         imgui.text(f'Max height:')
         imgui.next_column()
-        imgui.text(str(self.__polygon_data[active_polygon_id]['min_height']))
+        imgui.text(str(self.__polygon_data[active_polygon_id]['max_height']))
         imgui.next_column()
         imgui.text(f'Min height:')
         imgui.next_column()
-        imgui.text(str(self.__polygon_data[active_polygon_id]['max_height']))
+        imgui.text(str(self.__polygon_data[active_polygon_id]['min_height']))
         imgui.columns(1)
 
         if imgui.button('Recalculate Information', -1):
@@ -208,8 +208,8 @@ class ReliefTools:
             else:
                 maximum, minimum = self.__gui_manager.calculate_max_min_height(active_model_id,
                                                                                active_polygon_id)
-                self.__polygon_data[active_polygon_id]['max_height'] = maximum
-                self.__polygon_data[active_polygon_id]['min_height'] = minimum
+                self.__polygon_data[active_polygon_id]['max_height'] = max(maximum, minimum)
+                self.__polygon_data[active_polygon_id]['min_height'] = min(minimum, maximum)
 
         # Filter Logic
         # ------------
