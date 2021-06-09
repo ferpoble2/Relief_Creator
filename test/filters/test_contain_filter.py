@@ -49,7 +49,7 @@ class TestContainsFilter(unittest.TestCase):
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
-        self.engine.load_polygon_from_shapefile('resources/test_resources/polygons/shape_two_concentric_polygons.shp')
+        self.engine.load_shapefile_file('resources/test_resources/polygons/shape_two_concentric_polygons.shp')
 
         # apply transformation with filters
         self.engine.transform_points(polygon_id='Polygon 0',
@@ -80,7 +80,7 @@ class TestContainsFilter(unittest.TestCase):
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
-        self.engine.load_polygon_from_shapefile('resources/test_resources/polygons/shape_three_concentric_polygons.shp')
+        self.engine.load_shapefile_file('resources/test_resources/polygons/shape_three_concentric_polygons.shp')
 
         # apply transformation with filters
         self.engine.transform_points(polygon_id='Polygon 0',
@@ -112,7 +112,7 @@ class TestContainsFilter(unittest.TestCase):
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
-        self.engine.load_polygon_from_shapefile('resources/test_resources/polygons/'
+        self.engine.load_shapefile_file('resources/test_resources/polygons/'
                                                 'shape_three_polygons_south_america.shp')
 
         # apply transformation with filters
@@ -144,7 +144,7 @@ class TestContainsFilter(unittest.TestCase):
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
-        self.engine.load_polygon_from_shapefile('resources/test_resources/polygons/'
+        self.engine.load_shapefile_file('resources/test_resources/polygons/'
                                                 'shape_three_polygons_south_america.shp')
 
         # apply transformation with filters

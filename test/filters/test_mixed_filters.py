@@ -49,7 +49,7 @@ class TestMixedFilters(unittest.TestCase):
                                           'resources/test_resources/netcdf/test_file_1.nc')
 
         # load polygon
-        self.engine.load_polygon_from_shapefile('resources/test_resources/polygons/'
+        self.engine.load_shapefile_file('resources/test_resources/polygons/'
                                                 'shape_three_polygons_south_america.shp')
 
         # create polygon to modify the scene.
@@ -79,7 +79,7 @@ class TestMixedFilters(unittest.TestCase):
                                           'resources/test_resources/netcdf/test_file_1.nc')
 
         # load polygon
-        self.engine.load_polygon_from_shapefile('resources/test_resources/polygons/'
+        self.engine.load_shapefile_file('resources/test_resources/polygons/'
                                                 'shape_three_polygons_south_america.shp')
 
         # create polygon to modify the scene.

@@ -882,7 +882,7 @@ class Engine:
             log.exception(e)
             self.set_modal_text('Error', 'File not loaded.')
 
-    def load_polygon_from_shapefile(self, filename: str) -> None:
+    def load_shapefile_file(self, filename: str) -> None:
         """
         Load the data from a shapefile file and tell the scene to create a polygon with it.
 

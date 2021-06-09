@@ -48,7 +48,7 @@ class TestHeightGreaterFilter(unittest.TestCase):
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load polygon
-        self.engine.load_polygon_from_shapefile('resources/test_resources/polygons/shape_one_polygon_2.shp')
+        self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
 
         # create polygon to modify the scene.
         self.engine.transform_points(polygon_id=self.engine.get_active_polygon_id(),
@@ -79,7 +79,7 @@ class TestHeightGreaterFilter(unittest.TestCase):
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load polygon
-        self.engine.load_polygon_from_shapefile('resources/test_resources/polygons/shape_one_polygon_2.shp')
+        self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
 
         # create polygon to modify the scene.
         self.engine.transform_points(polygon_id=self.engine.get_active_polygon_id(),
@@ -110,7 +110,7 @@ class TestHeightGreaterFilter(unittest.TestCase):
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
-        self.engine.load_polygon_from_shapefile('resources/test_resources/polygons/'
+        self.engine.load_shapefile_file('resources/test_resources/polygons/'
                                                 'shape_three_polygons_south_america.shp')
 
         # apply transformation with filters
