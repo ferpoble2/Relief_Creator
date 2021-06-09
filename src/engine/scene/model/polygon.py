@@ -229,6 +229,8 @@ class Polygon(Model):
         """
         Add a new point to the list of points.
 
+        Unless used in 3D, the z value must be keep 0.5.
+
         Args:
             x: x position of the point
             y: y position of the point
