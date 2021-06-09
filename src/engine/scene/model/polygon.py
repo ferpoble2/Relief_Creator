@@ -66,48 +66,16 @@ class Polygon(Model):
 
         self.__is_planar = True
 
-    def __check_intersection(self, line_x_1: float, line_y_1: float, line_x_2: float, line_y_2: float) -> bool:
+    def __check_intersection(self, points: list = None) -> bool:
         """
-        Check if the line intersect with the other lines already in the polygon.
-
-        If the intersection happens either at the beginning of the line or the end, and in only one point,
-        then the intersection is not considered.
-
-        Returns: Boolean indicating if the segments intersects with each other.
+        Join the points given in a line and check if there is intersections.
 
         Args:
-            line_x_1: x axis of the beginning of the line
-            line_y_1: y axis of the beginning of the line
-            line_x_2: x axis of the end of the line
-            line_y_2: y axis of the end of the line
+            points: List with the points to check. [x,y,z,x,y,z,x,y,z,...]
         """
-
-        # get the intersections
-        intersections = self.__get_intersection(line_x_1, line_y_1, line_x_2, line_y_2)
-
-        # case no intersections
-        if len(intersections) == 0:
-            log.debug("There is no intersections")
-            return False
-        # case one intersection and it is at the end or beginning of the line
-        elif len(intersections) == 1 and isinstance(intersections[0], ShapelyPoint) and \
-                (list(intersections[0].coords)[0] in [(line_x_1, line_y_1), (line_x_2, line_y_2)]):
-            log.debug(f"Special case intersection {intersections}")
-            return False
-        else:
-            log.debug(f"There are some intersections {list(map(str, intersections))}")
-
-            # check the intersections
-            for intersection in intersections:
-                if isinstance(intersection, ShapelyPoint) and \
-                        list(intersection.coords)[0] not in [(line_x_1, line_y_1), (line_x_2, line_y_2)]:
-                    return True
-                elif isinstance(intersection, LineString):
-                    return True
-                elif (not isinstance(intersection, ShapelyPoint)) and (not isinstance(intersection, LineString)):
-                    return True
-
-            return False
+        points_array = np.array(points)
+        points_array = points_array.reshape((-1, 3))
+        return not LineString(points_array).is_simple
 
     def __check_repeated_point(self, x: float, y: float, z: float) -> bool:
         """
@@ -136,32 +104,12 @@ class Polygon(Model):
         """
         Update the variable indicating if the polygon is planar or not.
 
-        To do this, this method check that the last line does not intersect with any other.
-
         Returns: None
         """
         if self.get_point_number() > 2:
+            # ask for intersections on the closed polygon.
             point_list = self.get_point_list()
-            intersections = self.__get_intersection(point_list[-3], point_list[-2], point_list[0], point_list[1])
-
-            # intersection must be only two point and one linestring with the points
-            points = []
-            lines = []
-            for intersection in intersections:
-                if isinstance(intersection, ShapelyPoint):
-                    points.append(intersection)
-                elif isinstance(intersection, LineString):
-                    lines.append(intersection)
-
-            log.debug(list(lines[0].coords))
-
-            # check the conditions
-            if len(points) != 2:  # more than two points
-                self.__is_planar = False
-            elif len(lines) != 1:  # more than one line
-                self.__is_planar = False
-            elif list(points[0].coords)[0] not in list(lines[0].coords) or \
-                    list(points[1].coords)[0] not in list(lines[0].coords):
+            if self.__check_intersection(points=point_list + [point_list[0], point_list[1], point_list[2]]):
                 self.__is_planar = False
             else:
                 self.__is_planar = True
@@ -241,18 +189,18 @@ class Polygon(Model):
 
         # check if point is already on the polygon
         if self.__check_repeated_point(x, y, z):
-            raise RepeatedPointError("Point already exist on polygon.")
+            raise RepeatedPointError()
 
         # check if lines intersect
         if self.get_point_number() > 2:
             point_list = self.get_point_list()
 
             # do not let the creation of lines that intersect
-            if self.__check_intersection(x, y, point_list[-3], point_list[-2]):
-                raise LineIntersectionError("Line intersect another one already in the polygon.")
+            if self.__check_intersection(point_list + [x, y, z]):
+                raise LineIntersectionError()
 
             # if the completion line intersect, then change the state of the polygon.
-            if self.__check_intersection(x, y, point_list[0], point_list[1]):
+            if self.__check_intersection(point_list + [x, y, z, point_list[0], point_list[1], point_list[2]]):
                 self.__is_planar = False
             else:
                 self.__is_planar = True
