@@ -34,11 +34,15 @@ class Lines(Model):
     Class in charge of the modeling and drawing lines in the engine.
     """
 
-    def __init__(self, scene, border_z_offset: float = -0.1):
+    def __init__(self, scene, border_z_offset: float = -0.1, point_list: np.ndarray = None):
         """
         Constructor of the class
 
+        A list of points can be optionally passed to the constructor to create a model with already initialized lines.
+        The list of points must be an array of shape (num_points, 3), with each row being a point of the model.
+
         Args:
+            point_list: List of points to use as initial value. This array will not be modified.
             border_z_offset: Offset to add to the position of the points of the line to draw the border of the line.
         """
         super().__init__(scene)
@@ -61,6 +65,29 @@ class Lines(Model):
         self.__z_offset = 0  # this variable is passed to the shader
 
         self.set_shaders(self.__vertex_shader_file, self.__fragment_shader_file)
+
+        # initialize model if data is given
+        if point_list is not None:
+            points_copy = point_list.copy()
+
+            # check points
+            number_points = len(points_copy)
+            assert number_points > 0, 'Trying to load points with an array with no data.'
+
+            # set the points
+            self.__point_list = list(points_copy.reshape(-1))
+            self.set_vertices(np.array(self.__point_list, dtype=np.float32))
+
+            # set the indices
+            range_a = np.arange(0, number_points - 1)
+            range_b = np.arange(1, number_points)
+
+            indices_array = np.empty((range_a.size + range_b.size))
+            indices_array[0::2] = range_a
+            indices_array[1::2] = range_b
+
+            self.__indices_list = list(indices_array)
+            self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
 
     def _update_uniforms(self) -> None:
         """

@@ -52,9 +52,15 @@ class Points(Model):
         self.__color_list.append(color[2])
         self.__color_list.append(color[3])
 
-    def __init__(self, scene):
+    def __init__(self, scene, point_list: np.ndarray = None):
         """
-        Constructor of the class
+        Constructor of the class.
+
+        A list of points can be optionally passed to the constructor to create a model with already initialized points.
+        The list of points must be an array of shape (num_points, 3), with each row being a point of the model.
+
+        Args:
+            point_list: List of points to use as initial value. This array will not be modified.
         """
         super().__init__(scene)
         self.cbo = GL.glGenBuffers(1)
@@ -74,6 +80,31 @@ class Points(Model):
         self.__last_point_color = (0, 0, 1, 1)  # RGBA
 
         self.set_shaders(self.__vertex_shader_file, self.__fragment_shader_file)
+
+        # initialize model if data is given
+        if point_list is not None:
+            point_list_copy = point_list.copy()
+
+            # set points
+            self.__point_list = list(point_list.reshape(-1))
+            self.set_vertices(np.array(self.__point_list, dtype=np.float32))
+
+            point_number = len(point_list_copy)
+            assert point_number > 0, 'Trying to load points with an array with no data.'
+
+            # set colors
+            if point_number == 1:
+                self.__color_list = list(self.__first_point_color)
+            elif point_number == 2:
+                self.__color_list = list(self.__first_point_color) + list(self.__last_point_color)
+            elif point_number > 2:
+                self.__color_list = list(self.__first_point_color) + list(self.__normal_color)*(point_number-2) + \
+                                    list(self.__last_point_color)
+            self.set_color_buffer(np.array(self.__color_list, dtype=np.float32))
+
+            # set indices
+            self.__indices_list = list(range(point_number))
+            self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
 
     def __remove_last_color_from_color_list(self) -> None:
         """

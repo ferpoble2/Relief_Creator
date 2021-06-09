@@ -485,9 +485,17 @@ class Scene:
         self.__engine.set_loading_message('Generating 3D model...')
         self.__engine.set_task_with_loading_frame(task_loading)
 
-    def create_new_polygon(self) -> str:
+    def create_new_polygon(self, point_list: list = None, parameters: dict = None) -> str:
         """
-        Create a new polygon and adds it to the list of polygons.
+        Create a new polygon and adds it to the list of polygons of the scene.
+
+        Optionally, a list of points and a dictionary of parameters can be specified to set as initial values on the
+        polygon. The list of points must define a simple/planar polygon, otherwise, an LineIntersectionError or
+        RepeatedPointError will be raised.
+
+        Args:
+            point_list: List with the points to add to the polygon. [[x,y],[x,y],...]
+            parameters: Parameters to set in the polygon. {parameter_name:value,...}
 
         Returns: id of the created polygon
         """
@@ -496,7 +504,7 @@ class Scene:
         new_polygon_id = f"Polygon {self.__polygon_id_count}"
 
         # create the polygon and return its id
-        polygon = Polygon(self, new_polygon_id)
+        polygon = Polygon(self, new_polygon_id, point_list, parameters)
         self.add_polygon(polygon)
         return new_polygon_id
 

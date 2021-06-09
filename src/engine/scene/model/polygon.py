@@ -45,9 +45,18 @@ class Polygon(Model):
     set to the third coordinate so the methods defined inside the class works.
     """
 
-    def __init__(self, scene, id_polygon):
+    def __init__(self, scene, id_polygon: str, point_list: list = None, parameters: dict = None):
         """
         Constructor of the class.
+
+        Generate a new polygon with or without data.
+
+        The default
+
+        Args:
+            id_polygon: Id to use to identify the polygon on the program.
+            point_list: List of initial points to use in the polygon. [[x,y],[x,y],...]
+            parameters: Dictionary with initial parameters to set in the polygon. {parameter_name: value,...}
         """
         super().__init__(scene)
 
@@ -62,9 +71,33 @@ class Polygon(Model):
         self.__lines_model = Lines(scene)  # model to use to draw the lines
         self.__last_line_model = DashedLines(scene)  # model to use to render the last line of the polygon
 
-        self.__parameters = {}
+        self.__parameters = parameters if parameters is not None else {}
 
         self.__is_planar = True
+
+        # initialize polygon if data is given
+        if point_list is not None:
+
+            # check for consistency on the data
+            test_line = LineString(point_list)
+            if not test_line.is_simple:
+                raise LineIntersectionError()
+
+            if len(point_list) != len(set(point_list)):
+                raise RepeatedPointError()
+
+            # prepare the data
+            point_array = np.array(point_list)
+            point_array = point_array.reshape((-1, 2))
+
+            points = np.empty((len(point_list), 3))
+            points[:, 0] = point_array[:, 0]
+            points[:, 1] = point_array[:, 1]
+            points[:, 2] = 0.5
+
+            self.__point_model = Points(scene, points)
+            self.__lines_model = Lines(scene, point_list=points)
+            self.update_last_line(False)
 
     def __check_intersection(self, points: list = None) -> bool:
         """

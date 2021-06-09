@@ -970,7 +970,11 @@ class Engine:
 
     def load_shapefile_file(self, filename: str) -> None:
         """
-        Load the data from a shapefile file and tell the scene to create a polygon with it.
+        Load the data from a shapefile file and tell the scene to create one or more polygons with the data.
+
+        In case of error, this method shows modal texts with messages.
+
+        The last polygon added is set as teh active polygon.
 
         Args:
             filename: Name of the shapefile file.
@@ -987,46 +991,19 @@ class Engine:
             self.set_modal_text('Error', 'Please load a model before loading polygons.')
             return
 
-        error_number = 0
+        try:
+            for polygon_points, params in zip(polygons_point_list, polygons_param_list):
+                polygon_id = self.scene.create_new_polygon(polygon_points, params)
+                self.gui_manager.add_imported_polygon(polygon_id)
+                self.set_active_polygon(polygon_id)
 
-        for ind in range(len(polygons_point_list)):
-            errors = False
+        except LineIntersectionError:
+            self.set_modal_text('Error', 'One of the polygon loaded intersect itself.')
+            return
 
-            new_polygon_id = self.scene.create_new_polygon()
-            self.set_active_polygon(new_polygon_id)
-
-            for k, v in list(polygons_param_list[ind].items()):
-                self.set_new_parameter_to_polygon(new_polygon_id, k, v)
-
-            # add the points to the polygon
-            for point in polygons_point_list[ind]:  # shapefile polygons are closed, so we do not need the last point
-
-                try:
-                    self.add_new_vertex_to_activate_polygon_using_real_coords(point[0], point[1])
-
-                except LineIntersectionError:
-                    errors = True
-                    self.scene.delete_polygon_by_id(new_polygon_id)
-                    self.set_active_polygon(None)
-                    error_number += 1
-                    break
-
-                except RepeatedPointError:
-                    errors = True
-                    self.scene.delete_polygon_by_id(new_polygon_id)
-                    self.set_active_polygon(None)
-                    error_number += 1
-                    break
-
-            if not errors:
-                # tell the gui manager that a new polygon was created
-                log.debug('add polygon to the gui frames')
-                self.gui_manager.add_imported_polygon(new_polygon_id)
-
-        if error_number == 0:
-            self.set_modal_text('Information', 'Shapefile loaded successfully')
-        else:
-            self.set_modal_text('Information', f'There was {error_number} polygons with errors that were not loaded.')
+        except RepeatedPointError:
+            self.set_modal_text('Error', 'One of the polygon loaded has repeated points.')
+            return
 
     def load_shapefile_file_with_dialog(self) -> None:
         """
