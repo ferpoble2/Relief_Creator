@@ -1,10 +1,6 @@
 @startuml
 !$file = "(F,#ff75ff) File"
 class NetCDF  <<$file>>{
-    + LONGITUDE_KEYS: list
-    + LATITUDE_KEYS: list
-    + HEIGHT_KEYS: list
-
     + read_info(filename): array, array, array
     + get_variables_from_grp(grp, key_values): list
 }

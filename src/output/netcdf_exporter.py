@@ -20,6 +20,9 @@ File with the class NetcdfExporter, class in charge of exporting information of 
 """
 
 from netCDF4 import Dataset
+from src.utils import HEIGHT_KEYS
+from src.error.export_error import ExportError
+
 import numpy as np
 
 
@@ -33,6 +36,40 @@ class NetcdfExporter:
         Constructor of the class
         """
         pass
+
+    def modify_heights_existent_netcdf_file(self,
+                                            heights: np.ndarray,
+                                            filename='./temp_model_file.nc'):
+        """
+        Modify the height array stored in an existent netcdf file.
+
+        The value stored in the variable who stores the information of the height of the map is changed using the
+        specified heights.
+
+        Args:
+            heights: New heights to store in the netcdf file.
+            filename: Directory + filename to modify. Default value is the one created for the read_info method
+                      from the Input module.
+
+        Returns: None
+        """
+        root_grp = Dataset(filename, 'r+')
+        grp_keys = root_grp.variables.keys()
+
+        # Check for the key to be in the object
+        height_key = None
+        for key in HEIGHT_KEYS:
+            if key in grp_keys:
+                height_key = key
+                break
+
+        if height_key is None:
+            raise ExportError(3)
+
+        height_shape = root_grp.variables[height_key].shape
+        root_grp.variables[height_key][:] = heights.reshape(height_shape)
+        root_grp.variables[height_key].actual_range = np.array([np.nanmin(heights), np.nanmax(heights)])
+        root_grp.close()
 
     def export_model_vertices_to_netcdf_file(self,
                                              vertices: np.ndarray,

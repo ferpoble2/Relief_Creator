@@ -20,6 +20,7 @@ File that contains the main class of the program.
 """
 
 import os
+import shutil
 import easygui
 from src.utils import get_logger
 
@@ -44,7 +45,13 @@ class Program:
 
         # PROGRAM VARIABLES
         # -----------------
+
+        # Default color file to use when loading maps on the application.
         self.__CPT_file = os.path.join(os.getcwd(), 'resources', 'colors', 'default.cpt')
+
+        # File to use when making a copy of the loaded model.
+        # This copy helps the export process of the models, changing only the height information of the file.
+        self.__temp_model_file = './temp_model_file.nc'
 
         # Map 2d variables
         # ----------------
@@ -62,32 +69,6 @@ class Program:
         # do the logic of the initialization
         # ----------------------------------
         self.__engine.initialize(self.__engine, self)
-
-    def get_view_mode(self) -> str:
-        """
-        Get the view mode used by the program.
-
-        Values can be 2D or 3D in string format.
-
-        Returns: view mode being used.
-        """
-        return self.__view_mode
-
-    def set_view_mode_2D(self) -> None:
-        """
-        Set the view mode of the program to 2D.
-
-        Returns: None
-        """
-        self.__view_mode = '2D'
-
-    def set_view_mode_3D(self) -> None:
-        """
-        Set the view mode of the program to 3D.
-
-        Returns: None
-        """
-        self.__view_mode = '3D'
 
     def add_zoom(self) -> None:
         """
@@ -112,6 +93,43 @@ class Program:
 
         self.set_cpt_file(path_color_file)
         self.__engine.update_scene_models_colors()
+
+    def check_model_temp_file_exists(self) -> bool:
+        """
+        Check if the temporary file used to store the data of the loaded model on the scene exists.
+
+        Returns: True if the file exists, False otherwise.
+        """
+        return os.path.exists(self.get_model_temp_file())
+
+    def copy_model_temp_file(self, target_directory: str) -> None:
+        """
+        Copy the temporary file used to store the model data to the target directory.
+
+        Args:
+            target_directory: directory and filename to store the copy of the temporary file.
+
+        Returns: None
+        """
+        shutil.copy(self.get_model_temp_file(), target_directory)
+
+    def create_model_temp_file(self, reference_file: str) -> None:
+        """
+        Creates a temporary file to store the model data inside.
+
+        The reference file must be a netcdf file with the same information than the model that is being showed in
+        the program.
+
+        This temporary file will be used in the export process of the models.
+
+        It can be only one temporary file on the program.
+
+        Args:
+            reference_file: File to use as the base to the temporary file. Must be a netcdf file.
+
+        Returns: None
+        """
+        shutil.copy(reference_file, self.get_model_temp_file())
 
     def get_active_model(self) -> str:
         """
@@ -153,6 +171,26 @@ class Program:
         Returns: List with the position of the map.
         """
         return self.__map_position
+
+    def get_model_temp_file(self) -> str:
+        """
+        Get the directory and filename of the file used as temporary to store the model information.
+
+        The temporary file initially stores the same data as the model loaded on the program.
+
+        Returns: String with the directory and filename of the temporary file used for the models.
+        """
+        return self.__temp_model_file
+
+    def get_view_mode(self) -> str:
+        """
+        Get the view mode used by the program.
+
+        Values can be 2D or 3D in string format.
+
+        Returns: view mode being used.
+        """
+        return self.__view_mode
 
     def get_zoom_level(self) -> float:
         """
@@ -215,6 +253,45 @@ class Program:
         self.__engine.set_task_with_loading_frame(task_in_loading)
 
     # noinspection PyUnresolvedReferences
+    def open_file_save_box_dialog(self, message: str, title: str, default_filename: str) -> str:
+        """
+        Open the file save_box dialog to save new file in the selected directory.
+
+        Args:
+            message: Message to show to the user.
+            title: Title of the save box.
+            default_filename: Default name to use in the file.
+
+        Returns: Path to the selected file. (hard path, not relative)
+        """
+        file = easygui.filesavebox(message,
+                                   title,
+                                   default_filename)
+
+        if file is None:
+            raise ValueError('Directory not selected')
+
+        return file
+
+    def open_openbox_dialog(self, message) -> str:
+        """
+        Open a openfile dialog.
+
+        Raise FileNotFound if file is None.
+
+        Args:
+            message: Message to show in the openbox.
+
+        Returns: File selected by the user.
+        """
+        path_to_file = easygui.fileopenbox(message)
+        log.debug(f"Path to file: {path_to_file}")
+
+        if path_to_file is None:
+            raise FileNotFoundError('File not selected.')
+
+        return path_to_file
+
     def process_arguments(self, arguments: 'argparse.Namespace') -> None:
         """
         Parse the arguments and do the actions related to each command.
@@ -228,6 +305,18 @@ class Program:
         if 'model' in arguments and arguments.model is not None:
             log.debug('Loading model from command line  using default color file...')
             self.__engine.load_netcdf_file(self.get_cpt_file(), arguments.model)
+
+    def remove_temp_files(self) -> None:
+        """
+        Remove temporary files generated by the program.
+
+        This method must be called at the end of the program, otherwise it will interfere with the logic of the
+        program.
+
+        Returns: None
+        """
+        if os.path.exists(self.get_model_temp_file()):
+            os.remove(self.get_model_temp_file())
 
     def reset_zoom_level(self) -> None:
         """
@@ -316,41 +405,18 @@ class Program:
         """
         self.__map_position = new_position
 
-    def open_openbox_dialog(self, message) -> str:
+    def set_view_mode_2D(self) -> None:
         """
-        Open a openfile dialog.
+        Set the view mode of the program to 2D.
 
-        Raise FileNotFound if file is None.
-
-        Args:
-            message: Message to show in the openbox.
-
-        Returns: File selected by the user.
+        Returns: None
         """
-        path_to_file = easygui.fileopenbox(message)
-        log.debug(f"Path to file: {path_to_file}")
+        self.__view_mode = '2D'
 
-        if path_to_file is None:
-            raise FileNotFoundError('File not selected.')
-
-        return path_to_file
-
-    def open_file_save_box_dialog(self, message: str, title: str, default_filename: str) -> str:
+    def set_view_mode_3D(self) -> None:
         """
-        Open the file save_box dialog to save new file in the selected directory.
+        Set the view mode of the program to 3D.
 
-        Args:
-            message: Message to show to the user.
-            title: Title of the save box.
-            default_filename: Default name to use in the file.
-
-        Returns: Path to the selected file. (hard path, not relative)
+        Returns: None
         """
-        file = easygui.filesavebox(message,
-                                   title,
-                                   default_filename)
-
-        if file is None:
-            raise ValueError('Directory not selected')
-
-        return file
+        self.__view_mode = '3D'

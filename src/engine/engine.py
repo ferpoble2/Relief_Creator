@@ -72,6 +72,28 @@ class Engine:
         self.__thread_manager = ThreadManager()
         self.__task_manager = TaskManager()
 
+    def add_new_vertex_to_activate_polygon_using_real_coords(self, position_x: float, position_y: float) -> None:
+        """
+        Add a new point to the polygon using map coordinates.
+
+        The points added using this method will not be modified before adding them to the polygons.
+
+        Args:
+            position_x: Position on the X axis.
+            position_y: Position on the Y axis. (from bottom to top)
+
+        Returns: None
+        """
+        try:
+            self.scene.add_new_vertex_to_active_polygon_using_map_coords(position_x, position_y)
+        except RepeatedPointError:
+            log.info('Handling repeated point.')
+            self.set_modal_text('Error', 'Point already exist in polygon.')
+
+        except LineIntersectionError:
+            log.info('Handling line intersection.')
+            self.set_modal_text('Error', 'Line intersect another one already in the polygon.')
+
     def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
         """
         Ask the scene to add a vertex in the active polygon of the engine.
@@ -93,28 +115,6 @@ class Engine:
         try:
             self.scene.add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
 
-        except RepeatedPointError:
-            log.info('Handling repeated point.')
-            self.set_modal_text('Error', 'Point already exist in polygon.')
-
-        except LineIntersectionError:
-            log.info('Handling line intersection.')
-            self.set_modal_text('Error', 'Line intersect another one already in the polygon.')
-
-    def add_new_vertex_to_activate_polygon_using_real_coords(self, position_x: float, position_y: float) -> None:
-        """
-        Add a new point to the polygon using map coordinates.
-
-        The points added using this method will not be modified before adding them to the polygons.
-
-        Args:
-            position_x: Position on the X axis.
-            position_y: Position on the Y axis. (from bottom to top)
-
-        Returns: None
-        """
-        try:
-            self.scene.add_new_vertex_to_active_polygon_using_map_coords(position_x, position_y)
         except RepeatedPointError:
             log.info('Handling repeated point.')
             self.set_modal_text('Error', 'Point already exist in polygon.')
@@ -401,11 +401,27 @@ class Engine:
                     'Relief Creator',
                     'Model')
 
-            # ask the scene for information
+            # add the .nc extension if the selected directory does not have it.
+            if directory_file[-3:] != '.nc':
+                directory_file += '.nc'
+
+            # ask the scene for information of the model
             vertices = self.scene.get_map2dmodel_vertices_array(model_id)
 
-            # ask the output to write the file
-            NetcdfExporter().export_model_vertices_to_netcdf_file(vertices, directory_file)
+            # check if the temporary file exists, if it exists then store the new data on the file,
+            # otherwise, show an error message.
+            if self.program.check_model_temp_file_exists():
+                NetcdfExporter().modify_heights_existent_netcdf_file(vertices[:, :, 2],
+                                                                     self.program.get_model_temp_file())
+            else:
+                self.set_modal_text('Error', 'Temporary file storing the original data not found, try loading the '
+                                             'map again.')
+                return
+
+            # export temporary file to the directory selected
+            self.program.copy_model_temp_file(directory_file)
+
+            # show success window  to the user
             self.set_modal_text('Information', 'Model exported successfully')
 
         except TypeError:
@@ -870,6 +886,53 @@ class Engine:
         self.program.less_zoom()
         self.scene.update_models_projection_matrix()
 
+    def load_netcdf_file(self, path_color_file: str, path_model: str, then: callable = lambda: None) -> None:
+        """
+        Load a netcdf file on the engine, refreshing the scene and showing it.
+
+        This method also creates a copy of the loaded file in the directory specified by the program module. This file
+        is used in the export process of the maps.
+
+        This method executes asynchronously, to keep executing things in the same thread use the then  function.
+
+        Args:
+            path_color_file: Path to the color file to use.
+            path_model: Path to the model file (NetCDF) to use.
+            then: Function to call after the execution of the method.
+
+        Returns: none
+        """
+
+        # copy the file to the temp file
+        self.program.create_model_temp_file(path_model)
+
+        # noinspection PyMissingOrEmptyDocstring
+        def then_routine(model_id):
+            self.program.set_active_model(model_id)
+            self.program.set_loading(False)
+
+            then()
+
+        self.program.set_loading(True)
+        self.set_loading_message("Please wait a moment...")
+
+        try:
+            self.scene.refresh_with_model_2d_async(path_color_file, path_model, then_routine)
+
+        except OSError:
+            self.program.set_loading(False)
+            self.set_modal_text('Error', 'Error reading selected file. Is the file a netcdf file?')
+
+        except NetCDFImportError as e:
+            self.program.set_loading(False)
+            self.set_modal_text('Error', f'{e.get_code_message()}\n\n'
+                                         f'Current keys on the file are: {list(e.data)}')
+
+        except KeyError:
+            self.program.set_loading(False)
+            self.set_modal_text('Error', 'Error reading selected file. Is the key used in the file inside the '
+                                         'list of keys?')
+
     def load_netcdf_file_with_dialog(self) -> None:
         """
         Open a dialog to load a new netcdf model into the program.
@@ -878,9 +941,32 @@ class Engine:
         """
         try:
             self.program.load_netcdf_file_with_dialog()
+
         except FileNotFoundError as e:
             log.exception(e)
             self.set_modal_text('Error', 'File not loaded.')
+
+    def load_preview_interpolation_area(self, distance: float) -> None:
+        """
+        Ask the scene to load the interpolation area for the active polygon.
+
+        Args:
+            distance: Distance to use to calculate the interpolation area.
+
+        Returns: None
+        """
+        if not self.scene.is_polygon_planar(self.get_active_polygon_id()):
+            self.set_modal_text('Error', 'Polygon selected is not planar.')
+            return
+
+        try:
+            self.scene.load_preview_interpolation_area(distance, self.get_active_polygon_id())
+
+        except SceneError as e:
+
+            if e.code == 2:
+                self.set_modal_text('Error', 'The polygon must have at least 3 vertices to load the '
+                                             'interpolation area.')
 
     def load_shapefile_file(self, filename: str) -> None:
         """
@@ -942,28 +1028,6 @@ class Engine:
         else:
             self.set_modal_text('Information', f'There was {error_number} polygons with errors that were not loaded.')
 
-    def load_preview_interpolation_area(self, distance: float) -> None:
-        """
-        Ask the scene to load the interpolation area for the active polygon.
-
-        Args:
-            distance: Distance to use to calculate the interpolation area.
-
-        Returns: None
-        """
-        if not self.scene.is_polygon_planar(self.get_active_polygon_id()):
-            self.set_modal_text('Error', 'Polygon selected is not planar.')
-            return
-
-        try:
-            self.scene.load_preview_interpolation_area(distance, self.get_active_polygon_id())
-
-        except SceneError as e:
-
-            if e.code == 2:
-                self.set_modal_text('Error', 'The polygon must have at least 3 vertices to load the '
-                                             'interpolation area.')
-
     def load_shapefile_file_with_dialog(self) -> None:
         """
         Call the program to open the dialog to load a shapefile file.
@@ -972,6 +1036,7 @@ class Engine:
         """
         try:
             self.program.load_shapefile_file_with_dialog()
+
         except FileNotFoundError as e:
             log.exception(e)
             self.set_modal_text('Error', 'File not loaded.')
@@ -1040,47 +1105,6 @@ class Engine:
         """
         return read_info(filename)
 
-    def load_netcdf_file(self, path_color_file: str, path_model: str, then: callable = lambda: None) -> None:
-        """
-        Refresh the scene creating a 2D model with the parameters given.
-
-        This method executes asynchronously, to keep executing things in the same thread use the then  function.
-
-        Args:
-            path_color_file: Path to the color file to use.
-            path_model: Path to the model file (NetCDF) to use.
-            then: Function to call after the execution of the method.
-
-        Returns: none
-        """
-
-        # noinspection PyMissingOrEmptyDocstring
-        def then_routine(model_id):
-            self.program.set_active_model(model_id)
-            self.program.set_loading(False)
-
-            then()
-
-        self.program.set_loading(True)
-        self.set_loading_message("Please wait a moment...")
-
-        try:
-            self.scene.refresh_with_model_2d_async(path_color_file, path_model, then_routine)
-
-        except OSError:
-            self.program.set_loading(False)
-            self.set_modal_text('Error', 'Error reading selected file. Is the file a netcdf file?')
-
-        except NetCDFImportError as e:
-            self.program.set_loading(False)
-            self.set_modal_text('Error', f'{e.get_code_message()}\n\n'
-                                         f'Current keys on the file are: {list(e.data)}')
-
-        except KeyError:
-            self.program.set_loading(False)
-            self.set_modal_text('Error', 'Error reading selected file. Is the key used in the file inside the '
-                                         'list of keys?')
-
     def reload_models(self) -> None:
         """
         Ask the Scene to reload the models to better the definitions.
@@ -1136,7 +1160,11 @@ class Engine:
             self.__process_manager.update_process()
             self.render.on_loop([lambda: self.scene.draw()])
 
+        # terminate process external to the engine
         glfw.terminate()
+
+        # delete temporary files created by the program
+        self.program.remove_temp_files()
 
     def set_active_polygon(self, polygon_id: str or None) -> None:
         """
