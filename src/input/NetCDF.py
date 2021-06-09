@@ -21,14 +21,10 @@ File that contains the functions to read files in NetCDF4 format.
 from typing import Union
 from src.utils import get_logger
 from src.error.netcdf_import_error import NetCDFImportError
+from src.utils import LATITUDE_KEYS, LONGITUDE_KEYS, HEIGHT_KEYS
 
 import numpy as np
 from netCDF4 import Dataset
-
-# Variables to use to check for data in the netcdf files
-LONGITUDE_KEYS = ['x', 'lon']
-LATITUDE_KEYS = ['y', 'lat']
-HEIGHT_KEYS = ['z', 'Band1']
 
 log = get_logger(module='NETCDF')
 
@@ -115,7 +111,7 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
 
 if __name__ == "__main__":
     # filename = "../../test/input/files/test_file_2.nc"
-    filename = "./test_inputs/ETOPO_IceSurfacec_6m.nc"
+    filename = "../../resources/sample_netcdf/test.nc"
     rootgrp = Dataset(filename, "r", format="NETCDF4")
 
     print("Dimensiones del archivo:")
@@ -137,3 +133,5 @@ if __name__ == "__main__":
 
     print("Z values.")
     print(Z)
+
+    rootgrp.close()
