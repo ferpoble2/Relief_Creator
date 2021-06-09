@@ -120,61 +120,9 @@ class Polygon(Model):
 
         Returns: Boolean representing if point already exist in the polygon.
         """
-        point_list = self.get_point_list()
-
-        for point_ind in range(int(len(point_list) / 3)):
-            if point_list[point_ind * 3] == x and \
-                    point_list[point_ind * 3 + 1] == y and \
-                    point_list[point_ind * 3 + 2] == z:
-                return True
-
-        return False
-
-    def __get_intersection(self, line_x_1: float, line_y_1: float, line_x_2: float, line_y_2: float) -> list:
-        """
-        Get the intersection of a line with the lines already on the polygon.
-
-        Args:
-            line_x_1: x axis of the beginning of the line
-            line_y_1: y axis of the beginning of the line
-            line_x_2: x axis of the end of the line
-            line_y_2: y axis of the end of the line
-
-        Returns: The type of intersection.
-        """
-        # do nothing if there is no lines
-        if self.get_point_number() < 2:
-            log.debug('Not enough points to get a collision.')
-            return []
-
-        # arrange the points
-        points = np.array(self.get_point_list())
-        points = points.reshape((-1, 3))
-
-        # generate the new line
-        new_line = LineString([(line_x_1, line_y_1), (line_x_2, line_y_2)])
-
-        # generate the segments
-        segments = []
-        for point_ind in range(len(points)):
-
-            if point_ind == len(points) - 1:
-                segments.append(LineString([(points[point_ind][0], points[point_ind][1]),
-                                            (points[0][0], points[0][1])]))
-
-            else:
-                segments.append(LineString([(points[point_ind][0], points[point_ind][1]),
-                                            (points[point_ind + 1][0], points[point_ind + 1][1])]))
-
-        # check if the line intersect the segments
-        intersections = []
-        for segment in segments:
-
-            # check if intersects
-            if segment.intersects(new_line):
-                intersections.append(segment.intersection(new_line))
-
-        return intersections
+        point_list_array = np.array(self.get_point_list() + [x, y, z])
+        point_list_array = point_list_array.reshape((-1, 3))
+        return len(np.unique(point_list_array, axis=0)) != len(point_list_array)
 
     def __str__(self):
         """
