@@ -39,7 +39,7 @@ class TestAddPoints(unittest.TestCase):
 
         # initialize variables
         self.engine.should_use_threads(False)
-        self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
+        self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
                                           'resources/test_resources/netcdf/test_model_2.nc')
 
     def test_add_points_normal(self):
@@ -111,7 +111,7 @@ class TestPlanarity(unittest.TestCase):
 
         # initialize variables
         self.engine.should_use_threads(False)
-        self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
+        self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
                                           'resources/test_resources/netcdf/test_model_2.nc')
 
         pol_planar = self.engine.create_new_polygon()

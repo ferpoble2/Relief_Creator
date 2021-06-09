@@ -45,7 +45,7 @@ class TestMixedFilters(unittest.TestCase):
     def test_non_existent_filter(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
+        self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
                                           'resources/test_resources/netcdf/test_file_1.nc')
 
         # load polygon
@@ -75,7 +75,7 @@ class TestMixedFilters(unittest.TestCase):
     def test_height_contain(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
+        self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
                                           'resources/test_resources/netcdf/test_file_1.nc')
 
         # load polygon

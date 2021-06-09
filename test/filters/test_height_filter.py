@@ -44,7 +44,7 @@ class TestHeightGreaterFilter(unittest.TestCase):
     def test_normal_application_less_than(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.refresh_with_model_2d('resources/test_resources/cpt/colors_0_100_200.cpt',
+        self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load polygon
@@ -75,7 +75,7 @@ class TestHeightGreaterFilter(unittest.TestCase):
     def test_normal_application_greater_than(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.refresh_with_model_2d('resources/test_resources/cpt/colors_0_100_200.cpt',
+        self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load polygon
@@ -106,7 +106,7 @@ class TestHeightGreaterFilter(unittest.TestCase):
     def test_filters_not_in_map(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.refresh_with_model_2d('resources/test_resources/cpt/colors_0_100_200.cpt',
+        self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons

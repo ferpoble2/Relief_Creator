@@ -44,13 +44,13 @@ class TestModifyHeight(unittest.TestCase):
 
         # initialize variables
         self.engine.should_use_threads(False)
-        self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
+        self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
                                           'resources/test_resources/netcdf/test_model_2.nc')
 
     def test_linear_transformation(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.refresh_with_model_2d('resources/test_resources/cpt/cpt_1.cpt',
+        self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
                                           'resources/test_resources/netcdf/test_file_1.nc')
 
         # load list of polygons

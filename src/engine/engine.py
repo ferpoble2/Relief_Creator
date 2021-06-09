@@ -1040,7 +1040,7 @@ class Engine:
         """
         return read_info(filename)
 
-    def refresh_with_model_2d(self, path_color_file: str, path_model: str, then: callable = lambda: None) -> None:
+    def load_netcdf_file(self, path_color_file: str, path_model: str, then: callable = lambda: None) -> None:
         """
         Refresh the scene creating a 2D model with the parameters given.
 

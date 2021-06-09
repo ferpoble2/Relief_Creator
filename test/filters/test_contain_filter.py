@@ -45,7 +45,7 @@ class TestContainsFilter(unittest.TestCase):
     def test_normal_application_is_not_in(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.refresh_with_model_2d('resources/test_resources/cpt/colors_0_100_200.cpt',
+        self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
@@ -76,7 +76,7 @@ class TestContainsFilter(unittest.TestCase):
     def test_normal_application_is_in(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.refresh_with_model_2d('resources/test_resources/cpt/colors_0_100_200.cpt',
+        self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
@@ -108,7 +108,7 @@ class TestContainsFilter(unittest.TestCase):
     def test_polygon_not_in_map_is_in_filter(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.refresh_with_model_2d('resources/test_resources/cpt/colors_0_100_200.cpt',
+        self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
@@ -140,7 +140,7 @@ class TestContainsFilter(unittest.TestCase):
     def test_polygon_not_in_map_is_not_in_filter(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.refresh_with_model_2d('resources/test_resources/cpt/colors_0_100_200.cpt',
+        self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
