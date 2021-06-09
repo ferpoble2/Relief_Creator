@@ -40,6 +40,9 @@ log = get_logger(module="POLYGON")
 class Polygon(Model):
     """
     Class in charge of the polygons of the program.
+
+    Default values for z-axis coordinate of points in the polygon is 0.5. Unless in 3D mode, this value must be
+    set to the third coordinate so the methods defined inside the class works.
     """
 
     def __init__(self, scene, id_polygon):
