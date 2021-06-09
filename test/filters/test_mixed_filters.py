@@ -99,7 +99,7 @@ class TestMixedFilters(unittest.TestCase):
 
         # read data and compare
         info_written = read_info('resources/test_resources/temp/temp_transformation_mixed.nc')
-        info_expected = read_info('resources/test_resources/expected_data/netcdf/expected_transformation_2.nc.nc')
+        info_expected = read_info('resources/test_resources/expected_data/netcdf/expected_transformation_2.nc')
 
         self.assertTrue((info_written[0] == info_expected[0]).all())
         self.assertTrue((info_written[1] == info_expected[1]).all())
