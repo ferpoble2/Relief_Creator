@@ -155,7 +155,10 @@ class Engine:
             self.set_modal_text('Error', 'Polygon selected is not planar.')
             return
 
-        self.scene.apply_smoothing_algorithm(polygon_id, model_id, distance_to_polygon)
+        self.set_loading_message('Applying smoothing, This may take a while.')
+        self.set_task_with_loading_frame(lambda: self.scene.apply_smoothing_algorithm(polygon_id,
+                                                                                      model_id,
+                                                                                      distance_to_polygon))
 
     def are_frames_fixed(self) -> bool:
         """
@@ -979,14 +982,18 @@ class Engine:
             self.set_modal_text('Error', 'Polygon selected is not planar.')
             return
 
-        try:
-            self.scene.load_preview_interpolation_area(distance, self.get_active_polygon_id())
+        def load_preview_logic():
+            """Logic to load the preview of the polygons."""
+            try:
+                self.scene.load_preview_interpolation_area(distance, self.get_active_polygon_id())
 
-        except SceneError as e:
+            except SceneError as e:
+                if e.code == 2:
+                    self.set_modal_text('Error', 'The polygon must have at least 3 vertices to load the '
+                                                 'interpolation area.')
 
-            if e.code == 2:
-                self.set_modal_text('Error', 'The polygon must have at least 3 vertices to load the '
-                                             'interpolation area.')
+        self.set_loading_message('Loading preview, this may take a while.')
+        self.set_task_with_loading_frame(load_preview_logic)
 
     def load_shapefile_file(self, filename: str) -> None:
         """
