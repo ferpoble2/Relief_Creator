@@ -104,6 +104,18 @@
   {
    "optionDest": "hiddenimports",
    "value": "skimage.filters.rank.core_cy_3d"
+  },
+  {
+   "optionDest": "datas",
+   "value": "<project_directory>/resources/height_keys.json;resources/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "<project_directory>/resources/latitude_keys.json;resources/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "<project_directory>/resources/longitude_keys.json;resources/"
   }
  ],
  "nonPyinstallerOptions": {
