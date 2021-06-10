@@ -25,7 +25,6 @@ from shapely.ops import triangulate
 from typing import List
 from matplotlib import path
 from scipy import interpolate as interpolate_scipy
-from scipy.spatial.distance import cdist
 from skimage.filters import gaussian as gaussian_filter
 
 from src.utils import interpolate
@@ -340,8 +339,8 @@ class TransformationHelper:
         if len(heights_cut.reshape(-1)) == 0:
             return np.nan, np.nan
 
-        maximum = np.max(heights_cut[flags])
-        minimum = np.min(heights_cut[flags])
+        maximum = np.nanmax(heights_cut[flags])
+        minimum = np.nanmin(heights_cut[flags])
 
         return maximum, minimum
 
@@ -462,10 +461,11 @@ class TransformationHelper:
                                                       filter_data)
 
         # modify the height linearly
-        current_min_height = np.min(height_cut[filtered_flags])
-        current_max_height = np.max(height_cut[filtered_flags])
+        current_min_height = np.nanmin(height_cut[filtered_flags])
+        current_max_height = np.nanmax(height_cut[filtered_flags])
 
-        new_height = interpolate(height_cut[filtered_flags], current_min_height, current_max_height, new_min_height,
+        new_height = interpolate(height_cut[filtered_flags], current_min_height, current_max_height,
+                                 new_min_height,
                                  new_max_height,
                                  False)
 
