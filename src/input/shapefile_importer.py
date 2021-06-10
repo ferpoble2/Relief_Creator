@@ -56,30 +56,34 @@ class ShapefileImporter:
         parameter_list = []
 
         for shape_record in sf.shapeRecords():
-            if shape_record.shape.shapeType == shapefile.POLYGON:
+            # Add the points to the list of points to return
+            polygon_points = shape_record.shape.points
+            if polygon_points[0] == polygon_points[-1]:
+                point_list.append(polygon_points[:-1])
+            else:
+                point_list.append(polygon_points)
 
-                # dont store the last points 'cause it's the same than the first
-                point_list.append(shape_record.shape.points[:-1])
-
-                record_dict = shape_record.record.as_dict()
-                for k, v in record_dict.items():
-                    # convert the parameter to the types managed for the exporter
-                    if v is None:
-                        record_dict[k] = ''
-                    elif type(v) == bool:
-                        pass
-                    elif is_numeric(str(v)):
-                        record_dict[k] = float(v)
-                    else:
-                        record_dict[k] = str(v)
-                parameter_list.append(record_dict)
+            # Add the parameters to the list of dictionary parameters to return
+            record_dict = shape_record.record.as_dict()
+            for k, v in record_dict.items():
+                if v is None:
+                    record_dict[k] = ''
+                elif type(v) == bool:
+                    pass
+                elif is_numeric(str(v)):
+                    record_dict[k] = float(v)
+                else:
+                    record_dict[k] = str(v)
+            parameter_list.append(record_dict)
 
         return point_list, parameter_list
+
 
 if __name__ == '__main__':
     importer = ShapefileImporter()
 
-    points, parameters = importer.get_polygon_information('../../test/input/files/polygons/shape_multiple_parameters.shp')
+    points, parameters = importer.get_polygon_information(
+        '../../test/input/files/polygons/shape_multiple_parameters.shp')
 
     data = {
         'points': points,
@@ -87,5 +91,6 @@ if __name__ == '__main__':
     }
 
     import json
+
     with open('../../test/input/files/polygons/shapefile_data_parameters.json', 'w') as f:
         json.dump(data, f)
