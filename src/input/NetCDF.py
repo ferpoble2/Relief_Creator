@@ -73,26 +73,34 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
     # ask if the file have the values defined as ranges and spacing/dimensions
     if x is None:
         x_range = np.array(get_variables_from_grp(root_grp, ['x_range']))
-        if x_range is None:
-            raise NetCDFImportError(1, LONGITUDE_KEYS)
+        if x_range == np.array(None):
+            raise NetCDFImportError(3, {'accepted_keys': LONGITUDE_KEYS,
+                                        'file_keys': root_grp.variables.keys()})
 
         spacing = np.array(get_variables_from_grp(root_grp, ['spacing']))
-        if spacing is None:
-            raise NetCDFImportError(1, LONGITUDE_KEYS)
+        if spacing == np.array(None):
+            raise NetCDFImportError(3, {'accepted_keys': LONGITUDE_KEYS,
+                                        'file_keys': root_grp.variables.keys()})
 
         x = np.arange(x_range[0], x_range[1], spacing[0]).tolist() + [x_range[1]]
 
     # ask if the file have the values defined as ranges and spacing/dimensions
     if y is None:
         y_range = np.array(get_variables_from_grp(root_grp, ['y_range']))
-        if y_range is None:
-            raise NetCDFImportError(1, LATITUDE_KEYS)
+        if y_range == np.array(None):
+            raise NetCDFImportError(2, {'accepted_keys': LATITUDE_KEYS,
+                                        'file_keys': root_grp.variables.keys()})
 
         spacing = np.array(get_variables_from_grp(root_grp, ['spacing']))
-        if spacing is None:
-            raise NetCDFImportError(1, LATITUDE_KEYS)
+        if spacing == np.array(None):
+            raise NetCDFImportError(2, {'accepted_keys': LATITUDE_KEYS,
+                                        'file_keys': root_grp.variables.keys()})
 
         y = np.arange(y_range[0], y_range[1], spacing[1]).tolist() + [y_range[1]]
+
+    if z is None:
+        raise NetCDFImportError(4, {'accepted_keys': HEIGHT_KEYS,
+                                    'file_keys': root_grp.variables.keys()})
 
     # shape the arrays to work
     x = np.array(x)
@@ -111,7 +119,7 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
 
 if __name__ == "__main__":
     # filename = "../../test/input/files/test_file_2.nc"
-    filename = "../../resources/sample_netcdf/test.nc"
+    filename = "../../resources/sample_netcdf/38Ma_HotSpot.nc"
     rootgrp = Dataset(filename, "r", format="NETCDF4")
 
     print("Dimensiones del archivo:")

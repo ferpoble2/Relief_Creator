@@ -925,8 +925,28 @@ class Engine:
 
         except NetCDFImportError as e:
             self.program.set_loading(False)
-            self.set_modal_text('Error', f'{e.get_code_message()}\n\n'
-                                         f'Current keys on the file are: {list(e.data)}')
+
+            if e.code == 2:
+                self.set_modal_text('Error',
+                                    f'{e.get_code_message()}\n\n'
+                                    f'Current keys on the file are: {list(e.data["file_keys"])}\n\n'
+                                    f'Keys accepted by the program for latitude are: {list(e.data["accepted_keys"])}'
+                                    f'\n\nTry adding a key to the latitude_keys.json file located in the resources '
+                                    f'folder and restarting the application.')
+            if e.code == 3:
+                self.set_modal_text('Error',
+                                    f'{e.get_code_message()}\n\n'
+                                    f'Current keys on the file are: {list(e.data["file_keys"])}\n\n'
+                                    f'Keys accepted by the program for longitude are: {list(e.data["accepted_keys"])}'
+                                    f'\n\nTry adding a key to the longitude_keys.json file located in the resources '
+                                    f'folder and restarting the application.')
+            if e.code == 4:
+                self.set_modal_text('Error',
+                                    f'{e.get_code_message()}\n\n'
+                                    f'Current keys on the file are: {list(e.data["file_keys"])}\n\n'
+                                    f'Keys accepted by the program for height are: {list(e.data["accepted_keys"])}'
+                                    f'\n\nTry adding a key to the height_keys.json file located in the resources folder'
+                                    f' and restarting the application.')
 
         except KeyError:
             self.program.set_loading(False)
