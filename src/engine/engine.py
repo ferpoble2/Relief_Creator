@@ -167,37 +167,57 @@ class Engine:
         """
         return Settings.FIXED_FRAMES
 
-    def calculate_max_min_height(self, model_id: str, polygon_id: str) -> tuple:
+    def calculate_max_min_height(self, model_id: str, polygon_id: str, return_data: list) -> None:
         """
         Ask the scene for max and min values of the vertices that are inside the polygon.
 
+        This method is executed asynchronously, returning immediately. When the asynchronous task end, the calculated
+         values will be stored in the return_data variable. In case of error, [None, None] will be set in the
+         return_data variable.
+
+        This method is asynchronous, but it does not use threads or new process, it just set the execution of the code
+        some frames in the future to give time to the Loading windows to appear on the program.
+
         Args:
+            return_data: List with length 2 where to store the data.
             model_id: ID of the model to use.
             polygon_id: ID of the polygon to use.
 
         Returns: tuple with the max and min value.
         """
+        assert len(return_data) == 2, 'List to use as return value must be of length 2'
 
-        try:
-            return self.scene.calculate_max_min_height(model_id, polygon_id)
+        def asynchronous_task(return_values):
+            """Task to execute in a future frame"""
 
-        except SceneError as e:
-            if e.code == 1:
-                self.set_modal_text('Error',
-                                    'The polygon is not planar. Try using a planar polygon.')
-                return None, None
-            elif e.code == 2:
-                self.set_modal_text('Error',
-                                    'The polygon must have at least 3 points to be able to '
-                                    'calculate the information.')
-                return None, None
-            elif e.code == 3:
-                self.set_modal_text('Error',
-                                    'The current model is not supported to use to update the '
-                                    'height of the vertices, try using another type of model.')
-                return None, None
-            else:
-                raise e
+            try:
+                max_value, min_value = self.scene.calculate_max_min_height(model_id, polygon_id)
+                return_values[0] = max_value
+                return_values[1] = min_value
+
+            except SceneError as e:
+                if e.code == 1:
+                    self.set_modal_text('Error',
+                                        'The polygon is not planar. Try using a planar polygon.')
+                    return_values[0] = None
+                    return_values[1] = None
+                elif e.code == 2:
+                    self.set_modal_text('Error',
+                                        'The polygon must have at least 3 points to be able to '
+                                        'calculate the information.')
+                    return_values[0] = None
+                    return_values[1] = None
+                elif e.code == 3:
+                    self.set_modal_text('Error',
+                                        'The current model is not supported to use to update the '
+                                        'height of the vertices, try using another type of model.')
+                    return_values[0] = None
+                    return_values[1] = None
+                else:
+                    raise e
+
+        self.set_loading_message('Calculating heights...')
+        self.set_task_with_loading_frame(lambda: asynchronous_task(return_data))
 
     def change_3D_model_height_unit(self, model_id: str, measure_unit: str) -> None:
         """

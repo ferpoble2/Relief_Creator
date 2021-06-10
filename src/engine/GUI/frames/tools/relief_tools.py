@@ -66,6 +66,13 @@ class ReliefTools:
         self.__filter_name_list: List[str] = ['Height <=', 'Height >= ', 'Is is ', 'Is not in ']
         self.__filters: List[Filter] = []  # filters to apply on the polygon if the interpolation is triggered
 
+        # auxiliary variables
+
+        # Variable that stores the values of the minimum and maximum height inside a polygon.
+        # The values are [None, None] if there is nothing being calculated, ['waiting', 'waiting'] when the values
+        # are being calculated, and [int, int] once the values are calculated.
+        self.__max_min_data = [None, None]
+
     def __get_filters_dictionary_list(self) -> list:
         """
         Covert the filters to a list of tuples to pass them to the GUIManager.
@@ -183,6 +190,12 @@ class ReliefTools:
                 'min_height': None
             }
 
+        # Update the values of the minimum and maximum height if they were calculated.
+        if self.__max_min_data != [None, None] and self.__max_min_data != ['waiting', 'waiting']:
+            self.__polygon_data[active_polygon_id]['max_height'] = max(self.__max_min_data)
+            self.__polygon_data[active_polygon_id]['min_height'] = min(self.__max_min_data)
+            self.__max_min_data = [None, None]
+
         self.__gui_manager.set_tool_title_font()
         imgui.text('Relief Tools')
         self.__gui_manager.set_regular_font()
@@ -206,10 +219,12 @@ class ReliefTools:
                                                            'height of the '
                                                            'points inside it.')
             else:
-                maximum, minimum = self.__gui_manager.calculate_max_min_height(active_model_id,
-                                                                               active_polygon_id)
-                self.__polygon_data[active_polygon_id]['max_height'] = max(maximum, minimum)
-                self.__polygon_data[active_polygon_id]['min_height'] = min(minimum, maximum)
+                # Change the values of the max_min_data to waiting and execute the function to calculate the values.
+                # The method to calculate max_min_height is asynchronous, so it returns immediately.
+                self.__max_min_data = ['waiting', 'waiting']
+                self.__gui_manager.calculate_max_min_height(active_model_id,
+                                                            active_polygon_id,
+                                                            self.__max_min_data)
 
         # Filter Logic
         # ------------

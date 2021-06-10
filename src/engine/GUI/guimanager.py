@@ -151,17 +151,22 @@ class GUIManager:
         """
         return self.__engine.are_frames_fixed()
 
-    def calculate_max_min_height(self, model_id: str, polygon_id: str) -> tuple:
+    def calculate_max_min_height(self, model_id: str, polygon_id: str, return_data: list) -> None:
         """
         Ask the engine for max and min values of the vertices that are inside the polygon.
 
+        This method is executed asynchronously, returning immediately. When the asynchronous task end, the calculated
+         values will be stored in the return_data variable. In case of error, [None, None] will be set in the
+         return_data variable.
+
         Args:
+            return_data: List with length 2 where to store the data.
             model_id: ID of the model to use.
             polygon_id: ID of the polygon to use.
 
         Returns: tuple with the max and min value.
         """
-        return self.__engine.calculate_max_min_height(model_id, polygon_id)
+        return self.__engine.calculate_max_min_height(model_id, polygon_id, return_data)
 
     def change_color_file_with_dialog(self) -> None:
         """
