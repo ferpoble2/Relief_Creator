@@ -25,7 +25,7 @@ class NetCDFImportError(Exception):
     Class to use when there are errors in the import of netcdf files.
     """
 
-    def __init__(self, code, data = None):
+    def __init__(self, code, data=None):
         """
         Constructor of the class.
         """
@@ -33,7 +33,10 @@ class NetCDFImportError(Exception):
         self.data = data
         self.codes = {
             0: 'Default Error',
-            1: 'A key from the file is not in the list of accepted keys on the program.'
+            1: 'A key from the file is not in the list of accepted keys on the program.',
+            2: 'A key to read the latitude of the file is not in the list of accepted keys on the program',
+            3: 'A key to read the longitude of the file is not in the list of accepted keys on the program',
+            4: 'A key to read the height of the file is not in the list of accepted keys on the program'
         }
 
     def __str__(self) -> str:
