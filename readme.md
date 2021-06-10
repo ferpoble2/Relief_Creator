@@ -266,18 +266,11 @@ the latitude, longitude and height.
 
 ## How to add more keys to search for in the netcdf files
 
-If at some point, in the moment of loading a file the program hits a KeyError, then is highly probable that the netcdf
-file have keys with another name that the ones the program uses.
+If at some point, in the moment of loading a file the program hits a KeyError, then is highly probable that the netcdf file have keys with another name that the ones the program uses.
 
-At the beginning of the file `src/utils.py` there are three variables, `LONGITUDE_KEYS`, `LATITUDE_KEYS` and
-`HEIGHT_KEYS`.
+The keys that the program uses for the longitude, latitude and height are stored in the files `longitude_keys.json`, `latitude_keys.json` and `height_keys.json` respectively inside the folder resources.
 
-The first is the list of keys that the program will use to get the longitude data from the netcdf files, the second is
-the list of keys that the program will use to get the latitude data and the third is the list of keys that the program 
-will use to get the height data.
-
-To add a new key for the program to use to search for the data, just add a new string with the name of the key at 
-the end of the list that need to be modified.
+To add a new key, just modify the files listed before with the new key that you want the program to read.
 
 [comment]: <> "TODO: Add a secttion about how to add a new frame to the engine."
 
