@@ -19,10 +19,15 @@
 File with utils functions for the engine.
 """
 import logging
+import json
 
-LONGITUDE_KEYS = ['x', 'lon']
-LATITUDE_KEYS = ['y', 'lat']
-HEIGHT_KEYS = ['z', 'Band1']
+# get data from files.
+with open('resources/longitude_keys.json', 'r') as lon_file:
+    LONGITUDE_KEYS = json.load(lon_file)
+with open('resources/latitude_keys.json', 'r') as lat_file:
+    LATITUDE_KEYS = json.load(lat_file)
+with open('resources/height_keys.json', 'r') as height_file:
+    HEIGHT_KEYS = json.load(height_file)
 
 LOG_TO_FILE = False
 LOG_TO_CONSOLE = False
@@ -133,6 +138,9 @@ def interpolate(value: float, value_min: float, value_max: float, target_min: fl
     # case initial interval is just one value.
     if value_min == value_max:
         return (target_min + target_max) / 2.0
+
+    if target_min == target_max:
+        return target_max
 
     # return corresponding values
     return (value - value_min) * (float(target_max) - target_min) / (float(value_max) - value_min) + target_min
