@@ -16,8 +16,17 @@
 # END GPL LICENSE BLOCK
 
 """
-File with the class that will manage the state of the GUI.
+Module that defines the class GUIManager, class in charge of the UI of te application.
+
+This module uses the implementation of IMGUI that uses GLFW, and thus, the callbacks defined by IMGUI must be passed
+to the controller of the program to make sure they are called from within the real callbacks functions configured
+on the program.
+
+Before executing the callbacks of the program defined on GLFW, the method process_inputs from the GUIManager class
+must be called. This method process the inputs that happened on the GUI so the callbacks functions defined by IMGUI
+work correctly.
 """
+
 # noinspection PyPep8Naming
 import OpenGL.constant as OGLConstant
 import imgui
@@ -46,6 +55,14 @@ log = get_logger(module='GUIMANAGER')
 class GUIManager:
     """
     Class to manage all the UI configurations and functions.
+
+    This class uses the IMGUI module that implements its logic using GLFW. Since the logic of this class and the logic
+    of the controller collide with each other, the following must be done so this class can work correctly.
+
+    The callbacks defined by IMGUI must be called within the real callbacks configured on the application (likely
+    located on the controller), to do this, this class define methods that return the callbacks defined by IMGUI. Also,
+    the method process_inputs must be called before executing the callbacks so IMGUI can process the inputs and execute
+    the logic defined it its callbacks correctly.
     """
 
     def __init__(self, engine: 'Engine' = None):
@@ -440,7 +457,17 @@ class GUIManager:
 
     def get_gui_key_callback(self) -> callable:
         """
-        Get the key callback used by imgui.
+        Get the key callback defined by IMGUI.
+
+        This callback is the one configured by IMGUI on GLFW, and thus, receives the same arguments that the one
+        that GLFW defines.
+
+        In detail, the function returned receives 5 parameters:
+            window: GLFW window used in the application.
+            key: Keyboard key pressed
+            scancode: Platform specific scancode of the key pressed
+            action: Action. GLFW_PRESS, GLFW_REPEAT or GLFW_RELEASE
+            mods: Modifier bits.
 
         Returns: Function used by imgui for the key callback
         """
@@ -449,6 +476,14 @@ class GUIManager:
     def get_gui_mouse_scroll_callback(self) -> callable:
         """
         Get the mouse scroll callback used by imgui.
+
+        This callback is the one configured by IMGUI on GLFW, and thus, receives the same arguments that the one
+        that GLFW defines.
+
+        The function returned receives 3 parameters:
+            window: GLFW window used in the application.
+            x-offset: Movement of the scroll in the x-axis.
+            y-offset: Movement of the scroll in the y-axis.
 
         Returns: Function used by imgui for the mouse scroll callback
         """

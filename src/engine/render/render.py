@@ -115,6 +115,9 @@ class Render:
         if on_frame_tasks is None:
             on_frame_tasks = []
 
+        # Process the input so the GUI defined callbacks execute their logic correctly
+        # NOTE: The GUI defined callbacks are called from within the callbacks defined on the controller, that are
+        #       the ones who are really configured on GLFW.
         self.__GUI.process_input()
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
@@ -122,6 +125,7 @@ class Render:
         for func in on_frame_tasks:
             func()
 
+        # Draw the frames defined on the GUI on the Scene.
         self.__GUI.draw_frames()
 
         if self.__show_framerate:

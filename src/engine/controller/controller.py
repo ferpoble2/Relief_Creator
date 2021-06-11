@@ -16,7 +16,14 @@
 # END GPL LICENSE BLOCK
 
 """
-Controller of the application. Manage all the glfw events that happens in the application.
+Controller of the application.
+
+Generate all the GLFW callbacks functions that manage the events of the application. The callbacks define the
+logic to execute depending on the events happening, but also call the callback functions defined on the GUI of the
+application.
+
+All the events captured by the GUI must be processed so GLFW must be able to capture them for this module to
+work correctly.
 """
 from typing import Callable
 
@@ -229,6 +236,7 @@ class Controller:
                                 self.__engine.add_new_vertex_to_active_polygon_using_window_coords(pos_x, pos_y)
 
                 elif self.__engine.get_program_view_mode() == '3D':
+                    # There are no actions defined to the mouse buttons on the 3D mode
                     pass
 
         return mouse_button_callback
@@ -267,6 +275,9 @@ class Controller:
     def get_on_key_callback(self) -> Callable:
         """
         Get the callback function to use when a key is pressed.
+
+        This function also calls the key_callback defined by the GUI, executing the logic defined inside after the
+        logic defined in the controller.
 
         Returns: Function to use as callback.
         """
