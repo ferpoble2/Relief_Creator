@@ -385,7 +385,7 @@ class Engine:
         """
         self.scene.delete_polygon_by_id(polygon_id)
 
-    def disable_glfw_keyboard_callback(self) -> None:
+    def enable_only_gui_keyboard_callback(self) -> None:
         """
         Disable the glfw callback defined in the controller.
 
@@ -393,9 +393,9 @@ class Engine:
 
         Returns: None
         """
-        self.controller.disable_glfw_keyboard_callback()
+        self.controller.disable_only_gui_keyboard_callback()
 
-    def enable_glfw_keyboard_callback(self) -> None:
+    def disable_only_gui_keyboard_callback(self) -> None:
         """
         Enable the glfw callback defined in the controller.
 
@@ -403,7 +403,7 @@ class Engine:
 
         Returns: None
         """
-        self.controller.enable_glfw_keyboard_callback()
+        self.controller.enable_only_gui_keyboard_callback()
 
     def export_model_as_netcdf(self, model_id: str, directory_file: str = None) -> None:
         """

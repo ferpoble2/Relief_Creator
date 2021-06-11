@@ -49,7 +49,7 @@ class Loading(Frame):
 
         if self._GUI_manager.is_program_loading():
             imgui.open_popup("Loading")
-            self._GUI_manager.disable_glfw_keyboard_callback()
+            self._GUI_manager.disable_controller_keyboard_callback()
 
         if imgui.begin_popup_modal("Loading")[0]:
             imgui.set_window_size(self.__windows_width, self.__windows_height)
@@ -57,7 +57,7 @@ class Loading(Frame):
 
             if not self._GUI_manager.is_program_loading():
                 imgui.close_current_popup()
-                self._GUI_manager.enable_glfw_keyboard_callback()
+                self._GUI_manager.enable_controller_keyboard_callback()
 
             imgui.end_popup()
 

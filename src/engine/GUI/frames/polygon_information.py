@@ -183,7 +183,7 @@ class PolygonInformation(Frame):
             self.__current_bool_selected = 0
 
             # disable keyboard input for glfw
-            self._GUI_manager.disable_glfw_keyboard_callback()
+            self._GUI_manager.disable_controller_keyboard_callback()
 
         # popup to add a new parameter
         if imgui.begin_popup_modal('Add new parameter')[0]:
@@ -235,7 +235,7 @@ class PolygonInformation(Frame):
 
                 # close the popup and reactivate the glfw keyboard callback
                 imgui.close_current_popup()
-                self._GUI_manager.enable_glfw_keyboard_callback()
+                self._GUI_manager.enable_controller_keyboard_callback()
 
             imgui.end_popup()
 
@@ -252,7 +252,7 @@ class PolygonInformation(Frame):
         # ask if open it
         if self.__should_open_edit_dialog:
             imgui.open_popup('Edit parameter')
-            self._GUI_manager.enable_glfw_keyboard_callback()
+            self._GUI_manager.enable_controller_keyboard_callback()
 
             # once open this variable should be changed to false
             self.__should_open_edit_dialog = False
@@ -273,7 +273,7 @@ class PolygonInformation(Frame):
                 self.__current_bool_selected = 0 if self.__parameter_to_edit[1] else 1
 
             # disable the input
-            self._GUI_manager.disable_glfw_keyboard_callback()
+            self._GUI_manager.disable_controller_keyboard_callback()
 
         # popup to edit a parameter
         if imgui.begin_popup_modal('Edit parameter')[0]:
@@ -311,7 +311,7 @@ class PolygonInformation(Frame):
 
                 # close the popup and reactivate the glfw callback
                 imgui.close_current_popup()
-                self._GUI_manager.enable_glfw_keyboard_callback()
+                self._GUI_manager.enable_controller_keyboard_callback()
 
             imgui.end_popup()
 

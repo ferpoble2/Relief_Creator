@@ -94,9 +94,9 @@ class Tools3D(Frame):
 
         # disable input if writing a value on the input
         if imgui.is_item_active():
-            self._GUI_manager.disable_glfw_keyboard_callback()
+            self._GUI_manager.disable_controller_keyboard_callback()
         else:
-            self._GUI_manager.enable_glfw_keyboard_callback()
+            self._GUI_manager.enable_controller_keyboard_callback()
 
         # apply changes
         if imgui.button('Change Factor', -1):

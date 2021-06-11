@@ -309,7 +309,7 @@ class PolygonTools:
         if self.__open_rename_folder_popup:
             # open the popup
             imgui.open_popup(f'Rename folder {folder_id}')
-            self.__GUI_manager.disable_glfw_keyboard_callback()
+            self.__GUI_manager.disable_controller_keyboard_callback()
 
             # store the folder name as initial input of the popup
             self.__rename_folder_input_text_value = self.__GUI_manager.get_polygon_folder_name(folder_id)
@@ -330,7 +330,7 @@ class PolygonTools:
 
             if imgui.button('Change name', self.__rename_size_x - self.__button_margin_width):
                 self.__GUI_manager.set_polygon_folder_name(folder_id, self.__rename_folder_input_text_value)
-                self.__GUI_manager.enable_glfw_keyboard_callback()
+                self.__GUI_manager.enable_controller_keyboard_callback()
                 imgui.close_current_popup()
 
             imgui.end_popup()
@@ -490,7 +490,7 @@ class PolygonTools:
 
             # open the pop up and disable the keyboard callback
             imgui.open_popup(f'Rename {polygon_id}')
-            self.__GUI_manager.disable_glfw_keyboard_callback()
+            self.__GUI_manager.disable_controller_keyboard_callback()
 
         if imgui.begin_popup_modal(f'Rename {polygon_id}')[0]:
 
@@ -512,7 +512,7 @@ class PolygonTools:
                 self.__input_text_value = ''
 
                 # close the modal and re-enable the glfw controller
-                self.__GUI_manager.enable_glfw_keyboard_callback()
+                self.__GUI_manager.enable_controller_keyboard_callback()
                 imgui.close_current_popup()
 
             imgui.end_popup()

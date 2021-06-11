@@ -930,27 +930,30 @@ class GUIManager:
         """
         self.__engine.undo_action()
 
-    def enable_glfw_keyboard_callback(self) -> None:
+    def enable_controller_keyboard_callback(self) -> None:
         """
-        Enable the glfw callback defined in the controller.
+        Enable the logic defined on the controller keyboard callback.
 
-        The GUI callback is not affected.
+        This method should be called after disable_controller_keyboard_callback to return the keyboard callbacks to its
+        normal state.
 
         Returns: None
         """
         log.debug('key callback enabled')
-        self.__engine.enable_glfw_keyboard_callback()
+        self.__engine.disable_only_gui_keyboard_callback()
 
-    def disable_glfw_keyboard_callback(self) -> None:
+    def disable_controller_keyboard_callback(self) -> None:
         """
-        Disable the glfw callback defined in the controller.
+        Disable the logic defined on the controller keyboard callback, but keep executing the logic defined on the
+        IMGUI defined callback.
 
-        The GUI callback is not affected.
+        This method is useful when writing inside textbox, and the logic from the controller must not be executed but
+        the one in the GUI should.
 
         Returns: None
         """
         log.debug('key callback disabled')
-        self.__engine.disable_glfw_keyboard_callback()
+        self.__engine.enable_only_gui_keyboard_callback()
 
     def load_preview_interpolation_area(self, distance: float) -> None:
         """

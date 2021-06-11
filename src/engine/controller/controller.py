@@ -43,7 +43,7 @@ class Controller:
         self.__scene = engine.scene
         self.__engine = engine
 
-        self.__glfw_keyboard_callback_enabled = True
+        self.__only_gui_keyboard_callback_enabled = True
 
         # Auxiliary methods
         self.__mouse_old_pos = (0, 0)
@@ -133,7 +133,7 @@ class Controller:
         """
         self.__mouse_old_pos = (new_x, new_y)
 
-    def enable_glfw_keyboard_callback(self) -> None:
+    def enable_only_gui_keyboard_callback(self) -> None:
         """
         Enable the functionality of the keyboard callback function defined in the glfw call.
 
@@ -141,9 +141,9 @@ class Controller:
 
         Returns: None
         """
-        self.__glfw_keyboard_callback_enabled = True
+        self.__only_gui_keyboard_callback_enabled = True
 
-    def disable_glfw_keyboard_callback(self) -> None:
+    def disable_only_gui_keyboard_callback(self) -> None:
         """
         Disable the functionality of the keyboard callback function defined in the glfw call.
 
@@ -151,7 +151,7 @@ class Controller:
 
         Returns: None
         """
-        self.__glfw_keyboard_callback_enabled = False
+        self.__only_gui_keyboard_callback_enabled = False
 
     def get_cursor_position_callback(self):
         """
@@ -345,7 +345,7 @@ class Controller:
 
             # logic: only work if the glfw functionality is enabled
             # -----------------------------------------------------
-            if self.__glfw_keyboard_callback_enabled:
+            if self.__only_gui_keyboard_callback_enabled:
 
                 # shortcuts shared between 2D and 3D modes
                 # ----------------------------------------

@@ -68,7 +68,7 @@ class TextModal(Frame):
             self._GUI_manager.set_active_tool(None)
 
             # disable keyboard input
-            self._GUI_manager.disable_glfw_keyboard_callback()
+            self._GUI_manager.disable_controller_keyboard_callback()
 
             # dont show anymore
             self.__should_show = False
@@ -91,7 +91,7 @@ class TextModal(Frame):
                 # ----------------
                 self.__should_show = False
                 imgui.close_current_popup()
-                self._GUI_manager.enable_glfw_keyboard_callback()
+                self._GUI_manager.enable_controller_keyboard_callback()
 
             imgui.end_popup()
 
