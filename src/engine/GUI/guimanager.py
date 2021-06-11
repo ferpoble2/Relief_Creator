@@ -654,7 +654,6 @@ class GUIManager:
 
         # load the icons on the GUI
         self.__load_icons()
-        self.get_gui_mouse_scroll_callback()
 
         # initialize the components of the manager
         # ----------------------------------------
