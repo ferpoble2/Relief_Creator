@@ -22,6 +22,7 @@ File with the class PolygonTools, class in charge of rendering the tools for the
 import imgui
 
 from src.utils import get_logger
+from type_hinting import *
 
 log = get_logger(module="POLYGON_TOOLS")
 
@@ -44,7 +45,8 @@ class PolygonTools:
         self.__color_pick_window_size_y = -1
         self.__color_pick_should_open = False
         self.__color_selected_default = (1, 1, 0, 1)
-        self.__dot_color_selected_default = (1, 1, 0, 1)
+        self.__hide_dots_default = True
+        self.__dot_color_selected_default = (1, 1, 0, 1) if not self.__hide_dots_default else (1, 1, 0, 0)
         self.__color_selected_dict = {}
 
         self.__rename_size_x = 300
@@ -116,31 +118,47 @@ class PolygonTools:
 
             color_selected_data = self.__color_selected_dict[polygon_id]
 
-            imgui.text("Pick a color to use for the lines:")
-            color_changed, color_selected_data['polygon'] = imgui.color_edit4("Lines color",
+            # Show the select menu for the lines.
+            # Do not show the pick parameter for the transparency of the color. That parameter must be always 1 for the
+            # lines of the model.
+            # ----------------------------------------------------------------------------------------------------------
+            imgui.text("Lines configuration:")
+            color_changed, color_selected_data['polygon'] = imgui.color_edit3("Lines color",
                                                                               color_selected_data['polygon'][0],
                                                                               color_selected_data['polygon'][1],
-                                                                              color_selected_data['polygon'][2],
-                                                                              color_selected_data['polygon'][3])
+                                                                              color_selected_data['polygon'][2])
+            color_selected_data['polygon'] += (1,)
 
-            imgui.text("Pick a color to use for the dots:")
-            dot_color_changed, color_selected_data['dot'] = imgui.color_edit4("Dots color",
+            # Show the select menu for the dots color.
+            # Do not show the pick parameter for the transparency of the color. That parameter must be configured on the
+            # variable self.__hide_dots.
+            # ----------------------------------------------------------------------------------------------------------
+            imgui.text("Dots configuration:")
+            # Show the menu to select if show or not dots on the polygons.
+            hide_dots_changed, color_selected_data['hide_dots'] = imgui.checkbox("Hide dots",
+                                                                                 color_selected_data['hide_dots'])
+            dot_color_changed, color_selected_data['dot'] = imgui.color_edit3("Dots color",
                                                                               color_selected_data['dot'][0],
                                                                               color_selected_data['dot'][1],
-                                                                              color_selected_data['dot'][2],
-                                                                              color_selected_data['dot'][3])
+                                                                              color_selected_data['dot'][2])
 
+            # Update the color variables of the polygon selected.
+            show_dot_variable = 0 if color_selected_data['hide_dots'] else 1
+            color_selected_data['dot'] += (show_dot_variable,)
+
+            # Update colors of the polygon only if the parameters were changed.
+            # -----------------------------------------------------------------
             if color_changed:
                 log.debug(f"Changing colors of lines of polygon with id {polygon_id}")
                 self.__GUI_manager.change_color_of_polygon(polygon_id, color_selected_data['polygon'])
 
-            if dot_color_changed:
+            if dot_color_changed or hide_dots_changed:
                 log.debug(f"Changing colors of dots of polygon with id {polygon_id}")
                 self.__GUI_manager.change_dot_color_of_polygon(polygon_id, color_selected_data['dot'])
 
+            # return the normal tool and close the pop up
+            # -------------------------------------------
             if imgui.button("Close"):
-                # return the normal tool and close the pop up
-                # -------------------------------------------
                 self.__GUI_manager.set_active_tool(self.__tool_before_pop_up)
                 imgui.close_current_popup()
 
@@ -165,6 +183,7 @@ class PolygonTools:
         # change the tool to create polygon
         # ---------------------------------
         self.__GUI_manager.set_active_tool('create_polygon')
+
         # create the polygon and add it to a folder
         # -----------------------------------------
         new_polygon_id = self.__GUI_manager.create_new_polygon()
@@ -173,16 +192,21 @@ class PolygonTools:
             self.__GUI_manager.add_polygon_to_polygon_folder(folder_id, new_polygon_id)
         else:
             self.__GUI_manager.add_polygon_to_polygon_folder(folder_id, new_polygon_id)
+
         # add the colors to the list of colors data
         # -----------------------------------------
         self.__color_selected_dict[new_polygon_id] = {
             'polygon': self.__color_selected_default,
-            'dot': self.__dot_color_selected_default
+            'dot': self.__dot_color_selected_default,
+            'hide_dots': self.__hide_dots_default
         }
-        # set it as the active polygon
-        # ----------------------------
+
+        # set it as the active polygon and configure it
+        # ---------------------------------------------
         log.debug("Setting polygon as the active polygon")
         self.__GUI_manager.set_active_polygon(new_polygon_id)
+        self.__GUI_manager.change_dot_color_of_polygon(new_polygon_id, list(self.__dot_color_selected_default))
+        self.__GUI_manager.change_color_of_polygon(new_polygon_id, list(self.__color_selected_default))
 
     def __delete_selectable(self, active_polygon: str, polygon_id: str) -> bool:
         """
@@ -544,10 +568,17 @@ class PolygonTools:
 
         Returns: None
         """
+
+        # Add the colors of the polygon to the dictionary of colors
         self.__color_selected_dict[polygon_id] = {
             'polygon': self.__color_selected_default,
-            'dot': self.__dot_color_selected_default
+            'dot': self.__dot_color_selected_default,
+            'hide_dots': self.__hide_dots_default
         }
+
+        # Update the colors of the model to use the defaults values
+        self.__GUI_manager.change_dot_color_of_polygon(polygon_id, list(self.__dot_color_selected_default))
+        self.__GUI_manager.change_color_of_polygon(polygon_id, list(self.__color_selected_default))
 
     def render(self, frame_width: int) -> None:
         """

@@ -10,6 +10,7 @@ class PolygonTools{
     - __color_selected_dict: dict
     - __dot_color_selected_default: int, int, int, int
     - __GUI_manager: GUIManager
+    - __hide_dots_default: boolean
     - __input_text_value: str
     - __open_rename_folder_popup: boolean
     - __opened_action_popup_dict: dict
