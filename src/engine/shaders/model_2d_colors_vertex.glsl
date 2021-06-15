@@ -35,5 +35,6 @@ void main()
     max_height_value = max_height;
     min_height_value = min_height;
 
+    // Apply projection matrix to clip the position of the map
     gl_Position = projection * vec4(position, 1.0f);
 }

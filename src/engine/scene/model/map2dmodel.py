@@ -418,35 +418,41 @@ class Map2DModel(MapModel):
 
         Returns: None
         """
-        log.debug("Changing the projection matrix")
+
+        # Get the data and the proportions to generate the projection matrix
+        # ------------------------------------------------------------------
         width = scene_data['SCENE_WIDTH_X']
         height = scene_data['SCENE_HEIGHT_Y']
         proportion_panoramic = width / float(height)
         proportion_portrait = height / float(width)
 
+        # maximum and minimum values of the map coordinates.
         min_x = min(self.__x)
         max_x = max(self.__x)
         min_y = min(self.__y)
         max_y = max(self.__y)
-        log.debug(f"Model measures: X: {min_x} - {max_x} Y: {min_y} - {max_y}")
 
+        # width and height of the loaded maps.
         x_width = max_x - min_x
         y_height = max_y - min_y
 
         # CASE PANORAMIC DATA
         # -------------------
         if x_width > y_height:
+            # calculate the height of the viewport on map coordinates
+            # the width of the viewport in map coordinates is the same as x_width
             calculated_height_viewport = x_width / proportion_panoramic
 
+            # calculates the coordinates to use to clip the map on the scene to keep the aspect ratio.
             projection_min_y = (max_y + min_y) / 2 - calculated_height_viewport / 2
             projection_max_y = (max_y + min_y) / 2 + calculated_height_viewport / 2
 
+            # Calculate the distance to use as offset when applying zoom on the maps.
             zoom_difference_x = (x_width - (x_width / zoom_level)) / 2
             zoom_difference_y = (calculated_height_viewport - (calculated_height_viewport / zoom_level)) / 2
 
-            log.debug(f"Calculated height viewport: {calculated_height_viewport}")
-            log.debug(f"Zoom differences: x:{zoom_difference_x} y:{zoom_difference_y}")
-
+            # calculate the coordinates to show on the viewport.
+            # NOTE: The coordinates can be values outside of the map.
             self.__left_coordinate = min_x + zoom_difference_x
             self.__right_coordinate = max_x - zoom_difference_x
             self.__bottom_coordinate = projection_min_y + zoom_difference_y
@@ -455,24 +461,32 @@ class Map2DModel(MapModel):
         # CASE PORTRAIT DATA
         # -------------------
         else:
+            # calculate the width of the viewport on map coordinates
+            # the width of the viewport in map coordinates is the same as x_width
             calculated_width_viewport = y_height / proportion_portrait
 
+            # calculates the coordinates to use to clip the map on the scene to keep the aspect ratio.
             projection_min_x = (max_x + min_x) / 2 - calculated_width_viewport / 2
             projection_max_x = (max_x + min_x) / 2 + calculated_width_viewport / 2
 
+            # Calculate the distance to use as offset when applying zoom on the maps.
             zoom_difference_y = (y_height - (y_height / zoom_level)) / 2
             zoom_difference_x = (calculated_width_viewport - (calculated_width_viewport / zoom_level)) / 2
 
+            # calculate the coordinates to show on the viewport.
+            # NOTE: The coordinates can be values outside of the map.
             self.__left_coordinate = projection_min_x + zoom_difference_x
             self.__right_coordinate = projection_max_x - zoom_difference_x
             self.__bottom_coordinate = min_y + zoom_difference_y
             self.__top_coordinate = max_y - zoom_difference_y
 
+        # Move the coordinates to show on the model depending on the position that the model is located.
         self.__left_coordinate -= self.position[0]
         self.__right_coordinate -= self.position[0]
         self.__top_coordinate -= self.position[1]
         self.__bottom_coordinate -= self.position[1]
 
+        # Calculate the projection matrix given the calculated coordinates to show on the model.
         self.__projection = ortho(self.__left_coordinate,
                                   self.__right_coordinate,
                                   self.__bottom_coordinate,
@@ -531,6 +545,8 @@ class Map2DModel(MapModel):
         width_scene = self.scene.get_scene_setting_data()['SCENE_WIDTH_X']
         height_scene = self.scene.get_scene_setting_data()['SCENE_HEIGHT_Y']
 
+        # Calculate the amount to move the scene depending on the coordinates showed on the screen
+        # The more coordinates are showing on the scene, the bigger the movement.
         self.position[0] += (x_movement * (self.__right_coordinate - self.__left_coordinate)) / width_scene
         self.position[1] += (y_movement * (self.__top_coordinate - self.__bottom_coordinate)) / height_scene
 
