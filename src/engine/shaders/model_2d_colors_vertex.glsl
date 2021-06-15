@@ -35,6 +35,7 @@ void main()
     max_height_value = max_height;
     min_height_value = min_height;
 
-    // Apply projection matrix to clip how much of the maps should be showed on the screen and in wich proportions.
+    // OpenGL need the coordinated to be between (-1, 1). The projection matrix is the one in charge of converting the
+    // coordinates of the points to the range (-1, 1) and to keep the aspect ratio of the viewport used.
     gl_Position = projection * vec4(position, 1.0f);
 }

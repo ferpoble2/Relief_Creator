@@ -407,10 +407,20 @@ class Map2DModel(MapModel):
 
     def calculate_projection_matrix(self, scene_data: dict, zoom_level: float = 1) -> None:
         """
-        Set the projection matrix to show the model in the scene.
-        Must be called before drawing.
+        Generate the projection matrix on the model. Method must be called before drawing.
 
-        The projection matrix is in charge of cutting what things fit and what dont fit on the scene.
+        The projection matrix is the one in charge of converting the coordinates from the view space (camera point of
+        view) into the range (-1, 1), when the points are converted to this range of coordinates it is
+        called that they are in the clip space.
+
+        OpenGL is the one in charge of converting the coordinates from the clipping space into the screen space. showing
+        the points on the screen.
+
+        Since the projection matrix is the one who converts the coordinates of the model into the space accepted by
+        OpenGL (-1, 1), the matrix is also the one in charge of keeping the aspect ratio of the models
+        showed on the screen.
+
+        More information in: https://learnopengl.com/Getting-started/Coordinate-Systems
 
         Args:
             scene_data: Height and width of the scene.
@@ -421,10 +431,10 @@ class Map2DModel(MapModel):
 
         # Get the data and the proportions to generate the projection matrix
         # ------------------------------------------------------------------
-        width = scene_data['SCENE_WIDTH_X']
-        height = scene_data['SCENE_HEIGHT_Y']
-        proportion_panoramic = width / float(height)
-        proportion_portrait = height / float(width)
+        width_scene = scene_data['SCENE_WIDTH_X']
+        height_scene = scene_data['SCENE_HEIGHT_Y']
+        proportion_panoramic = width_scene / float(height_scene)
+        proportion_portrait = height_scene / float(width_scene)
 
         # maximum and minimum values of the map coordinates.
         min_x = min(self.__x)
@@ -433,22 +443,22 @@ class Map2DModel(MapModel):
         max_y = max(self.__y)
 
         # width and height of the loaded maps.
-        x_width = max_x - min_x
-        y_height = max_y - min_y
+        width_map = max_x - min_x
+        height_map = max_y - min_y
 
         # CASE PANORAMIC DATA
         # -------------------
-        if x_width > y_height:
+        if width_map > height_map:
             # calculate the height of the viewport on map coordinates
             # the width of the viewport in map coordinates is the same as x_width
-            calculated_height_viewport = x_width / proportion_panoramic
+            calculated_height_viewport = width_map / proportion_panoramic
 
             # calculates the coordinates to use to clip the map on the scene to keep the aspect ratio.
             projection_min_y = (max_y + min_y) / 2 - calculated_height_viewport / 2
             projection_max_y = (max_y + min_y) / 2 + calculated_height_viewport / 2
 
             # Calculate the distance to use as offset when applying zoom on the maps.
-            zoom_difference_x = (x_width - (x_width / zoom_level)) / 2
+            zoom_difference_x = (width_map - (width_map / zoom_level)) / 2
             zoom_difference_y = (calculated_height_viewport - (calculated_height_viewport / zoom_level)) / 2
 
             # calculate the coordinates to show on the viewport.
@@ -463,14 +473,14 @@ class Map2DModel(MapModel):
         else:
             # calculate the width of the viewport on map coordinates
             # the width of the viewport in map coordinates is the same as x_width
-            calculated_width_viewport = y_height / proportion_portrait
+            calculated_width_viewport = height_map / proportion_portrait
 
             # calculates the coordinates to use to clip the map on the scene to keep the aspect ratio.
             projection_min_x = (max_x + min_x) / 2 - calculated_width_viewport / 2
             projection_max_x = (max_x + min_x) / 2 + calculated_width_viewport / 2
 
             # Calculate the distance to use as offset when applying zoom on the maps.
-            zoom_difference_y = (y_height - (y_height / zoom_level)) / 2
+            zoom_difference_y = (height_map - (height_map / zoom_level)) / 2
             zoom_difference_x = (calculated_width_viewport - (calculated_width_viewport / zoom_level)) / 2
 
             # calculate the coordinates to show on the viewport.
