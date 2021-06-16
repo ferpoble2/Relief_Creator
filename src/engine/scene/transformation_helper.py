@@ -22,8 +22,8 @@ import numpy as np
 from shapely.geometry.polygon import LinearRing as LinearRing
 from shapely.geometry.polygon import Polygon, LineString
 from shapely.ops import triangulate
+import shapely.vectorized
 from typing import List
-from matplotlib import path
 from scipy import interpolate as interpolate_scipy
 from skimage.filters import gaussian as gaussian_filter
 
@@ -124,9 +124,11 @@ class TransformationHelper:
 
         return mask_modified
 
+    # noinspection SpellCheckingInspection
     def __generate_mask(self, points_array: np.ndarray, polygon_points) -> np.ndarray:
         """
-        Generate a mask of the points that are inside the specified polygon.
+        Generate a mask of the points that are inside the specified polygon. This method does not considerate the
+        points that are on the polygon, returning false in case they exists.
 
         Mask is a numpy array with booleans representing if the point is inside the polygon or not.
 
@@ -142,15 +144,26 @@ class TransformationHelper:
         for point_ind in range(len(polygon_points)):
             if point_ind % 3 == 0:
                 points_xy.append((polygon_points[point_ind], polygon_points[point_ind + 1]))
-        # get a mask for the points inside
-        xv = points_array[:, :, 0]
-        yv = points_array[:, :, 1]
-        # noinspection PyTypeChecker
-        p = path.Path(points_xy)
 
-        # noinspection PyTypeChecker
-        flags = p.contains_points(np.hstack((xv.flatten()[:, np.newaxis], yv.flatten()[:, np.newaxis])))
-        flags = flags.reshape(xv.shape)
+        # Deprecated code
+        # ---------------
+        # The code from bellow is deprecated since it does not use vectorized logic to get the masks of the elements.
+        # It uses the contains_points method from the mathplotlib.path module, implementation optimized of the
+        # algorithms presented in Computer Graphic Gems IV to calculate if a point is inside of a polygon.
+        #
+        # # get a mask for the points inside
+        # xv = points_array[:, :, 0]
+        # yv = points_array[:, :, 1]
+        # # noinspection PyTypeChecker
+        # p = path.Path(points_xy)
+        #
+        # print(time.time())
+        # points_map = np.hstack((xv.flatten()[:, np.newaxis], yv.flatten()[:, np.newaxis]))
+        # # noinspection PyTypeChecker
+        # flags = p.contains_points(points_map)
+        # flags = flags.reshape(xv.shape)
+
+        flags = shapely.vectorized.contains(Polygon(points_xy), points_array[:, :, 0], points_array[:, :, 1])
         return flags
 
     # noinspection PyShadowingNames,PyUnresolvedReferences

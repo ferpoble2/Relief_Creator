@@ -59,9 +59,9 @@ class TestLinearTransformations(unittest.TestCase):
                 points[row, col, 1] = row
 
         # create the polygon
-        polygon_points = [1, 0, 0,
-                          5, 0, 0,
-                          1, 5, 0]
+        polygon_points = [0.9, 0.1, 0,
+                          5.1, 0.1, 0,
+                          0.9, 5.1, 0]
 
         # create heights of the map
         height = np.zeros((10, 10))
@@ -147,7 +147,7 @@ class TestLinearTransformations(unittest.TestCase):
 
         # create heights of the map
         height = np.zeros((10, 10))
-        height[1, 1] = 1000
+        height[1, 2] = 1000
         height[2, 2] = 2000
 
         # apply transformation
@@ -159,7 +159,7 @@ class TestLinearTransformations(unittest.TestCase):
 
         # check values
         expected = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 50, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 50, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 100, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -353,7 +353,7 @@ class TestMinMaxPolygon(unittest.TestCase):
                 points[row, col, 1] = row
 
         # create the polygon
-        polygon_points = [1, 0, 0,
+        polygon_points = [0.9, 0, 0,
                           5, 0, 0,
                           1, 5, 0]
 
