@@ -53,6 +53,20 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
     """
     Extract the information of X, Y and Z from a NetCDF4 file.
 
+    The keys to use for extracting the information of the longitude, latitude and height are stored in the files
+    longitude_keys.json, latitude_keys.json and height_keys.json respectively.
+
+    In case that the file  does not have a key to extract either the longitude, latitude or height, then an
+    NetCDFImportError is raised proportioning as data a dictionary with the keys accepted as the parameter and the
+    keys stored in the read file.
+
+    Important:
+        Due to how some files are generated, if the longitude or latitude keys are missing, then the method ask
+        for the parameters x_range, y_range and spacing in the file. if they are defined in the file, then the program
+        generates the X and Y values from the values defined in the parameters. If they are not defined, then the
+        NetCDFImportError exception is raised with the information of the keys accepted and the keys that are inside the
+        file.
+
     Return a tuple with 3 elements in the format (X, Y, Z):
         X: 1-dimensional array.
         Y: 1-dimensional array.
@@ -72,31 +86,35 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
 
     # ask if the file have the values defined as ranges and spacing/dimensions
     if x is None:
-        x_range = np.array(get_variables_from_grp(root_grp, ['x_range']))
-        if x_range == np.array(None):
+        x_range_values = get_variables_from_grp(root_grp, ['x_range'])
+        x_range_array = np.array(x_range_values)
+        if x_range_values is None or len(x_range_array) < 2:
             raise NetCDFImportError(3, {'accepted_keys': LONGITUDE_KEYS,
                                         'file_keys': root_grp.variables.keys()})
 
-        spacing = np.array(get_variables_from_grp(root_grp, ['spacing']))
-        if spacing == np.array(None):
+        spacing_values = get_variables_from_grp(root_grp, ['spacing'])
+        spacing_array = np.array(spacing_values)
+        if spacing_values is None or len(spacing_array) < 2:
             raise NetCDFImportError(3, {'accepted_keys': LONGITUDE_KEYS,
                                         'file_keys': root_grp.variables.keys()})
 
-        x = np.arange(x_range[0], x_range[1], spacing[0]).tolist() + [x_range[1]]
+        x = np.arange(x_range_array[0], x_range_array[1], spacing_array[0]).tolist() + [x_range_array[1]]
 
     # ask if the file have the values defined as ranges and spacing/dimensions
     if y is None:
-        y_range = np.array(get_variables_from_grp(root_grp, ['y_range']))
-        if y_range == np.array(None):
+        y_range_values = get_variables_from_grp(root_grp, ['y_range'])
+        y_range_array = np.array(y_range_values)
+        if y_range_array is None or len(y_range_array) < 2:
             raise NetCDFImportError(2, {'accepted_keys': LATITUDE_KEYS,
                                         'file_keys': root_grp.variables.keys()})
 
-        spacing = np.array(get_variables_from_grp(root_grp, ['spacing']))
-        if spacing == np.array(None):
+        spacing_values = get_variables_from_grp(root_grp, ['spacing'])
+        spacing_array = np.array(spacing_values)
+        if spacing_values is None or len(spacing_array) < 2:
             raise NetCDFImportError(2, {'accepted_keys': LATITUDE_KEYS,
                                         'file_keys': root_grp.variables.keys()})
 
-        y = np.arange(y_range[0], y_range[1], spacing[1]).tolist() + [y_range[1]]
+        y = np.arange(y_range_array[0], y_range_array[1], spacing_array[1]).tolist() + [y_range_array[1]]
 
     if z is None:
         raise NetCDFImportError(4, {'accepted_keys': HEIGHT_KEYS,
