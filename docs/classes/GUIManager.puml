@@ -21,24 +21,26 @@ class GUIManager{
     + add_polygon_to_gui(polygon_id)
     + add_polygon_to_polygon_folder(folder_id, polygon_id)
     + add_zoom()
+    + apply_smoothing(polygon_id, model_id, distance_to_polygon)
     + are_frame_fixed()
     + calculate_max_min_height(model_id, polygon_id): tuple
-    + get_height_normalization_factor_of_active_3D_model(): float
-    + change_current_3D_model_normalization_factor(normalization_height_value)
-    + update_current_3D_model()
     + change_color_file_with_dialog()
     + change_color_of_polygon(polygon_id, color)
+    + change_current_3D_model_normalization_factor(normalization_height_value)
     + change_dot_color_of_polygon(polygon_id, color)
+    + change_height_unit_current_3D_model(measure_unit)
     + change_height_using_active_polygon(polygon_id, min_height, max_height, type)
+    + change_map_position_unit_current_3D_model(measure_unit)
+    + change_points_height(polygon_id, model_id, min_height, max_height, transformation_type, filters)
     + change_quality(quality)
     + create_new_polygon(): str
-    + load_preview_interpolation_area(distance)
-    + remove_interpolation_preview(polygon_id)
     + create_polygon_folder(name): PolygonFolder
     + delete_all_polygons_inside_folder(polygon_folder_id)
     + delete_polygon_by_id(polygon_id)
     + delete_polygon_parameter(polygon_id, key)
+    + disable_glfw_keyboard_callback()
     + draw_frames()
+    + enable_glfw_keyboard_callback()
     + export_model_as_netcdf(model_id)
     + export_polygon_with_id(polygon_id)
     + export_polygons_inside_folder(polygon_folder_id)
@@ -48,11 +50,12 @@ class GUIManager{
     + get_active_tool(): str
     + get_cpt_file(): str
     + get_gui_key_callback(): function
-    + change_points_height(polygon_id, model_id, min_height, max_height, transformation_type, filters)
     + get_gui_mouse_scroll_callback(): function
+    + get_height_normalization_factor_of_active_3D_model(): float
     + get_icon(icon_name): Icon
     + get_left_frame_width(): int
     + get_main_menu_bar_height(): int
+    + get_map_coordinates_from_window_coordinates(x_coordinate, y_coordinate): (float, float)
     + get_map_position(): list
     + get_polygon_folder_id_list(): list
     + get_polygon_folder_name(polygon_folder_id): str
@@ -60,6 +63,7 @@ class GUIManager{
     + get_polygon_name(polygon_id): str
     + get_polygon_parameters(polygon_id): list
     + get_polygons_id_from_polygon_folder(polygon_folder_id): list
+    + get_program_view_mode(): str
     + get_quality(): int
     + get_window_height(): int
     + get_window_width(): int
@@ -68,21 +72,18 @@ class GUIManager{
     + interpolate_points(polygon_id, model_id, distance, type_interpolation)
     + is_mouse_inside_frame(): boolean
     + is_polygon_planar()
-    + get_program_view_mode(): str
-    + set_program_view_mode(mode)
     + is_program_loading(): boolean
     + less_zoom()
     + load_netcdf_file_with_dialog()
+    + load_preview_interpolation_area(distance)
     + load_shapefile_file_with_dialog()
     + move_polygon_to_polygon_folder(polygon_id, folder_id)
     + optimize_gpu_memory()
     + process_input()
-    + reset_camera_values()
-    + apply_smoothing(polygon_id, model_id, distance_to_polygon)
-    + change_height_unit_current_3D_model(measure_unit)
-    + change_map_position_unit_current_3D_model(measure_unit)
     + reload_models()
+    + remove_interpolation_preview(polygon_id)
     + render()
+    + reset_camera_values()
     + set_active_polygon(polygon_id)
     + set_active_tool(tool)
     + set_bold_font()
@@ -93,10 +94,10 @@ class GUIManager{
     + set_polygon_folder_name(polygon_folder_id, new_name)
     + set_polygon_name(polygon_id, new_name)
     + set_polygon_parameter(polygon_id, key, value)
+    + set_program_view_mode(mode)
     + set_regular_font()
     + set_tool_title_font()
     + undo()
-    + enable_glfw_keyboard_callback()
-    + disable_glfw_keyboard_callback()
+    + update_current_3D_model()
 }
 @enduml
