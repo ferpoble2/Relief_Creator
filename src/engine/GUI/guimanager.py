@@ -512,6 +512,26 @@ class GUIManager:
         """
         return self.__engine.get_gui_setting_data()['LEFT_FRAME_WIDTH']
 
+    def get_map_coordinates_from_window_coordinates(self, x_coordinate: int, y_coordinate: int) -> (float, float):
+        """
+        Get the position of a point in the map given in screen coordinates.
+
+        Screen coordinates have the origin of the system at the top-left of the window, being the x-axis positive to
+        the right and the y-axis positive to the bottom.
+
+        The returned tuple is the real coordinates (coordinates used in the map) of the point specified in screen
+        coordinates.
+
+        If there is no map loaded on the program, then (None, None) is returned.
+
+        Args:
+            x_coordinate: x-axis component of the screen coordinate to evaluate on the map.
+            y_coordinate: y-axis component of the screen coordinate to evaluate on the map.
+
+        Returns: (x, y) tuple with the coordinates of the point on the map.
+        """
+        return self.__engine.get_map_coordinates_from_window_coordinates(x_coordinate, y_coordinate)
+
     def get_main_menu_bar_height(self) -> int:
         """
         Get the main menu bar height frm the settings.
