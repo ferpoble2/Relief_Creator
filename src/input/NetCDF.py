@@ -80,11 +80,16 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
     """
     root_grp = Dataset(file_name, "r", format="NETCDF4")
 
+    # Ask if the arrays that contains the information related to the arrays of the map is defined on the netcdf file
+    # with the names that are recognized by the program.
+    # --------------------------------------------------------------------------------------------------------------
     x = get_variables_from_grp(root_grp, LONGITUDE_KEYS)
     y = get_variables_from_grp(root_grp, LATITUDE_KEYS)
     z = get_variables_from_grp(root_grp, HEIGHT_KEYS)
 
-    # ask if the file have the values defined as ranges and spacing/dimensions
+    # Ask if the file have the values for the x values defined as ranges, spacing and dimensions.
+    # Raise error if it is not defined as ranges/spacing/dimensions
+    # ------------------------------------------------------------------------------------------
     if x is None:
         x_range_values = get_variables_from_grp(root_grp, ['x_range'])
         x_range_array = np.array(x_range_values)
@@ -98,9 +103,23 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
             raise NetCDFImportError(3, {'accepted_keys': LONGITUDE_KEYS,
                                         'file_keys': root_grp.variables.keys()})
 
-        x = np.arange(x_range_array[0], x_range_array[1], spacing_array[0]).tolist() + [x_range_array[1]]
+        dimension_values = get_variables_from_grp(root_grp, ['dimension'])
+        dimension_array = np.array(dimension_values)
+        if dimension_values is None or len(dimension_array) < 2:
+            raise NetCDFImportError(3, {'accepted_keys': LONGITUDE_KEYS,
+                                        'file_keys': root_grp.variables.keys()})
 
-    # ask if the file have the values defined as ranges and spacing/dimensions
+        # Generate the x-values given the ranges and spacing.
+        x = np.arange(x_range_array[0], x_range_array[1], spacing_array[0]).tolist()
+
+        # Add the last value of the range to the list if the x-value list is one short than the specified in the
+        # dimensions
+        if len(x) + 1 == dimension_array[0]:
+            x += [x_range_array[1]]
+
+    # Ask if the file have the values for the y values defined as ranges, spacing and dimensions.
+    # Raise error if it is not defined as ranges/spacing/dimensions.
+    # ------------------------------------------------------------------------------------------
     if y is None:
         y_range_values = get_variables_from_grp(root_grp, ['y_range'])
         y_range_array = np.array(y_range_values)
@@ -114,21 +133,35 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
             raise NetCDFImportError(2, {'accepted_keys': LATITUDE_KEYS,
                                         'file_keys': root_grp.variables.keys()})
 
-        y = np.arange(y_range_array[0], y_range_array[1], spacing_array[1]).tolist() + [y_range_array[1]]
+        dimension_values = get_variables_from_grp(root_grp, ['dimension'])
+        dimension_array = np.array(dimension_values)
+        if dimension_values is None or len(dimension_array) < 2:
+            raise NetCDFImportError(3, {'accepted_keys': LONGITUDE_KEYS,
+                                        'file_keys': root_grp.variables.keys()})
 
+        y = np.arange(y_range_array[0], y_range_array[1], spacing_array[1]).tolist()
+
+        if len(y) + 1 == dimension_array[1]:
+            y += [y_range_array[1]]
+
+    # Variable Z must be defined as an array on the netcdf files.
+    # Raise error if it is not defined.
     if z is None:
         raise NetCDFImportError(4, {'accepted_keys': HEIGHT_KEYS,
                                     'file_keys': root_grp.variables.keys()})
 
+    # If the Z variable is defined as unidimensional array, then it is necessary to flip the contents of the array once
+    # it is converted to a 2D matrix since the order of the y-axis is inverted.
+    if z.ndim == 1:
+        z = np.array(z)
+        z = z.reshape((len(y), len(x)))
+        z = np.flipud(z)
+
     # shape the arrays to work
+    # ------------------------
     x = np.array(x)
     y = np.array(y)
     z = np.array(z)
-
-    # check the case the z_array is unidimensional
-    if z.ndim == 1:
-        z = z.reshape((len(y), len(x)))
-        z = np.flipud(z)
 
     root_grp.close()
 
@@ -137,27 +170,22 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
 
 if __name__ == "__main__":
     # filename = "../../test/input/files/test_file_2.nc"
-    filename = "../../resources/sample_netcdf/38Ma_HotSpot.nc"
+    filename = "resources/sample_netcdf/38Ma_HotSpot.nc"
     rootgrp = Dataset(filename, "r", format="NETCDF4")
 
     print("Dimensiones del archivo:")
-    print(rootgrp.dimensions)
+    print(rootgrp.dimensions.keys())
 
     print("Grupos del archivo:")
-    print(rootgrp.groups)
+    print(rootgrp.groups.keys())
 
     print("Variables del archivo:")
-    print(rootgrp.variables)
+    print(rootgrp.variables.keys())
 
     X, Y, Z = read_info(filename)
 
-    print("X values")
-    print(X)
-
-    print("Y values")
-    print(Y)
-
-    print("Z values.")
-    print(Z)
+    print('Atributos de las variables')
+    for variable_key, variable_value in rootgrp.variables.items():
+        print(f' {variable_key}: {variable_value.ncattrs()}')
 
     rootgrp.close()

@@ -53,22 +53,44 @@ class NetcdfExporter:
 
         Returns: None
         """
-        root_grp = Dataset(filename, 'r+')
-        grp_keys = root_grp.variables.keys()
 
-        # Check for the key to be in the object
+        # Read the information of the file
+        # --------------------------------
+        root_grp = Dataset(filename, 'r+')
+        file_keys = root_grp.variables.keys()
+
+        # Check for the key that stores the height information. This key must be in the file, otherwise, an exception
+        # is raised.
+        # -----------------------------------------------------------------------------------------------------------
         height_key = None
         for key in HEIGHT_KEYS:
-            if key in grp_keys:
+            if key in file_keys:
                 height_key = key
                 break
 
         if height_key is None:
             raise ExportError(3)
 
-        height_shape = root_grp.variables[height_key].shape
+        # Store the values of the new heights in the variable
+        # ---------------------------------------------------
+        # Values of the maps are stored inverted when there is only one array.
+        if root_grp.variables[height_key].ndim == 1:
+            heights = np.flipud(heights)
+
+        # Get the shape of the file and change only the data that is defined in the inside.
+        height_shape = np.array(root_grp.variables[height_key]).shape
         root_grp.variables[height_key][:] = heights.reshape(height_shape)
-        root_grp.variables[height_key].actual_range = np.array([np.nanmin(heights), np.nanmax(heights)])
+
+        # Change the metadata of the file to match the new heights
+        # --------------------------------------------------------
+        # add the range if the variable is defined in the file.
+        if 'z_range' in file_keys:
+            root_grp.variables['z_range'][:] = [np.nanmin(heights), np.nanmax(heights)]
+
+        # change the actual range of the variable that uses the height key if it is defined
+        if 'actual_range' in root_grp.variables[height_key].ncattrs():
+            root_grp.variables[height_key].actual_range = np.array([np.nanmin(heights), np.nanmax(heights)])
+
         root_grp.close()
 
     def export_model_vertices_to_netcdf_file(self,
