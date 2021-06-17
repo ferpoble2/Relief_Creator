@@ -33,6 +33,19 @@ class Frame:
         self._position = [100, 100]
         self._GUI_manager = gui_manager
 
+    def add_new_polygon(self, polygon_id) -> None:
+        """
+        Function to call to add a new polygon into the frame.
+
+        Must be defined in child classes.
+
+        Args:
+            polygon_id: ID of the polygon.
+
+        Returns: None
+        """
+        pass
+
     def change_position(self, new_position: list) -> None:
         """
         Change the position of the frame in the screen. Only works properly when fixed_position is set to True.
@@ -49,32 +62,6 @@ class Frame:
         """
         return self._position
 
-    def add_new_polygon(self, polygon_id) -> None:
-        """
-        Function to call to add a new polygon into the frame.
-
-        Must be defined in child classes.
-
-        Args:
-            polygon_id: ID of the polygon.
-
-        Returns: None
-        """
-        pass
-
-    def render(self) -> None:
-        """
-        Draw the frames on the screen.
-
-        Notes:
-            Due to the implementation of imgui, it is recommendable to implement here all the logic related to the
-            windows that the program will show always show (imgui.begin(...)/imgui.end()) and to program all the logic
-            related to the popups to the post_render method.
-
-        Returns: None
-        """
-        raise NotImplementedError("Render method not implemented.")
-
     def post_render(self) -> None:
         """
         Method that executes after the rendering process of all the frames.
@@ -87,7 +74,7 @@ class Frame:
             def render():
                 if ...:
                     self.should_open_popup = True
-                    
+
             def post_render():
                 if self.should_open_popup:
                     imgui.open_popup('popup_id')
@@ -99,3 +86,16 @@ class Frame:
         Returns: None
         """
         pass
+
+    def render(self) -> None:
+        """
+        Draw the frames on the screen.
+
+        Notes:
+            Due to the implementation of imgui, it is recommendable to implement here all the logic related to the
+            windows that the program will show always (imgui.begin(...)/imgui.end()) and to program all the logic
+            related to the popups to the post_render method.
+
+        Returns: None
+        """
+        raise NotImplementedError("Render method not implemented.")
