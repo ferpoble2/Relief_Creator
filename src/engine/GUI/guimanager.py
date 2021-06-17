@@ -502,7 +502,11 @@ class GUIManager:
 
     def get_left_frame_width(self) -> int:
         """
-        Get the width of the left frame.
+        Get the width of the tools frame. This frame is located by default at the left of the window and does not
+        share the space with the elements on the scene.
+
+        If the frames are unfixed (the become movable) and the width of the Tools frame changes, the value returned
+        does not change, returning the default width of the Tools frame when the frame are fixed.
 
         Returns: width of the left frame
         """
