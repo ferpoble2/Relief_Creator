@@ -22,6 +22,7 @@ File that contains the main class of the program.
 import os
 import shutil
 import easygui
+import time
 from src.utils import get_logger
 
 log = get_logger(module='PROGRAM')
@@ -51,7 +52,7 @@ class Program:
 
         # File to use when making a copy of the loaded model.
         # This copy helps the export process of the models, changing only the height information of the file.
-        self.__temp_model_file = './temp_model_file.nc'
+        self.__temp_model_file = f'./{time.time()}temp_model_file.nc'
 
         # Map 2d variables
         # ----------------
