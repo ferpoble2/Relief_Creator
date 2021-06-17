@@ -55,7 +55,7 @@ class Settings:
     SCENE_BEGIN_X = LEFT_FRAME_WIDTH
     SCENE_BEGIN_Y = BOTTOM_FRAME_HEIGHT
     SCENE_WIDTH_X = WIDTH - LEFT_FRAME_WIDTH
-    SCENE_HEIGHT_Y = HEIGHT - MAIN_MENU_BAR_HEIGHT
+    SCENE_HEIGHT_Y = HEIGHT - MAIN_MENU_BAR_HEIGHT - TOP_FRAME_HEIGHT
 
     # GUI settings
     FONT_SIZE = 18
@@ -94,6 +94,6 @@ class Settings:
             Settings.SCENE_HEIGHT_Y = Settings.HEIGHT - Settings.MAIN_MENU_BAR_HEIGHT - Settings.TOP_FRAME_HEIGHT
         else:
             Settings.SCENE_BEGIN_X = 0
-            Settings.SCENE_BEGIN_Y = Settings.BOTTOM_FRAME_HEIGHT
+            Settings.SCENE_BEGIN_Y = 0
             Settings.SCENE_WIDTH_X = Settings.WIDTH
-            Settings.SCENE_HEIGHT_Y = Settings.HEIGHT - Settings.MAIN_MENU_BAR_HEIGHT - Settings.TOP_FRAME_HEIGHT
+            Settings.SCENE_HEIGHT_Y = Settings.HEIGHT - Settings.MAIN_MENU_BAR_HEIGHT
