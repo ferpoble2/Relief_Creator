@@ -22,7 +22,7 @@ File with the class PolygonTools, class in charge of rendering the tools for the
 import imgui
 
 from src.utils import get_logger
-from type_hinting import *
+from src.type_hinting import *
 
 log = get_logger(module="POLYGON_TOOLS")
 
