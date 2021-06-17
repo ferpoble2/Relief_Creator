@@ -41,11 +41,19 @@ class TestHeightGreaterFilter(unittest.TestCase):
         # initialize variables
         self.engine.should_use_threads(False)
 
+    def tearDown(self) -> None:
+        """
+        Delete all temporary files created by the program on the setup or testing processes.
+
+        Returns: None
+        """
+        self.program.remove_temp_files()
+
     def test_normal_application_less_than(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
         self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                          'resources/test_resources/netcdf/test_file_50_50.nc')
+                                     'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load polygon
         self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
@@ -76,7 +84,7 @@ class TestHeightGreaterFilter(unittest.TestCase):
         warnings.simplefilter("ignore", ResourceWarning)
 
         self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                          'resources/test_resources/netcdf/test_file_50_50.nc')
+                                     'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load polygon
         self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
@@ -107,11 +115,11 @@ class TestHeightGreaterFilter(unittest.TestCase):
         warnings.simplefilter("ignore", ResourceWarning)
 
         self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                          'resources/test_resources/netcdf/test_file_50_50.nc')
+                                     'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
         self.engine.load_shapefile_file('resources/test_resources/polygons/'
-                                                'shape_three_polygons_south_america.shp')
+                                        'shape_three_polygons_south_america.shp')
 
         # apply transformation with filters
         self.engine.transform_points(polygon_id='Polygon 0',
@@ -135,6 +143,7 @@ class TestHeightGreaterFilter(unittest.TestCase):
         self.assertTrue((info_written[2] == info_expected[2]).all())
 
         os.remove('resources/test_resources/temp/temp_is_in_filter_polygon_not_in_map.nc')
+
 
 if __name__ == '__main__':
     unittest.main()

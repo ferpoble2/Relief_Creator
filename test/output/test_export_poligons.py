@@ -48,6 +48,14 @@ class TestExportPolygons(unittest.TestCase):
         self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
                                           'resources/test_resources/netcdf/test_model_2.nc')
 
+    def tearDown(self) -> None:
+        """
+        Delete all temporary files created by the program on the setup or testing processes.
+
+        Returns: None
+        """
+        self.program.remove_temp_files()
+
     def test_create_and_export(self):
         warnings.simplefilter("ignore", ResourceWarning)
 

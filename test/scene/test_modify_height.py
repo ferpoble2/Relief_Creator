@@ -45,13 +45,21 @@ class TestModifyHeight(unittest.TestCase):
         # initialize variables
         self.engine.should_use_threads(False)
         self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
-                                          'resources/test_resources/netcdf/test_model_2.nc')
+                                     'resources/test_resources/netcdf/test_model_2.nc')
+
+    def tearDown(self) -> None:
+        """
+        Delete all temporary files created by the program on the setup or testing processes.
+
+        Returns: None
+        """
+        self.program.remove_temp_files()
 
     def test_linear_transformation(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
         self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
-                                          'resources/test_resources/netcdf/test_file_1.nc')
+                                     'resources/test_resources/netcdf/test_file_1.nc')
 
         # load list of polygons
         self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_south_america.shp')

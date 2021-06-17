@@ -42,6 +42,14 @@ class TestContainsFilter(unittest.TestCase):
         # initialize variables
         self.engine.should_use_threads(False)
 
+    def tearDown(self) -> None:
+        """
+        Delete all temporary files created by the program on the setup or testing processes.
+
+        Returns: None
+        """
+        self.program.remove_temp_files()
+
     def test_normal_application_is_not_in(self):
         warnings.simplefilter("ignore", ResourceWarning)
 

@@ -37,6 +37,14 @@ class TestPolygonFolderCreation(unittest.TestCase):
         self.program = Program(self.engine)
         self.gui_manager = self.engine.gui_manager
 
+    def tearDown(self) -> None:
+        """
+        Delete all temporary files created by the program on the setup or testing processes.
+
+        Returns: None
+        """
+        self.program.remove_temp_files()
+
     def test_create_folder(self):
         folder_list = self.gui_manager.get_polygon_folder_id_list()
         self.assertEqual([], folder_list, 'List is not empty at the beginning.')
