@@ -1006,7 +1006,6 @@ class Engine:
             self.program.load_netcdf_file_with_dialog()
 
         except FileNotFoundError as e:
-            log.exception(e)
             self.set_modal_text('Error', 'File not loaded.')
 
     def load_preview_interpolation_area(self, distance: float) -> None:
@@ -1082,7 +1081,6 @@ class Engine:
             self.program.load_shapefile_file_with_dialog()
 
         except FileNotFoundError as e:
-            log.exception(e)
             self.set_modal_text('Error', 'File not loaded.')
 
     def modify_camera_radius(self, distance: float) -> None:
