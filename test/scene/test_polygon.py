@@ -140,6 +140,7 @@ class TestPlanarity(unittest.TestCase):
         self.engine.add_new_vertex_to_active_polygon_using_window_coords(2, -0.5)
         self.assertFalse(self.engine.is_polygon_planar(pol_not_planar))
 
+        self.program.remove_temp_files()
 
 if __name__ == '__main__':
     unittest.main()
