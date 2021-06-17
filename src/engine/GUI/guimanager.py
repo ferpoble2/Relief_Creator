@@ -37,6 +37,7 @@ from src.engine.GUI.frames.debug import Debug
 from src.engine.GUI.frames.loading import Loading
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar
 from src.engine.GUI.frames.polygon_information import PolygonInformation
+from src.engine.GUI.frames.mouse_coordinates import MouseCoordinates
 from src.engine.GUI.frames.test_window import TestWindow
 from src.engine.GUI.frames.text_modal import TextModal
 from src.engine.GUI.frames.tools.tools import Tools
@@ -692,6 +693,7 @@ class GUIManager:
         polygon_information = PolygonInformation(gui_manager)
         confirmation_modal = ConfirmationModal(gui_manager)
         tools_3d = Tools3D(gui_manager)
+        mouse_coordinates = MouseCoordinates(gui_manager)
 
         self.__component_list_2D = [
             main_menu_bar,
@@ -701,7 +703,8 @@ class GUIManager:
             # debug,
             loading,
             polygon_information,
-            confirmation_modal
+            confirmation_modal,
+            mouse_coordinates
         ]
 
         self.__component_list_3D = [
