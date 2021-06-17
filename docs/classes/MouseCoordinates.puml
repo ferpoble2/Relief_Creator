@@ -1,0 +1,19 @@
+@startuml
+
+class MouseCoordinates {
+
+    - __width: int
+    - __height: int
+    - __alpha_value: float
+    - __frame_name: str
+    - __frame_fixed_flags: uint
+    - __frame_unfixed_flags: uint
+
+    + render()
+
+}
+
+
+
+
+@enduml
