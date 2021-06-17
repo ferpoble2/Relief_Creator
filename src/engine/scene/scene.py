@@ -308,16 +308,20 @@ class Scene:
 
         model.set_height_buffer(new_heights)
 
-    def calculate_map_position_from_window(self, position_x, position_y) -> (float, float):
+    def calculate_map_position_from_window(self, position_x: int, position_y: int) -> (float, float):
         """
         Calculate the position of a point on the map currently being showed on the screen.
 
+        Returns (None, None) if there is no active model on the program.
+
         Args:
-            position_x: Window position x of the point
-            position_y: Window position y (from top to bottom) of the point
+            position_x: Window position x of the point. (pixels to the right on the window)
+            position_y: Window position y (from top to bottom) of the point. (pixels down on the window)
 
         Returns: position_x, position_y of the new point in the map coordinates.
         """
+        if self.__engine.get_active_model_id() is None:
+            return None, None
 
         scene_settings = self.__engine.get_scene_setting_data()
         map_positions = self.get_active_model_showed_limits()
