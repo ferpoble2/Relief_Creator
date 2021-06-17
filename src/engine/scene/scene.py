@@ -894,26 +894,27 @@ class Scene:
         polygon_external_points = polygon.get_exterior_polygon_points(distance)
 
         # generating lines model
-        lines_external = Lines(self)
+        lines_external = Lines(self, point_list=np.array(polygon_external_points).reshape((-1, 3)))
         lines_external.set_line_color([1, 0, 0, 0.5])
 
-        # Add the lines of the external polygon to the lines model
-        for ind in range(int(len(polygon_external_points) / 3)):
-
-            point_1 = (polygon_external_points[ind * 3],
-                       polygon_external_points[ind * 3 + 1],
-                       polygon_external_points[ind * 3 + 2])
-
-            if ind == len(polygon_external_points) / 3 - 1:
-                point_2 = (polygon_external_points[0],
-                           polygon_external_points[1],
-                           polygon_external_points[2])
-            else:
-                point_2 = (polygon_external_points[ind * 3 + 3],
-                           polygon_external_points[ind * 3 + 4],
-                           polygon_external_points[ind * 3 + 5])
-
-            lines_external.add_line(point_1, point_2)
+        # Deprecated Code
+        # ---------------
+        # # Add the lines of the external polygon to the lines model
+        # for ind in range(int(len(polygon_external_points) / 3)):
+        #
+        #     point_1 = (polygon_external_points[ind * 3],
+        #                polygon_external_points[ind * 3 + 1],
+        #                polygon_external_points[ind * 3 + 2])
+        #
+        #     if ind == len(polygon_external_points) / 3 - 1:
+        #         point_2 = (polygon_external_points[0],
+        #                    polygon_external_points[1],
+        #                    polygon_external_points[2])
+        #     else:
+        #         point_2 = (polygon_external_points[ind * 3 + 3],
+        #                    polygon_external_points[ind * 3 + 4],
+        #                    polygon_external_points[ind * 3 + 5])
+        #   lines_external.add_line(point_1, point_2)
 
         # Add the model to the hash of interpolation areas
         self.__interpolation_area_hash[self.__engine.get_active_polygon_id()] = [lines_external]
