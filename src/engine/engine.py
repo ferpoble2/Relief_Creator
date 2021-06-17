@@ -647,6 +647,26 @@ class Engine:
         """
         return self.gui_manager.get_gui_mouse_scroll_callback()
 
+    def get_map_coordinates_from_window_coordinates(self, x_coordinate: int, y_coordinate: int) -> (float, float):
+        """
+        Get the position of a point in the map given in screen coordinates.
+
+        Screen coordinates have the origin of the system at the top-left of the window, being the x-axis positive to
+        the right and the y-axis positive to the bottom.
+
+        The returned tuple is the real coordinates (coordinates used in the map) of the point specified in screen
+        coordinates.
+
+        If there is no map loaded on the program, then (None, None) is returned.
+
+        Args:
+            x_coordinate: x-axis component of the screen coordinate to evaluate on the map.
+            y_coordinate: y-axis component of the screen coordinate to evaluate on the map.
+
+        Returns: (x, y) tuple with the coordinates of the point on the map.
+        """
+        return self.scene.calculate_map_position_from_window(x_coordinate, y_coordinate)
+
     def get_gui_setting_data(self) -> dict:
         """
         Get the GUI setting data.
