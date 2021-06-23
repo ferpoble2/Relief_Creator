@@ -1,23 +1,36 @@
 @startuml
             class Scene{
-                - __transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height, filters)
+                - __bilinear_interpolation(x, y, points): float
                 - __process_filters(filters): list
+                - __transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height, filters)
                 + add_model(model)
                 + add_new_vertex_to_active_polygon_using_real_coords(x_coord, y_coord)
                 + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
                 + add_polygon(polygon)
+                + apply_smoothing_algorithm(polygon_id, model_id, distance_to_polygon)
                 + calculate_map_position_from_window(): (float, float)
                 + calculate_max_min_height(model_id, polygon_id): tuple
+                + change_camera_azimuthal_angle(angle)
+                + change_camera_elevation(angle)
                 + change_color_of_polygon(polygon_id, color)
                 + change_dot_color_of_polygon(polygon_id, color)
+                + change_height_unit_3D_model(model_id, measure_unit)
+                + change_map_unit_3D_model(model_id, measure_unit)
+                + change_normalization_height_factor(active_model, new_factor)
+                + create_and_add_map3Dmodel(model_id, model_2d): str
                 + create_new_polygon(): str
                 + delete_polygon_by_id(polygon_id)
                 + delete_polygon_param(polygon_id, key)
                 + draw()
+                + get_active_model_coordinates_arrays(): (array, array)
+                + get_active_model_height_on_coordinates(x_coordinate, y_coordinate): float
                 + get_active_model_projection_matrix(): array
                 + get_active_model_showed_limits(): dict
                 + get_active_polygon_id(): str
+                + get_camera_settings(): dict
+                + get_camera_view_matrix(): array
                 + get_extra_reload_proportion_setting(): float
+                + get_height_normalization_factor(model_3d_id): float
                 + get_map2dmodel_vertices_array(model_id): array
                 + get_point_list_from_polygon(polygon_id): list
                 + get_polygon_id_list(): list
@@ -28,23 +41,18 @@
                 + initialize(engine)
                 + interpolate_points(polygon_id, model_id, distance, type_interpolation)
                 + is_polygon_planar(polygon_id)
-                + remove_interpolation_preview(polygon_id)
-                + create_and_add_map3Dmodel(model_id, model_2d): str
-                + get_camera_settings(): dict
-                + get_height_normalization_factor(model_3d_id): float
-                + change_normalization_height_factor(active_model, new_factor)
-                + update_3D_model(model_id)
-                + apply_smoothing_algorithm(polygon_id, model_id, distance_to_polygon)
-                + change_height_unit_3D_model(model_id, measure_unit)
-                + change_map_unit_3D_model(model_id, measure_unit)
                 + load_preview_interpolation_area(distance, z_value)
+                + modify_camera_radius(distance)
+                + move_camera(movement)
                 + move_models(x_movement, y_movement)
                 + optimize_gpu_memory_async(then)
                 + refresh_with_model_2d(path_color_file, path_model, model_id)
                 + reload_models_async(then)
                 + remove_all_models()
+                + remove_interpolation_preview(polygon_id)
                 + remove_last_point_from_active_polygon()
                 + remove_model(id_model)
+                + reset_camera_values()
                 + set_loading_message(new_msg)
                 + set_map_position(new_position)
                 + set_modal_text(title_modal, msg)
@@ -52,16 +60,11 @@
                 + set_polygon_name(polygon_id, new_name)
                 + set_polygon_param(polygon_id, key, value)
                 + transform_points(polygon_id, model_id, min_height, max_height, transformation_type, filters)
+                + update_3D_model(model_id)
                 + update_models_colors()
                 + update_models_projection_matrix()
                 + update_viewport()
                 + update_viewport_variables()
-                + reset_camera_values()
-                + get_camera_view_matrix(): array
-                + modify_camera_radius(distance)
-                + change_camera_elevation(angle)
-                + change_camera_azimuthal_angle(angle)
-                + move_camera(movement)
 
                 - __3d_model_hash: dictionary
                 - __engine : Engine

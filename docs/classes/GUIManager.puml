@@ -56,6 +56,7 @@ class GUIManager{
     + get_left_frame_width(): int
     + get_main_menu_bar_height(): int
     + get_map_coordinates_from_window_coordinates(x_coordinate, y_coordinate): (float, float)
+    + get_map_height_on_coordinates(x_coordinate, y_coordinate): float
     + get_map_position(): list
     + get_polygon_folder_id_list(): list
     + get_polygon_folder_name(polygon_folder_id): str

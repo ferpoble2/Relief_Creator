@@ -142,5 +142,6 @@ class TestPlanarity(unittest.TestCase):
 
         self.program.remove_temp_files()
 
+
 if __name__ == '__main__':
     unittest.main()

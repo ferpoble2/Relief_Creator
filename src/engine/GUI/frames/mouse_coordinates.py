@@ -37,7 +37,7 @@ class MouseCoordinates(Frame):
         Constructor of the class.
         """
         super().__init__(gui_manager)
-        self.__width = 250
+        self.__width = 300
         self.__height = 35
         self.__alpha_value = 0.4
 
@@ -79,7 +79,14 @@ class MouseCoordinates(Frame):
             # Round the values obtained to show only two decimals
             map_coordinates[0] = round(map_coordinates[0], 2)
             map_coordinates[1] = round(map_coordinates[1], 2)
-            imgui.text(f'Mouse Coordinates: {map_coordinates}')
+
+            height = self._GUI_manager.get_map_height_on_coordinates(map_coordinates[0],
+                                                                     map_coordinates[1])
+            if height is not None:
+                height = round(height, 2)
+                imgui.text(f'Mouse Coordinates: ({map_coordinates[0]}, {map_coordinates[1]}, {height})')
+            else:
+                imgui.text(f'Mouse Coordinates: ({map_coordinates[0]}, {map_coordinates[1]})')
 
             # Close the frame
             imgui.end()

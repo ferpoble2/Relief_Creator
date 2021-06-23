@@ -23,6 +23,7 @@ import ctypes as ctypes
 
 import OpenGL.GL as GL
 import numpy as np
+from typing import List, Union
 
 from src.engine.scene.model.mapmodel import MapModel
 from src.engine.scene.model.tranformations.transformations import ortho
@@ -195,6 +196,32 @@ class Map2DModel(MapModel):
         log.debug('Concatenating arrays')
         self.__triangles_to_delete = np.concatenate((self.__triangles_to_delete, to_delete))
         log.debug('Ended concatenating arrays')
+
+    # noinspection SpellCheckingInspection
+    def __bilinear_interpolation(self, x: float, y: float, points: List[tuple]) -> float:
+        """
+        Interpolate (x,y) from values associated with four points.
+
+        The four points are a list of four triplets: (x, y, value). The four points can be in any order. They should
+        form a rectangle.
+
+        Return: Value interpolated.
+        """
+        # See formula at: http://en.wikipedia.org/wiki/Bilinear_interpolation
+
+        points = sorted(points)  # order points by x, then by y
+        (x1, y1, q11), (_x1, y2, q12), (x2, _y1, q21), (_x2, _y2, q22) = points
+
+        if x1 != _x1 or x2 != _x2 or y1 != _y1 or y2 != _y2:
+            raise ValueError('points do not form a rectangle')
+        if not x1 <= x <= x2 or not y1 <= y <= y2:
+            raise ValueError('(x, y) not within the rectangle')
+
+        return (q11 * (x2 - x) * (y2 - y) +
+                q21 * (x - x1) * (y2 - y) +
+                q12 * (x2 - x) * (y - y1) +
+                q22 * (x - x1) * (y - y1)
+                ) / ((x2 - x1) * (y2 - y1) + 0.0)
 
     def __generate_index_list(self,
                               step_x: int,
@@ -511,6 +538,64 @@ class Map2DModel(MapModel):
         Returns: numpy array with the values of the buffer.
         """
         return self.__height_array
+
+    def get_model_coordinate_array(self) -> (np.ndarray, np.ndarray):
+        """
+        Return the arrays containing the information used to generate the models in the format
+        (x-axis array, y-axis array).
+
+        The returned arrays can be empty if the model is not initialized with data yet.
+
+        Returns: (x-axis, y-axis) tuple with the data of the coordinates of the model.
+        """
+        return np.array(self.__x), np.array(self.__y)
+
+    def get_height_on_coordinates(self, x_coordinate: float, y_coordinate: float) -> Union[float, None]:
+        """
+        Get the height of the model on the specified coordinates.
+
+        If the coordinates are outside of the model, or the model does not have values stored (still not initialized),
+        then None is returned.
+        If the coordinates does not exist in the model, then an interpolation of the value is given using bi-linear
+        interpolation.
+
+        Args:
+            x_coordinate: x-coordinate to use to ask for the point.
+            y_coordinate: y-coordinate to use to ask for the point.
+
+        Returns: Value interpolated with the height on the model.
+        """
+
+        # Security check
+        # --------------
+        if self.__x is None or self.__y is None or self.__z is None:
+            return None
+
+        x_values = self.__x
+        y_values = self.__y
+        z_values = self.__z
+
+        # Return None if the coordinate asked is outside of the model.
+        if x_coordinate < np.min(x_values) or x_coordinate > np.max(x_values) or y_coordinate < np.min(y_values) \
+                or y_coordinate > np.max(y_values):
+            return None
+
+        x_ind_1 = np.abs(x_values - x_coordinate).argmin()
+        y_ind_1 = np.abs(y_values - y_coordinate).argmin()
+
+        x_ind_2 = x_ind_1 - 1 if x_values[x_ind_1] > x_coordinate else x_ind_1 + 1
+        y_ind_2 = y_ind_1 - 1 if y_values[y_ind_1] > y_coordinate else y_ind_1 + 1
+
+        x_ind_1, x_ind_2 = (min(x_ind_1, x_ind_2), max(x_ind_1, x_ind_2))
+        y_ind_1, y_ind_2 = (min(y_ind_1, y_ind_2), max(y_ind_1, y_ind_2))
+
+        return self.__bilinear_interpolation(x_coordinate, y_coordinate,
+                                             [
+                                                 (x_values[x_ind_1], y_values[y_ind_1], z_values[y_ind_1, x_ind_1]),
+                                                 (x_values[x_ind_1], y_values[y_ind_2], z_values[y_ind_1, x_ind_2]),
+                                                 (x_values[x_ind_2], y_values[y_ind_1], z_values[y_ind_2, x_ind_1]),
+                                                 (x_values[x_ind_2], y_values[y_ind_2], z_values[y_ind_2, x_ind_2])
+                                             ])
 
     def get_projection_matrix(self) -> 'np.array':
         """

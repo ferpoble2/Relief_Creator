@@ -18,7 +18,7 @@
 """
 File that contain the Scene class. This class is in charge of the management of the models of the scene.
 """
-from typing import Dict, List
+from typing import Dict, List, Union
 from src.type_hinting import *
 
 import OpenGL.GL as GL
@@ -259,7 +259,7 @@ class Scene:
             raise AssertionError('There is no active polygon.')
 
         if active_polygon in self.__polygon_hash:
-            new_x, new_y = self.calculate_map_position_from_window(position_x, position_y)
+            new_x, new_y = self.calculate_map_position_from_window(position_x, position_y, allow_outside_map=True)
             self.__polygon_hash[active_polygon].add_point(new_x, new_y)
 
     def add_polygon(self, polygon: 'Polygon') -> None:
@@ -308,21 +308,36 @@ class Scene:
 
         model.set_height_buffer(new_heights)
 
-    def calculate_map_position_from_window(self, position_x: int, position_y: int) -> (float, float):
+    def calculate_map_position_from_window(self, position_x: int, position_y: int, allow_outside_map=False) \
+            -> (float, float):
         """
         Calculate the position of a point on the map currently being showed on the screen.
 
-        Returns (None, None) if there is no active model on the program.
+        Returns (None, None) if there is no active model on the program or if the position of the mouse is outside of
+        the map.
 
         Args:
+            allow_outside_map: If to enable to calculate the map position even when the positions given fall outside of
+                               the rendered map. When disabled, (None, None) is returned if points are outside of map.
             position_x: Window position x of the point. (pixels to the right on the window)
             position_y: Window position y (from top to bottom) of the point. (pixels down on the window)
 
         Returns: position_x, position_y of the new point in the map coordinates.
         """
+        # Security verifications
+        # ----------------------
+
+        # Model has to exist on the program
         if self.__engine.get_active_model_id() is None:
             return None, None
 
+        # Model must be initialized to obtain the data
+        x_array, y_array = self.get_active_model_coordinates_arrays()
+        if x_array is None and y_array is None:
+            return None, None
+
+        # Calculate the position of the mouse on the map
+        # ----------------------------------------------
         scene_settings = self.__engine.get_scene_setting_data()
         map_positions = self.get_active_model_showed_limits()
         window_settings = self.__engine.get_window_setting_data()
@@ -336,7 +351,15 @@ class Scene:
         x_pos = map_positions['left'] + (map_positions['right'] - map_positions['left']) * x_dist_pixel / scene_x
         y_pos = map_positions['bottom'] + (map_positions['top'] - map_positions['bottom']) * y_dist_pixel / scene_y
 
-        log.debug(f'Calculated position is: {x_pos} {y_pos}')
+        # return None, None if mouse is outside the map.
+        # ---------------------------------------------
+        outside_map = x_pos < np.min(x_array) or \
+                      x_pos > np.max(x_array) or \
+                      y_pos < np.min(y_array) or \
+                      y_pos > np.max(y_array)
+        if (not allow_outside_map) and outside_map:
+            return None, None
+
         return x_pos, y_pos
 
     def calculate_max_min_height(self, model_id: str, polygon_id: str) -> tuple:
@@ -581,6 +604,42 @@ class Scene:
         active_model_id = self.__engine.get_active_model_id()
         if active_model_id in self.__model_hash:
             return self.__model_hash[active_model_id].get_projection_matrix()
+
+    def get_active_model_height_on_coordinates(self, x_coordinate: float, y_coordinate: float) -> Union[float, None]:
+        """
+        Get the height of the active model in the specified coordinates.
+
+        If coordinates are outside the model or there is no active model, then None is returned.
+
+        Args:
+            x_coordinate: x-axis coordinate.
+            y_coordinate: y-axis coordinate.
+
+        Returns: Height of the model in the coordinates.
+        """
+        active_model_id = self.__engine.get_active_model_id()
+        if active_model_id in self.__model_hash:
+            return self.__model_hash[active_model_id].get_height_on_coordinates(x_coordinate, y_coordinate)
+        else:
+            return None
+
+    def get_active_model_coordinates_arrays(self) -> (np.ndarray, np.ndarray):
+        """
+        Get two arrays, the first containing the coordinates used in the active model for the x-axis and the second
+        containing the coordinates used in the active model for the y-axis.
+
+        The lists can be sorted ascended or descended. (must be verified, can vary)
+
+        If there is no active model or if there is a problem retrieving the model, then (None, None) is returned.
+
+        Returns: (x-axis array, y-axis array) coordinates used in the active model.
+        """
+        active_model_id = self.__engine.get_active_model_id()
+        if active_model_id in self.__model_hash:
+            model = self.__model_hash[active_model_id]
+            return model.get_model_coordinate_array()
+        else:
+            return None, None
 
     def get_active_model_showed_limits(self) -> dict:
         """

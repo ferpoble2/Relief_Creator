@@ -513,6 +513,14 @@ class GUIManager:
         """
         return self.__engine.get_gui_setting_data()['LEFT_FRAME_WIDTH']
 
+    def get_main_menu_bar_height(self) -> int:
+        """
+        Get the main menu bar height frm the settings.
+
+        Returns: main_menu_bar height
+        """
+        return self.__engine.get_gui_setting_data()['MAIN_MENU_BAR_HEIGHT']
+
     def get_map_coordinates_from_window_coordinates(self, x_coordinate: int, y_coordinate: int) -> (float, float):
         """
         Get the position of a point in the map given in screen coordinates.
@@ -533,13 +541,19 @@ class GUIManager:
         """
         return self.__engine.get_map_coordinates_from_window_coordinates(x_coordinate, y_coordinate)
 
-    def get_main_menu_bar_height(self) -> int:
+    def get_map_height_on_coordinates(self, x_coordinate: float, y_coordinate: float) -> float:
         """
-        Get the main menu bar height frm the settings.
+        Get the height of the current active map on the specified coordinates.
 
-        Returns: main_menu_bar height
+        If there is no map loaded or the coordinates are outside of the map, then None is returned.
+
+        Args:
+            x_coordinate: x-axis coordinate.
+            y_coordinate: y-axis coordinate.
+
+        Returns: Height of the active model on the specified location.
         """
-        return self.__engine.get_gui_setting_data()['MAIN_MENU_BAR_HEIGHT']
+        return self.__engine.get_map_height_on_coordinates(x_coordinate, y_coordinate)
 
     def get_map_position(self) -> list:
         """

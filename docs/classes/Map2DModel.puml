@@ -32,9 +32,11 @@
                     - __set_height_buffer()
                     ~ _update_uniforms()
                     + calculate_projection_matrix(scene_data, zoom_level)
-                    + get_height_array(): array
                     + get_color_file(): str
+                    + get_height_array(): array
+                    + get_model_coordinate_array(): (array, array)
                     + get_projection_matrix(): array
+                    + get_height_on_coordinates(x_coordinate, y_coordinate): float
                     + get_showed_limits(): dict
                     + get_vertices_shape(): tuple
                     + move(x_movement, y_movement)

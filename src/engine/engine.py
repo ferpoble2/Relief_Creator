@@ -647,6 +647,20 @@ class Engine:
         """
         return self.gui_manager.get_gui_mouse_scroll_callback()
 
+    def get_map_height_on_coordinates(self, x_coordinate: float, y_coordinate: float) -> float:
+        """
+        Get the height of the current active map on the specified coordinates.
+
+        If there is no map loaded or the coordinates are outside of the map, then None is returned.
+
+        Args:
+            x_coordinate: x-axis coordinate.
+            y_coordinate: y-axis coordinate.
+
+        Returns: Height of the active model on the specified location.
+        """
+        return self.scene.get_active_model_height_on_coordinates(x_coordinate, y_coordinate)
+
     def get_map_coordinates_from_window_coordinates(self, x_coordinate: int, y_coordinate: int) -> (float, float):
         """
         Get the position of a point in the map given in screen coordinates.
