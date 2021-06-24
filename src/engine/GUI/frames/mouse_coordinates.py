@@ -43,8 +43,8 @@ class MouseCoordinates(Frame):
 
         self.__frame_name = 'Mouse Coordinates'
         self.__frame_fixed_flags = imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE | \
-                                   imgui.WINDOW_NO_TITLE_BAR
-        self.__frame_unfixed_flags = imgui.WINDOW_NO_TITLE_BAR
+                                   imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_FOCUS_ON_APPEARING
+        self.__frame_unfixed_flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_FOCUS_ON_APPEARING
 
         self.change_position(
             [self._GUI_manager.get_left_frame_width(),
