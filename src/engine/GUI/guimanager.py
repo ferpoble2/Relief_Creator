@@ -807,6 +807,75 @@ class GUIManager:
         """
         self.__engine.load_shapefile_file_with_dialog()
 
+    def move_folder_position(self, polygon_folder_id: str, movement_offset: int) -> None:
+        """
+        Move the order of the folders on the GUI.
+
+        Example:
+            If the folders are arranged as follows:
+
+                Folder 1
+                Folder 2
+                Folder 3
+
+            Then, using a movement_offset of -2 in the Folder 3 will result in this:
+
+                Folder 3
+                Folder 2
+                Folder 1
+
+        This method change the order on which the polygons are draw on the scene.
+
+        Args:
+            polygon_folder_id: ID of the folder to move.
+            movement_offset: How much to move the folder.
+
+        Returns: None
+        """
+
+        # Move the folder on the manager
+        self.__polygon_folder_manager.move_folder_position(polygon_folder_id, movement_offset)
+
+        # Change the draw order of the polygons inside the folder
+        for polygon_id in self.get_polygons_id_from_polygon_folder(polygon_folder_id):
+            self.__engine.change_polygon_draw_order(polygon_id,
+                                                    self.__polygon_folder_manager.get_polygon_position(polygon_id))
+
+    def move_polygon_position(self, polygon_id: str, polygon_folder_id: str, movement_offset: int) -> None:
+        """
+        Move the polygon position inside the folder where it is located.
+
+        If movement_offset is negative, then the polygon will be moved to the beginning of the folder, if it is
+        positive, then it will be moved to the end of the folder.
+
+        Examples:
+
+            If the folder contains the following polygons:
+
+                [polygon_1, polygon_2, polygon_3, polygon_4]
+
+            then using movement_offset equal to -2 to move the polygon_4 will result in the folder containing the
+            polygons in the following order:
+
+                [polygon_1, polygon_4, polygon_2, polygon_3]
+
+        This method change the draw order of the polygons.
+
+        Args:
+            polygon_id: ID of the polygon to move.
+            polygon_folder_id: ID of the folder where the polygon is located.
+            movement_offset: How many positions to move the polygon.
+
+        Returns: None
+        """
+
+        # Move the position of the polygon in the respective folder
+        self.__polygon_folder_manager.move_polygon_position(polygon_folder_id, polygon_id, movement_offset)
+
+        # Update the draw order of the polygons
+        self.__engine.change_polygon_draw_order(polygon_id,
+                                                self.__polygon_folder_manager.get_polygon_position(polygon_id))
+
     def move_polygon_to_polygon_folder(self, old_folder_id: str, polygon_id: str, folder_id: str) -> None:
         """
         Move the polygon from one folder to another.

@@ -40,6 +40,8 @@ class GUIManager{
     + delete_polygon_parameter(polygon_id, key)
     + disable_glfw_keyboard_callback()
     + draw_frames()
+    + move_folder_position(polygon_folder_id, movement_offset)
+    + move_polygon_position(polygon_id, polygon_folder_id, movement_offset)
     + enable_glfw_keyboard_callback()
     + export_model_as_netcdf(model_id)
     + export_polygon_with_id(polygon_id)
