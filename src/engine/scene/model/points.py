@@ -46,15 +46,20 @@ class Points(Model):
             point_list: List of points to use as initial value. This array will not be modified.
         """
         super().__init__(scene)
+
+        # Properties of the model
+        # -----------------------
         self.cbo = GL.glGenBuffers(1)
-
         self.draw_mode = GL.GL_POINTS
-
         self.update_uniform_values = False
 
         self.__vertex_shader_file = './src/engine/shaders/point_vertex.glsl'
         self.__fragment_shader_file = './src/engine/shaders/point_fragment.glsl'
 
+        self.__z_offset = 0
+
+        # Data of the points
+        # ------------------
         self.__point_list = []
         self.__indices_list = []
         self.__color_list = []
@@ -64,7 +69,8 @@ class Points(Model):
 
         self.set_shaders(self.__vertex_shader_file, self.__fragment_shader_file)
 
-        # initialize model if data is given
+        # Initialize model if data is given
+        # ---------------------------------
         if point_list is not None:
             point_list_copy = point_list.copy()
 
@@ -163,6 +169,25 @@ class Points(Model):
         # set the color and projection matrix to use
         # ------------------------------------------
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_model_projection_matrix())
+
+    def set_z_offset(self, new_value: float) -> None:
+        """
+        Set a new value to the variable z_offset.
+
+        The variable z_offset store a value that will be applied to the vertices of the model in the shader and will
+        modify the z-axis value used by the points of the model.
+
+        The value used as z-axis in the shader will be as follows: z_used_for_render = z_point + z_offset.
+
+        This variable is useful to modify the z-position of the points without having to modify the vertex and indices
+        arrays that are stored in the GPU.
+
+        Args:
+            new_value: New value for the z_offset value.
+
+        Returns: None
+        """
+        self.__z_offset = new_value
 
     def add_point(self, x: float, y: float, z: float) -> None:
         """

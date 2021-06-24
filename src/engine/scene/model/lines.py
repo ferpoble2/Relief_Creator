@@ -150,7 +150,8 @@ class Lines(Model):
 
         The value used as z-axis in the shader will be as follows: z_used_for_render = z_point + z_offset.
 
-        This value affects all points in the model in the same amount.
+        This variable is useful to modify the z-position of the points without having to modify the vertex and indices
+        arrays that are stored in the GPU.
 
         Args:
             new_value: New value for the z_offset value.
