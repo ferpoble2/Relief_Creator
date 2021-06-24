@@ -297,6 +297,15 @@ class PolygonTools:
                 imgui.close_current_popup()
 
             imgui.separator()
+            imgui.selectable('Move Up')
+            if imgui.is_item_clicked():
+                self.__GUI_manager.move_folder_position(folder_id, -1)
+
+            imgui.selectable('Move Down')
+            if imgui.is_item_clicked():
+                self.__GUI_manager.move_folder_position(folder_id, 1)
+
+            imgui.separator()
             imgui.selectable('Rename')
             if imgui.is_item_clicked():
                 self.__open_rename_folder_popup = True
@@ -448,6 +457,14 @@ class PolygonTools:
                 imgui.close_current_popup()
             imgui.separator()
 
+            imgui.selectable('Move Up')
+            if imgui.is_item_clicked():
+                self.__GUI_manager.move_polygon_position(polygon_id, polygon_folder_id, -1)
+
+            imgui.selectable('Move Down')
+            if imgui.is_item_clicked():
+                self.__GUI_manager.move_polygon_position(polygon_id, polygon_folder_id, 1)
+
             # what happens when changing the polygon from one folder to another
             if self.__change_folder_selectable(polygon_folder_id, polygon_id):
                 # once the rename is completed, go back to the original tool
@@ -458,6 +475,7 @@ class PolygonTools:
 
                 # close the popup
                 imgui.close_current_popup()
+            imgui.separator()
 
             # what happens when rename option is pressed (all logic is inside the calling)
             if self.__rename_polygon_selectable(polygon_id):
