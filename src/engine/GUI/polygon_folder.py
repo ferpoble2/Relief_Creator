@@ -90,6 +90,17 @@ class PolygonFolder:
         """
         Move the polygon position within the list of polygons stored.
 
+        Examples:
+
+            If the folder contains the following polygons:
+
+                [polygon_1, polygon_2, polygon_3, polygon_4]
+
+            then using movement_offset equal to -2 to move the polygon_4 will result in the folder containing the
+            polygons in the following order:
+
+                [polygon_1, polygon_4, polygon_2, polygon_3]
+
         Args:
             polygon_id: ID of the polygon to move.
             movement_offset: How much to move the polygon inside the folder.
