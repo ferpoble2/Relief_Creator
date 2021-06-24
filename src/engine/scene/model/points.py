@@ -170,7 +170,7 @@ class Points(Model):
 
         # set the color and projection matrix to use
         # ------------------------------------------
-        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_model_projection_matrix())
+        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_2d_model_projection_matrix())
         GL.glUniform1f(z_value_location, self.__z_offset)
 
     def set_z_offset(self, new_value: float) -> None:

@@ -83,7 +83,7 @@ class Plane(Model):
                        self.__plane_color[1],
                        self.__plane_color[2],
                        self.__plane_color[3])
-        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_model_projection_matrix())
+        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_2d_model_projection_matrix())
 
     def set_triangles(self, vertices: np.ndarray) -> None:
         """

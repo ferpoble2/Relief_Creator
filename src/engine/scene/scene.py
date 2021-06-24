@@ -664,7 +664,7 @@ class Scene:
                                                self.__model_hash[active_model])
 
     # noinspection PyUnresolvedReferences
-    def get_active_model_projection_matrix(self) -> np.array:
+    def get_active_2d_model_projection_matrix(self) -> np.array:
         """
         Get the projection matrix from the active 2D model being showed on the screen.
 
