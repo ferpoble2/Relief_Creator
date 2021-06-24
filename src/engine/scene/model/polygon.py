@@ -43,6 +43,9 @@ class Polygon(Model):
 
     Default values for z-axis coordinate of points in the polygon is 0.5. Unless in 3D mode, this value must be
     set to the third coordinate so the methods defined inside the class works.
+
+    The parameter z_offset can be modified to change the value of the z-axis used for the polygons (and all the
+    sub-models that are used to render a polygon).
     """
 
     def __init__(self, scene, id_polygon: str, point_list: list = None, parameters: dict = None):
@@ -60,22 +63,29 @@ class Polygon(Model):
         """
         super().__init__(scene)
 
+        # Information of the model
+        # ------------------------
         self.id = id_polygon
         self.draw_mode = GL.GL_LINES
-
         self.update_uniform_values = False
-
         self.__name = self.get_id()
 
+        # Models used to generate the polygon on the scene
+        # ------------------------------------------------
         self.__point_model = Points(scene)  # model to use to draw the points
         self.__lines_model = Lines(scene)  # model to use to draw the lines
         self.__last_line_model = DashedLines(scene)  # model to use to render the last line of the polygon
 
+        # Parameters stored in the polygon to use when exporting to shapefile
+        # -------------------------------------------------------------------
         self.__parameters = parameters if parameters is not None else {}
 
+        # Properties of the model
+        # -----------------------
         self.__is_planar = True
 
-        # initialize polygon if data is given
+        # Initialize polygon if data is given
+        # -----------------------------------
         if point_list is not None:
 
             # check for consistency on the data
