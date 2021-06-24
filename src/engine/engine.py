@@ -243,6 +243,19 @@ class Engine:
         """
         self.scene.change_map_unit_3D_model(model_id, measure_unit)
 
+    def change_polygon_draw_order(self, polygon_id: str, new_position: str) -> None:
+        """
+        Ask the scene to change the order in which the polygons are draw.
+
+        Args:
+            polygon_id: Polygon to change the order.
+            new_position: New position in the order of drawing. If value is negative, then the polygon will be changed
+                          to be draw the last.
+
+        Returns: None
+        """
+        return self.scene.change_polygon_draw_order(polygon_id, new_position)
+
     def change_camera_elevation(self, angle) -> None:
         """
         Ask the scene to change the camera elevation.

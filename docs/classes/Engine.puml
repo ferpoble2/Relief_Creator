@@ -17,6 +17,7 @@ class Engine {
     + change_3D_model_position_unit(model_id, measure_unit)
     + change_camera_elevation(angle)
     + change_camera_xy_angle(angle)
+    + change_polygon_draw_order(polygon_id, new_position)
     + change_color_file_with_dialog()
     + change_color_of_polygon(polygon_id, color)
     + change_current_3D_model_normalization_factor(new_factor)
