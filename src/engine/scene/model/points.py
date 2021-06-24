@@ -35,23 +35,6 @@ class Points(Model):
     Class in charge of the modeling of points in the program.
     """
 
-    def __add_color_to_color_list(self, color: tuple) -> None:
-        """
-        Add a color to the color list.
-
-        Args:
-            color: New color to add (must have 4 elements)
-
-        Returns: None
-        """
-        if len(color) < 4:
-            raise AssertionError("Trying to add a color with fewer than 4 components.")
-
-        self.__color_list.append(color[0])
-        self.__color_list.append(color[1])
-        self.__color_list.append(color[2])
-        self.__color_list.append(color[3])
-
     def __init__(self, scene, point_list: np.ndarray = None):
         """
         Constructor of the class.
@@ -98,13 +81,30 @@ class Points(Model):
             elif point_number == 2:
                 self.__color_list = list(self.__first_point_color) + list(self.__last_point_color)
             elif point_number > 2:
-                self.__color_list = list(self.__first_point_color) + list(self.__normal_color)*(point_number-2) + \
+                self.__color_list = list(self.__first_point_color) + list(self.__normal_color) * (point_number - 2) + \
                                     list(self.__last_point_color)
             self.set_color_buffer(np.array(self.__color_list, dtype=np.float32))
 
             # set indices
             self.__indices_list = list(range(point_number))
             self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
+
+    def __add_color_to_color_list(self, color: tuple) -> None:
+        """
+        Add a color to the color list.
+
+        Args:
+            color: New color to add (must have 4 elements)
+
+        Returns: None
+        """
+        if len(color) < 4:
+            raise AssertionError("Trying to add a color with fewer than 4 components.")
+
+        self.__color_list.append(color[0])
+        self.__color_list.append(color[1])
+        self.__color_list.append(color[2])
+        self.__color_list.append(color[3])
 
     def __remove_last_color_from_color_list(self) -> None:
         """
