@@ -10,5 +10,6 @@ class PolygonFolder {
     + get_name(): str
     + get_polygon_list(): list
     + set_name(new_name)
+    + move_polygon(polygon_id, movement_offset)
 }
 @enduml

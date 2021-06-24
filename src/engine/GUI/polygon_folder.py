@@ -85,3 +85,22 @@ class PolygonFolder:
         Returns: None
         """
         self.__name = new_name
+
+    def move_polygon(self, polygon_id: str, movement_offset: int) -> None:
+        """
+        Move the polygon position within the list of polygons stored.
+
+        Args:
+            polygon_id: ID of the polygon to move.
+            movement_offset: How much to move the polygon inside the folder.
+
+        Returns: None
+        """
+        if polygon_id not in self.__polygon_id_list:
+            raise KeyError(f'Polygon {polygon_id} is not in the folder {self.__name} with id {self.__id}.')
+
+        curr_index = self.__polygon_id_list.index(polygon_id)
+        target_index = curr_index + movement_offset
+
+        self.__polygon_id_list.remove(polygon_id)
+        self.__polygon_id_list.insert(target_index, polygon_id)
