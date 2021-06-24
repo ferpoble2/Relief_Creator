@@ -601,16 +601,27 @@ class Scene:
 
         # check if draw the 2D or the 3D of the models.
         if self.__engine.get_program_view_mode() == '2D':
+
+            # Draw map2DModel
             if active_model is not None:
                 self.__model_hash[active_model].draw()
+
+            # Draw all the interpolation areas
             for area_models in self.__interpolation_area_hash.values():
                 for model in area_models:
                     model.draw()
+
+            # Draw all the polygons
             for polygon in self.__polygon_hash.values():
                 polygon.draw()
+
         elif self.__engine.get_program_view_mode() == '3D':
+
+            # Draw model if it exists
             if active_model in self.__3d_model_hash:
                 self.__3d_model_hash[active_model].draw()
+
+            # Create the model if it does not exists
             else:
                 self.create_and_add_map3Dmodel(active_model,
                                                self.__model_hash[active_model])
