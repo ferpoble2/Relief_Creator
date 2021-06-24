@@ -1079,11 +1079,9 @@ class Engine:
 
         except LineIntersectionError:
             self.set_modal_text('Error', 'One of the polygon loaded intersect itself.')
-            return
 
         except RepeatedPointError:
             self.set_modal_text('Error', 'One of the polygon loaded has repeated points.')
-            return
 
     def load_shapefile_file_with_dialog(self) -> None:
         """
