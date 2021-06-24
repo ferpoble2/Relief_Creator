@@ -24,10 +24,11 @@ flat out vec3 startPos;
 out vec3 vertPos;
 
 uniform mat4 projection;
+uniform float z_offset;
 
 void main()
 {
-    vec4 pos = projection * vec4(position, 1.0f);
+    vec4 pos = projection * vec4(position.xy, position.z + z_offset, 1.0f);
     vertPos     = pos.xyz / pos.w;
     startPos    = vertPos;
     gl_Position = pos;
