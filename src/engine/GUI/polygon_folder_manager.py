@@ -19,6 +19,7 @@
 File that contains the definition of the PoligonManager class, class in charge of the management of the
 folders of polygonfolder.
 """
+from typing import Dict
 
 from src.engine.GUI.polygon_folder import PolygonFolder
 from src.error.polygon_folder_not_found_error import PolygonFolderNotFoundError
@@ -34,7 +35,7 @@ class PolygonFolderManager:
         Constructor of the class
         """
         self.__folder_count_id = 0
-        self.__folders = {}
+        self.__folders: Dict[str, PolygonFolder] = {}
 
     def __create_new_folder(self, name='new_folder') -> PolygonFolder:
         """
@@ -63,6 +64,34 @@ class PolygonFolderManager:
             folder = self.__create_new_folder()
 
         folder.add_polygon(polygon_id)
+
+    def get_polygon_position(self, polygon_id: str) -> int:
+        """
+        Return the polygon position in the list of all the polygons that are inside all the folders.
+
+        If there is three folders of polygons as follows:
+            Folder 1
+                polygon 1
+                polygon 2
+
+            Folder 2
+
+            Folder 3
+                polygon 3
+
+        Then this method generate the list [polygon 1, polygon 2, polygon 3] and return the index of the element
+        specified on the parameters.
+
+        Args:
+            polygon_id: ID of the polygon to search.
+
+        Returns: Index of the polygon in the list containing all the polygons on all the folders.
+        """
+        polygons = []
+        for folder in self.__folders.values():
+            polygons += folder.get_polygon_list()
+
+        return polygons.index(polygon_id)
 
     def add_polygon_to_imported_polygon_folder(self, polygon_id: str) -> None:
         """
