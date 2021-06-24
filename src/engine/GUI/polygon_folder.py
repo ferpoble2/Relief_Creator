@@ -26,8 +26,8 @@ class PolygonFolder:
     Class in charge of the management of the folders of the polygons.
     """
 
-    def __init__(self, id: str):
-        self.__id = id
+    def __init__(self, folder_id: str):
+        self.__id = folder_id
         self.__name = 'folder'
         self.__polygon_id_list = []
 
