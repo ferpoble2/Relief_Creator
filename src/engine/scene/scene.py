@@ -598,6 +598,10 @@ class Scene:
             if polygon_id in self.__interpolation_area_hash:
                 self.__interpolation_area_hash.pop(polygon_id)
 
+            # remove it from the draw list
+            if polygon_id in self.__polygon_draw_order:
+                self.__polygon_draw_order.remove(polygon_id)
+
     def delete_polygon_param(self, polygon_id: str, key: str) -> None:
         """
         Delete a parameter from the polygon.
