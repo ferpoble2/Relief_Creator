@@ -141,6 +141,24 @@ class Lines(Model):
         self.__indices_list.append(self.get_number_of_points() - 1)
         self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
 
+    def set_z_offset(self, new_value: float) -> None:
+        """
+        Set a new value to the variable z_offset.
+
+        The variable z_offset store a value that will be applied to the vertices of the model in the shader and will
+        modify the z-axis value used by the points of the model.
+
+        The value used as z-axis in the shader will be as follows: z_used_for_render = z_point + z_offset.
+
+        This value affects all points in the model in the same amount.
+
+        Args:
+            new_value: New value for the z_offset value.
+
+        Returns: None
+        """
+        self.__z_offset = new_value
+
     def get_number_of_points(self) -> int:
         """
         Get the number of points in the model.

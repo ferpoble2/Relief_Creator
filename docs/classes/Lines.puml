@@ -16,6 +16,7 @@
                     + get_line_color(): tuple
                     + get_number_of_points(): int
                     + remove_last_added_line()
+                    + set_z_offset(new_value)
                     + set_border_color(color)
                     + set_line_color(color)
                     + set_use_borders(value)
