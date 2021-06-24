@@ -26,6 +26,7 @@
                     + is_planar()
                     + remove_last_added_point()
                     + set_dot_color(color)
+                    + set_z_offset(new_value)
                     + set_id(new_id)
                     + set_line_color(color)
                     + set_name(new_name)

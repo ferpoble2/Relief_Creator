@@ -41,9 +41,6 @@ class Polygon(Model):
     """
     Class in charge of the polygons of the program.
 
-    Default values for z-axis coordinate of points in the polygon is 0.5. Unless in 3D mode, this value must be
-    set to the third coordinate so the methods defined inside the class works.
-
     The parameter z_offset can be modified to change the value of the z-axis used for the polygons (and all the
     sub-models that are used to render a polygon).
     """
@@ -54,7 +51,9 @@ class Polygon(Model):
 
         Generate a new polygon with or without data.
 
-        The default
+        Polygons should be rendered in 2D mode. The default value for the z-axis coordinate of the points of the models
+        that conform a polygon is set to 0.5. This height can be changed using the variable z_offset, the value stored
+        in this variable will be added to the z_coordinate on the shaders.
 
         Args:
             id_polygon: Id to use to identify the polygon on the program.
@@ -83,6 +82,8 @@ class Polygon(Model):
         # Properties of the model
         # -----------------------
         self.__is_planar = True
+        self.__default_height_value = 0.5
+        self.__z_offset = 0  # Value to add to the z-axis of the points that generate the model.
 
         # Initialize polygon if data is given
         # -----------------------------------
@@ -103,7 +104,7 @@ class Polygon(Model):
             points = np.empty((len(point_list), 3))
             points[:, 0] = point_array[:, 0]
             points[:, 1] = point_array[:, 1]
-            points[:, 2] = 0.5  # unless in 3D, height of the points must be kept in 0.5
+            points[:, 2] = self.__default_height_value
 
             self.__point_model = Points(scene, points)
             self.__lines_model = Lines(scene, point_list=points)
@@ -212,23 +213,23 @@ class Polygon(Model):
         for x_coordinate, y_coordinate in zip(x_coords, y_coords):
             polygon_exterior.append(x_coordinate)
             polygon_exterior.append(y_coordinate)
-            polygon_exterior.append(0.5)
+            polygon_exterior.append(self.__default_height_value)
 
         return polygon_exterior
 
-    def add_point(self, x: float, y: float, z: float = 0.5) -> None:
+    def add_point(self, x: float, y: float, z: float = None) -> None:
         """
         Add a new point to the list of points.
-
-        Unless used in 3D, the z value must be keep 0.5.
 
         Args:
             x: x position of the point
             y: y position of the point
-            z: z position of the point (default to 0.5)
+            z: z position of the point
 
         Returns: None
         """
+        if z is None:
+            z = self.__default_height_value
 
         # check if point is already on the polygon
         if self.__check_repeated_point(x, y, z):
@@ -427,6 +428,22 @@ class Polygon(Model):
         Returns: None
         """
         self.__name = new_name
+
+    def set_z_offset(self, new_value: float) -> None:
+        """
+        Set the variable z_offset.
+
+        The z_offset is a variable that will be added in the shader to the z-coordinate position of the models.
+
+        This variable is useful to modify the z-position of the polygons without having to modify the vertex and indices
+        arrays that are stored in the GPU.
+
+        Args:
+            new_value: New value to use as offset on the z-axis coordinate.
+
+        Returns: None
+        """
+        self.__z_offset = new_value
 
     def set_new_parameter(self, key: str, value: str) -> None:
         """
