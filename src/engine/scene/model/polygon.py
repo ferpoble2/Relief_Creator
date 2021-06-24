@@ -93,7 +93,7 @@ class Polygon(Model):
             points = np.empty((len(point_list), 3))
             points[:, 0] = point_array[:, 0]
             points[:, 1] = point_array[:, 1]
-            points[:, 2] = 0.5
+            points[:, 2] = 0.5  # unless in 3D, height of the points must be kept in 0.5
 
             self.__point_model = Points(scene, points)
             self.__lines_model = Lines(scene, point_list=points)
