@@ -666,7 +666,10 @@ class Scene:
     # noinspection PyUnresolvedReferences
     def get_active_model_projection_matrix(self) -> np.array:
         """
-        Get the projection matrix from the active model.
+        Get the projection matrix from the active 2D model being showed on the screen.
+
+        The projection matrix of the 2D models limit the coordinates showed on the screen depending on the position
+        of the map and the level of zoom. This method is useful when rendering objects over the map.
 
         Returns: array with the projection matrix of the active model.
         """

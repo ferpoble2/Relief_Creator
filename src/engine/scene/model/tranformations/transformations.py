@@ -166,22 +166,10 @@ def ortho(left, right, bottom, top, near, far):
     t_b = top - bottom
     f_n = far - near
     return np.array([
-        [2 / r_l,
-         0,
-         0,
-         -(right + left) / r_l],
-        [0,
-         2 / t_b,
-         0,
-         -(top + bottom) / t_b],
-        [0,
-         0,
-         -2 / f_n,
-         -(far + near) / f_n],
-        [0,
-         0,
-         0,
-         1]], dtype=np.float32)
+        [2 / r_l, 0, 0, -(right + left) / r_l],
+        [0, 2 / t_b, 0, -(top + bottom) / t_b],
+        [0, 0, -2 / f_n, -(far + near) / f_n],
+        [0, 0, 0, 1]], dtype=np.float32)
 
 
 def lookAt(eye, at, up):
