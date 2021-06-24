@@ -58,6 +58,12 @@ class ConfirmationModal(Frame):
 
     def render(self) -> None:
         """
+        Render method. Do nothing.
+        """
+        pass
+
+    def post_render(self) -> None:
+        """
         Render a modal with the specified text.
         Returns: None
         """
