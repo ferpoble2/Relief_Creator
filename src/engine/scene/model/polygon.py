@@ -445,6 +445,10 @@ class Polygon(Model):
         """
         self.__z_offset = new_value
 
+        self.__point_model.set_z_offset(new_value)
+        self.__lines_model.set_z_offset(new_value)
+        self.__last_line_model.set_z_offset(new_value)
+
     def set_new_parameter(self, key: str, value: str) -> None:
         """
         Set a new parameter to be stored in the polygon.
