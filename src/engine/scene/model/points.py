@@ -56,6 +56,7 @@ class Points(Model):
         self.__vertex_shader_file = './src/engine/shaders/point_vertex.glsl'
         self.__fragment_shader_file = './src/engine/shaders/point_fragment.glsl'
 
+        # How much to move the z-axis coordinate of the points in the shader
         self.__z_offset = 0
 
         # Data of the points
@@ -165,10 +166,12 @@ class Points(Model):
         # update values for the polygon shader
         # ------------------------------------
         projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
+        z_value_location = GL.glGetUniformLocation(self.shader_program, "z_offset")
 
         # set the color and projection matrix to use
         # ------------------------------------------
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_model_projection_matrix())
+        GL.glUniform1f(z_value_location, self.__z_offset)
 
     def set_z_offset(self, new_value: float) -> None:
         """
