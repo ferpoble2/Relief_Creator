@@ -79,8 +79,8 @@ class Map2DModel(MapModel):
         self.__right_coordinate = None
         self.__top_coordinate = None
         self.__bottom_coordinate = None
-        self.__projection_z_axis_min_value = -100
-        self.__projection_z_axis_max_value = 100
+        self.__projection_z_axis_min_value = -1
+        self.__projection_z_axis_max_value = 1
 
         # utilities variables
         self.__triangles_to_delete = np.array([])  # triangles overlapped to delete when optimizing memory
