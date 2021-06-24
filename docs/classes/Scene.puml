@@ -13,6 +13,7 @@
                 + change_camera_azimuthal_angle(angle)
                 + change_camera_elevation(angle)
                 + change_color_of_polygon(polygon_id, color)
+                + change_polygon_draw_order(polygon_id, new_position)
                 + change_dot_color_of_polygon(polygon_id, color)
                 + change_height_unit_3D_model(model_id, measure_unit)
                 + change_map_unit_3D_model(model_id, measure_unit)

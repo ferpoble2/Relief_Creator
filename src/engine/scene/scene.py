@@ -426,6 +426,31 @@ class Scene:
         """
         self.__camera.modify_elevation(angle)
 
+    def change_polygon_draw_order(self, polygon_id: str, new_position: int) -> None:
+        """
+        Change the order on which the polygons are draw on the scene.
+
+        If new_position is negative, then the element will be moved to the end of the list.
+
+        Args:
+            polygon_id: ID of the polygon to modify the draw order.
+            new_position: Position in the list that store the drawing order of the polygons.
+
+        Returns: None
+        """
+        if polygon_id not in self.__polygon_hash.keys():
+            raise SceneError(5)
+
+        try:
+            self.__polygon_draw_order.remove(polygon_id)
+        except ValueError:
+            raise SceneError(6)
+
+        if new_position < 0:
+            self.__polygon_draw_order.append(polygon_id)
+        else:
+            self.__polygon_draw_order.insert(new_position, polygon_id)
+
     def change_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
         Change the color of the polygon with the specified id.
@@ -531,8 +556,8 @@ class Scene:
         RepeatedPointError will be raised.
 
         Args:
-            draw_position: Where, in the draw order, set the polygon. Negative values or out of index values will place
-                           the polygon at the end of the list (will be draw the last).
+            draw_position: Where, in the draw order, set the polygon. Negative values will place the polygon at the end
+                           of the list (will be draw the last).
             point_list: List with the points to add to the polygon. [[x,y],[x,y],...]
             parameters: Parameters to set in the polygon. {parameter_name:value,...}
 
@@ -545,7 +570,7 @@ class Scene:
 
         # Add the id to the list of drawing polygons
         # ------------------------------------------
-        if draw_position < 0 or draw_position > len(self.__polygon_draw_order) - 1:
+        if draw_position < 0:
             self.__polygon_draw_order.append(new_polygon_id)
         else:
             self.__polygon_draw_order.insert(draw_position, new_polygon_id)
@@ -554,6 +579,7 @@ class Scene:
         # ------------------------------------
         polygon = Polygon(self, new_polygon_id, point_list, parameters)
         self.add_polygon(polygon)
+
         return new_polygon_id
 
     def delete_polygon_by_id(self, polygon_id: str) -> None:
@@ -612,8 +638,8 @@ class Scene:
                     model.draw()
 
             # Draw all the polygons
-            for polygon in self.__polygon_hash.values():
-                polygon.draw()
+            for polygon in self.__polygon_draw_order:
+                self.__polygon_hash[polygon].draw()
 
         elif self.__engine.get_program_view_mode() == '3D':
 
