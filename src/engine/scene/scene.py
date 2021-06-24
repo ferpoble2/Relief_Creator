@@ -69,12 +69,14 @@ class Scene:
         # Polygons can be draw in different orders, this list store the order in which they must be draw
         # Polygons that are not in the list will not be draw
         self.__polygon_draw_order: List[str] = []
-        self.__engine: 'Engine' = engine
 
+        # Variables used by the scene to execute the main logic
+        # -----------------------------------------------------
+        self.__engine: 'Engine' = engine
+        self.__camera = Camera()
         self.__width_viewport = 0
         self.__height_viewport = 0
 
-        self.__camera = Camera()
 
         # auxiliary variables
         # -------------------
