@@ -42,5 +42,6 @@ class SceneError(BaseError):
             2: 'The polygon used doesnt have at least 3 vertices.',
             3: 'Can not use that model for transforming points. Try using a Map2DModel.',
             4: 'Polygon id can not be None.',
-            5: 'Polygon ID not found.'
+            5: 'Polygon ID not found.',
+            6: 'Polygon not in the list of polygons to be draw.'
         }
