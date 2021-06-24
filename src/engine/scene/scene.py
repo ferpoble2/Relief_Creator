@@ -77,7 +77,6 @@ class Scene:
         self.__width_viewport = 0
         self.__height_viewport = 0
 
-
         # auxiliary variables
         # -------------------
 
