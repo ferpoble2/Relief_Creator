@@ -522,7 +522,7 @@ class Scene:
         self.__engine.set_loading_message('Generating 3D model...')
         self.__engine.set_task_with_loading_frame(task_loading)
 
-    def create_new_polygon(self, point_list: list = None, parameters: dict = None) -> str:
+    def create_new_polygon(self, point_list: list = None, parameters: dict = None, draw_position: int = -1) -> str:
         """
         Create a new polygon and adds it to the list of polygons of the scene.
 
@@ -531,16 +531,27 @@ class Scene:
         RepeatedPointError will be raised.
 
         Args:
+            draw_position: Where, in the draw order, set the polygon. Negative values or out of index values will place
+                           the polygon at the end of the list (will be draw the last).
             point_list: List with the points to add to the polygon. [[x,y],[x,y],...]
             parameters: Parameters to set in the polygon. {parameter_name:value,...}
 
         Returns: id of the created polygon
         """
 
-        # generate a new id for the polygon
+        # Generate a new id for the polygon
+        # ---------------------------------
         new_polygon_id = f"Polygon {self.__polygon_id_count}"
 
-        # create the polygon and return its id
+        # Add the id to the list of drawing polygons
+        # ------------------------------------------
+        if draw_position < 0 or draw_position > len(self.__polygon_draw_order) - 1:
+            self.__polygon_draw_order.append(new_polygon_id)
+        else:
+            self.__polygon_draw_order.insert(draw_position, new_polygon_id)
+
+        # Create the polygon and return its id
+        # ------------------------------------
         polygon = Polygon(self, new_polygon_id, point_list, parameters)
         self.add_polygon(polygon)
         return new_polygon_id
