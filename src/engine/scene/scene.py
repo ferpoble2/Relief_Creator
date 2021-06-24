@@ -430,26 +430,24 @@ class Scene:
         """
         Change the order on which the polygons are draw on the scene.
 
-        If new_position is negative, then the element will be moved to the end of the list.
-
         Args:
             polygon_id: ID of the polygon to modify the draw order.
-            new_position: Position in the list that store the drawing order of the polygons.
+            new_position: New position in the list that store the drawing order of the polygons.
 
         Returns: None
         """
+        # Check that polygon exists in the scene
         if polygon_id not in self.__polygon_hash.keys():
             raise SceneError(5)
 
+        # Remove the polygon from the drawing list, raise exception if it is not in the list
         try:
             self.__polygon_draw_order.remove(polygon_id)
         except ValueError:
             raise SceneError(6)
 
-        if new_position < 0:
-            self.__polygon_draw_order.append(polygon_id)
-        else:
-            self.__polygon_draw_order.insert(new_position, polygon_id)
+        # Insert element in the new position
+        self.__polygon_draw_order.insert(new_position, polygon_id)
 
     def change_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
@@ -547,7 +545,7 @@ class Scene:
         self.__engine.set_loading_message('Generating 3D model...')
         self.__engine.set_task_with_loading_frame(task_loading)
 
-    def create_new_polygon(self, point_list: list = None, parameters: dict = None, draw_position: int = -1) -> str:
+    def create_new_polygon(self, point_list: list = None, parameters: dict = None, draw_position: int = None) -> str:
         """
         Create a new polygon and adds it to the list of polygons of the scene.
 
@@ -570,7 +568,7 @@ class Scene:
 
         # Add the id to the list of drawing polygons
         # ------------------------------------------
-        if draw_position < 0:
+        if draw_position is None:
             self.__polygon_draw_order.append(new_polygon_id)
         else:
             self.__polygon_draw_order.insert(draw_position, new_polygon_id)
