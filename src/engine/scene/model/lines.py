@@ -158,11 +158,17 @@ class Lines(Model):
 
         # draw if there is at least one line to draw
         if len(self.__point_list) / 3 > 1:
+
+            # Get the data to draw the lines
+            # ------------------------------
             render_settings = self.scene.get_render_settings()
             line_width = render_settings["LINE_WIDTH"]
             polygon_line_width = render_settings["POLYGON_LINE_WIDTH"]
             active_polygon_line_width = render_settings["ACTIVE_POLYGON_LINE_WIDTH"]
 
+            # if we need to draw the border, then change the color and offset used for the ones used to draw the
+            # borders, then draw the border and finally return the values to they normal state.
+            # --------------------------------------------------------------------------------------------------
             if self.__use_border:
                 # store the old color
                 old_color = self.__line_color
@@ -170,7 +176,7 @@ class Lines(Model):
 
                 # change the color and width of the line to draw
                 self.__line_color = self.__border_color
-                self.__z_offset = self.__z_offset_border
+                self.__z_offset = self.__z_offset + self.__z_offset_border
                 GL.glLineWidth(active_polygon_line_width)
                 super().draw()
 
@@ -178,6 +184,8 @@ class Lines(Model):
                 self.__line_color = old_color
                 self.__z_offset = old_z_offset
 
+            # Draw the lines using OpenGL
+            # ---------------------------
             GL.glLineWidth(polygon_line_width)
             super().draw()
             GL.glLineWidth(line_width)
