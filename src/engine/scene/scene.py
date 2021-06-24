@@ -17,6 +17,8 @@
 
 """
 File that contain the Scene class. This class is in charge of the management of the models of the scene.
+
+Class is in charge of the drawing of the models2D, models3D and polygons.
 """
 from typing import Dict, List, Union
 from src.type_hinting import *
@@ -30,7 +32,6 @@ import OpenGL.constant as OGLConstant
 from src.engine.scene.model.map2dmodel import Map2DModel
 from src.engine.scene.model.map3dmodel import Map3DModel
 from src.engine.scene.model.polygon import Polygon
-from src.engine.scene.model.plane import Plane
 from src.engine.scene.model.model import Model
 from src.engine.scene.model.lines import Lines
 from src.utils import get_logger
@@ -57,10 +58,17 @@ class Scene:
         """
         Constructor of the class.
         """
+
+        # Dictionaries storing the id representing each model and the model itself
+        # ------------------------------------------------------------------------
         self.__model_hash: Dict[str, 'Map2DModel'] = {}
         self.__3d_model_hash: Dict[str, 'Map3DModel'] = {}
         self.__polygon_hash: Dict[str, 'Polygon'] = {}
         self.__interpolation_area_hash: Dict[str, List['Model']] = {}
+
+        # Polygons can be draw in different orders, this list store the order in which they must be draw
+        # Polygons that are not in the list will not be draw
+        self.__polygon_draw_order: List[str] = []
         self.__engine: 'Engine' = engine
 
         self.__width_viewport = 0
@@ -76,6 +84,7 @@ class Scene:
         self.__should_execute_then_reload = 0
         self.__should_execute_then_optimize_gpu_memory = 0
 
+        # Variables that count the amount of ID given to the models and polygons
         self.__polygon_id_count = 0
         self.__model_id_count = 0
 
