@@ -246,3 +246,77 @@ class PolygonFolderManager:
             raise PolygonFolderNotFoundError('Folder is not in the dictionary of folders.')
 
         folder.set_name(new_name)
+
+    def move_polygon_position(self, polygon_folder_id: str, polygon_id: str, movement_offset: int) -> None:
+        """
+        Move the position of a polygon inside the folder that contain itself.
+
+        This changes the order in which the polygons are returned when asked for the list of polygons inside the
+        specified folder.
+
+        Examples:
+            If the folder contains the following polygons:
+
+                [polygon_1, polygon_2, polygon_3, polygon_4]
+
+            then using movement_offset equal to -2 to move the polygon_4 will result in the folder containing the
+            polygons in the following order:
+
+                [polygon_1, polygon_4, polygon_2, polygon_3]
+
+        Args:
+            polygon_folder_id: ID of the folder where the polygon is located.
+            polygon_id: ID of the polygon to move.
+            movement_offset: How many positions to move the polygon.
+
+        Returns: None
+        """
+        # Move the position of the polygon
+        self.__folders[polygon_folder_id].move_polygon(polygon_id, movement_offset)
+
+    def move_folder_position(self, polygon_folder_id, movement_offset):
+        """
+        Move the position of the folders on the internal structure.
+
+        This method affect the order when the folders are retrieved using the method get_folder_id_list.
+
+        Example:
+            If the folders are arranged as follows:
+
+                Folder 1
+                Folder 2
+                Folder 3
+
+            Then, using a movement_offset of -2 in the Folder 3 will result in this:
+
+                Folder 3
+                Folder 2
+                Folder 1
+
+        Args:
+            polygon_folder_id: ID of the folder to move.
+            movement_offset: How much to move the folder.
+
+        Returns: None
+        """
+
+        # Get the list of folders and get the index of the folder and the target index
+        # ----------------------------------------------------------------------------
+        folder_id_list = list(self.__folders.keys())
+        curr_index = folder_id_list.index(polygon_folder_id)
+        target_index = folder_id_list.index(polygon_folder_id) + movement_offset
+
+        # Get the items of the dictionary and change the order of the elements
+        # --------------------------------------------------------------------
+        folder_dictionary_items = list(self.__folders.items())
+
+        folder_dictionary_items.pop(curr_index)
+        folder_dictionary_items.insert(target_index, (polygon_folder_id, self.__folders[polygon_folder_id]))
+
+        # Reconstruct the dictionary with the values in the modified order
+        # ----------------------------------------------------------------
+        new_dict = {}
+        for v, k in folder_dictionary_items:
+            new_dict[v] = k
+
+        self.__folders = new_dict

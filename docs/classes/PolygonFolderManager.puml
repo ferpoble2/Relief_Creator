@@ -11,6 +11,8 @@ class PolygonFolderManager {
     + delete_polygon_from_all_folders(polygon_id)
     + delete_polygon_inside_folder(polygon_id, folder_id)
     + get_folder_id_list(): list
+    + move_polygon_position(polygon_folder_id, polygon_id, movement_offset)
+    + move_folder_position(polygon_folder_id, movement_offset)
     + get_name_of_folder(folder_id): str
     + get_polygon_id_list(folder_id): list
     + get_polygon_position(polygon_id): int
