@@ -626,6 +626,7 @@ class Scene:
 
         # get the active model
         active_model = self.__engine.get_active_model_id()
+        active_polygon = self.__engine.get_active_polygon_id()
 
         # check if draw the 2D or the 3D of the models.
         if self.__engine.get_program_view_mode() == '2D':
@@ -641,6 +642,14 @@ class Scene:
 
             # Draw all the polygons
             for polygon in self.__polygon_draw_order:
+
+                # Show the active polygon above the normal height for the polygons.
+                if polygon == active_polygon:
+                    self.__polygon_hash[polygon].set_z_offset(0.4)
+                else:
+                    self.__polygon_hash[polygon].set_z_offset(0)
+
+                # draw the polygons on the scene
                 self.__polygon_hash[polygon].draw()
 
         elif self.__engine.get_program_view_mode() == '3D':
