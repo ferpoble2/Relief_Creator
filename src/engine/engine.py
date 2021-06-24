@@ -243,7 +243,7 @@ class Engine:
         """
         self.scene.change_map_unit_3D_model(model_id, measure_unit)
 
-    def change_polygon_draw_order(self, polygon_id: str, new_position: str) -> None:
+    def change_polygon_draw_order(self, polygon_id: str, new_position: int) -> None:
         """
         Ask the scene to change the order in which the polygons are draw.
 
