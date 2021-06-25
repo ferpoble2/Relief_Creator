@@ -38,6 +38,17 @@ class Map2DModel(MapModel):
     """
     Class that manage all things related to the 2D representation of the maps.
 
+    Models only use an orthogonal projection matrix to be rendered on the screen, with a fixed camera that is on the
+    z-axis.
+
+    The movement on the map in the scene is done modifying the values used in the projection matrix, giving the illusion
+    that the map is being moved on the scene.
+
+    The points of the map use 0 as the value of their z-axis coordinate, being the model rendered a plane on the screen.
+
+    The height of the points of the model are passed as a vertex array to the shaders and the data from the color files
+    is passed as an uniform. The coloration of the models is done inside the shaders.
+
     Open GL variables:
         glVertexAttributePointer 1: Heights of the vertices.
 
