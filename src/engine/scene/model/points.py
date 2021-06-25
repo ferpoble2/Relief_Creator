@@ -75,14 +75,16 @@ class Points(Model):
         if point_list is not None:
             point_list_copy = point_list.copy()
 
-            # set points
+            # Set points
+            # ----------
             self.__point_list = list(point_list.reshape(-1))
             self.set_vertices(np.array(self.__point_list, dtype=np.float32))
 
             point_number = len(point_list_copy)
             assert point_number > 0, 'Trying to load points with an array with no data.'
 
-            # set colors
+            # Set colors
+            # ----------
             if point_number == 1:
                 self.__color_list = list(self.__first_point_color)
             elif point_number == 2:
@@ -92,7 +94,8 @@ class Points(Model):
                                     list(self.__last_point_color)
             self.set_color_buffer(np.array(self.__color_list, dtype=np.float32))
 
-            # set indices
+            # Set indices
+            # -----------
             self.__indices_list = list(range(point_number))
             self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
 
@@ -163,12 +166,12 @@ class Points(Model):
         Returns: None
         """
 
-        # update values for the polygon shader
+        # Update values for the polygon shader
         # ------------------------------------
         projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
         z_value_location = GL.glGetUniformLocation(self.shader_program, "z_offset")
 
-        # set the color and projection matrix to use
+        # Set the color and projection matrix to use
         # ------------------------------------------
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_2d_model_projection_matrix())
         GL.glUniform1f(z_value_location, self.__z_offset)
@@ -204,13 +207,15 @@ class Points(Model):
         Returns: None
         """
 
-        # update the vertices buffer
+        # Update the vertices buffer
+        # --------------------------
         self.__point_list.append(x)
         self.__point_list.append(y)
         self.__point_list.append(z)
         self.set_vertices(np.array(self.__point_list, dtype=np.float32))
 
-        # update  the color buffer
+        # Update the color buffer
+        # -----------------------
         if len(self.__color_list) / 4 == 0:
             self.__add_color_to_color_list(self.__first_point_color)
 
@@ -224,12 +229,11 @@ class Points(Model):
 
         self.set_color_buffer(np.array(self.__color_list, dtype=np.float32))
 
-        # update the indices buffer
+        # Update the indices buffer
+        # -------------------------
         self.__indices_list.append(len(self.__point_list) / 3 - 1)
         self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
 
-        # debug the information of the point
-        log.debug(self)
 
     def draw(self) -> None:
         """
