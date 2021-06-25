@@ -669,7 +669,13 @@ class Scene:
         Get the projection matrix from the active 2D model being showed on the screen.
 
         The projection matrix of the 2D models limit the coordinates showed on the screen depending on the position
-        of the map and the level of zoom. This method is useful when rendering objects over the map.
+        of the map and the level of zoom. This method is useful when rendering objects that need to be over the 2D
+        map.
+
+        The projection matrix used in 2D mode are orthogonal, and the camera is always on the z-axis coordinate, so the
+        value for near/far in the matrix does not affect the way that the models are viewed on the scene. Even with
+        this, models draw in the 2D mode that have a z-coordinate value that is outside the near/far range will not be
+        rendered (since they are out of the projection matrix).
 
         Returns: array with the projection matrix of the active model.
         """
