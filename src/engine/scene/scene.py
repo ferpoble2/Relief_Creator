@@ -641,15 +641,12 @@ class Scene:
                     model.draw()
 
             # Draw all the polygons
-            for polygon in self.__polygon_draw_order:
+            for polygon, draw_order in zip(self.__polygon_draw_order, range(len(self.__polygon_draw_order))):
 
-                # Show the active polygon above the normal height for the polygons.
-                if polygon == active_polygon:
-                    self.__polygon_hash[polygon].set_z_offset(0.4)
-                else:
-                    self.__polygon_hash[polygon].set_z_offset(0)
+                # Change the height of the polygon depending on the draw order
+                self.__polygon_hash[polygon].set_z_offset(len(self.__polygon_draw_order) - draw_order + 1)
 
-                # draw the polygons on the scene
+                # Draw the polygons on the scene
                 self.__polygon_hash[polygon].draw()
 
         elif self.__engine.get_program_view_mode() == '3D':
