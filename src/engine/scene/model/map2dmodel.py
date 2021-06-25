@@ -617,7 +617,7 @@ class Map2DModel(MapModel):
 
         Returns: Projection matrix being used by the model
         """
-        return self.__projection
+        return self.__projection.copy()
 
     def get_showed_limits(self) -> dict:
         """
