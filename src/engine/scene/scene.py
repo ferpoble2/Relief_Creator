@@ -677,6 +677,10 @@ class Scene:
         this, models draw in the 2D mode that have a z-coordinate value that is outside the near/far range will not be
         rendered (since they are out of the projection matrix).
 
+        The near/far range is the one used by the Map2DModel class for their projection matrix. That should
+        be [-99999, 99999]. Points that use this matrix and have points with z-axis coordinate outside this range
+        will not be rendered.
+
         Returns: array with the projection matrix of the active model.
         """
         active_model_id = self.__engine.get_active_model_id()
