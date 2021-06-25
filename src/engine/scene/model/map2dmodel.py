@@ -42,7 +42,8 @@ class Map2DModel(MapModel):
     z-axis.
 
     The movement on the map in the scene is done modifying the values used in the projection matrix, giving the illusion
-    that the map is being moved on the scene.
+    that the map is being moved on the scene. (The values of the near/far values for the projection matrix used are
+    fixed in the values -1/1.
 
     The points of the map use 0 as the value of their z-axis coordinate, being the model rendered a plane on the screen.
 
