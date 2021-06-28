@@ -16,7 +16,7 @@
 # END GPL LICENSE BLOCK
 
 """
-File that contains the program class, class that will be the main class of the program.
+File that contains the Engine class. Class in charge of the management of all the logic of the application.
 """
 
 import glfw
