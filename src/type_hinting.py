@@ -34,5 +34,6 @@ if False:
     from src.engine.engine import Engine
     from src.engine.scene.scene import Scene
     from src.engine.scene.model.map2dmodel import Map2DModel
+    from src.program.program import Program
 
     import numpy as np
