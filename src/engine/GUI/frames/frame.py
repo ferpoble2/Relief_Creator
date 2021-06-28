@@ -96,6 +96,10 @@ class Frame:
             windows that the program will show always (imgui.begin(...)/imgui.end()) and to program all the logic
             related to the popups to the post_render method.
 
+            By default, the imgui.begin() method focus the windows when being created, this may cause some popups to be
+            closed when the windows are created. To change this behaviour use the flag
+            imgui.WINDOW_NO_FOCUS_ON_APPEARING on the windows.
+
         Returns: None
         """
         raise NotImplementedError("Render method not implemented.")
