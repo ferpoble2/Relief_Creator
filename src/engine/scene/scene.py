@@ -51,12 +51,21 @@ class Scene:
     Class in charge of all the elements that are rendered using Opengl.
 
     This class manage all the configurations needed to show the models in the screen and the different operations
-    that they do.
+    that the user can do over the models (modify height, interpolate, smoothing).
+
+    In the 2D mode, the class draw the maps in 2D (Map2DModel) and the polygons with or without the interpolation area.
+    In the 3D mode, the class only draw the maps in 3D (Map3DModel).
     """
 
     def __init__(self, engine: 'Engine' = None):
         """
         Constructor of the class.
+
+        It is necessary to give an engine to the scene so the class can get the settings related to the scene and the
+        camera.
+
+        Args:
+            engine: Engine of the program.
         """
 
         # Dictionaries storing the id representing each model and the model itself
@@ -101,7 +110,7 @@ class Scene:
             is_not_in: str
         Use of filters not listed here will raise NotImplementedError.
 
-        The expected value on the filters is_is and is_not_in is the id of a polygon.
+        The expected value on the filters is_in and is_not_in is the id of a polygon.
 
         Args:
             filters: Filters to use in the format [(id_filter, args),...].
@@ -155,6 +164,9 @@ class Scene:
         """
         Method that transform the points of the model using the linear transformation and applies all the
         filter that were passed to it.
+
+        The process is done in a thread different from the main. While the process is done, a loading frame is rendered
+        in the program.
 
         Args:
             polygon_id: ID of the polygon to use for the transformation.
@@ -231,6 +243,10 @@ class Scene:
     def add_model(self, model: Map2DModel) -> None:
         """
         Add a model to the hash of models.
+
+        This method should be called only when testing or experimenting, to load a new model to the program use the
+        method refresh_with_model_2d_async, that method will load the model on the scene and add it to the scene.
+
         Args:
             model: Model to add to the hashtable.
 
@@ -240,7 +256,10 @@ class Scene:
 
     def add_new_vertex_to_active_polygon_using_map_coords(self, x_coord: float, y_coord: float) -> None:
         """
-        Add a new point to the active polygon using real coordinates.
+        Add a new point to the active polygon using the coordinates of the map.
+
+        The coordinates given in the parameters will not be processed, the point added to the polygon will have the
+        same coordinates specified on the arguments.
 
         Args:
             x_coord: x coordinate of the new point
@@ -255,6 +274,11 @@ class Scene:
     def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
         """
         Add a new vertex to the active polygon on the screen.
+
+        The coordinates expected as arguments are screen coordinates, these coordinates have the
+        origin at the top-left of the screen with the x-axis positive to the right and the y-axis positive to the
+        bottom. The coordinates given as parameters will be processed and transformed to the coordinates used in the
+        map being showed on the scene.
 
         Args:
             position_x: Position x of the point in window coordinates
@@ -275,6 +299,9 @@ class Scene:
     def add_polygon(self, polygon: 'Polygon') -> None:
         """
         Add a new polygon to render on the scene.
+
+        This method should only be called on testing on experimenting. To add a new polygon to the scene call the
+        method create_new_polygon, this method will create a polygon and add it to the scene to be rendered.
 
         Args:
             polygon: Polygon to add to the scene
@@ -620,13 +647,17 @@ class Scene:
         """
         Draw the models in the hash of models.
 
-        Draw the models in the order of the list.
+        Depending on the mode of the program (2D or 3D), the models draw on the scene will be different. In the 2D
+        mode, the polygons and the 2D map will be draw, while in the 3D mode only the 3D maps will be rendered.
+
+        If the mode selected is 3D and there is no 3D model for the current loaded map, the the model will be generated
+        in place.
+
         Returns: None
         """
 
         # get the active model
         active_model = self.__engine.get_active_model_id()
-        active_polygon = self.__engine.get_active_polygon_id()
 
         # check if draw the 2D or the 3D of the models.
         if self.__engine.get_program_view_mode() == '2D':
@@ -642,7 +673,6 @@ class Scene:
 
             # Draw all the polygons
             for polygon, draw_order in zip(self.__polygon_draw_order, range(len(self.__polygon_draw_order))):
-
                 # Change the height of the polygon depending on the draw order
                 self.__polygon_hash[polygon].set_z_offset(len(self.__polygon_draw_order) - draw_order + 1)
 
@@ -1012,7 +1042,7 @@ class Scene:
         if polygon_id in self.__polygon_hash:
             return self.__polygon_hash[polygon_id].is_planar()
 
-    def load_preview_interpolation_area(self, distance: float, polygon_id: str, z_value: float = 0.5) -> None:
+    def load_preview_interpolation_area(self, distance: float, polygon_id: str) -> None:
         """
         Calculate the interpolation area for the active polygon and draw it on the scene.
 
@@ -1020,7 +1050,6 @@ class Scene:
 
         Args:
             polygon_id: id of the polygon to load the interpolation area.
-            z_value: Value to use for the third component of the vertices in the area polygons.
             distance: Distance to use to calculate the external area.
 
         Returns: None
