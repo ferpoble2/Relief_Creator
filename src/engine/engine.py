@@ -1167,6 +1167,9 @@ class Engine:
         """
         Read the information of a netcdf file and return its contents.
 
+        In case of error reading the file, then NetCDFImportError is raised. This method uses the functionality defined
+        in the Input module of the program.
+
         Returns: Values of the variables X, Y and Z in the file.
 
         Args:
