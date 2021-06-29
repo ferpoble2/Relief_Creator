@@ -48,7 +48,7 @@ class Camera:
 
     def __spherical_to_cartesian(self, radius, phi, theta) -> np.ndarray:
         """
-        Transform spherical coordinates to cartesian ones.
+        Transform spherical coordinates to cartesian coordinates.
 
         Args:
             radius: Radius to use.
