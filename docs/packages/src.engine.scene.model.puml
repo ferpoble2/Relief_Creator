@@ -43,7 +43,6 @@ DashedLines -r--o Polygon
 hide members
 Model o--o src.engine.scene.Scene
 Map2DModel .> src.input.CTP
-Map2DModel .> src.engine.data.decimation
 
 
 @enduml
