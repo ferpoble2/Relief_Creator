@@ -51,8 +51,7 @@ class Icon:
             internalFormat = GL.GL_RGBA
             glformat = GL.GL_RGBA
         else:
-            print("Image mode not supported.")
-            raise Exception()
+            raise NotImplementedError('Image mode not supported.')
 
         # bind and configure the texture
         GL.glBindTexture(GL.GL_TEXTURE_2D, self.__texture_id)
