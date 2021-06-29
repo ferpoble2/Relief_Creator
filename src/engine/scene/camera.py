@@ -117,13 +117,13 @@ class Camera:
         Returns: None
         """
         self.__phi += angle
-        self.__camera_pos = self.__spherical_to_cartesian(self.__radius,
-                                                          self.__phi,
-                                                          self.__theta)
+        self.__camera_pos = self.__spherical_to_cartesian(self.__radius, self.__phi, self.__theta)
 
     def modify_camera_offset(self, offset_value: tuple) -> None:
         """
         Modify the camera offset.
+
+        This modify the point at which the camera is looking.
 
         This gives the illusion of moving the camera on the xyz coordinates.
 
