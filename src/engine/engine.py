@@ -1232,7 +1232,8 @@ class Engine:
 
     def run(self) -> None:
         """
-        Run the program
+        Run the main logic of the application.
+
         Returns: None
         """
         log.debug("Starting main loop.")
