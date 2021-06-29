@@ -27,6 +27,9 @@ from src.engine.scene.model.tranformations.transformations import lookAt
 class Camera:
     """
     Class in charge of generating view matrices for the 3D models to use.
+
+    The camera is implemented as a spherical camera always looking the a focus point that is by default at the
+    coordinate (0,0,0).
     """
 
     def __init__(self):
