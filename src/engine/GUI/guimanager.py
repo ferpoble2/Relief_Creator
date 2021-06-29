@@ -99,7 +99,7 @@ class GUIManager:
 
     def __load_icons(self) -> None:
         """
-        Load the icons in the icons dictionary.
+        Load the icons of the application in the icons dictionary.
 
         Returns: None
         """
