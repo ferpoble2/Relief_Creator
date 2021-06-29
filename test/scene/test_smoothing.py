@@ -60,9 +60,9 @@ class TestSmoothing(unittest.TestCase):
         self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
 
         # apply transformation with filters
-        self.engine.apply_smoothing(self.engine.get_active_polygon_id(),
-                                    self.engine.get_active_model_id(),
-                                    2)
+        self.engine.scene.apply_smoothing_algorithm(self.engine.get_active_polygon_id(),
+                                                    self.engine.get_active_model_id(),
+                                                    2)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -87,9 +87,9 @@ class TestSmoothing(unittest.TestCase):
 
         # apply transformation with filters
         for _ in range(5):
-            self.engine.apply_smoothing(self.engine.get_active_polygon_id(),
-                                        self.engine.get_active_model_id(),
-                                        2)
+            self.engine.scene.apply_smoothing_algorithm(self.engine.get_active_polygon_id(),
+                                                        self.engine.get_active_model_id(),
+                                                        2)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
