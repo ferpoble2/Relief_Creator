@@ -901,7 +901,7 @@ class GUIManager:
 
     def optimize_gpu_memory(self) -> None:
         """
-        Calls the engine to optimize the memory on the GPU
+        Calls the engine to optimize the memory on the GPU.
 
         Returns: None
         """

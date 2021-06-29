@@ -1146,6 +1146,9 @@ class Engine:
         """
         Call the scene to optimize the GPU memory.
 
+        Optimize the memory regenerating the indices for the current points of the map being showed on the application.
+        This method only works when the application is in 2D mode.
+
         Make an asynchronous call, setting the loading screen.
 
         Returns: None
