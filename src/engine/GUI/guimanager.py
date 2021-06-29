@@ -124,7 +124,9 @@ class GUIManager:
         Add the polygon to the folder that stores the imported polygons and update all the frames with the new
         polygon.
 
-        If the folder do not exist, then it is created.
+        If the folder do not exist, then it is created by the polygon manager.
+
+        All the frames are updated with the method add_new_polygon.
 
         Args:
             polygon_id: ID of the polygon to add.
