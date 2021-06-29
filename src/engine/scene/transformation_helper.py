@@ -44,6 +44,8 @@ class TransformationHelper:
     def __init__(self):
         """
         Constructor of the class.
+
+        Do nothing.
         """
         pass
 
