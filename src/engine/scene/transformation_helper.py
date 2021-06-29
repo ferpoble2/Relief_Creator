@@ -36,7 +36,9 @@ log = get_logger(module='TRANSFORMATION_HELPER')
 
 class TransformationHelper:
     """
-    Class in charge of executing transformation to different models in the scene.
+    Helper class to execute different kind of transformation to the points of the maps.
+
+    Mainly programmed using shapely and numpy as basis to be able to execute the different operations efficiently.
     """
 
     def __init__(self):
