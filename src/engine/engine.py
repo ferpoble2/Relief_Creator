@@ -1182,6 +1182,13 @@ class Engine:
         """
         Ask the Scene to reload the models to better the definitions.
 
+        This method recalculate the indices array used on the maps in the 2D mode to generate the triangles on the
+        model that will be rendered. The new indices are generated so they only generate just the sufficient amount of
+        triangles to fill the scene on the current level of zoom.
+
+        After the process, the old indices that were in the same position than the new triangles will be deleted
+        using the method optimize_gpu_memory.
+
         Returns: None
         """
         self.program.set_loading(True)
