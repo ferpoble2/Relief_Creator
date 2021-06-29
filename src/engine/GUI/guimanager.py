@@ -185,7 +185,7 @@ class GUIManager:
 
     def are_frame_fixed(self) -> bool:
         """
-        Check if the frames are fixed or not.
+        Return the state of the frames. True if they are fixed (position and size can not be changed),  False  if not.
 
         Returns: if frames are fixed or not.
         """
