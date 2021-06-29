@@ -183,6 +183,19 @@ class GUIManager:
         """
         self.__engine.add_zoom()
 
+    def apply_smoothing(self, polygon_id: str, model_id: str, distance_to_polygon: float) -> None:
+        """
+        Ask the engine to apply a smoothing algorithm over the interpolation area of the polygon.
+
+        Args:
+            polygon_id: id of the polygon to use for the smoothing.
+            model_id: id of the model to use for the smoothing.
+            distance_to_polygon: distance to use for the compute of the external polygon and the smoothing area.
+
+        Returns: None
+        """
+        self.__engine.apply_smoothing(polygon_id, model_id, distance_to_polygon)
+
     def are_frame_fixed(self) -> bool:
         """
         Return the state of the frames. True if they are fixed (position and size can not be changed),  False  if not.
@@ -234,6 +247,17 @@ class GUIManager:
         """
         self.__engine.change_color_of_polygon(polygon_id, color)
 
+    def change_current_3D_model_normalization_factor(self, normalization_height_value: float) -> None:
+        """
+        Ask the engine to change the current normalization factor being used for the active 3d model.
+
+        Args:
+            normalization_height_value: new normalization factor
+
+        Returns: None
+        """
+        self.__engine.change_current_3D_model_normalization_factor(normalization_height_value)
+
     def change_dot_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
         Change the color of the dots of the polygon with the specified id.
@@ -249,6 +273,40 @@ class GUIManager:
         Returns: None
         """
         self.__engine.change_dot_color_of_polygon(polygon_id, color)
+
+    def change_height_unit_current_3D_model(self, measure_unit: str) -> None:
+        """
+        Ask the engine to change the measure unit of the heights of the 3D model.
+
+        Args:
+            measure_unit: String representing the measure unit to change.
+
+        Returns: None
+        """
+
+        if measure_unit == 'Meters':
+            self.__engine.change_3D_model_height_unit(self.get_active_model_id(), 'meters')
+        elif measure_unit == 'Kilometers':
+            self.__engine.change_3D_model_height_unit(self.get_active_model_id(), 'kilometers')
+        else:
+            raise NotImplementedError(f'Measure {measure_unit} not implemented.')
+
+    def change_map_position_unit_current_3D_model(self, measure_unit: str) -> None:
+        """
+        Change the measure unit used for the points on the map on the current 3D model.
+
+        Args:
+            measure_unit: String representing the measure unit to change.
+
+        Returns: None
+        """
+
+        if measure_unit == 'Degrees':
+            self.__engine.change_3D_model_position_unit(self.get_active_model_id(), 'degrees')
+        elif measure_unit == 'UTM':
+            self.__engine.change_3D_model_position_unit(self.get_active_model_id(), 'utm')
+        else:
+            raise NotImplementedError(f'Measure {measure_unit} not implemented.')
 
     def change_points_height(self, polygon_id: str,
                              model_id: str,
@@ -369,6 +427,19 @@ class GUIManager:
         """
         self.__engine.delete_parameter_from_polygon(polygon_id, key)
 
+    def disable_controller_keyboard_callback(self) -> None:
+        """
+        Disable the logic defined on the controller keyboard callback, but keep executing the logic defined on the
+        IMGUI defined callback.
+
+        This method is useful when writing inside textbox, and the logic from the controller must not be executed but
+        the one in the GUI should.
+
+        Returns: None
+        """
+        log.debug('key callback disabled')
+        self.__engine.enable_only_gui_keyboard_callback()
+
     def draw_frames(self) -> None:
         """
         Draw the components of the GUI (This dont render them).
@@ -391,6 +462,18 @@ class GUIManager:
 
         # check for the mouse component
         self.__is_mouse_inside_frame = imgui.get_io().want_capture_mouse
+
+    def enable_controller_keyboard_callback(self) -> None:
+        """
+        Enable the logic defined on the controller keyboard callback.
+
+        This method should be called after disable_controller_keyboard_callback to return the keyboard callbacks to its
+        normal state.
+
+        Returns: None
+        """
+        log.debug('key callback enabled')
+        self.__engine.disable_only_gui_keyboard_callback()
 
     def export_model_as_netcdf(self, model_id: str) -> None:
         """
@@ -471,6 +554,14 @@ class GUIManager:
         """
         return self.__engine.get_active_tool()
 
+    def get_camera_data(self) -> dict:
+        """
+        Ask the engine for the data related to the camera.
+
+        Returns: Data related to the camera.
+        """
+        return self.__engine.get_camera_data()
+
     def get_cpt_file(self) -> str:
         """
         Get the CTP file used by the program.
@@ -512,6 +603,14 @@ class GUIManager:
         Returns: Function used by imgui for the mouse scroll callback
         """
         return self.__implementation.scroll_callback
+
+    def get_height_normalization_factor_of_active_3D_model(self) -> float:
+        """
+        Ask the engine for the normalization factor being used for the active 3D model.
+
+        Returns: Normalization height factor being used by the active model.
+        """
+        return self.__engine.get_height_normalization_factor_of_active_3D_model()
 
     def get_icon(self, icon_name: str) -> Icon:
         """
@@ -642,6 +741,14 @@ class GUIManager:
         Returns: List with the id of the polygons inside the folder.
         """
         return self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id)
+
+    def get_program_view_mode(self) -> str:
+        """
+        Ask the engine for the view mode being used for the program.
+
+        Returns: view mode being used by the program.
+        """
+        return self.__engine.get_program_view_mode()
 
     def get_quality(self) -> int:
         """
@@ -812,6 +919,17 @@ class GUIManager:
         """
         self.__engine.load_netcdf_file_with_dialog()
 
+    def load_preview_interpolation_area(self, distance: float) -> None:
+        """
+        Ask the engine to load the interpolation area.
+
+        Args:
+            distance: Distance to use to calculate the interpolation area.
+
+        Returns: None
+        """
+        self.__engine.load_preview_interpolation_area(distance)
+
     def load_shapefile_file_with_dialog(self) -> None:
         """
         Calls the engine to load a polygon from a shapefile file opening the dialog to select file.
@@ -936,6 +1054,19 @@ class GUIManager:
         """
         self.__engine.reload_models()
 
+    def remove_interpolation_preview(self, polygon_id: str) -> None:
+        """
+        Ask the engine to remove the interpolation preview of the specified polygon.
+
+        Do nothing if there is no interpolation area being showed.
+
+        Args:
+            polygon_id: Polygon id to delete the area.
+
+        Returns: None
+        """
+        self.__engine.remove_interpolation_preview(polygon_id)
+
     def render(self) -> None:
         """
         Render the GUI (Components must be drew first).
@@ -944,6 +1075,14 @@ class GUIManager:
         """
         imgui.render()
         self.__implementation.render(imgui.get_draw_data())
+
+    def reset_camera_values(self) -> None:
+        """
+        Ask the engine to reset the values of the camera to it's initial values.
+
+        Returns: None
+        """
+        self.__engine.reset_camera_values()
 
     def set_active_polygon(self, polygon_id: str) -> None:
         """
@@ -1081,6 +1220,17 @@ class GUIManager:
         """
         self.__engine.set_new_parameter_to_polygon(polygon_id, key, value)
 
+    def set_program_view_mode(self, mode: str = '2D') -> None:
+        """
+        Ask the engine to change the view mode to the selected mode.
+
+        Args:
+            mode: New mode to use in the program.
+
+        Returns: None
+        """
+        self.__engine.set_program_view_mode(mode)
+
     def set_regular_font(self) -> None:
         """
         Set the regular font too use in the render.
@@ -1107,101 +1257,6 @@ class GUIManager:
         """
         self.__engine.undo_action()
 
-    def enable_controller_keyboard_callback(self) -> None:
-        """
-        Enable the logic defined on the controller keyboard callback.
-
-        This method should be called after disable_controller_keyboard_callback to return the keyboard callbacks to its
-        normal state.
-
-        Returns: None
-        """
-        log.debug('key callback enabled')
-        self.__engine.disable_only_gui_keyboard_callback()
-
-    def disable_controller_keyboard_callback(self) -> None:
-        """
-        Disable the logic defined on the controller keyboard callback, but keep executing the logic defined on the
-        IMGUI defined callback.
-
-        This method is useful when writing inside textbox, and the logic from the controller must not be executed but
-        the one in the GUI should.
-
-        Returns: None
-        """
-        log.debug('key callback disabled')
-        self.__engine.enable_only_gui_keyboard_callback()
-
-    def load_preview_interpolation_area(self, distance: float) -> None:
-        """
-        Ask the engine to load the interpolation area.
-
-        Args:
-            distance: Distance to use to calculate the interpolation area.
-
-        Returns: None
-        """
-        self.__engine.load_preview_interpolation_area(distance)
-
-    def remove_interpolation_preview(self, polygon_id: str) -> None:
-        """
-        Ask the engine to remove the interpolation preview of the specified polygon.
-
-        Do nothing if there is no interpolation area being showed.
-
-        Args:
-            polygon_id: Polygon id to delete the area.
-
-        Returns: None
-        """
-        self.__engine.remove_interpolation_preview(polygon_id)
-
-    def get_program_view_mode(self) -> str:
-        """
-        Ask the engine for the view mode being used for the program.
-
-        Returns: view mode being used by the program.
-        """
-        return self.__engine.get_program_view_mode()
-
-    def set_program_view_mode(self, mode: str = '2D') -> None:
-        """
-        Ask the engine to change the view mode to the selected mode.
-
-        Args:
-            mode: New mode to use in the program.
-
-        Returns: None
-        """
-        self.__engine.set_program_view_mode(mode)
-
-    def get_camera_data(self) -> dict:
-        """
-        Ask the engine for the data related to the camera.
-
-        Returns: Data related to the camera.
-        """
-        return self.__engine.get_camera_data()
-
-    def get_height_normalization_factor_of_active_3D_model(self) -> float:
-        """
-        Ask the engine for the normalization factor being used for the active 3D model.
-
-        Returns: Normalization height factor being used by the active model.
-        """
-        return self.__engine.get_height_normalization_factor_of_active_3D_model()
-
-    def change_current_3D_model_normalization_factor(self, normalization_height_value: float) -> None:
-        """
-        Ask the engine to change the current normalization factor being used for the active 3d model.
-
-        Args:
-            normalization_height_value: new normalization factor
-
-        Returns: None
-        """
-        self.__engine.change_current_3D_model_normalization_factor(normalization_height_value)
-
     def update_current_3D_model(self) -> None:
         """
         Ask the engine to update the current 3D model.
@@ -1209,58 +1264,3 @@ class GUIManager:
         Returns: None
         """
         self.__engine.update_current_3D_model()
-
-    def reset_camera_values(self) -> None:
-        """
-        Ask the engine to reset the values of the camera to it's initial values.
-
-        Returns: None
-        """
-        self.__engine.reset_camera_values()
-
-    def apply_smoothing(self, polygon_id: str, model_id: str, distance_to_polygon: float) -> None:
-        """
-        Ask the engine to apply a smoothing algorithm over the interpolation area of the polygon.
-
-        Args:
-            polygon_id: id of the polygon to use for the smoothing.
-            model_id: id of the model to use for the smoothing.
-            distance_to_polygon: distance to use for the compute of the external polygon and the smoothing area.
-
-        Returns: None
-        """
-        self.__engine.apply_smoothing(polygon_id, model_id, distance_to_polygon)
-
-    def change_height_unit_current_3D_model(self, measure_unit: str) -> None:
-        """
-        Ask the engine to change the measure unit of the heights of the 3D model.
-
-        Args:
-            measure_unit: String representing the measure unit to change.
-
-        Returns: None
-        """
-
-        if measure_unit == 'Meters':
-            self.__engine.change_3D_model_height_unit(self.get_active_model_id(), 'meters')
-        elif measure_unit == 'Kilometers':
-            self.__engine.change_3D_model_height_unit(self.get_active_model_id(), 'kilometers')
-        else:
-            raise NotImplementedError(f'Measure {measure_unit} not implemented.')
-
-    def change_map_position_unit_current_3D_model(self, measure_unit: str) -> None:
-        """
-        Change the measure unit used for the points on the map on the current 3D model.
-
-        Args:
-            measure_unit: String representing the measure unit to change.
-
-        Returns: None
-        """
-
-        if measure_unit == 'Degrees':
-            self.__engine.change_3D_model_position_unit(self.get_active_model_id(), 'degrees')
-        elif measure_unit == 'UTM':
-            self.__engine.change_3D_model_position_unit(self.get_active_model_id(), 'utm')
-        else:
-            raise NotImplementedError(f'Measure {measure_unit} not implemented.')
