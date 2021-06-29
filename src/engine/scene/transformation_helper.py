@@ -80,8 +80,10 @@ class TransformationHelper:
                                 height_array: np.ndarray,
                                 filter_data: list) -> np.ndarray:
         """
-        Generates a mask that indicates which data to use for the interpolation.
-        Requires and initial mask that indicates the points that can be filtered from the one who do not.
+        Generates a mask that indicates which points are inside the corresponding filters.
+
+        Requires and initial mask that indicates the points that can be filtered from the one who do not. If no filter
+        is applied, then the same mask given as input is returned.
 
         Filter are expected to be received in a list with the following format [(filter_name, arguments),...].
         The list of accepted filters and its arguments are as follows:
