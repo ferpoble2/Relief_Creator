@@ -181,6 +181,7 @@ class Camera:
         self.__radius = 500
         self.__phi = -pi / 2  # along the xy plane
         self.__theta = 0.1  # perpendicular to xy plane
+        self.__camera_position_offset = np.array([0, 0, 0])
 
         self.__camera_pos = self.__spherical_to_cartesian(self.__radius, self.__phi, self.__theta)
         self.__look_at = np.array([0, 0, 0])
