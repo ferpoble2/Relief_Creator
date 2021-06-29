@@ -16,7 +16,8 @@
 # END GPL LICENSE BLOCK
 
 """
-File with the definition of the UnitConverter class, class in charge of realizing the conversion between units.
+File with the definition of the UnitConverter class, class in charge of realizing the conversion between the different
+units used in the program.
 """
 
 
