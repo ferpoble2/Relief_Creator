@@ -210,7 +210,8 @@ class GUIManager:
 
     def change_color_file_with_dialog(self) -> None:
         """
-        Change the color file to the one selected.
+        Ask the engine to open a dialog (file selector menu) and change the CPT file used to color the 2D and 3D models.
+
         This change all the models using the color file.
 
         Returns: None
