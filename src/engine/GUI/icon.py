@@ -28,6 +28,9 @@ from PIL import Image
 class Icon:
     """
     Class in charge of load the icons as OpenGL textures.
+
+    IMGUI must receive the images as OpenGL textures to be able to draw them, so this class implement the loading and
+    creating process of an image as a OpenGL Texture.
     """
 
     def __init__(self, file_dir):
@@ -64,8 +67,9 @@ class Icon:
 
     def get_texture_id(self) -> int:
         """
-        Get the id of the texture given by opengl.
+        Get the id of the texture loaded into OpenGL that have the information of the image loaded on the
+        constructor method.
 
-        Returns: Id of hte texture
+        Returns: Id of the texture.
         """
         return self.__texture_id
