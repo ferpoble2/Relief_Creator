@@ -69,23 +69,33 @@ class GUIManager:
     def __init__(self, engine: 'Engine' = None):
         """
         Constructor of the class.
+
+        Must receive the engine in which the class will be used to make calls.
         """
+
+        # IMGUI parameters
+        # ----------------
         self.__implementation = None
-        self.__glfw_window = None
-        self.__component_list_2D = []
-        self.__component_list_3D = []
         self.__io = None
         self.__font_regular = None
         self.__font_bold = None
         self.__font_tool_title = None
 
-        self.__is_mouse_inside_frame = False
+        # GLFW parameters
+        # ---------------
+        self.__glfw_window = None
 
+        # Class parameters
+        # ----------------
+        self.__engine = engine
         self.__polygon_folder_manager = PolygonFolderManager()
-
+        self.__component_list_2D = []
+        self.__component_list_3D = []
         self.__icons_dict = None
 
-        self.__engine = engine
+        # Auxiliary parameters
+        # --------------------
+        self.__is_mouse_inside_frame = False
 
     def __load_icons(self) -> None:
         """
