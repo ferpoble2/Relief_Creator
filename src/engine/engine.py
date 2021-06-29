@@ -1216,6 +1216,8 @@ class Engine:
         """
         Ask the scene to reset the values of the camera.
 
+        Set the camera values to the  default values.
+
         Returns: None
         """
         self.scene.reset_camera_values()

@@ -74,6 +74,9 @@ class Camera:
         """
         Set the camera to its initial configuration.
 
+        Set the radius from the focus to the actual camera, the azimuthal and elevation angles and the position
+        of the focus.
+
         Returns: None
         """
         self.__radius = 500
