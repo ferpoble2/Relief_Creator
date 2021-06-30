@@ -86,18 +86,6 @@ class Program:
             self.__zoom_level *= 2
         log.debug(f"zoom level: {self.__zoom_level}")
 
-    def load_cpt_file_with_dialog(self) -> None:
-        """
-        Change the CPT file, opening a dialog to select the file to use.
-
-        Returns: None
-        """
-        path_color_file = self.open_openbox_dialog('Select CPT file...')
-        log.debug(f"path_color_file: {path_color_file}")
-
-        self.set_cpt_file(path_color_file)
-        self.__engine.update_scene_models_colors()
-
     def check_model_temp_file_exists(self) -> bool:
         """
         Check if the temporary file used to store the data of the loaded model on the scene exists.
@@ -224,6 +212,18 @@ class Program:
         else:
             self.__zoom_level /= 2
         log.debug(f"zoom level: {self.__zoom_level}")
+
+    def load_cpt_file_with_dialog(self) -> None:
+        """
+        Change the CPT file, opening a dialog to select the file to use.
+
+        Returns: None
+        """
+        path_color_file = self.open_openbox_dialog('Select CPT file...')
+        log.debug(f"path_color_file: {path_color_file}")
+
+        self.set_cpt_file(path_color_file)
+        self.__engine.update_scene_models_colors()
 
     def load_netcdf_file_with_dialog(self) -> None:
         """
