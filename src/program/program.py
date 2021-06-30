@@ -86,7 +86,7 @@ class Program:
             self.__zoom_level *= 2
         log.debug(f"zoom level: {self.__zoom_level}")
 
-    def change_cpt_file_with_dialog(self) -> None:
+    def load_cpt_file_with_dialog(self) -> None:
         """
         Change the CPT file, opening a dialog to select the file to use.
 
