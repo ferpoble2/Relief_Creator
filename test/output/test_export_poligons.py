@@ -27,6 +27,7 @@ from src.output.shapefile_exporter import ShapefileExporter
 from src.input.shapefile_importer import ShapefileImporter
 from src.engine.scene.model.polygon import Polygon
 from src.engine.scene.scene import Scene
+from src.error.export_error import ExportError
 from src.engine.engine import Engine
 from src.program.program import Program
 
@@ -46,7 +47,7 @@ class TestExportPolygons(unittest.TestCase):
         # initialize variables
         self.engine.should_use_threads(False)
         self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
-                                          'resources/test_resources/netcdf/test_model_2.nc')
+                                     'resources/test_resources/netcdf/test_model_2.nc')
 
     def tearDown(self) -> None:
         """
@@ -99,6 +100,7 @@ class TestExportPolygons(unittest.TestCase):
         self.engine.set_new_parameter_to_polygon(pol, '4', float(205.5))
         self.engine.set_new_parameter_to_polygon(pol, '5', True)
         self.engine.set_new_parameter_to_polygon(pol, '6', False)
+        self.engine.set_new_parameter_to_polygon(pol, '7', None)
 
         self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
         self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 0)
@@ -116,7 +118,8 @@ class TestExportPolygons(unittest.TestCase):
 
         expected_value_polygons = [[(0.0, 0.0), (1.0, 0.0), (2.0, 0.0), (3.0, 0.0)]]
         expected_value_parameters = [
-            {'1': 'some_string', '2': 10.0, '3': 10.55487, '4': 205.5, '5': True, '6': False, 'name': 'Polygon 0'}]
+            {'1': 'some_string', '2': 10.0, '3': 10.55487, '4': 205.5, '5': True, '6': False, '7': 'None',
+             'name': 'Polygon 0'}]
 
         self.assertEqual(polygons, expected_value_polygons, 'Points stored in the polygon are not the expected value.')
         self.assertEqual(parameters, expected_value_parameters, 'Parameters stored are not the expected.')
@@ -193,6 +196,9 @@ class TestExportPolygons(unittest.TestCase):
         self.engine.add_new_vertex_to_activate_polygon_using_real_coords(2, 2)
         self.engine.add_new_vertex_to_activate_polygon_using_real_coords(2, 0)
         self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 0.1)
+        self.engine.set_new_parameter_to_polygon(pol_3, 'float_val', 15.567)
+        self.engine.set_new_parameter_to_polygon(pol_3, 'bool_val', True)
+        self.engine.set_new_parameter_to_polygon(pol_3, 'other_val', None)
 
         # export the polygons
         self.engine.export_polygon_list_id([pol_1, pol_2, pol_3],
@@ -207,7 +213,20 @@ class TestExportPolygons(unittest.TestCase):
                                    [(0.0, 0.0), (1.0, 0.0), (2.0, 0.0), (3.0, 0.0), (4.0, 0.0), (5.0, 0.0)],
                                    [(1.0, 0.1), (2.0, 0.0), (2.0, 2.0), (1.0, 1.0), (0.0, 0.0)]]
 
-        expected_value_parameters = [{'name': 'Polygon 0'}, {'name': 'Polygon 1'}, {'name': 'Polygon 2'}]
+        expected_value_parameters = [{'name': 'Polygon 0',
+                                      'float_val': '',
+                                      'bool_val': '',
+                                      'other_val': ''},
+
+                                     {'name': 'Polygon 1',
+                                      'float_val': '',
+                                      'bool_val': '',
+                                      'other_val': ''},
+
+                                     {'name': 'Polygon 2',
+                                      'float_val': 15.567,
+                                      'bool_val': True,
+                                      'other_val': 'None'}]
 
         self.assertEqual(polygons, expected_value_polygons, 'Points stored in the polygon are not the expected value.')
         self.assertEqual(parameters, expected_value_parameters, 'Parameters stored are not the expected.')
@@ -215,6 +234,14 @@ class TestExportPolygons(unittest.TestCase):
         os.remove('resources/test_resources/temp/test_shapefile_export_multiple_1.shp')
         os.remove('resources/test_resources/temp/test_shapefile_export_multiple_1.dbf')
         os.remove('resources/test_resources/temp/test_shapefile_export_multiple_1.shx')
+
+    def test_export_polygon_error(self):
+        exporter = ShapefileExporter()
+        with self.assertRaises(ExportError):
+            exporter.export_polygon_to_shapefile(list_of_points=None,
+                                                 directory='',
+                                                 polygon_name='',
+                                                 parameters=None)
 
 
 if __name__ == '__main__':

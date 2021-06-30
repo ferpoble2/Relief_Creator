@@ -65,6 +65,11 @@ class ShapefileExporter:
         """
         Export a list of polygons into a shapefile file.
 
+        Examples:
+            list_of_points: [[x, y, x, y, x, y, x, y], [x, y, x, y, x, y, x, y], ...]
+            list_of_parameters: [{...}, {...}, ...]
+            list_of_polygon_names: ['Polygon 0', 'Polygon 1', 'Polygon 2', ...]
+
         Args:
             list_of_points: List with list of points of the polygons. (list of lists)
             list_of_parameters: List with the parameters of the polygons. (list of dictionaries)
@@ -78,8 +83,10 @@ class ShapefileExporter:
         polygon_number = len(list_of_points)
         key_type_dict = {}
         processed_point_list = []
+        decimal_maximum_number = 0
 
-        # add the name to the parameters
+        # Add the name to the parameters and process the data of the polygons
+        # -------------------------------------------------------------------
         for ind in range(polygon_number):
             if 'name' not in list_of_parameters[ind]:
                 list_of_parameters[ind]['name'] = list_of_polygon_names[ind]
@@ -87,27 +94,40 @@ class ShapefileExporter:
             if len(list_of_points[ind]) < 6:
                 raise ExportError(1)
 
-            # sort the points to be counter clockwise
+            # Sort the points to be counter clockwise
+            # ---------------------------------------
             points = self.__delete_z_axis(list_of_points[ind])
             if is_clockwise(points):
                 points.reverse()  # polygons must be defined CCW
 
             processed_point_list.append(points)
 
-            # store all the keys and the type of the parameter in another dictionary
+            # Store all the keys and the type of the parameter in another dictionary.
+            # Also process the data of the parameters of the polygons.
+            # -----------------------------------------------------------------------
             for k, v in list(list_of_parameters[ind].items()):
+
+                # Save the maximum number of decimals in data of float type
+                if type(v) == float:
+                    decimals = len(str(v).split('.')[1])
+                    decimal_maximum_number = max(decimal_maximum_number, decimals)
+
+                # Save the type of the data in a dictionary to consult later
                 if k not in key_type_dict:
                     key_type_dict[k] = type(v)
 
+        # Create the fields for the parameters. All the polygons will have the same parameters, even when some polygons
+        # does not define them (in that case, the polygon will have '' as a value for the parameter).
+        # -------------------------------------------------------------------------------------------------------------
         w = shapefile.Writer(directory)
-
-        # create the fields for the parameters
-        for k, v in list(key_type_dict.items()):
-            if v == str:
+        for k, key_data_type in list(key_type_dict.items()):
+            if key_data_type == str:
                 w.field(k, 'C')
-            elif v == float:
+            elif key_data_type == float:
+                w.field(k, 'N', decimal=decimal_maximum_number)
+            elif key_data_type == int:
                 w.field(k, 'N')
-            elif v == bool:
+            elif key_data_type == bool:
                 w.field(k, 'L')
             else:  # in case of unknown data type
                 w.field(k, 'C')  # convert the parameter to string
@@ -115,11 +135,14 @@ class ShapefileExporter:
 
         for ind in range(polygon_number):
 
-            # dictionary with all the keys
+            # Create a dictionary with all the fields, then set the parameters that each polygon has defined
+            # ----------------------------------------------------------------------------------------------
             dict_params = {k: None for k in key_type_dict.keys()}
             for k, v in list(list_of_parameters[ind].items()):
                 dict_params[k] = key_type_dict[k](v)  # convert the value to the specified type
 
+            # Save the information in the Shapefile file
+            # ------------------------------------------
             params = list(dict_params.values())
             w.record(*params)
             w.poly([processed_point_list[ind]])
@@ -141,7 +164,7 @@ class ShapefileExporter:
 
         Any other parameter with another type will be converted to string.
 
-        Fieldnames should not be longer than 10 characters (accepted by shapefile standarts). Any name longer than
+        Fieldnames should not be longer than 10 characters (accepted by shapefile standards). Any name longer than
         10 characters long will be split and only the first 10 characters will be considered for the name of the field.
 
         Args:
