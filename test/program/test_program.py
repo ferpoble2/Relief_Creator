@@ -16,6 +16,7 @@
 #  END GPL LICENSE BLOCK
 
 import unittest
+import os
 from src.program.program import Program
 from src.engine.engine import Engine
 
@@ -96,6 +97,30 @@ class TestProgramParameters(unittest.TestCase):
         # Test exception raised
         with self.assertRaises(KeyError):
             self.program.set_active_tool('non_existent_tool')
+
+    def test_is_loading(self):
+        self.engine = Engine()
+        self.program = Program(self.engine)
+
+        self.assertEqual(False, self.program.is_loading())
+
+        self.program.set_loading(True)
+        self.assertEqual(True, self.program.is_loading())
+
+        self.program.set_loading(False)
+        self.assertEqual(False, self.program.is_loading())
+
+    def test_cpt_files(self):
+        self.engine = Engine()
+        self.program = Program(self.engine)
+
+        # Default value
+        default_value = os.path.join(os.getcwd(), 'resources', 'colors', 'default.cpt')
+        self.assertEqual(default_value, self.program.get_cpt_file())
+
+        # Change the file
+        self.program.set_cpt_file('resources/test_resources/cpt/colors_0_100_200.cpt')
+        self.assertEqual('resources/test_resources/cpt/colors_0_100_200.cpt', self.program.get_cpt_file())
 
 
 if __name__ == '__main__':
