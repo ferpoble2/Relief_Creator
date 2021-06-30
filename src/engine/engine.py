@@ -1235,24 +1235,40 @@ class Engine:
         """
         self.program.reset_zoom_level()
 
-    def run(self) -> None:
+    def run(self, n_frames: int = None, terminate_process: bool = True) -> None:
         """
         Run the main logic of the application.
 
         Returns: None
         """
         log.debug("Starting main loop.")
-        while not glfw.window_should_close(self.window):
-            self.__task_manager.update_tasks()
-            self.__thread_manager.update_threads()
-            self.__process_manager.update_process()
-            self.render.on_loop([lambda: self.scene.draw()])
 
-        # terminate process external to the engine
-        glfw.terminate()
+        # Run the app for a fixed number of frames or until the user closes
+        # -----------------------------------------------------------------
+        if n_frames is not None:
+            assert type(n_frames) == int and n_frames > 0
 
-        # delete temporary files created by the program
-        self.program.remove_temp_files()
+            for _ in range(n_frames):
+                self.__task_manager.update_tasks()
+                self.__thread_manager.update_threads()
+                self.__process_manager.update_process()
+                self.render.on_loop([lambda: self.scene.draw()])
+
+        else:
+            while not glfw.window_should_close(self.window):
+                self.__task_manager.update_tasks()
+                self.__thread_manager.update_threads()
+                self.__process_manager.update_process()
+                self.render.on_loop([lambda: self.scene.draw()])
+
+        # Terminate the process if the app ended the process.
+        # ---------------------------------------------------
+        if terminate_process:
+            # terminate process external to the engine
+            glfw.terminate()
+
+            # delete temporary files created by the program
+            self.program.remove_temp_files()
 
     def set_active_polygon(self, polygon_id: str or None) -> None:
         """
