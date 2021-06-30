@@ -63,6 +63,7 @@ class TestSmoothing(unittest.TestCase):
         self.engine.scene.apply_smoothing_algorithm(self.engine.get_active_polygon_id(),
                                                     self.engine.get_active_model_id(),
                                                     2)
+        self.engine.run(10, terminate_process=False)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
