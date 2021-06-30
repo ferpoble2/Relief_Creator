@@ -136,6 +136,11 @@ class Engine:
         """
         Ask the scene to apply smoothing over the indicated polygon.
 
+        A loading window will appear in the program when realizing the smoothing process on the loaded map.
+
+        NOTE: The smoothing process will not be done in the same frame that this method is called. It will be
+              done roughly 3 frames after this method is called.
+
         Args:
             polygon_id: Polygon to use to apply smoothing.
             model_id: Model to use.
