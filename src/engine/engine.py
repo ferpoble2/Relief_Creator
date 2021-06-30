@@ -291,7 +291,7 @@ class Engine:
         Returns: None
         """
         try:
-            self.program.change_cpt_file_with_dialog()
+            self.program.load_cpt_file_with_dialog()
         except FileNotFoundError:
             self.set_modal_text('Error', 'File not loaded.')
         except IOError:
