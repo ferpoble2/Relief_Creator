@@ -27,6 +27,9 @@ from src.utils import get_logger
 
 log = get_logger(module='PROGRAM')
 
+# List of all possible tools that can be active in the program.
+TOOL_LIST = ['move_map', 'create_polygon']
+
 
 class Program:
     """
@@ -362,11 +365,22 @@ class Program:
         """
         Set the active tool in the program.
 
+        The tools selected can be the following:
+            - move_map
+            - create_polygon
+
+        Any other tool will raise a KeyError.
+
+        To make the program does not use any tool, use None as the new_tool parameter.
+
         Args:
             new_tool: New tool being used.
 
         Returns: None
         """
+        if new_tool is not None and new_tool not in TOOL_LIST:
+            raise KeyError('Tool does not exists.')
+
         self.__active_tool = new_tool
 
     def set_cpt_file(self, new_file: str) -> None:
