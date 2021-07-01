@@ -78,27 +78,28 @@ def read_file(file_name: str) -> List[dict]:
         # split the line to get the contents
         line = line.split()
 
+        # Check if the line have information of the color
+        # -----------------------------------------------
         # do not consider empty lines
-        if len(line) == 0:
-            continue
-
-        # dont consider lines not related to the definition of color
-        if (not is_numeric(line[0])) or (not is_numeric(line[2])):
-            continue
+        empty_line = len(line) == 0
 
         # do not consider lines that does not have enough elements to define colors
-        if len(line) < 4:
-            continue
+        not_enough_elements = len(line) < 4
 
-        # append
-        values = line
-        color_pallet.append({
-            'height': float(values[0]),
-            'color': values[1].split('/')
-        })
-        color_pallet.append({
-            'height': float(values[2]),
-            'color': values[3].split('/')
-        })
+        # dont consider lines not related to the definition of color
+        not_color_definition = len(line) >= 4 and (not is_numeric(line[0]) or not is_numeric(line[2]))
+
+        # Append color defined in the line only if the line has color information
+        # -----------------------------------------------------------------------
+        if not empty_line and not not_enough_elements and not not_color_definition:
+            values = line
+            color_pallet.append({
+                'height': float(values[0]),
+                'color': values[1].split('/')
+            })
+            color_pallet.append({
+                'height': float(values[2]),
+                'color': values[3].split('/')
+            })
 
     return color_pallet
