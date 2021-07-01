@@ -102,9 +102,3 @@ def read_file(file_name: str) -> List[dict]:
         })
 
     return color_pallet
-
-
-if __name__ == '__main__':
-    filename = '../../resources/test_resources/cpt/colors_0_100_200.cpt'
-    colors = read_file(filename)
-    print(colors)
