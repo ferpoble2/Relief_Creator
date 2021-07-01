@@ -199,6 +199,7 @@ class TestExportPolygons(unittest.TestCase):
         self.engine.set_new_parameter_to_polygon(pol_3, 'float_val', 15.567)
         self.engine.set_new_parameter_to_polygon(pol_3, 'bool_val', True)
         self.engine.set_new_parameter_to_polygon(pol_3, 'other_val', None)
+        self.engine.set_new_parameter_to_polygon(pol_3, 'int_val', 18)
 
         # export the polygons
         self.engine.export_polygon_list_id([pol_1, pol_2, pol_3],
@@ -216,17 +217,20 @@ class TestExportPolygons(unittest.TestCase):
         expected_value_parameters = [{'name': 'Polygon 0',
                                       'float_val': '',
                                       'bool_val': '',
-                                      'other_val': ''},
+                                      'other_val': '',
+                                      'int_val': ''},
 
                                      {'name': 'Polygon 1',
                                       'float_val': '',
                                       'bool_val': '',
-                                      'other_val': ''},
+                                      'other_val': '',
+                                      'int_val': ''},
 
                                      {'name': 'Polygon 2',
                                       'float_val': 15.567,
                                       'bool_val': True,
-                                      'other_val': 'None'}]
+                                      'other_val': 'None',
+                                      'int_val': 18}]
 
         self.assertEqual(polygons, expected_value_polygons, 'Points stored in the polygon are not the expected value.')
         self.assertEqual(parameters, expected_value_parameters, 'Parameters stored are not the expected.')
@@ -237,11 +241,21 @@ class TestExportPolygons(unittest.TestCase):
 
     def test_export_polygon_error(self):
         exporter = ShapefileExporter()
+
+        # Test error when exporting only one polygon
         with self.assertRaises(ExportError):
             exporter.export_polygon_to_shapefile(list_of_points=None,
                                                  directory='',
                                                  polygon_name='',
                                                  parameters=None)
+
+        # Test error when exporting multiple polygons
+        with self.assertRaises(ExportError):
+            exporter.export_list_of_polygons([[0, 0], [0, 0], [0, 0]],
+                                             [{}, {}, {}],
+                                             ['pol_1', 'pol_2', 'pol_3'],
+                                             'resources/test_resources/temp/should_not_export.shp'
+                                             )
 
 
 if __name__ == '__main__':
