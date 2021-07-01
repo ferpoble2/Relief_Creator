@@ -123,7 +123,7 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
     if y is None:
         y_range_values = get_variables_from_grp(root_grp, ['y_range'])
         y_range_array = np.array(y_range_values)
-        if y_range_array is None or len(y_range_array) < 2:
+        if y_range_values is None or len(y_range_array) < 2:
             raise NetCDFImportError(2, {'accepted_keys': LATITUDE_KEYS,
                                         'file_keys': root_grp.variables.keys()})
 
@@ -136,7 +136,7 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
         dimension_values = get_variables_from_grp(root_grp, ['dimension'])
         dimension_array = np.array(dimension_values)
         if dimension_values is None or len(dimension_array) < 2:
-            raise NetCDFImportError(3, {'accepted_keys': LONGITUDE_KEYS,
+            raise NetCDFImportError(2, {'accepted_keys': LATITUDE_KEYS,
                                         'file_keys': root_grp.variables.keys()})
 
         y = np.arange(y_range_array[0], y_range_array[1], spacing_array[1]).tolist()

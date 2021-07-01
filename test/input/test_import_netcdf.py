@@ -22,6 +22,7 @@ import unittest
 import numpy as np
 
 from src.input.NetCDF import read_info
+from src.error.netcdf_import_error import NetCDFImportError
 
 
 class TestImportNetcdfFile(unittest.TestCase):
@@ -92,6 +93,32 @@ class TestImportNetcdfFile(unittest.TestCase):
         self.assertTrue((x == x_array).all())
         self.assertTrue((y == y_array).all())
         self.assertTrue((z == z_array).all())
+
+    def test_read_info_errors(self):
+
+        # Test files with Y and Z data but not all the X data
+        with self.assertRaises(NetCDFImportError):
+            read_info('resources/test_resources/netcdf/files_without_data/y_z_data_no_x_range.nc')
+
+        with self.assertRaises(NetCDFImportError):
+            read_info('resources/test_resources/netcdf/files_without_data/y_z_data_no_spacing.nc')
+
+        with self.assertRaises(NetCDFImportError):
+            read_info('resources/test_resources/netcdf/files_without_data/y_z_data_no_dimension.nc')
+
+        # Test files with X and Z data but not all the Y data
+        with self.assertRaises(NetCDFImportError):
+            read_info('resources/test_resources/netcdf/files_without_data/x_z_data_no_y_range.nc')
+
+        with self.assertRaises(NetCDFImportError):
+            read_info('resources/test_resources/netcdf/files_without_data/x_z_data_no_spacing.nc')
+
+        with self.assertRaises(NetCDFImportError):
+            read_info('resources/test_resources/netcdf/files_without_data/x_z_data_no_dimension.nc')
+
+        # Test files with X and Y data but not Z data
+        with self.assertRaises(NetCDFImportError):
+            read_info('resources/test_resources/netcdf/files_without_data/x_y_data_no_z_data.nc')
 
 
 if __name__ == '__main__':

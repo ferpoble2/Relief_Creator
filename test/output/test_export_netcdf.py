@@ -54,7 +54,8 @@ class TestExportNetcdfFile(unittest.TestCase):
         # Should not modify the file in any way
         with self.assertRaises(ExportError):
             exporter.modify_heights_existent_netcdf_file(np.array([]),
-                                                         'resources/test_resources/netcdf/file_no_keys.nc')
+                                                         'resources/test_resources/netcdf/files_without_data/'
+                                                         'file_no_keys.nc')
 
     def test_export_one_dimension_heights(self):
         exporter = NetcdfExporter()
