@@ -166,26 +166,3 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
     root_grp.close()
 
     return x, y, z
-
-
-if __name__ == "__main__":
-    # filename = "../../test/input/files/test_file_2.nc"
-    filename = "resources/sample_netcdf/38Ma_HotSpot.nc"
-    rootgrp = Dataset(filename, "r", format="NETCDF4")
-
-    print("Dimensiones del archivo:")
-    print(rootgrp.dimensions.keys())
-
-    print("Grupos del archivo:")
-    print(rootgrp.groups.keys())
-
-    print("Variables del archivo:")
-    print(rootgrp.variables.keys())
-
-    X, Y, Z = read_info(filename)
-
-    print('Atributos de las variables')
-    for variable_key, variable_value in rootgrp.variables.items():
-        print(f' {variable_key}: {variable_value.ncattrs()}')
-
-    rootgrp.close()
