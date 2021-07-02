@@ -20,7 +20,6 @@ File with the tests related to the functionality that imports CPT files into the
 """
 import unittest
 import warnings
-import os
 import json
 
 from src.input.CTP import read_file

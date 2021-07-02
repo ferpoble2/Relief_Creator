@@ -19,7 +19,6 @@
 File with utils functions to read CPT files. (file wih the information about how to set the colors of the models).
 """
 from typing import List
-from re import sub
 
 from src.utils import get_logger
 
