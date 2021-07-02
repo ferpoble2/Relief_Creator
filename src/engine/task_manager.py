@@ -44,12 +44,16 @@ class TaskManager:
         """
         Add a new task to the list of tasks to be executed.
 
+        The number of frames to wait must be greater than 0.
+
         Args:
             task: Function with no arguments with the logic to execute.
             n_frames: Number of frames to wait for the execution of the function.
 
         Returns: None
         """
+        assert n_frames > 0
+
         self.__pending_task_list.append({
             'task': task,
             'frames': n_frames  # need to be 2 to really wait one full frame
