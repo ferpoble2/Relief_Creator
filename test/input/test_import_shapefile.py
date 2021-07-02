@@ -110,6 +110,14 @@ class TestShapefileReading(unittest.TestCase):
         self.assertEqual(data_points, points)
         self.assertEqual(data_parameters, parameters)
 
+    def test_not_shapefile_file(self):
+
+        shp_importer = ShapefileImporter()
+        points, param = shp_importer.get_polygon_information('resources/test_resources/netcdf/test_file_1.nc')
+
+        self.assertIsNone(points)
+        self.assertIsNone(param)
+
 
 if __name__ == '__main__':
     unittest.main()

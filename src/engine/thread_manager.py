@@ -20,6 +20,7 @@ File with the class ThreadManager, class in charge of the management of the thre
 """
 from threading import Thread
 
+
 class ThreadManager:
     """
     Class in charge of the management of the threads on the program.
