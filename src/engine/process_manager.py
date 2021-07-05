@@ -18,6 +18,14 @@
 """
 File with the definition of the ProcessManager class, class in charge of the management of the process raised by the
 engine.
+
+Parallel process are executed in another space of memory than the main process, and thus, they need to copy all the
+variables and data from the main process to the new process. This can make process slower than threads or task, since
+the last two does not need to copy the variables and data to another space of memory.
+
+All the methods called on the process must be parsed and copied to the new space of memory, and thus, all the functions
+used for the parallel process must be public (they can not be private, protected, local to a class or functions or
+lambda).
 """
 
 from multiprocessing import Process, Queue
@@ -27,6 +35,10 @@ import queue
 class ProcessManager:
     """
     Class in charge of the management of the process.
+
+    All the methods called on the process must be parsed and copied to the new space of memory, and thus, all the
+    functions used for the parallel process must be public (they can not be private, protected, local to a class or
+    functions or lambda).
 
     WARNING: The use of this module can be slow since it has to copy all the variables to another memory to
     execute the new process. (use threads if this step is too slow)
@@ -49,18 +61,21 @@ class ProcessManager:
             function: Task to use.
             *args: Args to use in the function.
 
-        Returns: None
+        Returns: Queue used with the return value included.
         """
         ret = function(*args)
         q.put(ret)
+        return q
 
-    def create_parallel_process(self, parallel_task: callable, parallel_task_args: list, then_function: callable,
-                                then_function_args: list) -> None:
+    def create_parallel_process(self, parallel_task: callable,
+                                parallel_task_args=None,
+                                then_function: callable = lambda: None,
+                                then_function_args=None) -> None:
         """
         Create a new process and start it.
 
-        If the return parameter of the parallel task is not none, then the first parameter of the then_task will be
-        the returned parameter.
+        If the return parameter of the parallel_task is not none, then the returned value will be used as first
+        argument of the then_function.
 
         Args:
             parallel_task: Function to execute in a new process.
@@ -70,6 +85,11 @@ class ProcessManager:
 
         Returns: None
         """
+
+        if then_function_args is None:
+            then_function_args = []
+        if parallel_task_args is None:
+            parallel_task_args = []
 
         q = Queue()
         p = Process(target=self.true_parallel_task, args=(q, parallel_task) + tuple(parallel_task_args))
@@ -94,7 +114,15 @@ class ProcessManager:
             try:
                 ret = process['queue'].get(False)
                 process['process'].join()
-                process['then_function'](ret, *process['then_function_args'])
+
+                # Execute the then function with the returned argument only if the return value of the
+                # parallel process is not None.
+                if ret is not None:
+                    process['then_function'](ret, *process['then_function_args'])
+                else:
+                    process['then_function'](*process['then_function_args'])
+
+                # Add the process as one to delete.
                 to_delete.append(process)
 
             except queue.Empty:
@@ -102,30 +130,3 @@ class ProcessManager:
 
         for process in to_delete:
             self.__process_list.remove(process)
-
-
-# the class should pass this code
-if __name__ == '__main__':
-
-    import time
-
-    # move outside to run this code.
-
-    # noinspection PyMissingOrEmptyDocstring
-    def parallel_one(something):
-        print('to sleep')
-        time.sleep(2.5)
-        print(something)
-        return 300
-
-    # noinspection PyMissingOrEmptyDocstring
-    def then_task(number, another_number):
-        print(number)
-        print(another_number)
-
-
-    pm = ProcessManager()
-
-    pm.create_parallel_process(parallel_one, ['something'], then_task, [90000])
-    while True:
-        pm.update_process()
