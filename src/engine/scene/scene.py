@@ -345,8 +345,8 @@ class Scene:
 
         model.set_height_buffer(new_heights)
 
-    def calculate_map_position_from_window(self, position_x: int, position_y: int, allow_outside_map=False) \
-            -> (float, float):
+    def calculate_map_position_from_window(self, position_x: int, position_y: int, allow_outside_map=False,
+                                           allow_outside_scene=False) -> (float, float):
         """
         Calculate the position of a point on the map currently being showed on the screen.
 
@@ -356,6 +356,8 @@ class Scene:
         Args:
             allow_outside_map: If to enable to calculate the map position even when the positions given fall outside of
                                the rendered map. When disabled, (None, None) is returned if points are outside of map.
+            allow_outside_scene: If to enable to calculate the map position when the position given fall outside of
+                                 the scene. When disabled, (None, None) is returned if points are outside of map.
             position_x: Window position x of the point. (pixels to the right on the window)
             position_y: Window position y (from top to bottom) of the point. (pixels down on the window)
 
@@ -388,8 +390,8 @@ class Scene:
         x_pos = map_positions['left'] + (map_positions['right'] - map_positions['left']) * x_dist_pixel / scene_x
         y_pos = map_positions['bottom'] + (map_positions['top'] - map_positions['bottom']) * y_dist_pixel / scene_y
 
-        # return None, None if mouse is outside the map.
-        # ---------------------------------------------
+        # Return None, None if mouse is outside the map.
+        # ----------------------------------------------
         outside_map = x_pos < np.min(x_array) or \
                       x_pos > np.max(x_array) or \
                       y_pos < np.min(y_array) or \
@@ -397,6 +399,18 @@ class Scene:
         if (not allow_outside_map) and outside_map:
             return None, None
 
+        # Return None, None if the mouse is outside of the scene.
+        # -------------------------------------------------------
+        outside_scene = position_x < scene_settings['SCENE_BEGIN_X'] or \
+                        position_x > scene_settings['SCENE_BEGIN_X'] + scene_settings['SCENE_WIDTH_X'] or \
+                        position_y > window_settings['HEIGHT'] - scene_settings['SCENE_BEGIN_Y'] or \
+                        position_y < window_settings['HEIGHT'] - (scene_settings['SCENE_BEGIN_Y'] +
+                                                                  scene_settings['SCENE_HEIGHT_Y'])
+        if (not allow_outside_scene) and outside_scene:
+            return None, None
+
+        # Return the calculated value on the map.
+        # ---------------------------------------
         return x_pos, y_pos
 
     def calculate_max_min_height(self, model_id: str, polygon_id: str) -> tuple:
