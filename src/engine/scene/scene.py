@@ -280,6 +280,9 @@ class Scene:
         bottom. The coordinates given as parameters will be processed and transformed to the coordinates used in the
         map being showed on the scene.
 
+        The new vertex will not be added if it falls outside of the space considered for the scene on the program, but
+        will be added if it falls outside of the map (but still inside of the scene).
+
         Args:
             position_x: Position x of the point in window coordinates
             position_y: Position y of the point in window coordinates (from top to bottom)
@@ -293,7 +296,10 @@ class Scene:
             raise AssertionError('There is no active polygon.')
 
         if active_polygon in self.__polygon_hash:
-            new_x, new_y = self.calculate_map_position_from_window(position_x, position_y, allow_outside_map=True)
+            new_x, new_y = self.calculate_map_position_from_window(position_x,
+                                                                   position_y,
+                                                                   allow_outside_map=True,
+                                                                   allow_outside_scene=False)
             self.__polygon_hash[active_polygon].add_point(new_x, new_y)
 
     def add_polygon(self, polygon: 'Polygon') -> None:

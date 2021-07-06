@@ -16,6 +16,7 @@
 #  END GPL LICENSE BLOCK
 
 import unittest
+import warnings
 import numpy as np
 
 from src.engine.scene.transformation_helper import TransformationHelper
@@ -31,6 +32,8 @@ class TestLinearTransformations(unittest.TestCase):
 
         Initialize the common variables.
         """
+        warnings.simplefilter('ignore', category=DeprecationWarning)
+
         self.helper = TransformationHelper()
 
     def plot_points(self, points: list) -> None:

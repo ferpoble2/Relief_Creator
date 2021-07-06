@@ -37,6 +37,7 @@ class TestInterpolation(unittest.TestCase):
         Returns: None
         """
         warnings.simplefilter("ignore", ResourceWarning)
+        warnings.simplefilter('ignore', category=DeprecationWarning)
 
         # create program
         self.engine = Engine()

@@ -58,13 +58,12 @@ class TestProcessTask(unittest.TestCase):
     def test_code_in_another_process(self):
         pm = ProcessManager()
 
-        # Check if the task is iin fact executed in a new thread
         initial_time = time.time()
-        pm.create_parallel_process(time.sleep, [5])
+        pm.create_parallel_process(time.sleep, [PROCESS_CREATION_TIME * 2])
         final_time = time.time()
 
         # Check that the sleep logic is executing in another thread
-        self.assertTrue(final_time - initial_time < 3)
+        self.assertTrue(final_time - initial_time < PROCESS_CREATION_TIME)
 
         # Wait for the process to end
         time.sleep(5)

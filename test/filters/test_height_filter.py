@@ -33,6 +33,7 @@ class TestHeightGreaterFilter(unittest.TestCase):
         """
         Code executed before every test. Initializes a program to work with.
         """
+        warnings.simplefilter('ignore', category=DeprecationWarning)
 
         # create program
         self.engine = Engine()

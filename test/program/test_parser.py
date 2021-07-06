@@ -32,9 +32,17 @@ class TestArgumentParser(unittest.TestCase):
 
     def test_argument_reading(self):
 
-        arguments = get_command_line_arguments()
-        self.assertIn('model', arguments)
-        self.assertIsNone(arguments.model)
+        saved_argv = sys.argv
+
+        try:
+            sys.argv = ['./main.py']
+
+            arguments = get_command_line_arguments()
+            self.assertIn('model', arguments)
+            self.assertIsNone(arguments.model)
+
+        finally:
+            sys.argv = saved_argv
 
     def test_argument_model_value(self):
 
