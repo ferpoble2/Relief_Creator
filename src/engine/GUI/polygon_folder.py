@@ -62,7 +62,7 @@ class PolygonFolder:
         """
         return self.__id
 
-    def get_name(self) -> None:
+    def get_name(self) -> str:
         """
         Get the name of the polygon folder.
 

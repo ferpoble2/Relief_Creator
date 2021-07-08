@@ -26,7 +26,7 @@ class GUIError(BaseError):
     Error to use for GUI related errors.
     """
 
-    def __init__(self, code=0):
+    def __init__(self, code: int = 0):
         """
         Constructor of the class.
         """

@@ -26,4 +26,13 @@ class PolygonFolderNotFoundError(FolderError):
     """
     Error to use when a polygon folder is not found.
     """
-    pass
+
+    def __init__(self, err_code: int = 0):
+        """
+        Constructor of the class PolygonFolderNotFoundError.
+        """
+        super(PolygonFolderNotFoundError, self).__init__(err_code)
+
+        self.codes = {
+            0: 'Polygon Folder not found in the program.'
+        }
