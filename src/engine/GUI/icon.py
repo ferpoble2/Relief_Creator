@@ -53,13 +53,14 @@ class Icon:
         else:
             raise NotImplementedError('Image mode not supported.')
 
-        # bind and configure the texture
+        # Bind and configure the texture
         GL.glBindTexture(GL.GL_TEXTURE_2D, self.__texture_id)
         GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_BORDER)
         GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_BORDER)
         GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR)
         GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
 
+        # Generate the texture in OpenGl
         GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, internalFormat, image.size[0], image.size[1], 0, glformat,
                         GL.GL_UNSIGNED_BYTE,
                         img_data)
