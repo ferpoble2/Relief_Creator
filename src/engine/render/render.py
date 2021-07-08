@@ -27,10 +27,20 @@ import glfw
 
 
 class Render:
+    """
+    Class in charge of executing the render process on the application.
+
+    The render process is the one in charge of generating a 2D image using OpenGL to be showed on the program.
+
+    Note:
+        It is very important to call the method <instance>.init(...) before executing the method <instance>.on_loop(...)
+        since the first method initialize all the components related to the engine that are necessary to render the
+        scene and the GUI.
+    """
 
     def __init__(self):
         """
-        Constructor od the render.
+        Constructor of the render.
         """
         self.__window = None
         self.__GUI = None
