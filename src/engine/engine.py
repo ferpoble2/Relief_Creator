@@ -54,6 +54,8 @@ log = get_logger(module='ENGINE')
 class Engine:
     """
     Main class of the program, controls and connect every component of the program.
+
+    The engine is the one in charge of the management of the resources of the application.
     """
 
     def __init__(self):
