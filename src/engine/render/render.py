@@ -138,6 +138,7 @@ class Render:
         # Draw the frames defined on the GUI on the Scene.
         self.__GUI.draw_frames()
 
+        # Show the framerate of the application in the windows name if the variable __show_framerate is set to True.
         if self.__show_framerate:
             self.__current_time = glfw.get_time()
             self.__frame_count += 1
