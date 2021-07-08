@@ -21,6 +21,13 @@ Python file with all the important constants and global variables of the engine.
 
 
 class Settings:
+    """
+    Static class that store the values of the settings in the application.
+
+    Since the class is defined as static (all parameters are class parameters and not instance parameters), all changes
+    to the parameters will affect every instance of the class, modifying the settings for the application.
+    """
+
     # Screen settings
     WIDTH = 1300
     HEIGHT = 700

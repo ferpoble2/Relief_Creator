@@ -208,26 +208,34 @@ class Engine:
                 return_values[1] = min_value
 
             except SceneError as e:
+
+                # Do different logic depending on the error code that happened
+                # ------------------------------------------------------------
                 if e.code == 1:
                     self.set_modal_text('Error',
                                         'The polygon is not planar. Try using a planar polygon.')
                     return_values[0] = None
                     return_values[1] = None
+
                 elif e.code == 2:
                     self.set_modal_text('Error',
                                         'The polygon must have at least 3 points to be able to '
                                         'calculate the information.')
                     return_values[0] = None
                     return_values[1] = None
+
                 elif e.code == 3:
                     self.set_modal_text('Error',
                                         'The current model is not supported to use to update the '
                                         'height of the vertices, try using another type of model.')
                     return_values[0] = None
                     return_values[1] = None
+
                 else:
                     raise e
 
+        # Set the message for the loading frame and set the task to be executed behind a loading frame
+        # --------------------------------------------------------------------------------------------
         self.set_loading_message('Calculating heights...')
         self.set_task_with_loading_frame(lambda: asynchronous_task(return_data))
 
