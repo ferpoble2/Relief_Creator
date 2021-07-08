@@ -1470,7 +1470,7 @@ class Scene:
 
     def update_models_projection_matrix(self) -> None:
         """
-        Update the projection matrix of the models.
+        Update the projection matrix of the models with the current zoom level and map position of the application.
 
         Returns: None
         """
