@@ -35,6 +35,9 @@ class ThreadManager:
     def update_threads(self):
         """
         Method that update the finished threads and calls the then_task associated to the threads.
+
+        If the threads ended their execution, then the then_function is called, if they did not end their execution,
+        then this method does nothing.
         """
         to_delete = []
         for thread_pair in self.__threads_list:
