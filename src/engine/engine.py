@@ -55,7 +55,9 @@ class Engine:
     """
     Main class of the program, controls and connect every component of the program.
 
-    The engine is the one in charge of the management of the resources of the application.
+    The engine is the one in charge of the management of the resources of the application. This class controls the
+    scene, the GUI, the program, the render and the controller. Also, this programs uses components from the input and
+    output modules to load new files into the application or to export data respectively.
     """
 
     def __init__(self):
