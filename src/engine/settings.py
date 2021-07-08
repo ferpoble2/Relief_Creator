@@ -91,9 +91,12 @@ class Settings:
     def update_scene_values() -> None:
         """
         Update the settings related to the scene.
+
         Returns: None
         """
 
+        # Update the scene values depending if the frames are fixed on the application or if they are movable.
+        # ----------------------------------------------------------------------------------------------------
         if Settings.FIXED_FRAMES:
             Settings.SCENE_BEGIN_X = Settings.LEFT_FRAME_WIDTH
             Settings.SCENE_BEGIN_Y = Settings.BOTTOM_FRAME_HEIGHT
