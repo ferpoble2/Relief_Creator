@@ -172,6 +172,9 @@ class Engine:
     def are_frames_fixed(self) -> bool:
         """
         Return if the frames are fixed or not in the application.
+
+        The data is asked directly to the Settings static class.
+
         Returns: boolean indicating if the frames are fixed
         """
         return Settings.FIXED_FRAMES
