@@ -99,6 +99,8 @@ class NetcdfExporter:
         """
         Export the information of the vertices of a model to a netcdf file.
 
+        This method generates a totally new netcdf file, creating its own configuration and variables.
+
         Args:
             vertices: Information of the vertices. (shape must be (x, y, 3))
             filename: Name of the file to use.
