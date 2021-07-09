@@ -123,17 +123,6 @@ class Model:
         """
         return self.__vertices_array
 
-    def set_color_file(self, color_file: str) -> None:
-        """
-        Update the colors used by the model from the ones in the file.
-
-        Args:
-            color_file: File to be used to get the colors.
-
-        Returns: None
-        """
-        raise NotImplementedError("Method set_color_file not implemented in the model.")
-
     def set_indices(self, indices: np.ndarray) -> None:
         """Set the vertex indices of the vertices of the model.
 

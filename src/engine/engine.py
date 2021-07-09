@@ -108,6 +108,9 @@ class Engine:
 
         Returns: None
         """
+
+        # Check for the polygon and model to exist. if not, then open a modal text with a message explaining the error
+        # ------------------------------------------------------------------------------------------------------------
         if self.get_active_polygon_id() is None:
             self.set_modal_text('Error', 'Please select a polygon before adding a new vertex to it.')
             return
@@ -116,6 +119,9 @@ class Engine:
             self.set_modal_text('Error', 'Please load a model before adding vertices to the polygon.')
             return
 
+        # Add  the new vertex to the polygon located on the scene. In case of error, then open a modal text with a
+        # message explaining the error.
+        # --------------------------------------------------------------------------------------------------------
         try:
             self.scene.add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
 

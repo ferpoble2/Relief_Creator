@@ -162,7 +162,7 @@ class Lines(Model):
 
     def get_number_of_points(self) -> int:
         """
-        Get the number of points in the model.
+        Get the number of points that are defined in the model.
 
         Returns: Number of points in the model.
         """
