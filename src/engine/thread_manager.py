@@ -17,6 +17,9 @@
 
 """
 File with the class ThreadManager, class in charge of the management of the threads in the engine.
+
+Threads must be update regularly so the function programmed as then should be called. Otherwise, even if the logic
+programmed in the thread ends, the then function will not be called.
 """
 from threading import Thread
 
