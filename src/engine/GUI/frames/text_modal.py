@@ -38,16 +38,20 @@ class TextModal(Frame):
         """
         super().__init__(gui_manager)
 
+        # Variables of the window to draw on the GUI
+        # ------------------------------------------
         self.__windows_width = 300
         self.__windows_height = None
         self.__margin_button = 20
         self.__button_height = 25
 
+        # Variables of the modal window
+        # -----------------------------
         self.__should_show = False
         self.__modal_title = "Modal"
         self.__msg = "Sample text for the modal"
 
-        # auxiliary variables
+        # Auxiliary variables
         # -------------------
         self.__tool_before_pop_up = None
         self.__first_frame_call = False
