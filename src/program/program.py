@@ -44,33 +44,34 @@ class Program:
         Args:
             engine: Engine to use in the program.
         """
-        self.__engine = engine
-        self.__loading = False
 
         # PROGRAM VARIABLES
         # -----------------
+        self.__engine: Engine = engine
 
         # Default color file to use when loading maps on the application.
-        self.__CPT_file = os.path.join(os.getcwd(), 'resources', 'colors', 'default.cpt')
+        self.__CPT_file: str = os.path.join(os.getcwd(), 'resources', 'colors', 'default.cpt')
 
         # File to use when making a copy of the loaded model.
         # This copy helps the export process of the models, changing only the height information of the file.
-        self.__temp_model_file = f'./{time.time()}temp_model_file.nc'
+        self.__temp_model_file: str = f'./{time.time()}temp_model_file.nc'
 
         # Map 2d variables
         # ----------------
-        self.__zoom_level = 1
-        self.__map_position = [0, 0]
+        self.__zoom_level: float = 1
+        self.__map_position: list = [0, 0]
 
         # State variables
         # -----------------------
-        self.__active_model = None
-        self.__active_tool = None
-        self.__active_polygon = None
+        self.__active_model: str | None = None
+        self.__active_tool: str | None = None
+        self.__active_polygon: str | None = None
 
-        self.__view_mode = '2D'
+        self.__view_mode: str = '2D'
 
-        # do the logic of the initialization
+        self.__loading: bool = False
+
+        # Do the logic of the initialization
         # ----------------------------------
         self.__engine.initialize(self.__engine, self)
 
