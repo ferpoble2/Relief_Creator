@@ -51,7 +51,6 @@ from src.error.interpolation_error import InterpolationError
 log = get_logger(module='ENGINE')
 
 
-# noinspection PyMethodMayBeStatic
 class Engine:
     """
     Main class of the program, controls and connect every component of the program.
