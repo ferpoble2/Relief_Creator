@@ -28,6 +28,8 @@ work correctly.
 """
 
 # noinspection PyPep8Naming
+from typing import Union
+
 import OpenGL.constant as OGLConstant
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
@@ -1095,7 +1097,7 @@ class GUIManager:
         """
         self.__engine.set_active_polygon(polygon_id)
 
-    def set_active_tool(self, tool: str) -> None:
+    def set_active_tool(self, tool: Union[str, None]) -> None:
         """
         Set the active tool on the engine.
 

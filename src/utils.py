@@ -30,7 +30,7 @@ with open('resources/height_keys.json', 'r') as height_file:
     HEIGHT_KEYS = json.load(height_file)
 
 LOG_TO_FILE = False
-LOG_TO_CONSOLE = True
+LOG_TO_CONSOLE = False
 
 LOG_LEVEL = logging.DEBUG
 LOG_FILE_LEVEL = logging.DEBUG

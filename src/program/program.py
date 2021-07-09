@@ -21,6 +21,8 @@ File that contains the main class of the program.
 
 import os
 import shutil
+from typing import Union
+
 import easygui
 import time
 from src.utils import get_logger
@@ -362,7 +364,7 @@ class Program:
         """
         self.__active_polygon = polygon_id
 
-    def set_active_tool(self, new_tool: str) -> None:
+    def set_active_tool(self, new_tool: Union[str, None]) -> None:
         """
         Set the active tool in the program.
 

@@ -21,6 +21,7 @@ Frame for the confirmation modals of the application.
 
 import imgui
 
+from src.type_hinting import *
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
 

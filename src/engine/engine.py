@@ -18,6 +18,7 @@
 """
 File that contains the Engine class. Class in charge of the management of all the logic of the application.
 """
+from typing import Union
 
 import glfw
 from PIL import Image
@@ -1302,7 +1303,7 @@ class Engine:
         """
         self.program.set_active_polygon(polygon_id)
 
-    def set_active_tool(self, tool: str) -> None:
+    def set_active_tool(self, tool: Union[str, None]) -> None:
         """
         Set the active tool in the program.
 
