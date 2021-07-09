@@ -56,6 +56,9 @@ class Tools3D(Frame):
 
         Returns: None
         """
+
+        # Create the window on the screen depending on the mode selected on the program
+        # -----------------------------------------------------------------------------
         if self._GUI_manager.are_frame_fixed():
             imgui.begin('Tools 3D', False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE)
             imgui.set_window_position(self.get_position()[0], self.get_position()[1])
@@ -65,26 +68,37 @@ class Tools3D(Frame):
         else:
             imgui.begin('Tools 3D')
 
+        # ------------
+        # Camera Tools
+        # ------------
+
+        # Add a title to the camera section
         self._GUI_manager.set_tool_title_font()
         imgui.text('Camera Information')
         self._GUI_manager.set_regular_font()
 
+        # Get the camera data and show it in the frame
         camera_data = self._GUI_manager.get_camera_data()
-
         imgui.text(f'Elevation angle: {int(camera_data["elevation"])}°')
         imgui.text(f'Azimuthal angle: {int(camera_data["azimuthal"])}°')
         imgui.text(f'Radius: {camera_data["radius"]}')
         imgui.text(f'Position: {camera_data["position"]}')
-
         if imgui.button('Reset Camera', -1):
             self._GUI_manager.reset_camera_values()
 
         imgui.separator()
 
+        # ----------
+        # View Tools
+        # ----------
+
+        # Add a title to the view tools section
         self._GUI_manager.set_tool_title_font()
         imgui.text('View Tools')
         self._GUI_manager.set_regular_font()
 
+        # Show the current exaggeration factor to the user and set an input section where the user can enter a new
+        # value to use
         imgui.text('Elevation Exaggeration Factor')
         imgui.text(f'Current value: {self._GUI_manager.get_height_normalization_factor_of_active_3D_model()}')
         _, self.__normalization_height_value = imgui.input_float('New factor',
@@ -92,31 +106,38 @@ class Tools3D(Frame):
                                                                  format='%.0f')
         self.__normalization_height_value = max(self.__normalization_height_value, 0)
 
-        # disable input if writing a value on the input
+        # Disable the keyboard controller if the user is writing something on the GUI
         if imgui.is_item_active():
             self._GUI_manager.disable_controller_keyboard_callback()
         else:
             self._GUI_manager.enable_controller_keyboard_callback()
 
-        # apply changes
+        # Apply changes using the data written by the user in the options
         if imgui.button('Change Factor', -1):
             self._GUI_manager.change_current_3D_model_normalization_factor(self.__normalization_height_value)
 
         imgui.separator()
+
+        # ----------
+        # Unit Tools
+        # ----------
+
+        # Add a title to the unit tools section
         self._GUI_manager.set_tool_title_font()
         imgui.text('Unit Tools')
         self._GUI_manager.set_regular_font()
 
+        # Render boxes where the user can select the measure unit of the maps and the heights
         imgui.text_wrapped('Height measure unit:')
         clicked, self.__heights_measure_units_selected = imgui.combo('',
                                                                      self.__heights_measure_units_selected,
                                                                      self.__heights_measure_units)
-
         imgui.text_wrapped('Map position measure unit:')
         clicked, self.__map_position_units_selected = imgui.combo(' ',
                                                                   self.__map_position_units_selected,
                                                                   self.__map_position_units)
 
+        # Render a button where the user can update the information of the model
         if imgui.button('Update Model', -1):
             self._GUI_manager.change_height_unit_current_3D_model(
                 self.__heights_measure_units[self.__heights_measure_units_selected]
