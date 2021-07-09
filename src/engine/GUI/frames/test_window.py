@@ -16,7 +16,9 @@
 # END GPL LICENSE BLOCK
 
 """
-Test frame for the GUI (default for imgui)
+Test frame for the GUI (default for imgui).
+
+The test frame is the one proportionate by IMGUI that shows all the ppossiblethings that can be done with IMGUI.
 """
 
 from src.engine.GUI.frames.frame import Frame
@@ -29,6 +31,8 @@ log = get_logger(module="TEST WINDOW")
 class TestWindow(Frame):
     """
     Class that render the test_window of imgui.
+
+    This window contains all the possible frames and options that can be used with IMGUI.
     """
 
     def render(self) -> None:
