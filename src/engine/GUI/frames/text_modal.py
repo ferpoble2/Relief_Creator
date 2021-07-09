@@ -59,20 +59,25 @@ class TextModal(Frame):
         Returns: None
         """
 
+        # Open the popup modal if the variable should_show was changed to True in some point of the application and
+        # do the logic related to the opening of a modal (deactivate tools, disable controller, ...)
+        # ---------------------------------------------------------------------------------------------------------
         if self.__should_show:
+            # Ask imgui to open the popup modal
             imgui.open_popup(self.__modal_title)
 
-            # stores the active tool and deactivate it
-            # ----------------------------------------
+            # Stores the active tool and deactivate it
             self.__tool_before_pop_up = self._GUI_manager.get_active_tool()
             self._GUI_manager.set_active_tool(None)
 
-            # disable keyboard input
+            # Disable keyboard input
             self._GUI_manager.disable_controller_keyboard_callback()
 
-            # dont show anymore
+            # Return the variable should_show to false since the modal was already opened
             self.__should_show = False
 
+        # Set the window size and position and then render the popup modal if it was opened before
+        # ----------------------------------------------------------------------------------------
         imgui.set_next_window_size(self.__windows_width, -1)
         imgui.set_next_window_position(imgui.get_io().display_size.x * 0.5,
                                        imgui.get_io().display_size.y * 0.5,
@@ -80,15 +85,15 @@ class TextModal(Frame):
                                        0.5,
                                        0.5)
         if imgui.begin_popup_modal(self.__modal_title)[0]:
+            # Show the text in the modal popup
             imgui.text_wrapped(self.__msg)
 
+            # Render a button to close the popup and do the logic related to the closing of a modal
             if imgui.button("Close", self.__windows_width - self.__margin_button, self.__button_height):
-                # return the original tool to the program
-                # ---------------------------------------
+                # Return the original tool to the program
                 self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
 
-                # close the pop up
-                # ----------------
+                # Close the pop up
                 self.__should_show = False
                 imgui.close_current_popup()
                 self._GUI_manager.enable_controller_keyboard_callback()
