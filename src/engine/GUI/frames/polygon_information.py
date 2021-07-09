@@ -69,12 +69,17 @@ class PolygonInformation(Frame):
     def render(self) -> None:
         """
         Render the frame.
+
+        Do not render anything if there is not an active polygon on the application.
+
         Returns: None
         """
+
         # Do not draw the screen if there is no active polygon.
         if self._GUI_manager.get_active_polygon_id() is not None:
 
-            # set the flags if the windows should be collapsable or not
+            # Open the window with the selected options depending on the state of the program
+            # -------------------------------------------------------------------------------
             if self._GUI_manager.are_frame_fixed():
                 imgui.begin('Polygon Information', False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE | \
                             imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_FOCUS_ON_APPEARING)
@@ -86,7 +91,9 @@ class PolygonInformation(Frame):
             else:
                 imgui.begin('Polygon Information', False, imgui.WINDOW_NO_FOCUS_ON_APPEARING)
 
-            # First row
+            # --------------------------------------------
+            # First row, show the data titles in bold font
+            # --------------------------------------------
             self._GUI_manager.set_bold_font()
             imgui.columns(2, 'Data List')
             imgui.separator()
@@ -96,32 +103,36 @@ class PolygonInformation(Frame):
             imgui.separator()
             self._GUI_manager.set_regular_font()
 
-            # parameters
+            # ---------------------------------------------------------------------------------------------------------
+            # For each parameter defined in the polygon, show a new row on the frame with the name of the parameter and
+            # the value stored in the parameter. Also, configure the popup modal that will open in case that the
+            # parameter is clicked.
+            # ---------------------------------------------------------------------------------------------------------
             for parameter in self._GUI_manager.get_polygon_parameters(self._GUI_manager.get_active_polygon_id()):
 
-                # key
+                # Render the key of the parameter
                 imgui.next_column()
                 imgui.text(parameter[0])
                 if imgui.is_item_hovered() and imgui.is_mouse_clicked(1):
                     imgui.open_popup(f'options for parameter {parameter[0]}')
 
-                # value
+                # Render the value of the parameter
                 imgui.next_column()
                 imgui.text(str(parameter[1]))
                 if imgui.is_item_hovered() and imgui.is_mouse_clicked(1):
                     imgui.open_popup(f'options for parameter {parameter[0]}')
                 imgui.separator()
 
-                # popup with the options
+                # Configure the popup options when the right click is pressed on the parameters
                 if imgui.begin_popup(f'options for parameter {parameter[0]}'):
 
-                    # edit option
+                    # Edit parameter option
                     imgui.selectable('Edit')
                     if imgui.is_item_clicked():
                         self.__should_open_edit_dialog = True
                         self.__parameter_to_edit = (parameter[0], parameter[1])
 
-                    # delete option
+                    # Delete parameter option
                     imgui.selectable('Delete')
                     if imgui.is_item_clicked():
                         # Set a confirmation modal before deleting the parameter
@@ -136,10 +147,9 @@ class PolygonInformation(Frame):
 
                     imgui.end_popup()
 
-            # return to one column
+            # Show a button to add a new parameter to the polygon at the end of the table
+            # ---------------------------------------------------------------------------
             imgui.columns(1)
-
-            # button to add a new parameter.
             if imgui.button("Add New", -1):
                 self.__should_open_add_dialog = True
 
@@ -155,13 +165,17 @@ class PolygonInformation(Frame):
         """
 
         # Popup to add a new parameter
+        # ----------------------------
         self.__add_parameter_popup()
 
         # Popup to edit a parameter
+        # -------------------------
         self.__edit_parameter_popup()
 
     def __add_parameter_popup(self):
-        # popup modal to add
+
+        # Configure the window in case the popup should open
+        # --------------------------------------------------
         imgui.set_next_window_size(-1, -1)
         imgui.set_next_window_position(imgui.get_io().display_size.x * 0.5,
                                        imgui.get_io().display_size.y * 0.5,
@@ -169,56 +183,59 @@ class PolygonInformation(Frame):
                                        0.5,
                                        0.5)
 
-        # in case of opening
+        # Open the popup and configure it in case the variable to open it is set to True
+        # ------------------------------------------------------------------------------
         if self.__should_open_add_dialog:
-            imgui.open_popup('Add new parameter')
 
-            # once open this variable should be changed to false
-            self.__key_string_value = 'Name'
-            self.__value_string_value = 'Value of parameter'
+            # Ask IMGUI to open the popup and change the variable that is used to check if the popup should open
+            imgui.open_popup('Add new parameter')
             self.__should_open_add_dialog = False
 
-            # set initial variable values
+            # Configure the information of the popup
+            self.__key_string_value = 'Name'
+            self.__value_string_value = 'Value of parameter'
             self.__current_variable_type = 0
             self.__current_bool_selected = 0
 
-            # disable keyboard input for glfw
+            # Disable keyboard input for glfw
             self._GUI_manager.disable_controller_keyboard_callback()
 
-        # popup to add a new parameter
+        # Render the popup if it was opened
+        # ---------------------------------
         if imgui.begin_popup_modal('Add new parameter')[0]:
+
+            # Get the data of the polygon and the parameters of the polygon
             polygon_id = self._GUI_manager.get_active_polygon_id()
             dict_parameters = dict(self._GUI_manager.get_polygon_parameters(polygon_id))
 
-            # name
-            # note: the input item text is the id and should be different from the ones that shows at the same time
+            # Render an input for the name of the parameter
+            # Note: Fields stored in a shapefile file can not have name with more than 10 characters
             imgui.text('Name of the parameter:')
             imgui.same_line()
             _, self.__key_string_value = imgui.input_text('',
                                                           self.__key_string_value,
                                                           10)  # shapefile fields name can not exceed 10 characters
 
-            # check if name already exist on polygon
+            # Check if name already exist on polygon, if it already exists, then show an error message
             repeated_name = True if self.__key_string_value in dict_parameters else False
             if repeated_name:
                 imgui.text_colored('*Name can not be repeated', 1, 0, 0, 1)
 
-            # variable type selectable
+            # Render a selectable for the type of variable to create
             imgui.text('Variable type: ')
             imgui.same_line()
             clicked, self.__current_variable_type = imgui.listbox(
                 "  ", self.__current_variable_type, self.__parameters_type_list
             )
 
-            # value
-            # note: the input item text is the id and should be different from the ones that shows at the same time
+            # Render an input for the value of the parameter. The type of input depends on the type of the variable
+            # that is selected
             imgui.text('Value of the parameter:')
             imgui.same_line()
-
             data_errors = self.__render_parameter_value_input()
 
-            # logic of the button
-            # -------------------
+            # Render a button to save the parameter into the polygon. If there is error in the data written on the
+            # input value or the name is an already existent name, then do not save the parameter into the polygon.
             if imgui.button('Done', -1) and not data_errors and not repeated_name:  # do nothing if there is data errors
 
                 if self.__current_variable_type == 2:  # boolean
@@ -228,12 +245,12 @@ class PolygonInformation(Frame):
                     value = self.__convert_value_to_exportable_variable_type(self.__value_string_value,
                                                                              self.__current_variable_type)
 
-                # store the value
+                # Store the value
                 self._GUI_manager.set_polygon_parameter(self._GUI_manager.get_active_polygon_id(),
                                                         self.__key_string_value,
                                                         value)
 
-                # close the popup and reactivate the glfw keyboard callback
+                # Close the popup and reactivate the glfw keyboard callback
                 imgui.close_current_popup()
                 self._GUI_manager.enable_controller_keyboard_callback()
 
