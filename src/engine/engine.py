@@ -1575,7 +1575,7 @@ class Engine:
         """
         Undo the most recent action made in the program.
 
-        It is dependant of the active tool being used in the program.
+        The logic executed depends on the active tool of the program.
 
         Returns: None
         """
