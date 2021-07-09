@@ -283,8 +283,17 @@ class Controller:
         """
 
         # define the on_key callback
-        # noinspection PyMissingOrEmptyDocstring
         def on_key(window, key, scancode, action, mods):
+            """
+            Function used for the on_key callback. This function will be called every time that a key is pressed on
+            the application.
+
+            Update the state of the keys in the internal variables of the controller class and do the logic on the
+            program depending on the key pressed.
+
+            Does nothing but keep track of the keys pressed and released if the variable only_gui_keyboard_callback
+            is set to True.
+            """
 
             # update the state of the controller variables
             # work even when glfw callback is disabled
@@ -432,8 +441,13 @@ class Controller:
         Returns: Function to use as a callback.
         """
 
-        # noinspection PyMissingOrEmptyDocstring
         def on_resize(_, width, height):
+            """
+            Function used for the resizing callback. This function will be called every time the window of the
+            application is resized.
+
+            Update the height and width settings and also update the scene values and viewport.
+            """
             log.debug(f"Windows resized to {width}x{height}")
 
             # In case window was minimized, do nothing

@@ -17,6 +17,8 @@
 
 """
 File that contains functionality to get and configure a parser for the command line options.
+
+The parser will do logic on the program accordingly to the options given in the command.
 """
 import argparse
 
