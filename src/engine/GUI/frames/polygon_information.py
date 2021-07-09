@@ -81,7 +81,7 @@ class PolygonInformation(Frame):
             # Open the window with the selected options depending on the state of the program
             # -------------------------------------------------------------------------------
             if self._GUI_manager.are_frame_fixed():
-                imgui.begin('Polygon Information', False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE | \
+                imgui.begin('Polygon Information', False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE |
                             imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_FOCUS_ON_APPEARING)
                 self.change_position([self._GUI_manager.get_window_width() - self.__width,
                                       self._GUI_manager.get_window_height() - self.__height])
@@ -186,7 +186,6 @@ class PolygonInformation(Frame):
         # Open the popup and configure it in case the variable to open it is set to True
         # ------------------------------------------------------------------------------
         if self.__should_open_add_dialog:
-
             # Ask IMGUI to open the popup and change the variable that is used to check if the popup should open
             imgui.open_popup('Add new parameter')
             self.__should_open_add_dialog = False
