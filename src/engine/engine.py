@@ -1582,17 +1582,12 @@ class Engine:
         active_tool = self.get_active_tool()
 
         if active_tool == 'create_polygon':
-            # remove the last point from the active polygon if there is an active polygon.
             log.debug('Undoing actions for tool create_polygon.')
 
-            # ask for the active polygon and call the scene to remove the points
+            # Ask for the active polygon and call the scene to remove the last added point
+            # ----------------------------------------------------------------------------
             if self.get_active_polygon_id() is not None:
                 self.scene.remove_last_point_from_active_polygon()
-            else:
-                log.debug('Active polygon is None. Nothing to undo.')
-
-        else:
-            log.debug(f'Tool {active_tool} has no undo action defined.')
 
     def update_current_3D_model(self) -> None:
         """
