@@ -149,15 +149,15 @@ class PolygonInformation(Frame):
         """
         Method executed after the rendering process of all components.
 
-        This methods define all the logic related to the popups of the frame.
+        This methods define all the logic related to the popups that can be raised due to the logic of the frame.
 
         Returns: None
         """
 
-        # popup to add a new parameter
+        # Popup to add a new parameter
         self.__add_parameter_popup()
 
-        # popup to edit a parameter
+        # Popup to edit a parameter
         self.__edit_parameter_popup()
 
     def __add_parameter_popup(self):
