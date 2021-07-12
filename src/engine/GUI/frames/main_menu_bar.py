@@ -51,13 +51,13 @@ class MainMenuBar(Frame):
         model_loaded = current_model is not None
 
         if imgui.begin_main_menu_bar():
-            # first menu dropdown
+            # File menu
             self.__file_menu(model_loaded)
 
-            # second menu dropdown
+            # Edit menu
             self.__edit_menu(model_loaded)
 
-            # third menu dropdown
+            # View menu
             self.__view_menu(model_loaded)
 
             imgui.end_main_menu_bar()
@@ -70,20 +70,25 @@ class MainMenuBar(Frame):
             model_loaded: Boolean indicating if there is a model loaded in the program.
         """
         if imgui.begin_menu('File', True):
+
+            # Option to open a NetCDF file
             imgui.menu_item('Open NetCDF file...', 'Ctrl+O', False, True)
             if imgui.is_item_clicked():
                 self._GUI_manager.load_netcdf_file_with_dialog()
 
+            # Option to open a CPT file
             imgui.menu_item('Change CPT file...', 'Ctrl+T', False, model_loaded)
             if imgui.is_item_clicked() and model_loaded:
                 self._GUI_manager.change_color_file_with_dialog()
 
+            # Option to load a Shapefile file
             imgui.separator()
             imgui.menu_item('Load shapefile file...', 'Ctrl+L', False, model_loaded)
             if imgui.is_item_clicked() and model_loaded:
                 log.debug('Clicked load shapefile...')
                 self._GUI_manager.load_shapefile_file_with_dialog()
 
+            # Option to export the current model to NetCDF file
             imgui.separator()
             imgui.menu_item('Export current model...', enabled=model_loaded)
             if imgui.is_item_clicked() and model_loaded:
@@ -101,6 +106,7 @@ class MainMenuBar(Frame):
         """
         if imgui.begin_menu('View'):
 
+            # Option to fix/unfix the frames of the application
             if self._GUI_manager.are_frame_fixed():
                 imgui.menu_item('Unfix windows positions')
                 if imgui.is_item_clicked():
@@ -111,8 +117,8 @@ class MainMenuBar(Frame):
                 if imgui.is_item_clicked():
                     self._GUI_manager.fix_frames_position(True)
 
+            # Options to show the points of the map, lines, or to render the model of the map
             imgui.separator()
-
             imgui.menu_item('Use points', enabled=model_loaded)
             if imgui.is_item_clicked() and model_loaded:
                 log.info("Rendering points")
@@ -128,6 +134,7 @@ class MainMenuBar(Frame):
                 log.info("Rendering filled polygons")
                 self._GUI_manager.set_models_polygon_mode(GL.GL_FILL)
 
+            # Option to change to 2D/3D mode. Raise error if the program is in another mode other than 3D or 2D.
             imgui.separator()
             program_view_mode = self._GUI_manager.get_program_view_mode()
             if program_view_mode == '3D':
@@ -153,6 +160,8 @@ class MainMenuBar(Frame):
             model_loaded: Boolean indicating if there is a model loaded in the program.
         """
         if imgui.begin_menu('Edit', True):
+
+            # Option to undo the last executed action
             imgui.menu_item('Undo', 'CTRL+Z', False, model_loaded)
             if imgui.is_item_clicked() and model_loaded:
                 self._GUI_manager.undo_action()
