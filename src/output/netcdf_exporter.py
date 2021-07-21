@@ -55,13 +55,11 @@ class NetcdfExporter:
         """
 
         # Read the information of the file
-        # --------------------------------
         root_grp = Dataset(filename, 'r+')
         file_keys = root_grp.variables.keys()
 
         # Check for the key that stores the height information. This key must be in the file, otherwise, an exception
         # is raised.
-        # -----------------------------------------------------------------------------------------------------------
         height_key = None
         for key in HEIGHT_KEYS:
             if key in file_keys:
