@@ -211,13 +211,13 @@ class Scene:
 
         # CALL THE THREAD TASK
         # --------------------
-        # define mutable object to store results to use from the parallel task to the then task
+        # Define mutable object to store results to use from the parallel task to the then task
         new_height = [None]
 
         # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
         def parallel_task(new_height: list, vertex_array: 'numpy.array', height_array: 'numpy.array',
                           polygon_points: list, max_height: float, min_height: float, filter_data: list):
-            # calculate the new height of the points
+            # Calculate the new height of the points
             new_height[0] = TransformationHelper().modify_points_inside_polygon_linear(vertex_array,
                                                                                        height_array,
                                                                                        polygon_points,
@@ -227,11 +227,11 @@ class Scene:
 
         # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
         def then(new_height: list, engine: 'Engine', model: Map2DModel):
-            # tell the polygon the new height of the vertices
+            # Tell the polygon the new height of the vertices
             model.set_height_buffer(new_height[0])
             engine.set_program_loading(False)
 
-        # define the parallel functions to use
+        # Define the parallel functions to use
         self.__engine.set_loading_message('Changing height...')
         self.__engine.set_program_loading(True)
         self.__engine.set_thread_task(parallel_task, then,
