@@ -135,8 +135,11 @@ class Scene:
                 # get the points of the polygon
                 polygon_id = filter_obj[1]
 
-                # get the data and check it
+                # Get the data and check it
                 # -------------------------
+                # Check if the polygon is simple/planar or not. If not, raise exception.
+                if not self.is_polygon_planar(polygon_id):
+                    raise ModelTransformationError(8)
 
                 # Get vertices of polygon. raise exception if the is problems getting the information.
                 try:
