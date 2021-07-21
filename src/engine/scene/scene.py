@@ -138,18 +138,20 @@ class Scene:
                 # get the data and check it
                 # -------------------------
 
-                # get vertices of polygon. raise exception if the is problems getting the information.
+                # Get vertices of polygon. raise exception if the is problems getting the information.
                 try:
                     polygon_points = self.get_polygon_points(polygon_id)
+
                 except SceneError:  # polygon not found
                     raise ModelTransformationError(6)
 
-                # check that have at least three vertices
+                # Check that have at least three vertices
                 if len(polygon_points) < 9:
                     raise ModelTransformationError(7)
 
-                # store the data
+                # Store the data
                 filter_data.append((id_filter, polygon_points))
+
             else:
                 raise NotImplementedError(f'Processing process for filter {id_filter} not implemented on the Scene.')
 
@@ -188,7 +190,7 @@ class Scene:
         model = self.__model_hash[model_id]
         polygon = self.__polygon_hash[polygon_id]
 
-        # ask the model and polygon for the parameters to calculate the new height
+        # Ask the model and polygon for the parameters to calculate the new height
         vertices_shape = model.get_vertices_shape()
         vertex_array = model.get_vertices_array().reshape(vertices_shape)
         height_array = model.get_height_array().reshape((vertices_shape[0], vertices_shape[1]))
@@ -200,7 +202,8 @@ class Scene:
         if not polygon.is_planar():
             raise ModelTransformationError(3)
 
-        # process the filters to format them in a format suitable the TransformationHelper class.
+        # Process the filters to format them in a format suitable the TransformationHelper class.
+        # ---------------------------------------------------------------------------------------
         filter_data = self.__process_filters(filters)
 
         # CALL THE THREAD TASK
