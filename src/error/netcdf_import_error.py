@@ -18,9 +18,10 @@
 """
 File with the class definition of the NetCDFImportError, class to use when there is errors importing netcdf files.
 """
+from src.error.base_error import BaseError
 
 
-class NetCDFImportError(Exception):
+class NetCDFImportError(BaseError):
     """
     Class to use when there are errors in the import of netcdf files.
     """
@@ -38,17 +39,3 @@ class NetCDFImportError(Exception):
             3: 'A key to read the longitude of the file is not in the list of accepted keys on the program',
             4: 'A key to read the height of the file is not in the list of accepted keys on the program'
         }
-
-    def __str__(self) -> str:
-        """
-        Returns: Message showed in the console.
-        """
-        return self.get_code_message()
-
-    def get_code_message(self) -> str:
-        """
-        Get the message stored describing the error.
-
-        Returns: string
-        """
-        return self.codes[self.code]
