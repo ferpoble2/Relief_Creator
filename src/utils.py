@@ -21,7 +21,8 @@ File with utils functions for the engine.
 import logging
 import json
 
-# get data from files.
+# Get the keys to search in the reading process of the NetCDF file from the files located in the resources.
+# ---------------------------------------------------------------------------------------------------------
 with open('resources/longitude_keys.json', 'r') as lon_file:
     LONGITUDE_KEYS = json.load(lon_file)
 with open('resources/latitude_keys.json', 'r') as lat_file:
@@ -29,6 +30,8 @@ with open('resources/latitude_keys.json', 'r') as lat_file:
 with open('resources/height_keys.json', 'r') as height_file:
     HEIGHT_KEYS = json.load(height_file)
 
+# Configurations of the loggers. These configurations affect all the loggers of the application.
+# ----------------------------------------------------------------------------------------------
 LOG_TO_FILE = False
 LOG_TO_CONSOLE = False
 

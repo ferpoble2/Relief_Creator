@@ -27,6 +27,16 @@ def get_command_line_arguments() -> 'argparse.Namespace':
     """
     Configure and return a command line parser.
 
+    The command line parser returned works as a dictionary that can be asked if the parameters expected were defined
+    when the call to run the program was made.
+
+    Example:
+        if 'model' in parser:
+            ...
+
+        if parser.model is not None:
+            ...
+
     Returns: Parser to use to get the arguments.
     """
     parser = argparse.ArgumentParser(description='Relief creator Program.')
