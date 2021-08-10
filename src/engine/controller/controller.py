@@ -52,7 +52,7 @@ class Controller:
 
         self.__only_gui_keyboard_callback_enabled = True
 
-        # Auxiliary methods
+        # Auxiliary variables
         self.__mouse_old_pos = (0, 0)
         self.__is_left_ctrl_pressed = False
         self.__is_left_alt_pressed = False
