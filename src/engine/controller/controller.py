@@ -77,6 +77,8 @@ class Controller:
         self.__camera_movement_velocity = 1
         self.__camera_mouse_movement_factor = 0.01
 
+        self.__move_map_tool_activated = False
+
     def __change_color_file_with_dialog(self) -> None:
         """
         Change the color file opening a dialog to select the file.
@@ -175,10 +177,8 @@ class Controller:
 
             if self.__engine.get_program_view_mode() == '2D':
 
-                if active_tool == 'move_map':
+                if active_tool == 'move_map' and self.__move_map_tool_activated:
                     if self.__is_left_mouse_being_pressed:
-                        log.debug(
-                            f"Cursor movement: {x_pos - self.__mouse_old_pos[0]}, {self.__mouse_old_pos[1] - y_pos}")
                         self.__engine.move_scene(x_pos - self.__mouse_old_pos[0], self.__mouse_old_pos[1] - y_pos)
 
             if self.__engine.get_program_view_mode() == '3D':
@@ -227,6 +227,9 @@ class Controller:
                     if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
                         active_tool = self.__engine.get_active_tool()
 
+                        if active_tool == 'move_map':
+                            self.__move_map_tool_activated = True
+
                         if active_tool == 'create_polygon':
                             pos_x, pos_y = glfw.get_cursor_pos(window)
 
@@ -235,8 +238,13 @@ class Controller:
 
                                 self.__engine.add_new_vertex_to_active_polygon_using_window_coords(pos_x, pos_y)
 
+                    if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.RELEASE:
+                        active_tool = self.__engine.get_active_tool()
+
+                        if active_tool == 'move_map':
+                            self.__move_map_tool_activated = False
+
                 elif self.__engine.get_program_view_mode() == '3D':
-                    # There are no actions defined to the mouse buttons on the 3D mode
                     pass
 
         return mouse_button_callback
