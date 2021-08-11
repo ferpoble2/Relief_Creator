@@ -393,9 +393,14 @@ class TransformationHelper:
         # create a polygon external to the one proportionate
         exterior_polygon = LinearRing(external_points_no_z_axis)
 
-        # get the bounding box of the nan values
+        # get the bounding box of the nan values. Add/subtract 1 from every index to get one row/col of values before
+        # the nan values.
         min_x_index, max_x_index, min_y_index, max_y_index = self.__get_bounding_box_indexes(points_array,
                                                                                              exterior_polygon)
+        min_x_index -= 1
+        max_x_index += 1
+        min_y_index -= 1
+        max_y_index += 1
 
         # copy the array to not modify the original
         heights = heights.copy()
