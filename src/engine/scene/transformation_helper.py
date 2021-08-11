@@ -217,13 +217,34 @@ class TransformationHelper:
         data[:, :, 1] = grid_y
         data[:, :, 2] = array_2d
 
+        # change shape of the data to an array of points
         nan_mask = nan_mask.reshape(-1)
         data = data.reshape((-1, 3))
 
-        # noinspection PyShadowingNames
-        points = data[~nan_mask][:, 0:2]
-        # noinspection PyShadowingNames
-        values = data[~nan_mask][:, 2]
+        # select only points that have values and have a nan neighbour
+        original_data = np.isnan(array_2d)
+        shift_up = np.isnan(np.roll(array_2d, 1, axis=0))
+        shift_down = np.isnan(np.roll(array_2d, -1, axis=0))
+        shift_left = np.isnan(np.roll(array_2d, -1, axis=1))
+        shift_right = np.isnan(np.roll(array_2d, 1, axis=1))
+        pivots_points = ~original_data & (shift_up | shift_down | shift_left | shift_right)
+
+        from matplotlib import pyplot as plt
+        plt.matshow(pivots_points)
+        plt.show()
+        pivot_points_1d = pivots_points.reshape(-1)
+
+        # select the points and their value to use as values for the interpolation
+        points = data[pivot_points_1d][:, 0:2]
+        values = data[pivot_points_1d][:, 2]
+
+        # Deprecated code
+        # Uses all the points of the matrix to interpolate. Too slow...
+        # -------------------------------------------------------------
+        # # noinspection PyShadowingNames
+        # points = data[~nan_mask][:, 0:2]
+        # # noinspection PyShadowingNames
+        # values = data[~nan_mask][:, 2]
 
         points_to_interpolate = data[nan_mask][:, 0:2]
 
