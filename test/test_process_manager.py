@@ -96,24 +96,31 @@ class TestProcessTask(unittest.TestCase):
         TEST_MUTABLE_OBJECT[0] = None
 
     def test_execution_then_task_modify_global_object(self):
-        pm = ProcessManager()
 
         # Execute thread and wait for it to end.
 
         # Execute a parallel process that does nothing and then execute a function that changes the mutable object
         # values. The parallel process return None, and thus, a new argument should not be added to the then function.
-        pm.create_parallel_process(parallel_task=do_nothing_function,
-                                   parallel_task_args=None,
-                                   then_function=change_global_mutable_object,
-                                   then_function_args=[50, 0])
-        time.sleep(PROCESS_CREATION_TIME)
+        for process_creation_time in PROCESS_CREATION_TIMES:
+            pm = ProcessManager()
+            pm.create_parallel_process(parallel_task=do_nothing_function,
+                                       parallel_task_args=None,
+                                       then_function=change_global_mutable_object,
+                                       then_function_args=[50, 0])
+            time.sleep(process_creation_time)
 
-        # Update thread task to execute the then logic
-        pm.update_process()
+            # Update thread task to execute the then logic
+            pm.update_process()
 
-        # Check values
-        self.assertEqual(50, TEST_MUTABLE_OBJECT[0])
-        self.assertEqual(None, TEST_MUTABLE_OBJECT[1])
+            # Check values
+            try:
+                self.assertEqual(50, TEST_MUTABLE_OBJECT[0])
+                self.assertEqual(None, TEST_MUTABLE_OBJECT[1])
+                break
+
+            except AssertionError as e:
+                if process_creation_time == PROCESS_CREATION_TIMES[-1]:
+                    raise e
 
         # Return values of object to normal
         TEST_MUTABLE_OBJECT[0] = None
