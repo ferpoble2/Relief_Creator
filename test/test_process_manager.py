@@ -31,6 +31,7 @@ from src.engine.process_manager import ProcessManager
 # Variables and functions used in testing.
 TEST_MUTABLE_OBJECT = [None, None, None]
 PROCESS_CREATION_TIME = 5  # time in seconds to wait for a process to create
+PROCESS_CREATION_TIMES = [0, 1, 5, 10, 20, 30]  # time in seconds to wait for the process to create
 
 
 def do_nothing_function():
@@ -69,26 +70,29 @@ class TestProcessTask(unittest.TestCase):
         time.sleep(5)
 
     def test_execution_then_task(self):
-        pm = ProcessManager()
-
-        # Execute thread and wait for it to end.
 
         # Execute a parallel process that does nothing and then execute a function that changes the mutable object
         # values. The parallel process return None, and thus, a new argument should not be added to the then function.
-        pm.create_parallel_process(parallel_task=do_nothing_function,
-                                   parallel_task_args=None,
-                                   then_function=change_mutable_object,
-                                   then_function_args=[50, 0, TEST_MUTABLE_OBJECT])
-        time.sleep(PROCESS_CREATION_TIME)
+        for process_creation_time in PROCESS_CREATION_TIMES:
+            pm = ProcessManager()
+            pm.create_parallel_process(parallel_task=do_nothing_function,
+                                       parallel_task_args=None,
+                                       then_function=change_mutable_object,
+                                       then_function_args=[50, 0, TEST_MUTABLE_OBJECT])
+            time.sleep(process_creation_time)
+            pm.update_process()
 
-        # Update thread task to execute the then logic
-        pm.update_process()
+            # Check values
+            try:
+                self.assertEqual(50, TEST_MUTABLE_OBJECT[0])
+                self.assertEqual(None, TEST_MUTABLE_OBJECT[1])
+                break
 
-        # Check values
-        self.assertEqual(50, TEST_MUTABLE_OBJECT[0])
-        self.assertEqual(None, TEST_MUTABLE_OBJECT[1])
+            except AssertionError as e:
+                if process_creation_time == PROCESS_CREATION_TIMES[-1]:
+                    raise e
 
-        # Return values of object to normal
+        # Return values to normal
         TEST_MUTABLE_OBJECT[0] = None
 
     def test_execution_then_task_modify_global_object(self):
