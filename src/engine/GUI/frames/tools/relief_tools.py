@@ -142,13 +142,14 @@ class ReliefTools:
                 # get list with the polygons on the program and remove the active one
                 polygon_list = self.__gui_manager.get_polygon_id_list()
                 polygon_list.remove(self.__gui_manager.get_active_polygon_id())
+                polygon_list_names = list(map(lambda x: self.__gui_manager.get_polygon_name(x), polygon_list))
 
                 # empty list case
                 if len(polygon_list) == 0:
                     filter_data.arguments = 0
                     _, filter_data.arguments = imgui.combo('Value',
                                                            filter_data.arguments,
-                                                           polygon_list)
+                                                           polygon_list_names)
 
                 else:
                     # change the current polygon to the first on the list if it is not selected
@@ -158,7 +159,7 @@ class ReliefTools:
                     # show the combo options for the rendering. Must be at least one polygon for the filter to work.
                     _, selected_polygon = imgui.combo('Value',
                                                       polygon_list.index(filter_data.arguments),
-                                                      polygon_list)
+                                                      polygon_list_names)
                     filter_data.arguments = polygon_list[selected_polygon]
 
             # button to remove the filter
