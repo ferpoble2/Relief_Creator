@@ -501,15 +501,18 @@ class TransformationHelper:
                                                       height_cut,
                                                       filter_data)
 
-        # modify the height linearly
-        current_min_height = np.nanmin(height_cut[filtered_flags])
-        current_max_height = np.nanmax(height_cut[filtered_flags])
+        # modify the height linearly if there are points to modify
+        if len(height_cut[filtered_flags]) > 0:
 
-        new_height = interpolate(height_cut[filtered_flags], current_min_height, current_max_height,
-                                 new_min_height,
-                                 new_max_height,
-                                 False)
+            current_min_height = np.nanmin(height_cut[filtered_flags])
+            current_max_height = np.nanmax(height_cut[filtered_flags])
 
-        height_cut[filtered_flags] = new_height
-        height[min_y_index:max_y_index, min_x_index:max_x_index] = height_cut
+            new_height = interpolate(height_cut[filtered_flags], current_min_height, current_max_height,
+                                     new_min_height,
+                                     new_max_height,
+                                     False)
+
+            height_cut[filtered_flags] = new_height
+            height[min_y_index:max_y_index, min_x_index:max_x_index] = height_cut
+
         return height
