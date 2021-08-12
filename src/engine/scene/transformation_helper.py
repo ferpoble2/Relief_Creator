@@ -228,10 +228,6 @@ class TransformationHelper:
         shift_left = np.isnan(np.roll(array_2d, -1, axis=1))
         shift_right = np.isnan(np.roll(array_2d, 1, axis=1))
         pivots_points = ~original_data & (shift_up | shift_down | shift_left | shift_right)
-
-        from matplotlib import pyplot as plt
-        plt.matshow(pivots_points)
-        plt.show()
         pivot_points_1d = pivots_points.reshape(-1)
 
         # select the points and their value to use as values for the interpolation
