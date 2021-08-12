@@ -1,20 +1,6 @@
 # Source directory
 
-In this directory is located all the code and resources used by the program.
-
-
-## Logs
-
-- The `logs/` directory contains all the logs of the different modules. The logs files are separated by module, having
-each module a different file to store the logs.
-
-## Test data
-
-Inside the folder `engine/input/` there are different folders with test data to check the engine:
-
-- The folder `test_colors` has test CPT files to color the models.
-- The folder `test_inputs` has test NETCDF files to load into the program.
-- The folder `test_polygons` has test shapefile files to load into the program.
+In this directory is located all the code that runs the program.
 
 ## Errors
 
@@ -23,7 +9,7 @@ The folder `error` contain manually created exceptions used in the program.
 ## Fonts and Icons
 
 - The fonts used in the engine are in the directory `engine/GUI/fonts/`, and are used by the engine to render the User interface.
-    - To change the font used in the different windows of the GUI it is necessary call the correct methods on the `GUIManager` class.
+    - To change the font used in the different windows of the GUI it is necessary to call the correct methods on the `GUIManager` class.
 
 - The Icons are stored in the directory `engine/GUI/icons/`, and are used by the engine to draw imagen on the GUI. 
     - The images are loaded, stored and used as OpenGl textures on the engine.
