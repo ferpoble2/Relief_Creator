@@ -19,14 +19,13 @@
 File with the class ReliefTools. Class in charge of render the Relief tools inside another frame.
 """
 
-import imgui
 from dataclasses import dataclass
-
 from typing import List
 
-from src.error.GUI_error import GUIError
-from src.utils import get_logger
+import imgui
+
 from src.type_hinting import *
+from src.utils import get_logger
 
 log = get_logger(module="RELIEF_TOOLS")
 
