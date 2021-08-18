@@ -1178,6 +1178,11 @@ class GUIManager:
         """
         Call the scene to change the polygon mode used by the models.
 
+        The polygon mode must be one of the followiing constants defined in the opengl library:
+            - GL_POINT
+            - GL_LINE
+            - GL_FILL
+
         Args:
             polygon_mode: Polygon mode to use.
 

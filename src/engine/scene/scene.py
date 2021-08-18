@@ -1367,7 +1367,12 @@ class Scene:
 
     def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
-        Select if the models uses the wireframe mode or not.
+        Change the polygon mode used by the models.
+
+        The polygon mode must be one of the followiing constants defined in the opengl library:
+            - GL_POINT
+            - GL_LINE
+            - GL_FILL
 
         Args:
             polygon_mode: OpenGL polygon mode to draw the model.
