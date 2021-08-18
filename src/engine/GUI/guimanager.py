@@ -238,9 +238,11 @@ class GUIManager:
         """
         Change the color of the polygon with the specified id.
 
-        Only change the color of the lines of the polygon.
+        Only change the color of the lines of the polygon, the color of the dots must be changed with the method
+        change_dot_color_of_polygon. The colors must be defined in the order RGBA and with values between 0 and 1.
 
-        The colors must be defined in the order RGBA and with values between 0 and 1.
+        Examples:
+            gui_manager.change_color_of_polygon('my_polygon', [1,0,0,1])
 
         Args:
             polygon_id: Id of the polygon to change the color.
