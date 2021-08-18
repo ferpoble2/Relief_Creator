@@ -1110,7 +1110,7 @@ class GUIManager:
 
     def set_bold_font(self) -> None:
         """
-        Set a bold font too use in the render.
+        Set a bold font to use in the render on the GUI.
 
         Returns: Set the font to bold.
         """
