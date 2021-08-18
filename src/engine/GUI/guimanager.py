@@ -159,7 +159,8 @@ class GUIManager:
         """
         Add an already existent polygon to the specified folder.
 
-        This methods change the polygon draw order so the polygons are draw in order.
+        This methods change the polygon draw order so the polygons are draw in the order they are shown on the
+        GUI.
 
         Args:
             folder_id: Folder to use
