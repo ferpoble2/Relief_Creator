@@ -179,7 +179,7 @@ class GUIManager:
 
     def add_zoom(self) -> None:
         """
-        Ask the engine to add zoom more zoom to the maps. Only works on the 2D mode.
+        Ask the engine to more zoom to the maps. Only works on the 2D mode.
 
         Returns: None
         """
