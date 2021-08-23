@@ -34,10 +34,46 @@ log = get_logger(module="RELIEF_TOOLS")
 class Filter:
     """
     Data class to represent the filters on the GUI.
-    """
 
+    The type and the corresponding filters are as follows:
+        0: height_less_than
+        1: height_greater_than
+        2: is_in
+        3: is_not_in
+
+    The arguments that each filter must have are as follows:
+        0: int/float
+        1: int/float
+        2: String (polygon id)
+        3: String (polygon id)
+    """
     selected_type: int  # int representing the filter to use. The description for the filter is in the list of options.
     arguments: any  # arguments to apply the filter, can be a number, a polygon, or anything.
+
+    def get_filter_tuple(self):
+        """
+        Get a tuple with the filter ID and the argument to use in the filter. The ID returned is the one used by the
+        scene of the program.
+
+        Example:
+            ('height_less_than', 80)
+            ('is_not_in', 'some_polygon')
+
+        Returns: Tuple with the filter ID and the argument to use to apply the filter.
+        """
+        if self.selected_type == 0:
+            return 'height_less_than', self.arguments
+
+        elif self.selected_type == 1:
+            return 'height_greater_than', self.arguments
+
+        elif self.selected_type == 2:
+            return 'is_in', self.arguments
+
+        elif self.selected_type == 3:
+            return 'is_not_in', self.arguments
+        else:
+            raise NotImplementedError(f'Conversion of filter with id {self.selected_type} not implemented.')
 
 
 class ReliefTools:
@@ -74,32 +110,15 @@ class ReliefTools:
 
     def __get_filters_dictionary_list(self) -> list:
         """
-        Covert the filters to a list of tuples to pass them to the GUIManager.
+        Covert the filters to a list of tuples with the ID of the filter and the argument used to apply the filter.
 
         Tuples generated are as follows (filter_id, arguments).
-        The filter id is the name of the filter used globally by the program.
-
-        The ID and the corresponding filters is as follows:
-            0: height_less_than
-            1: height_greater_than
-            2: is_in
-            3: is_not_in
 
         Returns: List with the information of the filters.
         """
         filter_dictionary_list = []
         for filter_obj in self.__filters:
-
-            if filter_obj.selected_type == 0:
-                filter_dictionary_list.append(('height_less_than', filter_obj.arguments))
-            elif filter_obj.selected_type == 1:
-                filter_dictionary_list.append(('height_greater_than', filter_obj.arguments))
-            elif filter_obj.selected_type == 2:
-                filter_dictionary_list.append(('is_in', filter_obj.arguments))
-            elif filter_obj.selected_type == 3:
-                filter_dictionary_list.append(('is_not_in', filter_obj.arguments))
-            else:
-                raise NotImplementedError(f'Conversion of filter with id {filter_obj.selected_type} not implemented.')
+            filter_dictionary_list.append(filter_obj.get_filter_tuple())
 
         return filter_dictionary_list
 
@@ -129,6 +148,7 @@ class ReliefTools:
 
             # Selection of the argument for the filter.
             # this vary depending on the filter selected
+            # ------------------------------------------
 
             # height <= or height >=
             if filter_data.selected_type == 0 or filter_data.selected_type == 1:
