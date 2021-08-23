@@ -44,6 +44,9 @@ from src.error.interpolation_error import InterpolationError
 
 log = get_logger(module="SCENE")
 
+# List with all the filters accepted by the scene to modify the height of the maps
+FILTER_LIST = ['is_in', 'is_not_in', 'height_less_than', 'height_greater_than']
+
 
 # TODO: Scene does too much logic. PolygonManager and ModelManager class are necessary to make class smaller.
 class Scene:
@@ -104,26 +107,36 @@ class Scene:
         use in the TransformationHelper class.
 
         The list of accepted filters and its arguments are as follows:
-            height_less_than: int
-            height_greater_than: int
-            is_in: str
-            is_not_in: str
-        Use of filters not listed here will raise NotImplementedError.
+            height_less_than: int/float
+            height_greater_than: int/float
+            is_in: str (polygon id)
+            is_not_in: str (polygon id)
 
-        The expected value on the filters is_in and is_not_in is the id of a polygon.
+        Use of filters not listed here will raise or in the FILTER_LIST variable of the module will raise a
+        NotImplemented error.
 
         Args:
             filters: Filters to use in the format [(id_filter, args),...].
 
-        Returns: List with the filters and the data necessary to apply them.
-        """
+        Returns:
+            List with the filters and the data necessary to apply them. For example:
 
+            [('height_less_than', 199),
+             ('height_greater_than', 400),
+             ('is_in', [(0,0), (50,0), ...], # Argument is the list of points of the polygon
+             ('is_not_in', [(0,0), (50,0), ...]) # Argument is the list of points of the polygon
+        """
         if filters is None:
             filters = []
 
         filter_data = []
         for filter_obj in filters:
             id_filter = filter_obj[0]
+
+            # check if the filter is accepted by the scene
+            if id_filter not in FILTER_LIST:
+                raise NotImplementedError(f'Can not process filter with ID {id_filter} since it is not in the list '
+                                          f'of accepted filters.')
 
             # height filters
             if id_filter == 'height_less_than' or id_filter == 'height_greater_than':
