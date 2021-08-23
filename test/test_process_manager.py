@@ -57,17 +57,25 @@ def change_global_mutable_object(value, ind):
 class TestProcessTask(unittest.TestCase):
 
     def test_code_in_another_process(self):
-        pm = ProcessManager()
 
-        initial_time = time.time()
-        pm.create_parallel_process(time.sleep, [PROCESS_CREATION_TIME * 2])
-        final_time = time.time()
+        for time_to_wait in PROCESS_CREATION_TIMES:
+            pm = ProcessManager()
 
-        # Check that the sleep logic is executing in another thread
-        self.assertTrue(final_time - initial_time < PROCESS_CREATION_TIME)
+            initial_time = time.time()
+            pm.create_parallel_process(time.sleep, [time_to_wait * 2])
+            final_time = time.time()
 
-        # Wait for the process to end
-        time.sleep(5)
+            try:
+                # Check that the sleep logic is executing in another thread
+                self.assertTrue(final_time - initial_time < time_to_wait)
+                # Wait for the process to end
+                time.sleep(time_to_wait * 2)
+                # break the for loop if the test works
+                break
+
+            except AssertionError as e:
+                if time_to_wait == PROCESS_CREATION_TIMES[-1]:
+                    raise e
 
     def test_execution_then_task(self):
 
