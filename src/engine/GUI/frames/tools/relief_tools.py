@@ -136,14 +136,14 @@ class ReliefTools:
 
         # render the filters on the GUI
         for filter_ind in range(len(self.__filters)):
-            filter_data = self.__filters[filter_ind]
+            filter_obj = self.__filters[filter_ind]
 
             # push the ID since the elements of the filter will all have the same ID
             imgui.push_id(f"relief_tools_filter_{filter_ind}")
 
             # Selection of the filter
-            _, filter_data.selected_type = imgui.combo('Filter',
-                                                       filter_data.selected_type,
+            _, filter_obj.selected_type = imgui.combo('Filter',
+                                                       filter_obj.selected_type,
                                                        self.__filter_name_list)
 
             # Selection of the argument for the filter.
@@ -151,39 +151,16 @@ class ReliefTools:
             # ------------------------------------------
 
             # height <= or height >=
-            if filter_data.selected_type == 0 or filter_data.selected_type == 1:
-                if not isinstance(filter_data.arguments, float):
-                    filter_data.arguments = 0
-                _, filter_data.arguments = imgui.input_float('Value', filter_data.arguments)
+            if filter_obj.selected_type == 0 or filter_obj.selected_type == 1:
+                self.__render_input_value_height_filters(filter_obj)
 
             # is in or is not in
-            elif filter_data.selected_type == 2 or filter_data.selected_type == 3:
-                # get list with the polygons on the program and remove the active one
-                polygon_list = self.__gui_manager.get_polygon_id_list()
-                polygon_list.remove(self.__gui_manager.get_active_polygon_id())
-                polygon_list_names = list(map(lambda x: self.__gui_manager.get_polygon_name(x), polygon_list))
-
-                # empty list case
-                if len(polygon_list) == 0:
-                    filter_data.arguments = 0
-                    _, filter_data.arguments = imgui.combo('Value',
-                                                           filter_data.arguments,
-                                                           polygon_list_names)
-
-                else:
-                    # change the current polygon to the first on the list if it is not selected
-                    if filter_data.arguments not in polygon_list:
-                        filter_data.arguments = polygon_list[0]
-
-                    # show the combo options for the rendering. Must be at least one polygon for the filter to work.
-                    _, selected_polygon = imgui.combo('Value',
-                                                      polygon_list.index(filter_data.arguments),
-                                                      polygon_list_names)
-                    filter_data.arguments = polygon_list[selected_polygon]
+            elif filter_obj.selected_type == 2 or filter_obj.selected_type == 3:
+                self.__render_input_value_polygon_filters(filter_obj)
 
             # button to remove the filter
             if imgui.button('Remove Filter'):
-                filter_to_remove = filter_data
+                filter_to_remove = filter_obj
 
             imgui.pop_id()
 
@@ -194,6 +171,55 @@ class ReliefTools:
         # button to add more filters
         if imgui.button('Add Filter', -1):
             self.__filters.append(Filter(0, 0))
+
+    def __render_input_value_polygon_filters(self, filter_obj: Filter):
+        """
+        Render the input values for the filters that use a polygon as an argument. Filters is_in and is_not_in
+        should use this input value.
+
+        Args:
+            filter_obj: Filter to which the input is rendered for.
+
+        Returns: None
+        """
+
+        # get list with the polygons on the program and remove the active one
+        polygon_list = self.__gui_manager.get_polygon_id_list()
+        polygon_list.remove(self.__gui_manager.get_active_polygon_id())
+        polygon_list_names = list(map(lambda x: self.__gui_manager.get_polygon_name(x), polygon_list))
+
+        # empty list case
+        if len(polygon_list) == 0:
+            filter_obj.arguments = 0
+            _, filter_obj.arguments = imgui.combo('Value',
+                                                  filter_obj.arguments,
+                                                  polygon_list_names)
+
+        else:
+            # change the current polygon to the first on the list if it is not selected
+            if filter_obj.arguments not in polygon_list:
+                filter_obj.arguments = polygon_list[0]
+
+            # show the combo options for the rendering. Must be at least one polygon for the filter to work.
+            _, selected_polygon = imgui.combo('Value',
+                                              polygon_list.index(filter_obj.arguments),
+                                              polygon_list_names)
+            filter_obj.arguments = polygon_list[selected_polygon]
+
+    def __render_input_value_height_filters(self, filter_obj: Filter):
+        """
+        Render the input value for filters that use a height value as an argument. Filters height_greater_than and
+        height_less_than should use this input value.
+
+        Args:
+            filter_obj: Filter to which the input is rendered for.
+
+        Returns: None
+        """
+
+        if not isinstance(filter_obj.arguments, float):
+            filter_obj.arguments = 0
+        _, filter_obj.arguments = imgui.input_float('Value', filter_obj.arguments)
 
     def render(self) -> None:
         """
