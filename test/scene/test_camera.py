@@ -115,5 +115,6 @@ class TestCamera(unittest.TestCase):
         equal_array = expected_matrix == view_matrix
         self.assertTrue(equal_array.all())
 
+
 if __name__ == '__main__':
     unittest.main()
