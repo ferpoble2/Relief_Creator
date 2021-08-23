@@ -134,26 +134,33 @@ class TestProcessTask(unittest.TestCase):
         TEST_MUTABLE_OBJECT[0] = None
 
     def test_thread_execution_with_return_argument(self):
-        pm = ProcessManager()
 
         # Execute thread and wait for it to end
+        for process_creation_time in PROCESS_CREATION_TIMES:
+            pm = ProcessManager()
 
-        # The parallel task is executed in another process, and thus, all the variables modified on the other process
-        # will not update their values in the main process. The Then function can receive the return argument from the
-        # parallel process task as the first argument, being able to modify the corresponding variables on the main
-        # process with the information calculated on the parallel process.
-        pm.create_parallel_process(return_value_plus_50,
-                                   [100],
-                                   change_mutable_object,
-                                   [1, TEST_MUTABLE_OBJECT])
-        time.sleep(PROCESS_CREATION_TIME)
+            # The parallel task is executed in another process, and thus, all the variables modified on the other
+            # process will not update their values in the main process. The Then function can receive the return
+            # argument from the parallel process task as the first argument, being able to modify the corresponding
+            # variables on the main process with the information calculated on the parallel process.
+            pm.create_parallel_process(return_value_plus_50,
+                                       [100],
+                                       change_mutable_object,
+                                       [1, TEST_MUTABLE_OBJECT])
+            time.sleep(process_creation_time)
 
-        # Update thread task to execute the then logic
-        pm.update_process()
+            # Update thread task to execute the then logic
+            pm.update_process()
 
-        # Check values
-        self.assertEqual(150, TEST_MUTABLE_OBJECT[1])
-        self.assertEqual(None, TEST_MUTABLE_OBJECT[0])
+            # Check values
+            try:
+                self.assertEqual(150, TEST_MUTABLE_OBJECT[1])
+                self.assertEqual(None, TEST_MUTABLE_OBJECT[0])
+                break
+
+            except AssertionError as e:
+                if process_creation_time == PROCESS_CREATION_TIMES[-1]:
+                    raise e
 
         # Return values to normal
         TEST_MUTABLE_OBJECT[1] = None
