@@ -897,6 +897,14 @@ class Scene:
         vertices_array[:, :, 2] = heights
         return vertices_array
 
+    def get_model_list(self) -> List[str]:
+        """
+        Get a list with the ID of all the 2D models loaded into the program.
+
+        Returns: List with the ID of the models.
+        """
+        return list(self.__model_hash.keys())
+
     def get_point_list_from_polygon(self, polygon_id: str) -> list:
         """
         Return the list of points from a given polygon.
