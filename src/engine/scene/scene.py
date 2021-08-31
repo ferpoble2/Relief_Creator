@@ -905,6 +905,17 @@ class Scene:
         """
         return list(self.__model_hash.keys())
 
+    def get_3d_model_list(self) -> List[str]:
+        """
+        Get a list with the ID of the 3D models generated on the program.
+
+        The ID used by the 3D models is the same as the ID used by the 2D model from which they were generated. All 3D
+        models have a 2D model associated, but not all 2D models have a 3D model.
+
+        Returns: List with the ID of the 3D models generated on the program.
+        """
+        return list(self.__3d_model_hash.keys())
+
     def get_point_list_from_polygon(self, polygon_id: str) -> list:
         """
         Return the list of points from a given polygon.
