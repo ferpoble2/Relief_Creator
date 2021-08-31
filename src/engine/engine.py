@@ -700,6 +700,14 @@ class Engine:
         """
         return self.scene.get_active_model_height_on_coordinates(x_coordinate, y_coordinate)
 
+    def get_3d_model_list(self) -> List[str]:
+        """
+        Get the list of all 3D models generated in the program.
+
+        Returns: List with the ID of the 3D models in the program.
+        """
+        return self.scene.get_3d_model_list()
+
     def get_map_coordinates_from_window_coordinates(self, x_coordinate: int, y_coordinate: int) -> (float, float):
         """
         Get the position of a point in the map given in screen coordinates.
