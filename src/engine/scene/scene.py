@@ -60,7 +60,7 @@ class Scene:
     In the 3D mode, the class only draw the maps in 3D (Map3DModel).
     """
 
-    def __init__(self, engine: 'Engine' = None):
+    def __init__(self, engine: 'Engine'):
         """
         Constructor of the class.
 
