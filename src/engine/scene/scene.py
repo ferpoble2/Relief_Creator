@@ -1257,6 +1257,7 @@ class Scene:
 
             # this line have to be removed for the program to accept more than one model at the same time
             self.remove_all_models()
+            self.remove_all_3d_models()
             self.add_model(model)
 
             self.__engine.reset_zoom_level()
@@ -1311,6 +1312,14 @@ class Scene:
         Returns: None
         """
         self.__model_hash = {}
+
+    def remove_all_3d_models(self) -> None:
+        """
+        Remove all the 3D models from the hash of 3D models.
+
+        Returns: None
+        """
+        self.__3d_model_hash = {}
 
     def remove_interpolation_preview(self, polygon_id: str) -> None:
         """
