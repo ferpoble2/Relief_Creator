@@ -28,7 +28,7 @@ work correctly.
 """
 
 # noinspection PyPep8Naming
-from typing import Union
+from typing import Union, List
 
 import OpenGL.constant as OGLConstant
 import imgui
@@ -1274,3 +1274,11 @@ class GUIManager:
         Returns: None
         """
         self.__engine.update_current_3D_model()
+
+    def get_model_list(self) -> List[str]:
+        """
+        Get a list with the ID of all the 2D models loaded into the program.
+
+        Returns: List of models loaded into the program.
+        """
+        return self.__engine.get_model_list()
