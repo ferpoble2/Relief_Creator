@@ -44,6 +44,7 @@ class Engine {
     + get_float_bytes()
     + get_float_bytes(): int
     + get_font_size(): int
+    + get_model_list(): List[str]
     + get_gui_key_callback(): function
     + get_gui_scroll_callback(): function
     + get_gui_setting_data(): dict

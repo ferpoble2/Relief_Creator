@@ -18,7 +18,7 @@
 """
 File that contains the Engine class. Class in charge of the management of all the logic of the application.
 """
-from typing import Union
+from typing import Union, List
 
 import glfw
 from PIL import Image
@@ -794,6 +794,14 @@ class Engine:
         Returns: Name of the polygon
         """
         return self.scene.get_polygon_name(polygon_id)
+
+    def get_model_list(self) -> List[str]:
+        """
+        Get a list with the id of all the 2D models loaded into the program.
+
+        Returns: List of models loaded into the program.
+        """
+        return self.scene.get_model_list()
 
     def get_program_view_mode(self) -> str:
         """
