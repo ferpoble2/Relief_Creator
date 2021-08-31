@@ -52,6 +52,7 @@ class GUIManager{
     + get_active_tool(): str
     + get_cpt_file(): str
     + get_model_list(): List[str]
+    + get_3d_model_list(): List[str]
     + get_gui_key_callback(): function
     + get_gui_mouse_scroll_callback(): function
     + get_height_normalization_factor_of_active_3D_model(): float

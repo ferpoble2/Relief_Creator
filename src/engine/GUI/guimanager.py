@@ -575,6 +575,14 @@ class GUIManager:
         """
         return self.__engine.get_cpt_file()
 
+    def get_3d_model_list(self) -> List[str]:
+        """
+        Get the list of all 3D models generated in the program.
+
+        Returns: List with the ID of the 3D models in the program.
+        """
+        return self.__engine.get_3d_model_list()
+
     def get_gui_key_callback(self) -> callable:
         """
         Get the key callback defined by IMGUI.
