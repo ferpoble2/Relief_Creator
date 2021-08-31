@@ -80,6 +80,7 @@ class Debug(Frame):
         imgui.text_wrapped(f"List of polygons: {self._GUI_manager.get_polygon_id_list()}")
         imgui.text_wrapped(f"List of folders: {self._GUI_manager.get_polygon_folder_id_list()}")
         imgui.text_wrapped(f"List of models: {self._GUI_manager.get_model_list()}")
+        imgui.text_wrapped(f"List of 3D models: {self._GUI_manager.get_3d_model_list()}")
 
         if self._GUI_manager.are_frame_fixed():
             self.change_position([self.get_position()[0], self._GUI_manager.get_window_height() - self.__height])
