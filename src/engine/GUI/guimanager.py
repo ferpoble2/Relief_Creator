@@ -68,7 +68,7 @@ class GUIManager:
     the logic defined it its callbacks correctly.
     """
 
-    def __init__(self, engine: 'Engine' = None):
+    def __init__(self, engine: 'Engine'):
         """
         Constructor of the class.
 
