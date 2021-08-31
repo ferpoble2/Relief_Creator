@@ -84,22 +84,22 @@ class Scene:
 
         # Variables used by the scene to execute the main logic
         # -----------------------------------------------------
-        self.__engine: 'Engine' = engine
+        self.__engine = engine
         self.__camera = Camera()
-        self.__width_viewport = 0
-        self.__height_viewport = 0
+        self.__width_viewport: int = 0
+        self.__height_viewport: int = 0
 
         # auxiliary variables
         # -------------------
 
         # variable that indicated witch function then to use when there is
         # more than one model on the scene.
-        self.__should_execute_then_reload = 0
-        self.__should_execute_then_optimize_gpu_memory = 0
+        self.__should_execute_then_reload: int = 0
+        self.__should_execute_then_optimize_gpu_memory: int = 0
 
         # Variables that count the amount of ID given to the models and polygons
-        self.__polygon_id_count = 0
-        self.__model_id_count = 0
+        self.__polygon_id_count: int = 0
+        self.__model_id_count: int = 0
 
     def __process_filters(self, filters=None):
         """
