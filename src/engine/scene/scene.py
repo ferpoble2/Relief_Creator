@@ -757,24 +757,6 @@ class Scene:
         else:
             raise SceneError(7)
 
-    def get_active_model_height_on_coordinates(self, x_coordinate: float, y_coordinate: float) -> Union[float, None]:
-        """
-        Get the height of the active model in the specified coordinates.
-
-        If coordinates are outside the model or there is no active model, then None is returned.
-
-        Args:
-            x_coordinate: x-axis coordinate.
-            y_coordinate: y-axis coordinate.
-
-        Returns: Height of the model in the coordinates.
-        """
-        active_model_id = self.__engine.get_active_model_id()
-        if active_model_id in self.__model_hash:
-            return self.__model_hash[active_model_id].get_height_on_coordinates(x_coordinate, y_coordinate)
-        else:
-            return None
-
     def get_active_model_coordinates_arrays(self) -> (np.ndarray, np.ndarray):
         """
         Get two arrays, the first containing the coordinates used in the active model for the x-axis and the second
@@ -792,6 +774,24 @@ class Scene:
             return model.get_model_coordinate_array()
         else:
             return None, None
+
+    def get_active_model_height_on_coordinates(self, x_coordinate: float, y_coordinate: float) -> Union[float, None]:
+        """
+        Get the height of the active model in the specified coordinates.
+
+        If coordinates are outside the model or there is no active model, then None is returned.
+
+        Args:
+            x_coordinate: x-axis coordinate.
+            y_coordinate: y-axis coordinate.
+
+        Returns: Height of the model in the coordinates.
+        """
+        active_model_id = self.__engine.get_active_model_id()
+        if active_model_id in self.__model_hash:
+            return self.__model_hash[active_model_id].get_height_on_coordinates(x_coordinate, y_coordinate)
+        else:
+            return None
 
     def get_active_model_showed_limits(self) -> dict:
         """
