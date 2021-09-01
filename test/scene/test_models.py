@@ -30,6 +30,22 @@ PATH_TO_MODEL_4 = 'resources/test_resources/netcdf/test_file_4.nc'
 
 class TestLoadedModelsList(unittest.TestCase):
 
+    def setUp(self) -> None:
+        """
+        Initialize variables for the testing. Code is executed before every test.
+        """
+        self.engine = Engine()
+        self.engine.should_use_threads(False)
+        self.program = Program(self.engine)
+
+    def tearDown(self) -> None:
+        """
+        Delete all temporary files created by the program on the setup or testing processes.
+
+        Returns: None
+        """
+        self.program.close()
+
     def test_3d_model_list(self):
         """
         Test the behaviour of the 3D model list in the program.
@@ -38,26 +54,21 @@ class TestLoadedModelsList(unittest.TestCase):
         is not the case anymore, mark this test as one who should fail.
         """
         warnings.simplefilter("ignore", ResourceWarning)
+        self.program.set_view_mode_3D()
 
-        engine = Engine()
-        engine.should_use_threads(False)
+        self.assertEqual([], self.engine.get_3d_model_list(), 'List of models is not empty.')
 
-        program = Program(engine)
-        program.set_view_mode_3D()
+        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_1)
+        self.engine.run(10, False)
+        self.assertEqual([0], self.engine.get_3d_model_list(), 'First models should be assigned to the ID 0.')
 
-        self.assertEqual([], engine.get_3d_model_list(), 'List of models is not empty.')
-
-        engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_1)
-        engine.run(10, False)
-        self.assertEqual([0], engine.get_3d_model_list(), 'First models should be assigned to the ID 0.')
-
-        engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_2)
-        engine.run(10, False)
-        engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_3)
-        engine.run(10, False)
-        engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_4)
-        engine.run(10, False)
-        self.assertEqual([3], engine.get_3d_model_list(), 'The fourth models is not assigned to the ID 3.')
+        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_2)
+        self.engine.run(10, False)
+        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_3)
+        self.engine.run(10, False)
+        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_4)
+        self.engine.run(10, False)
+        self.assertEqual([3], self.engine.get_3d_model_list(), 'The fourth models is not assigned to the ID 3.')
 
     def test_model_list(self):
         """
@@ -68,19 +79,15 @@ class TestLoadedModelsList(unittest.TestCase):
         """
         warnings.simplefilter("ignore", ResourceWarning)
 
-        engine = Engine()
-        program = Program(engine)
-        engine.should_use_threads(False)
+        self.assertEqual([], self.engine.get_model_list(), 'List of models is not empty.')
 
-        self.assertEqual([], engine.get_model_list(), 'List of models is not empty.')
+        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_1)
+        self.assertEqual([0], self.engine.get_model_list(), 'First models should be assigned to the ID 0.')
 
-        engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_1)
-        self.assertEqual([0], engine.get_model_list(), 'First models should be assigned to the ID 0.')
-
-        engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_2)
-        engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_3)
-        engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_4)
-        self.assertEqual([3], engine.get_model_list(), 'The fourth models is not assigned to the ID 3.')
+        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_2)
+        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_3)
+        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_4)
+        self.assertEqual([3], self.engine.get_model_list(), 'The fourth models is not assigned to the ID 3.')
 
 
 if __name__ == '__main__':
