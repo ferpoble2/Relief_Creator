@@ -16,6 +16,7 @@
 #  END GPL LICENSE BLOCK
 
 import unittest
+
 from src.engine.settings import Settings
 
 

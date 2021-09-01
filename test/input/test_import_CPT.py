@@ -18,9 +18,9 @@
 """
 File with the tests related to the functionality that imports CPT files into the program.
 """
+import json
 import unittest
 import warnings
-import json
 
 from src.input.CTP import read_file
 

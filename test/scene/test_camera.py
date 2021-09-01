@@ -16,9 +16,11 @@
 #  END GPL LICENSE BLOCK
 
 import unittest
-from src.engine.scene.camera import Camera
 from math import pi
+
 import numpy as np
+
+from src.engine.scene.camera import Camera
 
 
 class TestCamera(unittest.TestCase):

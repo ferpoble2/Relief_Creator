@@ -15,8 +15,8 @@
 #
 #  END GPL LICENSE BLOCK
 
-import unittest
 import time
+import unittest
 
 from src.engine.thread_manager import ThreadManager
 

@@ -22,9 +22,9 @@ Due to python implementations, all functions passed to the parallel process must
 be private, protected, or local to a function or class.
 """
 
-import unittest
-import time
 import queue
+import time
+import unittest
 
 from src.engine.process_manager import ProcessManager
 

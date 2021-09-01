@@ -19,15 +19,12 @@
 Tests that check the logic of the utils module.
 """
 
-import unittest
-import os
 import logging
+import os
+import unittest
 import warnings
 
-from src.utils import interpolate
-from src.utils import get_logger
-from src.utils import is_numeric
-from src.utils import is_clockwise
+from src.utils import get_logger, interpolate, is_clockwise, is_numeric
 
 
 class TestIsClockwise(unittest.TestCase):

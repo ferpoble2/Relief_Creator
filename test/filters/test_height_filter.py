@@ -18,13 +18,13 @@
 """
 File with the tests related to the functionality that applies height filters to the polygons.
 """
+import os
 import unittest
 import warnings
-import os
 
 from src.engine.engine import Engine
-from src.program.program import Program
 from src.input.NetCDF import read_info
+from src.program.program import Program
 
 
 class TestHeightGreaterFilter(unittest.TestCase):

@@ -19,10 +19,11 @@
 File with test related to the functionality that imports netcdf files.
 """
 import unittest
+
 import numpy as np
 
-from src.input.NetCDF import read_info
 from src.error.netcdf_import_error import NetCDFImportError
+from src.input.NetCDF import read_info
 
 
 class TestImportNetcdfFile(unittest.TestCase):

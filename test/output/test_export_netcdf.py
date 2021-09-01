@@ -18,14 +18,15 @@
 """
 File with test related to the functionality of exporting netcdf files.
 """
-import unittest
-import numpy as np
 import os
 import shutil
+import unittest
 
-from src.output.netcdf_exporter import NetcdfExporter
-from src.input.NetCDF import read_info
+import numpy as np
+
 from src.error.export_error import ExportError
+from src.input.NetCDF import read_info
+from src.output.netcdf_exporter import NetcdfExporter
 
 
 class TestExportNetcdfFile(unittest.TestCase):

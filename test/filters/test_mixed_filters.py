@@ -19,13 +19,13 @@
 File with tests that mix different filters at the same time to modify a map.
 """
 
-import unittest
 import os
+import unittest
 import warnings
 
 from src.engine.engine import Engine
-from src.program.program import Program
 from src.input.NetCDF import read_info
+from src.program.program import Program
 
 
 class TestMixedFilters(unittest.TestCase):

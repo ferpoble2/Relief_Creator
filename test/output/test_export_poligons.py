@@ -16,19 +16,16 @@
 #  END GPL LICENSE BLOCK
 
 """
-File with tests related to the export functionality for poligons.
+File with tests related to the export functionality for polygons.
 """
+import os
 import unittest
 import warnings
-import os
-import time
 
-from src.output.shapefile_exporter import ShapefileExporter
-from src.input.shapefile_importer import ShapefileImporter
-from src.engine.scene.model.polygon import Polygon
-from src.engine.scene.scene import Scene
-from src.error.export_error import ExportError
 from src.engine.engine import Engine
+from src.error.export_error import ExportError
+from src.input.shapefile_importer import ShapefileImporter
+from src.output.shapefile_exporter import ShapefileExporter
 from src.program.program import Program
 
 

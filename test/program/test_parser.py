@@ -22,8 +22,8 @@ The parser is the module in charge of executing logic depending of the parameter
 the program from the console
 """
 
-import unittest
 import sys
+import unittest
 
 from src.program.parser import get_command_line_arguments
 

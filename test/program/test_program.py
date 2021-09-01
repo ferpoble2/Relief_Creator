@@ -15,10 +15,11 @@
 #
 #  END GPL LICENSE BLOCK
 
-import unittest
 import os
-from src.program.program import Program
+import unittest
+
 from src.engine.engine import Engine
+from src.program.program import Program
 
 
 class TestProgramParameters(unittest.TestCase):

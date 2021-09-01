@@ -17,10 +17,8 @@
 """
 File with the tests related to the import of polygons in shapefile files.
 """
-
-import unittest
 import json
-import os
+import unittest
 
 from src.input.shapefile_importer import ShapefileImporter
 
