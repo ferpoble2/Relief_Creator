@@ -24,34 +24,38 @@ from src.program.program import Program
 
 class TestIconCreation(unittest.TestCase):
 
-    def test_RGB_file(self):
-        # Start program to initialize OpenGL
-        # ----------------------------------
+    def setUp(self) -> None:
+        """
+        Code executed before every test. Initializes a program to work with.
+        """
+        # create program
         self.engine = Engine()
         self.program = Program(self.engine)
 
+        # initialize variables
+        self.engine.should_use_threads(False)
+
+    def tearDown(self) -> None:
+        """
+        Delete all temporary files created by the program on the setup or testing processes.
+
+        Returns: None
+        """
+        self.program.close()
+
+    def test_RGB_file(self):
         # Test the creation and id of the icon
         # ------------------------------------
         icon = Icon('resources/test_resources/images/rgb.png')
         self.assertEqual(3, icon.get_texture_id())
 
     def test_RGBA_file(self):
-        # Start program to initialize OpenGL
-        # ----------------------------------
-        self.engine = Engine()
-        self.program = Program(self.engine)
-
         # Test the creation and id of the icon
         # ------------------------------------
         icon = Icon('resources/test_resources/images/rgba.png')
         self.assertEqual(3, icon.get_texture_id())
 
     def test_not_implemented_image_mode(self):
-        # Start program to initialize OpenGL
-        # ----------------------------------
-        self.engine = Engine()
-        self.program = Program(self.engine)
-
         # Test the creation and id of the icon
         # ------------------------------------
         with self.assertRaises(NotImplementedError):
