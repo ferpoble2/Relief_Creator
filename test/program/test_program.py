@@ -24,10 +24,26 @@ from src.program.program import Program
 
 class TestProgramParameters(unittest.TestCase):
 
-    def test_zoom(self):
+    def setUp(self) -> None:
+        """
+        Code executed before every test. Initializes a program to work with.
+        """
+        # create program
         self.engine = Engine()
         self.program = Program(self.engine)
 
+        # initialize variables
+        self.engine.should_use_threads(False)
+
+    def tearDown(self) -> None:
+        """
+        Delete all temporary files created by the program on the setup or testing processes.
+
+        Returns: None
+        """
+        self.program.close()
+
+    def test_zoom(self):
         # Test default values
         self.assertEqual(1, self.program.get_zoom_level())
 
@@ -57,9 +73,6 @@ class TestProgramParameters(unittest.TestCase):
         self.assertEqual(1, self.program.get_zoom_level())
 
     def test_view_mode(self):
-        self.engine = Engine()
-        self.program = Program(self.engine)
-
         # Default value
         self.assertEqual('2D', self.program.get_view_mode())
 
@@ -71,9 +84,6 @@ class TestProgramParameters(unittest.TestCase):
         self.assertEqual('2D', self.program.get_view_mode())
 
     def test_map_position(self):
-        self.engine = Engine()
-        self.program = Program(self.engine)
-
         # Default value
         self.assertEqual([0, 0], self.program.get_map_position())
 
@@ -82,9 +92,6 @@ class TestProgramParameters(unittest.TestCase):
         self.assertEqual([15, 15], self.program.get_map_position())
 
     def test_active_tool(self):
-        self.engine = Engine()
-        self.program = Program(self.engine)
-
         # Default value
         self.assertEqual(None, self.program.get_active_tool())
 
@@ -100,9 +107,6 @@ class TestProgramParameters(unittest.TestCase):
             self.program.set_active_tool('non_existent_tool')
 
     def test_is_loading(self):
-        self.engine = Engine()
-        self.program = Program(self.engine)
-
         self.assertEqual(False, self.program.is_loading())
 
         self.program.set_loading(True)
@@ -112,9 +116,6 @@ class TestProgramParameters(unittest.TestCase):
         self.assertEqual(False, self.program.is_loading())
 
     def test_cpt_files(self):
-        self.engine = Engine()
-        self.program = Program(self.engine)
-
         # Default value
         default_value = os.path.join(os.getcwd(), 'resources', 'colors', 'default.cpt')
         self.assertEqual(default_value, self.program.get_cpt_file())
