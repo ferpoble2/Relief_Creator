@@ -20,12 +20,14 @@ File with the class ReliefTools. Class in charge of render the Relief tools insi
 """
 
 from dataclasses import dataclass
-from typing import List
+from typing import List, TYPE_CHECKING
 
 import imgui
 
-from src.type_hinting import *
 from src.utils import get_logger
+
+if TYPE_CHECKING:
+    from engine.GUI.guimanager import GUIManager
 
 log = get_logger(module="RELIEF_TOOLS")
 
@@ -143,8 +145,8 @@ class ReliefTools:
 
             # Selection of the filter
             _, filter_obj.selected_type = imgui.combo('Filter',
-                                                       filter_obj.selected_type,
-                                                       self.__filter_name_list)
+                                                      filter_obj.selected_type,
+                                                      self.__filter_name_list)
 
             # Selection of the argument for the filter.
             # this vary depending on the filter selected

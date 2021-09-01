@@ -18,35 +18,34 @@
 """
 File that contains the Engine class. Class in charge of the management of all the logic of the application.
 """
-from typing import Union, List
+from typing import List, TYPE_CHECKING, Union
 
 import glfw
 from PIL import Image
 
-from src.type_hinting import *
-
+from engine.GUI.guimanager import GUIManager
 from src.engine.controller.controller import Controller
-from src.engine.GUI.guimanager import GUIManager
 from src.engine.process_manager import ProcessManager
 from src.engine.render.render import Render
 from src.engine.scene.scene import Scene
 from src.engine.settings import Settings
-from src.engine.thread_manager import ThreadManager
 from src.engine.task_manager import TaskManager
-
-from src.input.shapefile_importer import ShapefileImporter
+from src.engine.thread_manager import ThreadManager
+from src.error.export_error import ExportError
+from src.error.interpolation_error import InterpolationError
+from src.error.line_intersection_error import LineIntersectionError
+from src.error.model_transformation_error import ModelTransformationError
+from src.error.netcdf_import_error import NetCDFImportError
+from src.error.repeated_point_error import RepeatedPointError
+from src.error.scene_error import SceneError
 from src.input.NetCDF import read_info
+from src.input.shapefile_importer import ShapefileImporter
 from src.output.netcdf_exporter import NetcdfExporter
 from src.output.shapefile_exporter import ShapefileExporter
 from src.utils import get_logger
 
-from src.error.line_intersection_error import LineIntersectionError
-from src.error.model_transformation_error import ModelTransformationError
-from src.error.repeated_point_error import RepeatedPointError
-from src.error.scene_error import SceneError
-from src.error.export_error import ExportError
-from src.error.netcdf_import_error import NetCDFImportError
-from src.error.interpolation_error import InterpolationError
+if TYPE_CHECKING:
+    import numpy as np
 
 log = get_logger(module='ENGINE')
 

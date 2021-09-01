@@ -18,18 +18,16 @@
 """
 File with the class TransformationHelper, class in charge of making transformation to the points of different models.
 """
-import numpy as np
-from shapely.geometry.polygon import LinearRing as LinearRing
-from shapely.geometry.polygon import Polygon, LineString
-from shapely.ops import triangulate
-import shapely.vectorized
 from typing import List
+
+import numpy as np
+import shapely.vectorized
 from scipy import interpolate as interpolate_scipy
+from shapely.geometry.polygon import LineString, LinearRing as LinearRing, Polygon
+from shapely.ops import triangulate
 from skimage.filters import gaussian as gaussian_filter
 
-from src.utils import interpolate
-from src.utils import is_clockwise
-from src.utils import get_logger
+from src.utils import get_logger, interpolate, is_clockwise
 
 log = get_logger(module='TRANSFORMATION_HELPER')
 
@@ -503,7 +501,6 @@ class TransformationHelper:
 
         # modify the height linearly if there are points to modify
         if len(height_cut[filtered_flags]) > 0:
-
             current_min_height = np.nanmin(height_cut[filtered_flags])
             current_max_height = np.nanmax(height_cut[filtered_flags])
 

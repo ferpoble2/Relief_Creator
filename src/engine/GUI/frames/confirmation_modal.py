@@ -19,11 +19,15 @@
 Frame for the confirmation modals of the application.
 """
 
+from typing import TYPE_CHECKING
+
 import imgui
 
-from src.type_hinting import *
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
+
+if TYPE_CHECKING:
+    from engine.GUI.guimanager import GUIManager
 
 log = get_logger(module="CONFIRMATION_MODAL")
 

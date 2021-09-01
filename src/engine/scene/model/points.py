@@ -19,13 +19,13 @@
 File with the class Points, class in charge of storing all the information related to the models that draw points on
 the scene
 """
+import ctypes as ctypes
+
+import OpenGL.GL as GL
+import numpy as np
 
 from src.engine.scene.model.model import Model
 from src.utils import get_logger
-
-import numpy as np
-import OpenGL.GL as GL
-import ctypes as ctypes
 
 log = get_logger(module="POINTS")
 
@@ -233,7 +233,6 @@ class Points(Model):
         # -------------------------
         self.__indices_list.append(len(self.__point_list) / 3 - 1)
         self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
-
 
     def draw(self) -> None:
         """

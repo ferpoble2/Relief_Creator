@@ -20,11 +20,11 @@ File with the class Lines, class in charge of storing all the information relate
 the scene.
 """
 
+import OpenGL.GL as GL
+import numpy as np
+
 from src.engine.scene.model.model import Model
 from src.utils import get_logger
-
-import numpy as np
-import OpenGL.GL as GL
 
 log = get_logger(module="LINES")
 

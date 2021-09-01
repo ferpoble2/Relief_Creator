@@ -19,12 +19,17 @@
 Sample frame for the application GUI.
 """
 
+import os
+from typing import TYPE_CHECKING
+
 import imgui
 import psutil
-import os
 
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
+
+if TYPE_CHECKING:
+    from engine.GUI.guimanager import GUIManager
 
 log = get_logger(module="DEBUG_FRAME")
 
@@ -74,7 +79,7 @@ class Debug(Frame):
         imgui.text(f"Loading: {loading}")
         imgui.separator()
         imgui.text(f"RAM used: {memory_usage_mb} MB")
-        # imgui.text(f"CPU usage: {cpu_percent} %")  # This value change a lot in short time (dont give useful infromation)
+        # imgui.text(f"CPU usage: {cpu_percent} %")  # This value change a lot in short time
 
         imgui.separator()
         imgui.text_wrapped(f"List of polygons: {self._GUI_manager.get_polygon_id_list()}")

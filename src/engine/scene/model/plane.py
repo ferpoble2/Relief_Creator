@@ -18,12 +18,11 @@
 """
 File with the class Plane, class in charge of rendering a plane on the scene.
 """
+import OpenGL.GL as GL
+import numpy as np
 
 from src.engine.scene.model.model import Model
 from src.utils import get_logger
-
-import numpy as np
-import OpenGL.GL as GL
 
 log = get_logger(module="PLANE")
 

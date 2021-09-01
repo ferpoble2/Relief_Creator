@@ -21,10 +21,11 @@ File that contains the main class of the program.
 
 import os
 import shutil
+import time
 from typing import Union
 
 import easygui
-import time
+
 from src.utils import get_logger
 
 log = get_logger(module='PROGRAM')

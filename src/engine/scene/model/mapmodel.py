@@ -19,8 +19,10 @@
 File with the abstract class MapModel, abstract class in charge of the definition of common methods between maps models.
 """
 
-import numpy as np
 from typing import Union
+
+import numpy as np
+
 from src.engine.scene.model.model import Model
 
 

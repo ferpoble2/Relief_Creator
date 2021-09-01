@@ -18,11 +18,16 @@
 """
 Main menu bar frame in the GUI
 """
+from typing import TYPE_CHECKING
+
+import OpenGL.GL as GL
+import imgui
+
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
 
-import imgui
-import OpenGL.GL as GL
+if TYPE_CHECKING:
+    from engine.GUI.guimanager import GUIManager
 
 log = get_logger(module="MAIN_MENU_BAR")
 

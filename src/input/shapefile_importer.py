@@ -20,6 +20,7 @@ File with the class ShapefileImporter, class in charge of import shapefile files
 """
 
 import shapefile
+
 from src.utils import is_numeric
 
 

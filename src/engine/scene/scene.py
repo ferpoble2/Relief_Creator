@@ -20,27 +20,27 @@ File that contain the Scene class. This class is in charge of the management of 
 
 Class is in charge of the drawing of the models2D, models3D and polygons.
 """
-from typing import Dict, List, Union
-from src.type_hinting import *
+from typing import Dict, List, TYPE_CHECKING, Union
 
 import OpenGL.GL as GL
-import numpy as np
-
 # noinspection PyPep8Naming
 import OpenGL.constant as OGLConstant
+import numpy as np
 
+from src.engine.scene.camera import Camera
+from src.engine.scene.model.lines import Lines
 from src.engine.scene.model.map2dmodel import Map2DModel
 from src.engine.scene.model.map3dmodel import Map3DModel
-from src.engine.scene.model.polygon import Polygon
 from src.engine.scene.model.model import Model
-from src.engine.scene.model.lines import Lines
-from src.utils import get_logger
+from src.engine.scene.model.polygon import Polygon
 from src.engine.scene.transformation_helper import TransformationHelper
-from src.engine.scene.camera import Camera
-
+from src.error.interpolation_error import InterpolationError
 from src.error.model_transformation_error import ModelTransformationError
 from src.error.scene_error import SceneError
-from src.error.interpolation_error import InterpolationError
+from src.utils import get_logger
+
+if TYPE_CHECKING:
+    from engine.engine import Engine
 
 log = get_logger(module="SCENE")
 

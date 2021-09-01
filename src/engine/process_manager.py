@@ -28,8 +28,8 @@ used for the parallel process must be public (they can not be private, protected
 lambda).
 """
 
-from multiprocessing import Process, Queue
 import queue
+from multiprocessing import Process, Queue
 
 
 class ProcessManager:

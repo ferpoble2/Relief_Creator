@@ -28,7 +28,7 @@ work correctly.
 """
 
 # noinspection PyPep8Naming
-from typing import Union, List
+from typing import List, TYPE_CHECKING, Union
 
 import OpenGL.constant as OGLConstant
 import imgui
@@ -38,8 +38,8 @@ from src.engine.GUI.frames.confirmation_modal import ConfirmationModal
 from src.engine.GUI.frames.debug import Debug
 from src.engine.GUI.frames.loading import Loading
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar
-from src.engine.GUI.frames.polygon_information import PolygonInformation
 from src.engine.GUI.frames.mouse_coordinates import MouseCoordinates
+from src.engine.GUI.frames.polygon_information import PolygonInformation
 from src.engine.GUI.frames.test_window import TestWindow
 from src.engine.GUI.frames.text_modal import TextModal
 from src.engine.GUI.frames.tools.tools import Tools
@@ -48,7 +48,8 @@ from src.engine.GUI.icon import Icon
 from src.engine.GUI.polygon_folder_manager import PolygonFolderManager
 from src.utils import get_logger
 
-from src.type_hinting import *
+if TYPE_CHECKING:
+    from engine.engine import Engine
 
 # noinspection SpellCheckingInspection
 log = get_logger(module='GUIMANAGER')

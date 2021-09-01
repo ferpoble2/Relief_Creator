@@ -19,8 +19,10 @@
 File with the definition of the camera class, class in charge of the management of the visualization of the 3D models.
 """
 
+from math import cos, pi, sin
+
 import numpy as np
-from math import sin, cos, pi
+
 from src.engine.scene.model.tranformations.transformations import lookAt
 
 

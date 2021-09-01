@@ -20,10 +20,10 @@ Class in charge of managing the models of the maps in 2 dimensions.
 """
 
 import ctypes as ctypes
+from typing import List, Union
 
 import OpenGL.GL as GL
 import numpy as np
-from typing import List, Union
 
 from src.engine.scene.model.mapmodel import MapModel
 from src.engine.scene.model.tranformations.transformations import ortho

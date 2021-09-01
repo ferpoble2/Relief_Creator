@@ -19,11 +19,14 @@
 File with the class InterpolationTools. Class in charge of render the Interpolation Tools inside another frame.
 """
 
+from typing import TYPE_CHECKING
+
 import imgui
 
 from src.utils import get_logger
 
-from src.type_hinting import *
+if TYPE_CHECKING:
+    from engine.GUI.guimanager import GUIManager
 
 log = get_logger(module="INTERPOLATION_TOOLS")
 

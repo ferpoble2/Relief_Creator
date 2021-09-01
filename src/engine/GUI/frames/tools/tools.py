@@ -19,14 +19,18 @@
 Sample frame for the application GUI.
 """
 
+from typing import TYPE_CHECKING
+
 import imgui
 
 from src.engine.GUI.frames.frame import Frame
+from src.engine.GUI.frames.tools.interpolation_tools import InterpolationTools
+from src.engine.GUI.frames.tools.polygon_tools import PolygonTools
+from src.engine.GUI.frames.tools.relief_tools import ReliefTools
 from src.utils import get_logger
 
-from src.engine.GUI.frames.tools.relief_tools import ReliefTools
-from src.engine.GUI.frames.tools.polygon_tools import PolygonTools
-from src.engine.GUI.frames.tools.interpolation_tools import InterpolationTools
+if TYPE_CHECKING:
+    from engine.GUI.guimanager import GUIManager
 
 log = get_logger(module="TOOLS")
 

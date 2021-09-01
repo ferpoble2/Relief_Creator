@@ -18,8 +18,8 @@
 """
 File with utils functions for the engine.
 """
-import logging
 import json
+import logging
 
 # Get the keys to search in the reading process of the NetCDF file from the files located in the resources.
 # ---------------------------------------------------------------------------------------------------------

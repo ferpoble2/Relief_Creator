@@ -25,13 +25,14 @@ application.
 All the events captured by the GUI must be processed so GLFW must be able to capture them for this module to
 work correctly.
 """
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 
 import glfw
 
 from src.utils import get_logger
 
-from src.type_hinting import *
+if TYPE_CHECKING:
+    from engine.engine import Engine
 
 log = get_logger(module="CONTROLLER")
 

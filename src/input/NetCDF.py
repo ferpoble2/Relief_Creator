@@ -19,12 +19,12 @@
 File that contains the functions to read files in NetCDF4 format.
 """
 from typing import Union
-from src.utils import get_logger
-from src.error.netcdf_import_error import NetCDFImportError
-from src.utils import LATITUDE_KEYS, LONGITUDE_KEYS, HEIGHT_KEYS
 
 import numpy as np
 from netCDF4 import Dataset
+
+from src.error.netcdf_import_error import NetCDFImportError
+from src.utils import HEIGHT_KEYS, LATITUDE_KEYS, LONGITUDE_KEYS, get_logger
 
 log = get_logger(module='NETCDF')
 

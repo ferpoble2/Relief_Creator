@@ -19,11 +19,11 @@
 File with the class NetcdfExporter, class in charge of exporting information of the models to a netcdf file.
 """
 
-from netCDF4 import Dataset
-from src.utils import HEIGHT_KEYS
-from src.error.export_error import ExportError
-
 import numpy as np
+from netCDF4 import Dataset
+
+from src.error.export_error import ExportError
+from src.utils import HEIGHT_KEYS
 
 
 class NetcdfExporter:

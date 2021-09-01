@@ -19,9 +19,9 @@
 Files with the DashedLines class. Class is in charge of render dashed lines on the screen.
 """
 
-from src.engine.scene.model.lines import Lines
-
 import OpenGL.GL as GL
+
+from src.engine.scene.model.lines import Lines
 
 
 class DashedLines(Lines):

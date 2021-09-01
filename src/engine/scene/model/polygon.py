@@ -20,19 +20,17 @@ File containing the class polygon.
 
 This class stores all the information related to the polygons that can be draw on the screen of the program.
 """
-from src.engine.scene.model.model import Model
-from src.utils import get_logger
-from src.engine.scene.model.points import Points
-from src.engine.scene.model.lines import Lines
+import OpenGL.GL as GL
+import numpy as np
+from shapely.geometry import LineString, Polygon as ShapelyPolygon
+
 from src.engine.scene.model.dashed_lines import DashedLines
+from src.engine.scene.model.lines import Lines
+from src.engine.scene.model.model import Model
+from src.engine.scene.model.points import Points
 from src.error.line_intersection_error import LineIntersectionError
 from src.error.repeated_point_error import RepeatedPointError
-
-import numpy as np
-import OpenGL.GL as GL
-from shapely.geometry import LineString
-from shapely.geometry import Polygon as ShapelyPolygon
-from shapely.geometry import Point as ShapelyPoint
+from src.utils import get_logger
 
 log = get_logger(module="POLYGON")
 

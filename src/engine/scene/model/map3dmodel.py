@@ -19,18 +19,20 @@
 File with the definition of the class Map3DModel, class in charge of the 3D representation of the maps.
 """
 import ctypes as ctypes
+from typing import TYPE_CHECKING
 
-import numpy as np
 import OpenGL.GL as GL
+import numpy as np
 
-from src.input.CTP import read_file
 from src.engine.scene.model.mapmodel import MapModel
-from src.engine.scene.model.tranformations.transformations import perspective, identity
+from src.engine.scene.model.tranformations.transformations import identity, perspective
 from src.engine.scene.unit_converter import UnitConverter
-
+from src.input.CTP import read_file
 from src.utils import get_logger
 
-from src.type_hinting import *
+if TYPE_CHECKING:
+    from engine.scene.scene import Scene
+    from engine.scene.model.map2dmodel import Map2DModel
 
 log = get_logger(module='MAP3DMODEL')
 

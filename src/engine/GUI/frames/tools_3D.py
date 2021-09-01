@@ -19,10 +19,14 @@
 File with the class tools3D, class in charge of rendering the tools frame for the 3D apps.
 """
 
+from typing import TYPE_CHECKING
+
 import imgui
 
-from src.type_hinting import *
 from src.engine.GUI.frames.frame import Frame
+
+if TYPE_CHECKING:
+    from engine.GUI.guimanager import GUIManager
 
 
 class Tools3D(Frame):

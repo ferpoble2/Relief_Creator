@@ -22,11 +22,15 @@ Frame contains tuples with the name and values of the parameters of the polygon 
 shapefile file if they are exported.
 """
 
+from typing import TYPE_CHECKING
+
 import imgui
 
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
 
+if TYPE_CHECKING:
+    from engine.GUI.guimanager import GUIManager
 log = get_logger(module="Polygon Information")
 
 

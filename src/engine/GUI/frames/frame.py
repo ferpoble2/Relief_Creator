@@ -18,7 +18,11 @@
 """
 Main Frame class for the others elements to use.
 """
-from src.type_hinting import *
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from engine.GUI.guimanager import GUIManager
 
 
 class Frame:
