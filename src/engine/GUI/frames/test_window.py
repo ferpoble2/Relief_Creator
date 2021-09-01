@@ -18,12 +18,13 @@
 """
 Test frame for the GUI (default for imgui).
 
-The test frame is the one proportionate by IMGUI that shows all the ppossiblethings that can be done with IMGUI.
+The test frame is the one proportionate by IMGUI that shows all the possible things that can be done with IMGUI.
 """
+
+import imgui
 
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
-import imgui
 
 log = get_logger(module="TEST WINDOW")
 
