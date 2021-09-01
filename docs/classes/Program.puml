@@ -13,6 +13,7 @@ class Program {
     + add_zoom()
     + change_cpt_file_with_dialog()
     + check_model_temp_file_exists()
+    + close()
     + copy_model_temp_file(target_directory)
     + create_model_temp_file(reference_file)
     + get_active_model(): str

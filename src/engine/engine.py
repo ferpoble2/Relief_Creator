@@ -1271,6 +1271,20 @@ class Engine:
         """
         self.program.reset_zoom_level()
 
+    def exit(self):
+        """
+        Terminate the process in charge of rendering the windows and the scene, closing the windows and returning the
+        resources to the OS.
+
+        This method do not close the program, just exit the process executed by the engine, to close the program
+        completely call the method close() from the Program class.
+
+        Returns: None
+        """
+
+        # Terminate process external to the engine, returning the resources to the OS.
+        glfw.terminate()
+
     def run(self, n_frames: int = None, terminate_process: bool = True) -> None:
         """
         Run the main logic of the application.
@@ -1300,11 +1314,7 @@ class Engine:
         # Terminate the process if the app ended the process.
         # ---------------------------------------------------
         if terminate_process:
-            # terminate process external to the engine
-            glfw.terminate()
-
-            # delete temporary files created by the program
-            self.program.remove_temp_files()
+            self.program.close()
 
     def set_active_polygon(self, polygon_id: str or None) -> None:
         """

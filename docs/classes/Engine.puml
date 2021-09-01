@@ -30,6 +30,7 @@ class Engine {
     + delete_polygon_by_id(polygon_id)
     + disable_glfw_keyboard_callback()
     + enable_glfw_keyboard_callback()
+    + exit()
     + export_model_as_netcdf(model_id)
     + export_polygon_list_id(polygon_id_list, filename)
     + export_polygon_with_id(polygon_id)

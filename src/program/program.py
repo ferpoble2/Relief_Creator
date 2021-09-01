@@ -22,11 +22,14 @@ File that contains the main class of the program.
 import os
 import shutil
 import time
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
 import easygui
 
 from src.utils import get_logger
+
+if TYPE_CHECKING:
+    from engine.engine import Engine
 
 log = get_logger(module='PROGRAM')
 
@@ -97,6 +100,15 @@ class Program:
         Returns: True if the file exists, False otherwise.
         """
         return os.path.exists(self.get_model_temp_file())
+
+    def close(self) -> None:
+        """
+        Close the program, deleting temporary files and exiting all the resources used on the engine.
+
+        Returns: None
+        """
+        self.remove_temp_files()
+        self.__engine.exit()
 
     def copy_model_temp_file(self, target_directory: str) -> None:
         """
