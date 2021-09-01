@@ -49,7 +49,7 @@ class TestGetModelCoordinates(unittest.TestCase):
 
         Returns: None
         """
-        self.program.remove_temp_files()
+        self.program.close()
 
     def test_get_model_coordinates_from_window_coordinates(self):
         """
@@ -173,7 +173,7 @@ class TestGetModelHeight(unittest.TestCase):
 
         Returns: None
         """
-        self.program.remove_temp_files()
+        self.program.close()
 
     def test_get_model_height_from_coordinates(self):
         """
@@ -254,7 +254,7 @@ class TestModelInformationGetters(unittest.TestCase):
 
         Returns: None
         """
-        self.program.remove_temp_files()
+        self.program.close()
 
     def test_get_model_arrays(self):
         """Test if the model getter of the arrays (x-axis and y-axis) return the same data as the one read by the

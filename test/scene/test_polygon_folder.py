@@ -43,7 +43,7 @@ class TestPolygonFolderCreation(unittest.TestCase):
 
         Returns: None
         """
-        self.program.remove_temp_files()
+        self.program.close()
 
     def test_create_folder(self):
         folder_list = self.gui_manager.get_polygon_folder_id_list()

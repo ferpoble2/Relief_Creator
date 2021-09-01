@@ -49,7 +49,7 @@ class TestMixedFilters(unittest.TestCase):
 
         Returns: None
         """
-        self.program.remove_temp_files()
+        self.program.close()
 
     def test_non_existent_filter(self):
         warnings.simplefilter("ignore", ResourceWarning)

@@ -48,7 +48,7 @@ class TestAddPoints(unittest.TestCase):
 
         Returns: None
         """
-        self.program.remove_temp_files()
+        self.program.close()
 
     def test_add_points_normal(self):
         warnings.simplefilter("ignore", ResourceWarning)

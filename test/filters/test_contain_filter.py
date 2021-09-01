@@ -49,7 +49,7 @@ class TestContainsFilter(unittest.TestCase):
 
         Returns: None
         """
-        self.program.remove_temp_files()
+        self.program.close()
 
     def test_normal_application_is_not_in(self):
         warnings.simplefilter("ignore", ResourceWarning)

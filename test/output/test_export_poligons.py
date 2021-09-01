@@ -52,7 +52,7 @@ class TestExportPolygons(unittest.TestCase):
 
         Returns: None
         """
-        self.program.remove_temp_files()
+        self.program.close()
 
     def test_create_and_export(self):
         warnings.simplefilter("ignore", ResourceWarning)

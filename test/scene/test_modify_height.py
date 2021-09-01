@@ -53,7 +53,7 @@ class TestModifyHeight(unittest.TestCase):
 
         Returns: None
         """
-        self.program.remove_temp_files()
+        self.program.close()
 
     def test_linear_transformation(self):
         warnings.simplefilter("ignore", ResourceWarning)

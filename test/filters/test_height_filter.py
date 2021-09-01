@@ -48,7 +48,7 @@ class TestHeightGreaterFilter(unittest.TestCase):
 
         Returns: None
         """
-        self.program.remove_temp_files()
+        self.program.close()
 
     def test_normal_application_less_than(self):
         warnings.simplefilter("ignore", ResourceWarning)

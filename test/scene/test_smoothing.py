@@ -54,7 +54,7 @@ class TestSmoothing(unittest.TestCase):
 
         Returns: None
         """
-        self.program.remove_temp_files()
+        self.program.close()
 
     def test_smoothing_normal_application(self):
         # load list of polygons
