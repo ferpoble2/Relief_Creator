@@ -45,19 +45,19 @@ class TestLoadedModelsList(unittest.TestCase):
         program = Program(engine)
         program.set_view_mode_3D()
 
-        self.assertEqual(engine.get_3d_model_list(), [], 'List of models is not empty.')
+        self.assertEqual([], engine.get_3d_model_list(), 'List of models is not empty.')
 
         engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_1)
-        engine.run(3, False)
-        self.assertEqual(engine.get_3d_model_list(), [0], 'First models should be assigned to the ID 0.')
+        engine.run(10, False)
+        self.assertEqual([0], engine.get_3d_model_list(), 'First models should be assigned to the ID 0.')
 
         engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_2)
-        engine.run(3, False)
+        engine.run(10, False)
         engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_3)
-        engine.run(3, False)
+        engine.run(10, False)
         engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_4)
-        engine.run(3, False)
-        self.assertEqual(engine.get_3d_model_list(), [3], 'The fourth models is not assigned to the ID 3.')
+        engine.run(10, False)
+        self.assertEqual([3], engine.get_3d_model_list(), 'The fourth models is not assigned to the ID 3.')
 
     def test_model_list(self):
         """
@@ -69,17 +69,18 @@ class TestLoadedModelsList(unittest.TestCase):
         warnings.simplefilter("ignore", ResourceWarning)
 
         engine = Engine()
+        program = Program(engine)
         engine.should_use_threads(False)
 
-        self.assertEqual(engine.get_model_list(), [], 'List of models is not empty.')
+        self.assertEqual([], engine.get_model_list(), 'List of models is not empty.')
 
         engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_1)
-        self.assertEqual(engine.get_model_list(), [0], 'First models should be assigned to the ID 0.')
+        self.assertEqual([0], engine.get_model_list(), 'First models should be assigned to the ID 0.')
 
         engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_2)
         engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_3)
         engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_4)
-        self.assertEqual(engine.get_model_list(), [3], 'The fourth models is not assigned to the ID 3.')
+        self.assertEqual([3], engine.get_model_list(), 'The fourth models is not assigned to the ID 3.')
 
 
 if __name__ == '__main__':
