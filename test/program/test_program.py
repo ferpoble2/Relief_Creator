@@ -125,5 +125,24 @@ class TestProgramParameters(unittest.TestCase):
         self.assertEqual('resources/test_resources/cpt/colors_0_100_200.cpt', self.program.get_cpt_file())
 
 
+class TestDebugMode(unittest.TestCase):
+
+    def test_debug_mode_default_value(self):
+        engine = Engine()
+        program = Program(engine, debug_mode=True)
+
+        self.assertFalse(program.get_debug_mode())
+
+        program.close()
+
+    def test_debug_mode_false(self):
+        engine = Engine()
+        program = Program(engine, debug_mode=True)
+
+        self.assertTrue(program.get_debug_mode())
+
+        program.close()
+
+
 if __name__ == '__main__':
     unittest.main()
