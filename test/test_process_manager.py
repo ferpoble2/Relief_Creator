@@ -21,7 +21,6 @@ File wth logic that test the process manager of the application.
 Due to python implementations, all functions passed to the parallel process must be defined public. They can not
 be private, protected, or local to a function or class.
 """
-
 import queue
 import time
 import unittest

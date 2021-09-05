@@ -18,7 +18,6 @@
 """
 File with tests related to the conversion of units used in the scene to transform coordinates of the model.
 """
-
 import unittest
 
 from src.engine.scene.unit_converter import UnitConverter

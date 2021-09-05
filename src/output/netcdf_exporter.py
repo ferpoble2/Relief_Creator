@@ -18,7 +18,6 @@
 """
 File with the class NetcdfExporter, class in charge of exporting information of the models to a netcdf file.
 """
-
 import numpy as np
 from netCDF4 import Dataset
 

@@ -21,7 +21,6 @@ Daniel Calderon, CC3501, 2019-1
 Transformation matrices for computer graphics
 v2.0
 """
-
 import numpy as np
 
 

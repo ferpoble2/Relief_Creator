@@ -18,7 +18,6 @@
 """
 File with the tests related to the contain filter functionality.
 """
-
 import os
 import unittest
 import warnings

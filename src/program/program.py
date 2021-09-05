@@ -18,7 +18,6 @@
 """
 File that contains the main class of the program.
 """
-
 import os
 import shutil
 import time

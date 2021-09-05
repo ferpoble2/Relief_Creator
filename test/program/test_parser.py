@@ -21,7 +21,6 @@ Tests related to the logic of the parser of arguments of the program.
 The parser is the module in charge of executing logic depending of the parameters given when executing
 the program from the console
 """
-
 import sys
 import unittest
 

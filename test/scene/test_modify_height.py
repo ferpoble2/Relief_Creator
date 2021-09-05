@@ -18,7 +18,6 @@
 """
 File with the tests related to the modifications of the height to the points inside the polygons.
 """
-
 import os
 import unittest
 import warnings

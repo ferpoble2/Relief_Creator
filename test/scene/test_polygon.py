@@ -17,7 +17,6 @@
 """
 File with tests related to the polygon class.
 """
-
 import unittest
 import warnings
 

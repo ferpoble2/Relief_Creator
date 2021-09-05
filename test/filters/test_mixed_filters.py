@@ -18,7 +18,6 @@
 """
 File with tests that mix different filters at the same time to modify a map.
 """
-
 import os
 import unittest
 import warnings

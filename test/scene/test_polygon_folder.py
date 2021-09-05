@@ -18,7 +18,6 @@
 """
 File with tests  related to the folders of polygons showed on the GUI.
 """
-
 import unittest
 
 from src.engine.engine import Engine

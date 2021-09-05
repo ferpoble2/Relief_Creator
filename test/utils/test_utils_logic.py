@@ -18,7 +18,6 @@
 """
 Tests that check the logic of the utils module.
 """
-
 import logging
 import os
 import unittest

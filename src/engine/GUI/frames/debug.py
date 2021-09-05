@@ -18,7 +18,6 @@
 """
 Sample frame for the application GUI.
 """
-
 import os
 from typing import TYPE_CHECKING
 

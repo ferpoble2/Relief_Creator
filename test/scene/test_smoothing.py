@@ -18,7 +18,6 @@
 """
 File with the tests related to the smoothing functionality.
 """
-
 import os
 import unittest
 import warnings

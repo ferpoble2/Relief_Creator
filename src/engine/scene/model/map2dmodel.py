@@ -18,7 +18,6 @@
 """
 Class in charge of managing the models of the maps in 2 dimensions.
 """
-
 import ctypes as ctypes
 from typing import List, Union
 

@@ -18,7 +18,6 @@
 """
 File with the class ShapefileImporter, class in charge of import shapefile files and generate polygons.
 """
-
 import shapefile
 
 from src.utils import is_numeric
