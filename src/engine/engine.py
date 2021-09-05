@@ -1302,7 +1302,11 @@ class Engine:
         if n_frames is not None:
             assert type(n_frames) == int and n_frames > 0
 
+            # Run for the specified amount of frames
             for _ in range(n_frames):
+                if glfw.window_should_close(self.window):
+                    break
+
                 self.__task_manager.update_tasks()
                 self.__thread_manager.update_threads()
                 self.__process_manager.update_process()
