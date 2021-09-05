@@ -26,7 +26,7 @@ from src.engine.engine import Engine
 from src.program.program import Program
 
 
-class TestProgramParameters(unittest.TestCase):
+class TestZoomParameters(unittest.TestCase):
 
     def setUp(self) -> None:
         """
@@ -76,6 +76,28 @@ class TestProgramParameters(unittest.TestCase):
         self.program.add_zoom()
         self.assertEqual(1, self.program.get_zoom_level())
 
+
+class TestViewModeParameters(unittest.TestCase):
+
+    def setUp(self) -> None:
+        """
+        Code executed before every test. Initializes a program to work with.
+        """
+        # create program
+        self.engine = Engine()
+        self.program = Program(self.engine)
+
+        # initialize variables
+        self.engine.should_use_threads(False)
+
+    def tearDown(self) -> None:
+        """
+        Delete all temporary files created by the program on the setup or testing processes.
+
+        Returns: None
+        """
+        self.program.close()
+
     def test_view_mode(self):
         # Default value
         self.assertEqual('2D', self.program.get_view_mode())
@@ -87,6 +109,28 @@ class TestProgramParameters(unittest.TestCase):
         self.program.set_view_mode_2D()
         self.assertEqual('2D', self.program.get_view_mode())
 
+
+class TestMapPositionParameters(unittest.TestCase):
+
+    def setUp(self) -> None:
+        """
+        Code executed before every test. Initializes a program to work with.
+        """
+        # create program
+        self.engine = Engine()
+        self.program = Program(self.engine)
+
+        # initialize variables
+        self.engine.should_use_threads(False)
+
+    def tearDown(self) -> None:
+        """
+        Delete all temporary files created by the program on the setup or testing processes.
+
+        Returns: None
+        """
+        self.program.close()
+
     def test_map_position(self):
         # Default value
         self.assertEqual([0, 0], self.program.get_map_position())
@@ -94,6 +138,28 @@ class TestProgramParameters(unittest.TestCase):
         # Move map
         self.program.set_map_position([15, 15])
         self.assertEqual([15, 15], self.program.get_map_position())
+
+
+class TestActiveToolParameters(unittest.TestCase):
+
+    def setUp(self) -> None:
+        """
+        Code executed before every test. Initializes a program to work with.
+        """
+        # create program
+        self.engine = Engine()
+        self.program = Program(self.engine)
+
+        # initialize variables
+        self.engine.should_use_threads(False)
+
+    def tearDown(self) -> None:
+        """
+        Delete all temporary files created by the program on the setup or testing processes.
+
+        Returns: None
+        """
+        self.program.close()
 
     def test_active_tool(self):
         # Default value
@@ -110,6 +176,28 @@ class TestProgramParameters(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.program.set_active_tool('non_existent_tool')
 
+
+class TestLoadingParameters(unittest.TestCase):
+
+    def setUp(self) -> None:
+        """
+        Code executed before every test. Initializes a program to work with.
+        """
+        # create program
+        self.engine = Engine()
+        self.program = Program(self.engine)
+
+        # initialize variables
+        self.engine.should_use_threads(False)
+
+    def tearDown(self) -> None:
+        """
+        Delete all temporary files created by the program on the setup or testing processes.
+
+        Returns: None
+        """
+        self.program.close()
+
     def test_is_loading(self):
         self.assertEqual(False, self.program.is_loading())
 
@@ -118,6 +206,28 @@ class TestProgramParameters(unittest.TestCase):
 
         self.program.set_loading(False)
         self.assertEqual(False, self.program.is_loading())
+
+
+class TestCPTFilesParameters(unittest.TestCase):
+
+    def setUp(self) -> None:
+        """
+        Code executed before every test. Initializes a program to work with.
+        """
+        # create program
+        self.engine = Engine()
+        self.program = Program(self.engine)
+
+        # initialize variables
+        self.engine.should_use_threads(False)
+
+    def tearDown(self) -> None:
+        """
+        Delete all temporary files created by the program on the setup or testing processes.
+
+        Returns: None
+        """
+        self.program.close()
 
     def test_cpt_files(self):
         # Default value
