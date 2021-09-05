@@ -47,12 +47,6 @@ class TestLoadedModelsList(unittest.TestCase):
         self.program.close()
 
     def test_3d_model_list(self):
-        """
-        Test the behaviour of the 3D model list in the program.
-
-        The program must have only one 3D model at the same time. The list should not be longer than 1 element. If that
-        is not the case anymore, mark this test as one who should fail.
-        """
         warnings.simplefilter("ignore", ResourceWarning)
         self.program.set_view_mode_3D()
 
@@ -71,12 +65,6 @@ class TestLoadedModelsList(unittest.TestCase):
         self.assertEqual([3], self.engine.get_3d_model_list(), 'The fourth models is not assigned to the ID 3.')
 
     def test_model_list(self):
-        """
-        Test the list of models on the program.
-
-        The program must only have one active model at the same time. The list of models should not be longer than
-        one element. If that is not the case anymore, then mark this test as one who should fail.
-        """
         warnings.simplefilter("ignore", ResourceWarning)
 
         self.assertEqual([], self.engine.get_model_list(), 'List of models is not empty.')

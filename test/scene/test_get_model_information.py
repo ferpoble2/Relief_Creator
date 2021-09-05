@@ -52,14 +52,6 @@ class TestGetModelCoordinates(unittest.TestCase):
         self.program.close()
 
     def test_get_model_coordinates_from_window_coordinates(self):
-        """
-        Test the values given by the scene when obtaining the map coordinates using the windows coordinates.
-
-        WARNING:
-            This test is dependant on the initial settings of the program. Data should be changed if the settings
-            on the program change.
-        """
-
         self.engine.load_netcdf_file(self.program.get_cpt_file(),
                                      'resources/test_resources/netcdf/test_file_1.nc')
 
@@ -84,14 +76,6 @@ class TestGetModelCoordinates(unittest.TestCase):
         self.assertTrue((expected_array == values_array).all())
 
     def test_get_model_coordinates_from_window_coordinates_borders(self):
-        """
-        Test the values given by the scene when obtaining the map coordinates using the windows coordinates on the
-        borders of the map.
-
-        WARNING:
-            This test is dependant on the initial settings of the program. Data should be changed if the settings
-            on the program change.
-        """
         self.engine.load_netcdf_file(self.program.get_cpt_file(),
                                      'resources/test_resources/netcdf/test_file_1.nc')
 
@@ -176,13 +160,6 @@ class TestGetModelHeight(unittest.TestCase):
         self.program.close()
 
     def test_get_model_height_from_coordinates(self):
-        """
-        Test the values given by the scene when obtaining the map coordinates using the windows coordinates.
-
-        WARNING:
-            This test is dependant on the initial settings of the program. Data should be changed if the settings
-            on the program change.
-        """
 
         # Load model with coordinates separated by 0.1 degrees.
         self.engine.load_netcdf_file(self.program.get_cpt_file(),
@@ -257,8 +234,6 @@ class TestModelInformationGetters(unittest.TestCase):
         self.program.close()
 
     def test_get_model_arrays(self):
-        """Test if the model getter of the arrays (x-axis and y-axis) return the same data as the one read by the
-        input module."""
         self.engine.load_netcdf_file(self.program.get_cpt_file(),
                                      'resources/test_resources/netcdf/test_file_1.nc')
 

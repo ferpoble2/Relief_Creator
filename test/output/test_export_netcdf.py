@@ -83,10 +83,6 @@ class TestExportNetcdfFile(unittest.TestCase):
         os.remove('resources/test_resources/temp/one_dimension_file.nc')
 
     def test_export_file_actual_range_metadata(self):
-        """
-        Test the export of a file with the metadata actual_range inside the variable that stores the heights of the
-        maps.
-        """
         exporter = NetcdfExporter()
 
         # Copy file to modify to not modify the original file
