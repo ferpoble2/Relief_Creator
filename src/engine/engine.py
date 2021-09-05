@@ -1014,13 +1014,14 @@ class Engine:
         Returns: none
         """
 
-        # copy the file to the temp file
-        self.program.create_model_temp_file(path_model)
 
         # noinspection PyMissingOrEmptyDocstring
         def then_routine(model_id):
             self.program.set_active_model(model_id)
             self.program.set_loading(False)
+
+            # copy the file to the temp file
+            self.program.create_model_temp_file(path_model)
 
             then()
 
