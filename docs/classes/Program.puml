@@ -4,11 +4,12 @@ class Program {
     - __active_polygon: str
     - __active_tool: str
     - __CPT_file: str
+    - __debug_mode: bool
     - __engine: Engine
     - __loading: boolean
     - __map_position: list
-    - __zoom_level: float
     - __view_mode: str
+    - __zoom_level: float
 
     + add_zoom()
     + change_cpt_file_with_dialog()
@@ -20,6 +21,7 @@ class Program {
     + get_active_polygon_id(): str
     + get_active_tool(): str
     + get_cpt_file(): str
+    + get_debug_mode(): bool
     + get_map_position(): list
     + get_model_temp_file()
     + get_view_mode(): str

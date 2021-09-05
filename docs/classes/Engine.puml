@@ -17,12 +17,12 @@ class Engine {
     + change_3D_model_position_unit(model_id, measure_unit)
     + change_camera_elevation(angle)
     + change_camera_xy_angle(angle)
-    + change_polygon_draw_order(polygon_id, new_position)
     + change_color_file_with_dialog()
     + change_color_of_polygon(polygon_id, color)
     + change_current_3D_model_normalization_factor(new_factor)
     + change_dot_color_of_polygon(polygon_id,  color)
     + change_height_window(height)
+    + change_polygon_draw_order(polygon_id, new_position)
     + change_quality(quality)
     + change_width_window(width)
     + create_new_polygon(): str
@@ -35,6 +35,7 @@ class Engine {
     + export_polygon_list_id(polygon_id_list, filename)
     + export_polygon_with_id(polygon_id)
     + fix_frames()
+    + get_3d_model_list(): List[str]
     + get_active_model_id()
     + get_active_polygon_id(): str
     + get_active_tool(): str
@@ -45,8 +46,6 @@ class Engine {
     + get_float_bytes()
     + get_float_bytes(): int
     + get_font_size(): int
-    + get_model_list(): List[str]
-    + get_3d_model_list(): List[str]
     + get_gui_key_callback(): function
     + get_gui_scroll_callback(): function
     + get_gui_setting_data(): dict
@@ -54,6 +53,7 @@ class Engine {
     + get_map_coordinates_from_window_coordinates(x_coordinate, y_coordinate): (float, float)
     + get_map_height_on_coordinates(x_coordinate, y_coordinate): float
     + get_map_position(): list
+    + get_model_list(): List[str]
     + get_parameters_from_polygon(polygon_id): list
     + get_polygon_id_list(): list
     + get_polygon_name(polygon_id): str
@@ -68,6 +68,7 @@ class Engine {
     + interpolate_points(polygon_id, model_id, distance, type_interpolation)
     + is_mouse_hovering_frame()
     + is_polygon_planar(polygon_id)
+    + is_program_debug_mode(): boolean
     + is_program_loading(): boolean
     + less_zoom()
     + load_netcdf_file_with_dialog()
