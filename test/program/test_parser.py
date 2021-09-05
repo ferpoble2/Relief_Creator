@@ -28,7 +28,7 @@ import unittest
 from src.program.parser import get_command_line_arguments
 
 
-class TestArgumentParser(unittest.TestCase):
+class TestModelArgument(unittest.TestCase):
 
     def test_argument_reading(self):
 
@@ -58,6 +58,9 @@ class TestArgumentParser(unittest.TestCase):
                              arguments.model)
         finally:
             sys.argv = saved_argv
+
+
+class TestDebugArgument(unittest.TestCase):
 
     def test_debug_mode_default(self):
         saved_argv = sys.argv
