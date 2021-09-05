@@ -15,6 +15,10 @@
 #
 #  END GPL LICENSE BLOCK
 
+"""
+File with tests related to the Program class of the application.
+"""
+
 import os
 import unittest
 
