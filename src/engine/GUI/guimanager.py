@@ -841,17 +841,17 @@ class GUIManager:
         # initialize the components of the manager
         # ----------------------------------------
         main_menu_bar = MainMenuBar(gui_manager)
-        # noinspection PyUnusedLocal
-        test_window = TestWindow(gui_manager)
         text_modal = TextModal(gui_manager)
         tools = Tools(gui_manager)
-        # noinspection PyUnusedLocal
-        debug = Debug(gui_manager)
         loading = Loading(gui_manager)
         polygon_information = PolygonInformation(gui_manager)
         confirmation_modal = ConfirmationModal(gui_manager)
         tools_3d = Tools3D(gui_manager)
         mouse_coordinates = MouseCoordinates(gui_manager)
+
+        # Windows only used when debugging
+        debug = Debug(gui_manager)
+        test_window = TestWindow(gui_manager)
 
         self.__component_list_2D = [
             main_menu_bar,
