@@ -42,6 +42,8 @@ def get_command_line_arguments() -> 'argparse.Namespace':
     parser = argparse.ArgumentParser(description='Relief creator Program.')
     parser.add_argument('-model', metavar='<filename>', type=str,
                         help='A netcdf to load before running the program.')
+    parser.add_argument('-debug', action='store_true',
+                        help='If to start the program in debug mode.')
 
     args = parser.parse_args()
     return args
