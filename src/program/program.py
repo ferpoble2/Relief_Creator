@@ -43,7 +43,7 @@ class Program:
     """
 
     # noinspection PyUnresolvedReferences
-    def __init__(self, engine: 'Engine'):
+    def __init__(self, engine: 'Engine', debug_mode: bool = False):
         """
         Constructor of the class.
 
@@ -76,6 +76,8 @@ class Program:
         self.__view_mode: str = '2D'
 
         self.__loading: bool = False
+
+        self.__debug_mode: bool = debug_mode
 
         # Do the logic of the initialization
         # ----------------------------------
@@ -154,6 +156,14 @@ class Program:
         Returns: Id of the active polygon
         """
         return self.__active_polygon
+
+    def get_debug_mode(self) -> bool:
+        """
+        Returns if the program is in debug mode or not.
+
+        Returns: Boolean indicating if the program is in debug mode or not.
+        """
+        return self.__debug_mode
 
     def get_active_tool(self) -> str:
         """
