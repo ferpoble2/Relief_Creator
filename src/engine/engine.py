@@ -783,6 +783,28 @@ class Engine:
         """
         return self.scene.get_polygon_points(polygon_id)
 
+    def exit(self):
+        """
+        Terminate the process in charge of rendering the windows and the scene, closing the windows and returning the
+        resources to the OS.
+
+        This method do not close the program, just exit the process executed by the engine, to close the program
+        completely call the method close() from the Program class.
+
+        Returns: None
+        """
+
+        # Terminate process external to the engine, returning the resources to the OS.
+        glfw.terminate()
+
+    def get_model_list(self) -> List[str]:
+        """
+        Get a list with the id of all the 2D models loaded into the program.
+
+        Returns: List of models loaded into the program.
+        """
+        return self.scene.get_model_list()
+
     def get_polygon_id_list(self) -> list:
         """
         Get the full list of polygon ids currently being used on the program.
@@ -801,14 +823,6 @@ class Engine:
         Returns: Name of the polygon
         """
         return self.scene.get_polygon_name(polygon_id)
-
-    def get_model_list(self) -> List[str]:
-        """
-        Get a list with the id of all the 2D models loaded into the program.
-
-        Returns: List of models loaded into the program.
-        """
-        return self.scene.get_model_list()
 
     def get_program_view_mode(self) -> str:
         """
@@ -1013,7 +1027,6 @@ class Engine:
 
         Returns: none
         """
-
 
         # noinspection PyMissingOrEmptyDocstring
         def then_routine(model_id):
@@ -1271,20 +1284,6 @@ class Engine:
         Returns: None
         """
         self.program.reset_zoom_level()
-
-    def exit(self):
-        """
-        Terminate the process in charge of rendering the windows and the scene, closing the windows and returning the
-        resources to the OS.
-
-        This method do not close the program, just exit the process executed by the engine, to close the program
-        completely call the method close() from the Program class.
-
-        Returns: None
-        """
-
-        # Terminate process external to the engine, returning the resources to the OS.
-        glfw.terminate()
 
     def run(self, n_frames: int = None, terminate_process: bool = True) -> None:
         """
