@@ -49,7 +49,7 @@ from src.engine.GUI.polygon_folder_manager import PolygonFolderManager
 from src.utils import get_logger
 
 if TYPE_CHECKING:
-    from engine.engine import Engine
+    from src.engine.engine import Engine
 
 # noinspection SpellCheckingInspection
 log = get_logger(module='GUIMANAGER')
