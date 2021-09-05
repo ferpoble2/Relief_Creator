@@ -60,7 +60,7 @@ class Program:
 
         # File to use when making a copy of the loaded model.
         # This copy helps the export process of the models, changing only the height information of the file.
-        self.__temp_model_file: str = f'./{time.time()}temp_model_file.nc'
+        self.__temp_model_file: str = f'./temp_model_file.{time.time()}.nc'
 
         # Map 2d variables
         # ----------------
