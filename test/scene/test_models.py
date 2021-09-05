@@ -18,8 +18,8 @@
 import unittest
 import warnings
 
-from engine.engine import Engine
-from program.program import Program
+from src.engine.engine import Engine
+from src.program.program import Program
 
 COLOR_FILE_LOCATION = 'resources/test_resources/cpt/colors_0_100_200.cpt'
 PATH_TO_MODEL_1 = 'resources/test_resources/netcdf/test_file_1.nc'

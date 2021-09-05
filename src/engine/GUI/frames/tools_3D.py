@@ -26,7 +26,7 @@ import imgui
 from src.engine.GUI.frames.frame import Frame
 
 if TYPE_CHECKING:
-    from engine.GUI.guimanager import GUIManager
+    from src.engine.GUI.guimanager import GUIManager
 
 
 class Tools3D(Frame):

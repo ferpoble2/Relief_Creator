@@ -32,7 +32,7 @@ import glfw
 from src.utils import get_logger
 
 if TYPE_CHECKING:
-    from engine.engine import Engine
+    from src.engine.engine import Engine
 
 log = get_logger(module="CONTROLLER")
 

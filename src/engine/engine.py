@@ -23,7 +23,7 @@ from typing import List, TYPE_CHECKING, Union
 import glfw
 from PIL import Image
 
-from engine.GUI.guimanager import GUIManager
+from src.engine.GUI.guimanager import GUIManager
 from src.engine.controller.controller import Controller
 from src.engine.process_manager import ProcessManager
 from src.engine.render.render import Render

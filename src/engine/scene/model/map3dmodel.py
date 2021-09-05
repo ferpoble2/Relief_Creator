@@ -31,8 +31,8 @@ from src.input.CTP import read_file
 from src.utils import get_logger
 
 if TYPE_CHECKING:
-    from engine.scene.scene import Scene
-    from engine.scene.model.map2dmodel import Map2DModel
+    from src.engine.scene.scene import Scene
+    from src.engine.scene.model.map2dmodel import Map2DModel
 
 log = get_logger(module='MAP3DMODEL')
 
