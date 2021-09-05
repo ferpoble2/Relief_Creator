@@ -249,5 +249,6 @@ class TestModelInformationGetters(unittest.TestCase):
     def test_get_model_arrays_no_model(self):
         self.assertEqual((None, None), self.engine.scene.get_active_model_coordinates_arrays())
 
+
 if __name__ == '__main__':
     unittest.main()
