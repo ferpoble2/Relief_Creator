@@ -133,7 +133,7 @@ class TestDebugMode(unittest.TestCase):
 
     def test_debug_mode_default_value(self):
         engine = Engine()
-        program = Program(engine, debug_mode=True)
+        program = Program(engine)
 
         self.assertFalse(program.get_debug_mode())
 
