@@ -50,7 +50,6 @@ class Program:
         Args:
             engine: Engine to use in the program.
         """
-
         # PROGRAM VARIABLES
         # -----------------
         self.__engine: Engine = engine
@@ -178,7 +177,6 @@ class Program:
         Get the CTP file currently being used by the program.
 
         Returns: String with the path to the file.
-
         """
         return self.__CPT_file
 
@@ -326,12 +324,11 @@ class Program:
         """
         Parse the arguments and do the actions related to each command.
 
-        Returns: None
-
         Args:
             arguments (Namespace):  Arguments received in the command line.
-        """
 
+        Returns: None
+        """
         if 'model' in arguments and arguments.model is not None:
             log.debug('Loading model from command line  using default color file...')
             self.__engine.load_netcdf_file(self.get_cpt_file(), arguments.model)
@@ -361,7 +358,6 @@ class Program:
         Run the program.
 
         Returns: None
-
         """
         log.debug('Running program...')
         self.__engine.run()
@@ -372,7 +368,7 @@ class Program:
         Args:
             new_model_id: ID of the new model to use.
 
-        Returns:
+        Returns: None
         """
         self.__active_model = new_model_id
 
@@ -417,7 +413,6 @@ class Program:
             new_file: New file to use as a CPT file.
 
         Returns: None
-
         """
         if new_file[-4:].lower() != ".cpt":
             raise IOError("File is not a cpt file.")

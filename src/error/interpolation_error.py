@@ -18,7 +18,6 @@
 """
 File with the InterpolationError class, class to use when raising exceptions related to the interpolation process.
 """
-
 from src.error.scene_error import SceneError
 
 

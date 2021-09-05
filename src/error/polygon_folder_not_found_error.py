@@ -18,7 +18,6 @@
 """
 File containing the class PolygonFolderNotFound
 """
-
 from src.error.folder_error import FolderError
 
 

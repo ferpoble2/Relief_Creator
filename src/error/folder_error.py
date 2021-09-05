@@ -18,7 +18,6 @@
 """
 File containing the class FolderError
 """
-
 from src.error.GUI_error import GUIError
 
 

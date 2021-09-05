@@ -70,17 +70,17 @@ class TaskManager:
         """
         to_delete = []
 
-        # check on the tasks
+        # Check on the tasks
         for task in self.__pending_task_list:
 
             # Subtract one frame from the task
             task['frames'] -= 1
 
-            # execute it if frames to wait is zero
+            # Execute it if frames to wait is zero
             if task['frames'] == 0:
                 task['task']()
                 to_delete.append(task)
 
-        # delete tasks already executed
+        # Delete tasks already executed
         for task in to_delete:
             self.__pending_task_list.remove(task)

@@ -71,7 +71,7 @@ class Settings:
 
     CLEAR_COLOR = [0.15, 0.15, 0.15, 1]  # clear color of the screen
 
-    # type settings
+    # Type settings
     FLOAT_BYTES = 4  # float will be represented by 4 bytes.
 
     @staticmethod

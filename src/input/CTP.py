@@ -34,7 +34,6 @@ def is_numeric(text: str) -> bool:
 
     Returns:
         True if the string was numeric, False otherwise.
-
     """
     try:
         float(text)
@@ -65,7 +64,6 @@ def read_file(file_name: str) -> List[dict]:
 
     Returns:
         Dictionary with the limits and the colors associated.
-
     """
     log.debug(f'Reading file {file_name}')
 
@@ -74,22 +72,19 @@ def read_file(file_name: str) -> List[dict]:
     color_pallet = []
     for line in file.readlines():
 
-        # split the line to get the contents
+        # Split the line to get the contents
         line = line.split()
 
-        # Check if the line have information of the color
-        # -----------------------------------------------
-        # do not consider empty lines
+        # Do not consider empty lines
         empty_line = len(line) == 0
 
-        # do not consider lines that does not have enough elements to define colors
+        # Do not consider lines that does not have enough elements to define colors
         not_enough_elements = len(line) < 4
 
-        # dont consider lines not related to the definition of color
+        # Do not consider lines not related to the definition of color
         not_color_definition = len(line) >= 4 and (not is_numeric(line[0]) or not is_numeric(line[2]))
 
         # Append color defined in the line only if the line has color information
-        # -----------------------------------------------------------------------
         if not empty_line and not not_enough_elements and not not_color_definition:
             values = line
             color_pallet.append({

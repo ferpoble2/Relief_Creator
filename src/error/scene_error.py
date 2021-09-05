@@ -18,7 +18,6 @@
 """
 File that contains all the exceptions related to the scene.
 """
-
 from src.error.base_error import BaseError
 
 

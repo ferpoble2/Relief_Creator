@@ -82,14 +82,12 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
 
     # Ask if the arrays that contains the information related to the arrays of the map is defined on the netcdf file
     # with the names that are recognized by the program.
-    # --------------------------------------------------------------------------------------------------------------
     x = get_variables_from_grp(root_grp, LONGITUDE_KEYS)
     y = get_variables_from_grp(root_grp, LATITUDE_KEYS)
     z = get_variables_from_grp(root_grp, HEIGHT_KEYS)
 
     # Ask if the file have the values for the x values defined as ranges, spacing and dimensions.
     # Raise error if it is not defined as ranges/spacing/dimensions
-    # ------------------------------------------------------------------------------------------
     if x is None:
         x_range_values = get_variables_from_grp(root_grp, ['x_range'])
         x_range_array = np.array(x_range_values)
@@ -119,7 +117,6 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
 
     # Ask if the file have the values for the y values defined as ranges, spacing and dimensions.
     # Raise error if it is not defined as ranges/spacing/dimensions.
-    # ------------------------------------------------------------------------------------------
     if y is None:
         y_range_values = get_variables_from_grp(root_grp, ['y_range'])
         y_range_array = np.array(y_range_values)
@@ -157,12 +154,12 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
         z = z.reshape((len(y), len(x)))
         z = np.flipud(z)
 
-    # shape the arrays to work
-    # ------------------------
+    # Convert the variables to arrays to return
     x = np.array(x)
     y = np.array(y)
     z = np.array(z)
 
+    # Close the file
     root_grp.close()
 
     return x, y, z

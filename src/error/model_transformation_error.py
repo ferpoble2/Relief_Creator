@@ -18,7 +18,6 @@
 """
 File with the class ModelTransformationError, class to raise when there is an error in the transformation process.
 """
-
 from src.error.scene_error import SceneError
 
 

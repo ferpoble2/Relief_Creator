@@ -22,7 +22,6 @@ import json
 import logging
 
 # Get the keys to search in the reading process of the NetCDF file from the files located in the resources.
-# ---------------------------------------------------------------------------------------------------------
 with open('resources/longitude_keys.json', 'r') as lon_file:
     LONGITUDE_KEYS = json.load(lon_file)
 with open('resources/latitude_keys.json', 'r') as lat_file:
@@ -31,7 +30,6 @@ with open('resources/height_keys.json', 'r') as height_file:
     HEIGHT_KEYS = json.load(height_file)
 
 # Configurations of the loggers. These configurations affect all the loggers of the application.
-# ----------------------------------------------------------------------------------------------
 LOG_TO_FILE = False
 LOG_TO_CONSOLE = False
 
@@ -134,18 +132,18 @@ def interpolate(value: float, value_min: float, value_max: float, target_min: fl
     if convert:
         value = float(value)
 
-    # check values
+    # Check values and store them in the correct variables
     value_min, value_max = min(value_min, value_max), max(value_min, value_max)
     target_min, target_max = min(target_min, target_max), max(target_min, target_max)
 
-    # case initial interval is just one value.
+    # Case initial interval is just one value.
     if value_min == value_max:
         return (target_min + target_max) / 2.0
 
     if target_min == target_max:
         return target_max
 
-    # return corresponding values
+    # Return corresponding values
     return (value - value_min) * (float(target_max) - target_min) / (float(value_max) - value_min) + target_min
 
 
@@ -158,7 +156,6 @@ def is_numeric(value: str) -> bool:
 
     Returns: boolean indicating if can be converted
     """
-
     try:
         float(value)
         return True
@@ -175,8 +172,6 @@ def is_clockwise(points):
 
     Returns: Boolean indicating if points are CW or not.
     """
-
-    # points is your list (or array) of 2d points.
     assert len(points) > 2, 'Need at least 3 points to work.'
 
     s = 0.0

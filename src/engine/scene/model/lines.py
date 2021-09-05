@@ -19,7 +19,6 @@
 File with the class Lines, class in charge of storing all the information related to the models that draw lines on
 the scene.
 """
-
 import OpenGL.GL as GL
 import numpy as np
 
@@ -97,14 +96,12 @@ class Lines(Model):
         Returns: None
         """
 
-        # update values for the polygon shader
-        # ------------------------------------
+        # Update values for the polygon shader
         projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
         polygon_color_location = GL.glGetUniformLocation(self.shader_program, "lines_color")
         z_value_location = GL.glGetUniformLocation(self.shader_program, "z_offset")
 
-        # set the color and projection matrix to use
-        # ------------------------------------------
+        # Set the color and projection matrix to use
         GL.glUniform4f(polygon_color_location,
                        self.__line_color[0],
                        self.__line_color[1],
@@ -124,19 +121,19 @@ class Lines(Model):
         Returns: None
         """
 
-        # first point
+        # First point
         self.__point_list.append(first_point[0])
         self.__point_list.append(first_point[1])
         self.__point_list.append(first_point[2])
 
-        # second point
+        # Second point
         self.__point_list.append(second_point[0])
         self.__point_list.append(second_point[1])
         self.__point_list.append(second_point[2])
 
         self.set_vertices(np.array(self.__point_list, dtype=np.float32))
 
-        # add the index to the model
+        # Add the index to the model
         self.__indices_list.append(self.get_number_of_points() - 2)
         self.__indices_list.append(self.get_number_of_points() - 1)
         self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
@@ -179,32 +176,29 @@ class Lines(Model):
         if len(self.__point_list) / 3 > 1:
 
             # Get the data to draw the lines
-            # ------------------------------
             render_settings = self.scene.get_render_settings()
             line_width = render_settings["LINE_WIDTH"]
             polygon_line_width = render_settings["POLYGON_LINE_WIDTH"]
             active_polygon_line_width = render_settings["ACTIVE_POLYGON_LINE_WIDTH"]
 
-            # if we need to draw the border, then change the color and offset used for the ones used to draw the
-            # borders, then draw the border and finally return the values to they normal state.
-            # --------------------------------------------------------------------------------------------------
+            # If we need to draw the border, then change the color and offset used for the ones used to draw the
+            # borders, then draw the border and finally return the values to they normal state
             if self.__use_border:
-                # store the old color
+                # Store the old color
                 old_color = self.__line_color
                 old_z_offset = self.__z_offset
 
-                # change the color and width of the line to draw
+                # Change the color and width of the line to draw
                 self.__line_color = self.__border_color
                 self.__z_offset = self.__z_offset + self.__z_offset_border
                 GL.glLineWidth(active_polygon_line_width)
                 super().draw()
 
-                # return the original color
+                # Return the original color
                 self.__line_color = old_color
                 self.__z_offset = old_z_offset
 
             # Draw the lines using OpenGL
-            # ---------------------------
             GL.glLineWidth(polygon_line_width)
             super().draw()
             GL.glLineWidth(line_width)
@@ -217,7 +211,6 @@ class Lines(Model):
             value: Boolean indicating if use borders or not
 
         Returns: None
-
         """
         self.__use_border = value
 
@@ -228,9 +221,9 @@ class Lines(Model):
         Returns: None
         """
 
-        # do something only if there is at least one line
+        # Do something only if there is at least one line
         if len(self.__point_list) > 5:
-            # remove the points
+            # Remove the points
             self.__point_list.pop()
             self.__point_list.pop()
             self.__point_list.pop()
@@ -239,7 +232,7 @@ class Lines(Model):
             self.__point_list.pop()
             self.set_vertices(np.array(self.__point_list, dtype=np.float32))
 
-            # remove the indices
+            # Remove the indices
             self.__indices_list.pop()
             self.__indices_list.pop()
             self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
@@ -280,5 +273,4 @@ class Lines(Model):
 
         Returns: Color of the border
         """
-
         return self.__border_color

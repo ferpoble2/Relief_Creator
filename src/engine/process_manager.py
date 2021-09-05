@@ -27,7 +27,6 @@ All the methods called on the process must be parsed and copied to the new space
 used for the parallel process must be public (they can not be private, protected, local to a class or functions or
 lambda).
 """
-
 import queue
 from multiprocessing import Process, Queue
 

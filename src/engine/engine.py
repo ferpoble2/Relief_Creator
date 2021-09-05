@@ -109,7 +109,6 @@ class Engine:
         """
 
         # Check for the polygon and model to exist. if not, then open a modal text with a message explaining the error
-        # ------------------------------------------------------------------------------------------------------------
         if self.get_active_polygon_id() is None:
             self.set_modal_text('Error', 'Please select a polygon before adding a new vertex to it.')
             return
@@ -120,7 +119,6 @@ class Engine:
 
         # Add  the new vertex to the polygon located on the scene. In case of error, then open a modal text with a
         # message explaining the error.
-        # --------------------------------------------------------------------------------------------------------
         try:
             self.scene.add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
 
@@ -213,9 +211,6 @@ class Engine:
                 return_values[1] = min_value
 
             except SceneError as e:
-
-                # Do different logic depending on the error code that happened
-                # ------------------------------------------------------------
                 if e.code == 1:
                     self.set_modal_text('Error',
                                         'The polygon is not planar. Try using a planar polygon.')
@@ -240,7 +235,6 @@ class Engine:
                     raise e
 
         # Set the message for the loading frame and set the task to be executed behind a loading frame
-        # --------------------------------------------------------------------------------------------
         self.set_loading_message('Calculating heights...')
         self.set_task_with_loading_frame(lambda: asynchronous_task(return_data))
 
@@ -453,23 +447,22 @@ class Engine:
 
         Returns: None
         """
-
         try:
-            # select a directory to store the file.
+            # Select a directory to store the file.
             if directory_file is None:
                 directory_file = self.program.open_file_save_box_dialog(
                     'Select a directory and filename for the shapefile file.',
                     'Relief Creator',
                     'Model')
 
-            # add the .nc extension if the selected directory does not have it.
+            # Add the .nc extension if the selected directory does not have it.
             if directory_file[-3:] != '.nc':
                 directory_file += '.nc'
 
-            # ask the scene for information of the model
+            # Ask the scene for information of the model
             vertices = self.scene.get_map2dmodel_vertices_array(model_id)
 
-            # check if the temporary file exists, if it exists then store the new data on the file,
+            # Check if the temporary file exists, if it exists then store the new data on the file,
             # otherwise, show an error message.
             if self.program.check_model_temp_file_exists():
                 NetcdfExporter().modify_heights_existent_netcdf_file(vertices[:, :, 2],
@@ -479,10 +472,10 @@ class Engine:
                                              'map again.')
                 return
 
-            # export temporary file to the directory selected
+            # Export temporary file to the directory selected
             self.program.copy_model_temp_file(directory_file)
 
-            # show success window  to the user
+            # Show success window  to the user
             self.set_modal_text('Information', 'Model exported successfully')
 
         except TypeError:
@@ -547,7 +540,7 @@ class Engine:
         Returns: None
         """
 
-        # ask for the points of the polygon
+        # Ask for the points of the polygon
         points = self.scene.get_point_list_from_polygon(polygon_id)
 
         try:
@@ -560,14 +553,13 @@ class Engine:
             self.set_modal_text('Error', 'Polygon not exported.')
             return
 
-        # ask the exporter to export the list of points
+        # Ask the exporter to export the list of points
         try:
             ShapefileExporter().export_polygon_to_shapefile(points,
                                                             directory_filename,
                                                             self.scene.get_polygon_name(polygon_id),
                                                             dict(self.scene.get_polygon_params(polygon_id)))
         except ExportError as e:
-
             if e.code == 2:
                 self.set_modal_text("Error", "The polygon does not have enough points.")
                 return
@@ -633,16 +625,16 @@ class Engine:
     def get_clear_color(self) -> list:
         """
         Get the clear color used.
-        Returns:list with the clear color
 
+        Returns:list with the clear color
         """
         return Settings.CLEAR_COLOR
 
     def get_cpt_file(self) -> str:
         """
         Get the CTP file currently being used in the program
-        Returns: String with the path to the file
 
+        Returns: String with the path to the file
         """
         return self.program.get_cpt_file()
 
@@ -658,14 +650,15 @@ class Engine:
         """
         Return the number of bytes used to represent a float number in opengl.
 
-        Returns: number of bytes used to represent a float.
+        Returns: Number of bytes used to represent a float.
         """
         return Settings.FLOAT_BYTES
 
     def get_font_size(self) -> int:
         """
         Get the font size to use in the program.
-        Returns: font size
+
+        Returns: Font size used by the program.
         """
         return Settings.FONT_SIZE
 
@@ -730,8 +723,8 @@ class Engine:
     def get_gui_setting_data(self) -> dict:
         """
         Get the GUI setting data.
-        Returns: dict with the data
 
+        Returns: Dictionary with the data related to the GUI.
         """
         return {
             'LEFT_FRAME_WIDTH': Settings.LEFT_FRAME_WIDTH,
@@ -793,7 +786,6 @@ class Engine:
 
         Returns: None
         """
-
         # Terminate process external to the engine, returning the resources to the OS.
         glfw.terminate()
 
@@ -809,7 +801,7 @@ class Engine:
         """
         Get the full list of polygon ids currently being used on the program.
 
-        Returns: list of polygons in the program
+        Returns: List of polygons in the program.
         """
         return self.scene.get_polygon_id_list()
 
@@ -820,7 +812,7 @@ class Engine:
         Args:
             polygon_id: Id of the polygon
 
-        Returns: Name of the polygon
+        Returns: Name of the polygon.
         """
         return self.scene.get_polygon_name(polygon_id)
 
@@ -836,7 +828,7 @@ class Engine:
         """
         Get the quality value stored in the settings.
 
-        Returns: Quality setting
+        Returns: Quality setting.
         """
         return Settings.QUALITY
 
@@ -844,7 +836,7 @@ class Engine:
         """
         Return a dictionary with the settings related to the render.
 
-        Returns: Dictionary with the render settings
+        Returns: Dictionary with the render settings.
         """
         return {
             "LINE_WIDTH": Settings.LINE_WIDTH,
@@ -858,7 +850,8 @@ class Engine:
     def get_scene_setting_data(self) -> dict:
         """
         Get the scene setting data.
-        Returns: dict with the data
+
+        Returns: dict with the data.
         """
         return {
             'SCENE_BEGIN_X': Settings.SCENE_BEGIN_X, 'SCENE_BEGIN_Y': Settings.SCENE_BEGIN_Y,
@@ -876,7 +869,8 @@ class Engine:
     def get_window_setting_data(self) -> dict:
         """
         Get the window setting data.
-        Returns: dict with the data
+
+        Returns: dict with the data.
         """
         return {
             'HEIGHT': Settings.HEIGHT,
@@ -892,7 +886,6 @@ class Engine:
         Get the zoom level currently being used in the program.
 
         Returns: Zoom level
-
         """
         return self.program.get_zoom_level()
 
@@ -900,31 +893,29 @@ class Engine:
     def initialize(self, engine: 'Engine', program: 'Program') -> None:
         """
         Initialize the components of the program.
-        Returns: None
 
         Args:
             program: Program that runs the engine and the application.
             engine: Engine to initialize.
+
+        Returns: None
         """
         log.info('Starting Program')
         self.program = program
 
         # GLFW CODE
-        # ---------
         log.debug("Creating windows.")
         self.window = self.render.init("Relief Creator", engine)
 
-        # icon of the program
+        # Icon of the program
         program_icon = Image.open('resources/icons/program_icons/icon_program.png')
         glfw.set_window_icon(self.window, 1, [program_icon])
 
         # GUI CODE
-        # --------
         log.debug("Loading GUI")
         self.gui_manager.initialize(self.window, engine, self.gui_manager)
 
         # CONTROLLER CODE
-        # ---------------
         glfw.set_key_callback(self.window, self.controller.get_on_key_callback())
         glfw.set_window_size_callback(self.window, self.controller.get_resize_callback())
         glfw.set_mouse_button_callback(self.window, self.controller.get_mouse_button_callback())
@@ -948,7 +939,6 @@ class Engine:
 
         Returns: None
         """
-
         if model_id is None:
             self.set_modal_text('Error', 'Please load a model before interpolating points.')
             return
@@ -1297,16 +1287,15 @@ class Engine:
         """
         Run the main logic of the application.
 
-        Returns: None
-
         Args:
             n_frames: Number of frames to run in the application. None to run until window is closed.
             terminate_process: If terminate the program after the execution of the frames.
+
+        Returns: None
         """
         log.debug("Starting main loop.")
 
         # Run the app for a fixed number of frames or until the user closes
-        # -----------------------------------------------------------------
         if n_frames is not None:
             assert type(n_frames) == int and n_frames > 0
 
@@ -1328,7 +1317,6 @@ class Engine:
                 self.render.on_loop([lambda: self.scene.draw()])
 
         # Terminate the process if the app ended the process.
-        # ---------------------------------------------------
         if terminate_process:
             self.program.close()
 
@@ -1401,7 +1389,7 @@ class Engine:
         Args:
             polygon_mode: Polygon mode to use.
 
-        Returns:
+        Returns: None
         """
         self.scene.set_models_polygon_mode(polygon_mode)
 
@@ -1458,10 +1446,10 @@ class Engine:
         """
         Tell the program to set the loading state.
 
-        Returns: None
-
         Args:
             new_state: Boolean indicating the state of the program (if it is loading or not)
+
+        Returns: None
         """
         self.program.set_loading(new_state)
 
@@ -1635,7 +1623,6 @@ class Engine:
             log.debug('Undoing actions for tool create_polygon.')
 
             # Ask for the active polygon and call the scene to remove the last added point
-            # ----------------------------------------------------------------------------
             if self.get_active_polygon_id() is not None:
                 self.scene.remove_last_point_from_active_polygon()
 
@@ -1662,6 +1649,7 @@ class Engine:
     def update_scene_values(self) -> None:
         """
         Update the configuration values related to the scene.
+
         Returns: None
         """
         Settings.update_scene_values()
@@ -1669,5 +1657,7 @@ class Engine:
     def update_scene_viewport(self) -> None:
         """
         Update the scene viewport with the new values that exist in the Settings.
+
+        Returns: None
         """
         self.scene.update_viewport()

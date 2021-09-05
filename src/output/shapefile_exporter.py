@@ -85,9 +85,8 @@ class ShapefileExporter:
         processed_point_list = []
         decimal_maximum_number = 0
 
-        # Add the name to the parameters and process the data of the polygons
-        # -------------------------------------------------------------------
         for ind in range(polygon_number):
+            # Add the name to the parameters and process the data of the polygons
             if 'name' not in list_of_parameters[ind]:
                 list_of_parameters[ind]['name'] = list_of_polygon_names[ind]
 
@@ -95,16 +94,14 @@ class ShapefileExporter:
                 raise ExportError(1)
 
             # Sort the points to be counter clockwise
-            # ---------------------------------------
             points = self.__delete_z_axis(list_of_points[ind])
             if is_clockwise(points):
                 points.reverse()  # polygons must be defined CCW
 
             processed_point_list.append(points)
 
-            # Store all the keys and the type of the parameter in another dictionary.
-            # Also process the data of the parameters of the polygons.
-            # -----------------------------------------------------------------------
+            # Store all the keys and the type of the parameter in another dictionary. Also process the data of the
+            # parameters of the polygons
             for k, v in list(list_of_parameters[ind].items()):
 
                 # Save the maximum number of decimals in data of float type
@@ -117,8 +114,7 @@ class ShapefileExporter:
                     key_type_dict[k] = type(v)
 
         # Create the fields for the parameters. All the polygons will have the same parameters, even when some polygons
-        # does not define them (in that case, the polygon will have '' as a value for the parameter).
-        # -------------------------------------------------------------------------------------------------------------
+        # does not define them (in that case, the polygon will have '' as a value for the parameter)
         w = shapefile.Writer(directory)
         for k, key_data_type in list(key_type_dict.items()):
             if key_data_type == str:
@@ -134,15 +130,12 @@ class ShapefileExporter:
                 key_type_dict[k] = str
 
         for ind in range(polygon_number):
-
             # Create a dictionary with all the fields, then set the parameters that each polygon has defined
-            # ----------------------------------------------------------------------------------------------
             dict_params = {k: None for k in key_type_dict.keys()}
             for k, v in list(list_of_parameters[ind].items()):
                 dict_params[k] = key_type_dict[k](v)  # convert the value to the specified type
 
             # Save the information in the Shapefile file
-            # ------------------------------------------
             params = list(dict_params.values())
             w.record(*params)
             w.poly([processed_point_list[ind]])
@@ -180,7 +173,7 @@ class ShapefileExporter:
         if list_of_points is None:
             list_of_points = []
 
-        # add the name if there is not in the parameters
+        # Add the name if there is not in the parameters
         if 'name' not in parameters:
             parameters['name'] = polygon_name
         if len(list_of_points) < 6:  # two points
@@ -188,7 +181,7 @@ class ShapefileExporter:
 
         w = shapefile.Writer(directory)
 
-        # create the fields
+        # Create the fields
         for k, v in list(parameters.items()):
             if type(v) == str:
                 w.field(k, 'C', size=len(v))
@@ -199,8 +192,8 @@ class ShapefileExporter:
                 w.field(k, 'N')
             elif type(v) == bool:
                 w.field(k, 'L')
-            else:  # in case of unknown data type
-                w.field(k, 'C')  # convert the parameter to string
+            else:  # In case of unknown data type, convert the parameter to string
+                w.field(k, 'C')
                 parameters[k] = str(v)
 
         # Save the polygons

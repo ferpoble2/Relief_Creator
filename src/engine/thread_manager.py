@@ -47,7 +47,7 @@ class ThreadManager:
             if not thread_pair['thread'].is_alive():
                 to_delete.append(thread_pair)
 
-                # check if the return object is None or not to give it to the then task
+                # Check if the return object is None or not to give it to the then task
                 if thread_pair['return_array'][0] is not None:
                     thread_pair['then_func'](thread_pair['return_array'][0], *thread_pair['then_args'])
                 else:
