@@ -59,6 +59,34 @@ class TestArgumentParser(unittest.TestCase):
         finally:
             sys.argv = saved_argv
 
+    def test_debug_mode_default(self):
+        saved_argv = sys.argv
+
+        try:
+            sys.argv = ['./main.py', '-debug']
+
+            arguments = get_command_line_arguments()
+
+            self.assertIn('debug', arguments)
+            self.assertTrue(arguments.debug)
+
+        finally:
+            sys.argv = saved_argv
+
+    def test_debug_mode_false(self):
+        saved_argv = sys.argv
+
+        try:
+            sys.argv = ['./main.py']
+
+            arguments = get_command_line_arguments()
+
+            self.assertIn('debug', arguments)
+            self.assertFalse(arguments.debug)
+
+        finally:
+            sys.argv = saved_argv
+
 
 if __name__ == '__main__':
     unittest.main()
