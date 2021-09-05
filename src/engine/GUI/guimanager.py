@@ -535,6 +535,14 @@ class GUIManager:
             self.__engine.fix_frames(False)
             self.__engine.update_scene_viewport()
 
+    def get_3d_model_list(self) -> List[str]:
+        """
+        Get the list of all 3D models generated in the program.
+
+        Returns: List with the ID of the 3D models in the program.
+        """
+        return self.__engine.get_3d_model_list()
+
     def get_active_model_id(self) -> str:
         """
         Get the active model being used in the program
@@ -575,14 +583,6 @@ class GUIManager:
 
         """
         return self.__engine.get_cpt_file()
-
-    def get_3d_model_list(self) -> List[str]:
-        """
-        Get the list of all 3D models generated in the program.
-
-        Returns: List with the ID of the 3D models in the program.
-        """
-        return self.__engine.get_3d_model_list()
 
     def get_gui_key_callback(self) -> callable:
         """
@@ -698,6 +698,14 @@ class GUIManager:
         Returns: list with the position of the map.
         """
         return self.__engine.get_map_position()
+
+    def get_model_list(self) -> List[str]:
+        """
+        Get a list with the ID of all the 2D models loaded into the program.
+
+        Returns: List of models loaded into the program.
+        """
+        return self.__engine.get_model_list()
 
     def get_polygon_folder_id_list(self) -> list:
         """
@@ -849,17 +857,11 @@ class GUIManager:
         tools_3d = Tools3D(gui_manager)
         mouse_coordinates = MouseCoordinates(gui_manager)
 
-        # Windows only used when debugging
-        debug = Debug(gui_manager)
-        test_window = TestWindow(gui_manager)
-
         self.__component_list_2D = [
             main_menu_bar,
             mouse_coordinates,
-            # test_window,
             text_modal,
             tools,
-            # debug,
             loading,
             polygon_information,
             confirmation_modal
@@ -867,11 +869,9 @@ class GUIManager:
 
         self.__component_list_3D = [
             main_menu_bar,
-            # debug,
             loading,
             text_modal,
             confirmation_modal,
-            # test_window,
             tools_3d
         ]
 
@@ -1283,11 +1283,3 @@ class GUIManager:
         Returns: None
         """
         self.__engine.update_current_3D_model()
-
-    def get_model_list(self) -> List[str]:
-        """
-        Get a list with the ID of all the 2D models loaded into the program.
-
-        Returns: List of models loaded into the program.
-        """
-        return self.__engine.get_model_list()
