@@ -994,6 +994,14 @@ class Engine:
         """
         return self.scene.is_polygon_planar(polygon_id)
 
+    def is_program_debug_mode(self) -> bool:
+        """
+        Get if the program was initiated in debug mode or not.
+
+        Returns: Boolean indicating if the program is in debug mode or not.
+        """
+        return self.program.get_debug_mode()
+
     def is_program_loading(self) -> bool:
         """
         Return if the program is loading or not.
