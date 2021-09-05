@@ -1290,6 +1290,10 @@ class Engine:
         Run the main logic of the application.
 
         Returns: None
+
+        Args:
+            n_frames: Number of frames to run in the application. None to run until window is closed.
+            terminate_process: If terminate the program after the execution of the frames.
         """
         log.debug("Starting main loop.")
 
