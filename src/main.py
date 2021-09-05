@@ -25,8 +25,14 @@ from src.program.parser import get_command_line_arguments
 from src.program.program import Program
 
 if __name__ == '__main__':
-    engine = Engine()
-    program = Program(engine)
+    # Get the arguments to use for the program.
+    command_line_args = get_command_line_arguments()
+    debug_mode = command_line_args.debug if 'debug' in command_line_args else False
 
-    program.process_arguments(get_command_line_arguments())
+    # Create the program
+    engine = Engine()
+    program = Program(engine, debug_mode=debug_mode)
+
+    # Start the program
+    program.process_arguments(command_line_args)
     program.run()
