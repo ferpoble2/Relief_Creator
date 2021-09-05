@@ -875,6 +875,13 @@ class GUIManager:
             tools_3d
         ]
 
+        if self.__engine.is_program_debug_mode():
+            debug = Debug(gui_manager)
+            test_window = TestWindow(gui_manager)
+
+            self.__component_list_2D += [debug, test_window]
+            self.__component_list_3D += [debug, test_window]
+
     def interpolate_points(self, polygon_id: str, model_id: str, distance: float, type_interpolation: str) -> None:
         """
         Call the engine to interpolate the points using the specified polygons and the specified distance.
