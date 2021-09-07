@@ -1,15 +1,12 @@
 # Relief Creator
 
-Simple application to modify terrain using polygons and functions over the points of the terrain.
+Simple application to modify paleogeographic maps (NetCDF files) using polygons.
 
 # Context of the application
 
-This project is development as a thesis project for the Computer Science department of the University of Chile and
-consist on a program that is able to modify the height of geographical data using interactive controls to draw polygons
-in the screen.
+This project is developed as a thesis project for the Computer Science department of the University of Chile and consist of a program that can modify the height of geographical data using interactive controls to draw polygons on the screen.
 
-It is developed with the goal of making easier to modify the height of maps, without the necessity of using software or
-tools not developed for that purpose.
+The goal of the project is to make easier to modify the height of maps, without the necessity of using software or tools not developed for that purpose.
 
 # Usage
 
@@ -17,7 +14,7 @@ tools not developed for that purpose.
 
 ### Shortcuts
 
-This is a list of shortcuts implemented in the program to make the usage of it more fast.
+This is a list of shortcuts implemented in the program to make the usage of it faster.
 
 - CTRL + O: Load a netcdf file on the program.
 - CTRL + T: Loaf a ctp file on the program.
@@ -76,11 +73,11 @@ In the settings tab of the program there is a menu that allows the import of pre
 
 To build the executable, the program needs the absolute path of the files that it will be using, and thus, before running the program, it is necessary to replace all the paths that contains `<project_directory>` with the absolute path where the project is located.
 
-After configurating the program,  pressing the button at the end of the program will start the process to generate an executable.
+After configurating the program, pressing the button at the end of the program will start the process to generate an executable.
 
 The program will be generated in the `output` folder under the name of ReliefeCreator.
 
-NOTE: After the configuration of the program, at the end of all the options, there will be a text-box with a commnd, this command can be used to generate the executable from a terminal without using the program.
+NOTE: After the configuration of the program, at the end of all the options, there will be a textbox with a command, this command can be used to generate the executable from a terminal without using the program.
 
 ## Using the console
 
@@ -92,7 +89,7 @@ pyinstaller --noconfirm --onedir --console --icon "<project_directory>/resources
 
 Make sure to change all strings that contains `<project_directory>` with the absolute path of the directory in which the project  is stored.
 
-# How to change the icon
+# How to change the icon of the application
 
 ## Window icon
 
@@ -116,7 +113,7 @@ Please consider that all the application icons must be in format `ICO`.
 
 # How to run tests
 
-The project include inside the folder `test` different types of tests that check the functionality of the program. These tests were written using the unit tests library of the Python language.
+The project includes inside the folder `test` different types of tests that check the functionality of the program. These tests were written using the unit tests library of the Python language.
 
 To run the tests, add the root directory of the project to the PYTHONPATH variable and then execute the following command inside the root folder of the project:
 
@@ -139,11 +136,11 @@ There is a number of tools that form part of the engine, they are stored as stri
 
 Only one tool can be active at a given time.
 
-Note: The name from above is not showed in the tools frame of the program but is the one used by the program. The list of all tools is defined inside the program module.
+Note: The name from above is not showed in the tools frame of the program but is the one used by the program internally. The list of all tools is defined inside the program module.
 
 # Filters
 
-There is a number of filters that can be applied to the transformations before modifying the points of the loaded models, they are given to the Scene methods as a list of pairs (ID, Parameters). Here is the list of all filters implemented currently in the program:
+There is several filters that can be applied to the transformations before modifying the points of the loaded models, they are given to the Scene methods as a list of pairs (ID, Parameters). Here is the list of all filters implemented currently in the program:
 
 |         ID          |     Parameters      |                         Description                          |
 | :-----------------: | :-----------------: | :----------------------------------------------------------: |
@@ -152,11 +149,11 @@ There is a number of filters that can be applied to the transformations before m
 |        is_in        | string (polygon id) | Filter all the points that are inside the specified polygon. |
 |      is_not_in      | string (polygon id) | Filter all the points that are not in the specified polygon (are outside the polygon). |
 
-These filters are passed to the Scene class at the time of the interpolation. The Scene is in charge of getting the necessary data to apply the filters correctly on the transformations.
+These filters are passed to the Scene class at the time of the interpolation. The Scene oversees getting the necessary data to apply the filters correctly on the transformations.
 
 Note: The list of all filters is defined in the scene module.
 
-# How to extend the program
+# How to extend the program with new functionality
 
 ## How to create new frames on the application
 
@@ -186,11 +183,11 @@ The Frame class also define the method post-render, method that is called at the
 
 ## How to get the data of the different components of the application
 
-The GUIManager, and all the components of the application, get the data from the Engine component. To keep the program organized, all frames must get the data that they need from the GUIManager class, and is the GUIManager the one that should ask the information to the Engine component.
+The GUIManager, and all the components of the application, get the data from the Engine component. To keep the program organized, all frames must get the data that they need from the GUIManager class. The GUIManager is the one that should ask the information to the Engine component.
 
 The engine, as the center of the program, can get the data from all the other components by calling the methods that they have defined.
 
-Most of the data can be obtained using the already defined methods on the engine, but if you want to update the program with new functionality, then you have to define the method to get the data in the respective component, and then have the engine call that method to get the data. This way the components remain organized while still being efficient.
+Most of the data can be obtained using the already defined methods on the engine, but if you want to update the program with new functionality, then you must define the method to get the data in the respective component, and then have the engine call that method to get the data. This way the components remain organized while still being efficient.
 
 To see a diagram with all the components of the program, see the diagram generated by PlantUML located at `docs/objects/main_objects.puml`.
 
@@ -204,8 +201,8 @@ The components and the type of functionality expected in their interior are defi
 + GUI: Functionality related to the UI of the program.
 + Render: Functionality related to the rendering process and the main cycle of the program.
 + Controller: Functionality related to the keyboard/mouse input and how the program must answer to the events.
-+ Program: Functionality related to the state of the program in a given moment.
-+ Engine: Functionality related to the communication of different components of the program. Functionality related to how the program must answer possible errors that happens. Functionality related to the threads and execution of tasks.
++ Program: Functionality related to the state of the program in each moment.
++ Engine: Functionality related to the communication of different components of the program, how the program must answer possible errors that happens and related to the threads and execution of tasks.
 + Output: Functionality related to the generation of output files.
 + Input: Functionality related to reading of input files.
 
@@ -222,13 +219,13 @@ The second point is related to the first and is to keep the error handling proce
 
 ## Example
 
-So, for example, if there is the need to add a new functionality to apply a filter to the full map when the  user press a button, then the following steps should be done to add that functionality to the program:
+So, for example, if there is the need to add a new functionality to apply a filter to the full map when the  user presses a button, then the following steps should be done to add that functionality to the program:
 
 1. Locate in which component the functionality should be added (in this case, it must be added on the Scene component, in the Scene class and the TransformationHelper class).
 
-2. Implement the functionality in the given component, either modifying and existent class or creating a new one, and add a method that allows to use the functionality to the class that is connected to the engine (in this case, add a method to execute the logic in the Scene class).
+2. Implement the functionality in the given component, either modifying an existent class or creating a new one, and add a method that allows to use the functionality to the class that is connected to the engine (in this case, add a method to execute the logic in the Scene class).
 
-3. Implement a new method to the engine class where the new functionality is called and all the possible errors are handled.
+3. Implement a new method in the engine class where the new functionality is called and all the possible errors are handled.
 
    This should be the end of a normal process, in the current example we still need to add a button to connect the functionality implemented to the GUI.
 
@@ -291,7 +288,7 @@ the debugging process become easier.
 The loggers generated logs to the standard output (console) but also store the logs in files in the `src/logs/` folder.
 In this folder each module logs to a specific file.
 
-In the file `src/utils.py` are defined the following variables that modify the behaviour of the loggers:
+In the file `src/utils.py` are defined the following variables that modify the behavior of the loggers:
 
 - LOG_TO_FILE: If logging or not to a file
 - LOG_TO_CONSOLE: If logging or not to the console
@@ -302,60 +299,41 @@ In the file `src/utils.py` are defined the following variables that modify the b
 
 # About the parallel tasks on the engine
 
-The engine has implemented two main pipelines to delegate tasks to some time in the future, tasks and parallel tasks.
+The engine has implemented two main pipelines to delegate tasks to sometime in the future, tasks and parallel tasks.
 
 ## Tasks
 
-Tasks are code that will be executed after some number of frames have passed, this is, the code executed will be delayed
-some number of frames.
+Tasks are code that will be executed after some numbers of frames have passed, this is, the code executed will be delayed some number of frames.
 
-The `engine`, at the beginning of each frame, checks if there is pending tasks to execute, if there is, then checks 
-if the frame count of them is Zero, if it is, then the engine execute the code, if not, then the engine subtract 1 from
-the frame count.
+The `engine`, at the beginning of each frame, checks if there is pending tasks to execute, if there is, then checks if the frame count of them is Zero, if it is, then the engine executes the code, if not, then the engine subtracts 1 from the frame count.
 
 The only way to add tasks to the queue is with the method `set_task_for_next_frame` of the class `engine`.  This method 
-receive the function to be executed after the next frame. The function will be called without any arguments.
+receives the function to be executed after the next frame. The function will be called without any arguments.
 
 ## Parallel tasks
 
-Parallel tasks are code that will be executed in parallel along with the main pipeline of the engine, this is, will be 
-executed while the engine do the rendering of the application.
+Parallel tasks are code that will be executed in parallel along with the main pipeline of the engine, this is, will be executed while the engine does the rendering of the application.
 
-These tasks are executed in parallel using threads, and since threads share the memory and variables, it is recommended
-to not do anything else when a thread is running something. (this can be achieved setting a load screen on the program
+These tasks are executed in parallel using threads, and since threads share the memory and variables, it is recommended to not do anything else when a thread is running something. (this can be achieved setting a load screen on the program
 using the method `set_loading(True)` of the class `Program`).
 
-To set a parallel task on the engine it is necessary to use the method `set_thread_task`, the first parameter of the 
-method ( `parallel_task` ) is the function to execute in parallel and the second parameter ( `then` ) is a function that will be executed after
-the thread finish its execution. This last function will be executed in the main thread.
+To set a parallel task on the engine it is necessary to use the method `set_thread_task`, the first parameter of the  method ( `parallel_task` ) is the function to execute in parallel and the second parameter ( `then` ) is a function that will be executed after the thread finish its execution. This last function will be executed in the main thread.
 
-To achieve this, when a parallel task is settled, the engine stores the thread in a internal variable, and, in each frame,
-the engine ask the thread if it finished its execution, if it finished, then the engine execute the function given as
-second parameter, if not, then the engine does nothing.
+To achieve this, when a parallel task is settled, the engine stores the thread in a internal variable, and, in each frame, the engine ask the thread if it finished its execution, if it finished, then the engine execute the function given as second parameter, if not, then the engine does nothing.
 
-The parameters of the method `set_thread_task` are called `parallel_task` and `then`, they are called that way to 
-emulate how threads work in the language Javascript. This implementation of parallel tasks is a bit difficult to work
-with, but give a lot of benefits, first, it is possible to execute code after the threads ends, not having to implement
-on every thread a mechanism to check if the thread ended, second, it is possible to set new thread from either inside
-the parallel task, or the code that executes after the parallel task, making it easy to call more than one thread or 
-to make a pipeline parallel to the main pipeline.
+The parameters of the method `set_thread_task` are called `parallel_task` and `then`, they are called that way to  emulate how threads work in the language Javascript. This implementation of parallel tasks is a bit difficult to work with, but give a lot of benefits, first, it is possible to execute code after the threads ends, not having to implement on every thread a mechanism to check if the thread ended, second, it is possible to set new thread from either inside the parallel task, or the code that executes after the parallel task, making it easy to call more than one thread or  to make a pipeline parallel to the main pipeline.
 
 ### Precautions
 
-The only problem with the parallel tasks is that code related to OpenGL, due to problems of implementation of OpenGL, 
-can not be executed in parallel (the context of OpenGL only lives in the main thread). And due to this, all the calls
+The only problem with the parallel tasks is that code related to OpenGL, due to problems of implementation of OpenGL,  cannot be executed in parallel (the context of OpenGL only lives in the main thread). And due to this, all the calls
 to OpenGL must be executed either on the main thread directly, or in a function `then`.
 
-When programming a new thread task, be aware that the function or method must receive a function (preferably in a 
-parameter called `then`) and must execute that function at the end of the parallel routine. This because usually the
-thread tasks tend to "accumulate" (callback hell), so if in one of those calls the `then` function is not called it
-makes all the pipeline fail.
+When programming a new thread task, be aware that the function or method must receive a function (preferably in a  parameter called `then`) and must execute that function at the end of the parallel routine. This because usually the thread tasks tend to "accumulate" (callback hell), so if in one of those calls the `then` function is not called it makes all the pipelines fail.
 
 # Code Guidelines
 
-- Identation must be of four spaces.
+- Indentation must be of four spaces.
 - Docstring must follow the google docstring format.
 - Lines must be shorter or equal than 100 characters when possible.
 - All files, clases, methods and functions must be documented.
-- When possible, files should contain a small program inside the block `if __name__ == __main__` with an example of the methods and definition in the file.
-- Method and function definitions must have the type of the parameters and the output using `typing` from python.
+- Method and function definitions must have the type of the parameters and the output documented using type hints.
