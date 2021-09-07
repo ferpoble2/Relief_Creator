@@ -21,6 +21,7 @@ File with tests related to the Program class of the application.
 import os
 import sys
 import unittest
+import warnings
 
 from src.engine.engine import Engine
 from src.program.parser import get_command_line_arguments
@@ -35,7 +36,7 @@ class TestZoomParameters(unittest.TestCase):
         """
         # create program
         self.engine = Engine()
-        self.program = Program(self.engine)
+        self.program = Program(self.engine, initialize_engine=False)
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -86,7 +87,7 @@ class TestViewModeParameters(unittest.TestCase):
         """
         # create program
         self.engine = Engine()
-        self.program = Program(self.engine)
+        self.program = Program(self.engine, initialize_engine=False)
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -119,7 +120,7 @@ class TestMapPositionParameters(unittest.TestCase):
         """
         # create program
         self.engine = Engine()
-        self.program = Program(self.engine)
+        self.program = Program(self.engine, initialize_engine=False)
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -149,7 +150,7 @@ class TestActiveToolParameters(unittest.TestCase):
         """
         # create program
         self.engine = Engine()
-        self.program = Program(self.engine)
+        self.program = Program(self.engine, initialize_engine=False)
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -186,7 +187,7 @@ class TestLoadingParameters(unittest.TestCase):
         """
         # create program
         self.engine = Engine()
-        self.program = Program(self.engine)
+        self.program = Program(self.engine, initialize_engine=False)
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -217,7 +218,7 @@ class TestCPTFilesParameters(unittest.TestCase):
         """
         # create program
         self.engine = Engine()
-        self.program = Program(self.engine)
+        self.program = Program(self.engine, initialize_engine=False)
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -244,7 +245,7 @@ class TestDebugMode(unittest.TestCase):
 
     def test_debug_mode_default_value(self):
         engine = Engine()
-        program = Program(engine)
+        program = Program(engine, initialize_engine=False)
 
         self.assertFalse(program.get_debug_mode())
 
@@ -252,7 +253,7 @@ class TestDebugMode(unittest.TestCase):
 
     def test_debug_mode_false(self):
         engine = Engine()
-        program = Program(engine, debug_mode=True)
+        program = Program(engine, debug_mode=True, initialize_engine=False)
 
         self.assertTrue(program.get_debug_mode())
 
@@ -262,6 +263,8 @@ class TestDebugMode(unittest.TestCase):
 class TestParser(unittest.TestCase):
 
     def test_parser_model(self):
+        warnings.simplefilter('ignore', ResourceWarning)
+
         engine = Engine()
         program = Program(engine)
 
