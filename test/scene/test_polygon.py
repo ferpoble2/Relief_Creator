@@ -139,7 +139,40 @@ class TestPlanarity(unittest.TestCase):
         self.engine.add_new_vertex_to_active_polygon_using_real_coords(2, -0.5)
         self.assertFalse(self.engine.is_polygon_planar(pol_not_planar))
 
-        self.program.remove_temp_files()
+        self.program.close()
+
+
+class TestUndoAction(unittest.TestCase):
+
+    def test_undo_point_added(self):
+        warnings.simplefilter("ignore", ResourceWarning)
+
+        engine = Engine()
+        program = Program(engine)
+
+        engine.should_use_threads(False)
+        engine.load_netcdf_file(
+            'resources/test_resources/cpt/colors_0_100_200.cpt',
+            'resources/test_resources/netcdf/test_file_1.nc'
+        )
+
+        pol_id = engine.create_new_polygon()
+
+        engine.set_active_polygon(pol_id)
+        engine.add_new_vertex_to_active_polygon_using_real_coords(50, 50)
+        engine.add_new_vertex_to_active_polygon_using_real_coords(60, 60)
+
+        self.assertEqual([50, 50, 0.5, 60, 60, 0.5],
+                         engine.get_points_from_polygon(pol_id),
+                         'Polygon does not store points coordinates correctly.')
+
+        program.set_active_tool('create_polygon')
+        engine.undo_action()
+        self.assertEqual([50, 50, 0.5],
+                         engine.get_points_from_polygon(pol_id),
+                         'Last point of the polygon was not removed correctly.')
+
+        program.close()
 
 
 if __name__ == '__main__':
