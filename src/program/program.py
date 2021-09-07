@@ -42,7 +42,10 @@ class Program:
     """
 
     # noinspection PyUnresolvedReferences
-    def __init__(self, engine: 'Engine', debug_mode: bool = False):
+    def __init__(self,
+                 engine: 'Engine',
+                 debug_mode: bool = False,
+                 initialize_engine: bool = True):
         """
         Constructor of the class.
 
@@ -79,7 +82,8 @@ class Program:
 
         # Do the logic of the initialization
         # ----------------------------------
-        self.__engine.initialize(self.__engine, self)
+        if initialize_engine:
+            self.__engine.initialize(self.__engine, self)
 
     def add_zoom(self) -> None:
         """
