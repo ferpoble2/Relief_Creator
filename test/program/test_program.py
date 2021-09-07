@@ -19,9 +19,11 @@
 File with tests related to the Program class of the application.
 """
 import os
+import sys
 import unittest
 
 from src.engine.engine import Engine
+from src.program.parser import get_command_line_arguments
 from src.program.program import Program
 
 
@@ -255,6 +257,29 @@ class TestDebugMode(unittest.TestCase):
         self.assertTrue(program.get_debug_mode())
 
         program.close()
+
+
+class TestParser(unittest.TestCase):
+
+    def test_parser_model(self):
+        engine = Engine()
+        program = Program(engine)
+
+        engine.should_use_threads(False)
+
+        saved_argv = sys.argv
+
+        try:
+            sys.argv = ['./main.py', '-model', 'resources/sample_netcdf/ETOPO_IceSurfacec_6m.nc']
+            arguments = get_command_line_arguments()
+
+            self.assertIsNone(program.get_active_model())
+
+            program.process_arguments(arguments)
+            self.assertIsNotNone(program.get_active_model())
+
+        finally:
+            sys.argv = saved_argv
 
 
 if __name__ == '__main__':
