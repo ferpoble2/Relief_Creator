@@ -82,6 +82,8 @@ class Program:
 
         # Do the logic of the initialization
         # ----------------------------------
+        self.__engine.program = self
+
         if initialize_engine:
             self.__engine.initialize(self.__engine, self)
 
