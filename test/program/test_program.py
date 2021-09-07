@@ -281,6 +281,8 @@ class TestParser(unittest.TestCase):
         finally:
             sys.argv = saved_argv
 
+        program.close()
+
 
 if __name__ == '__main__':
     unittest.main()
