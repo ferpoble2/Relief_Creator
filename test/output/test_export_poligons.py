@@ -62,10 +62,10 @@ class TestExportPolygons(unittest.TestCase):
 
         # add points
         self.engine.set_active_polygon(pol)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 1)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 1)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 1)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(1, 1)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(1, 0)
 
         # export
         self.engine.export_polygon_with_id(pol, 'resources/test_resources/temp/test_shapefile_export')
@@ -99,10 +99,10 @@ class TestExportPolygons(unittest.TestCase):
         self.engine.set_new_parameter_to_polygon(pol, '6', False)
         self.engine.set_new_parameter_to_polygon(pol, '7', None)
 
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(2, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(3, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(1, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(2, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(3, 0)
 
         # export
         self.engine.export_polygon_with_id(pol, 'resources/test_resources/temp/'
@@ -134,10 +134,10 @@ class TestExportPolygons(unittest.TestCase):
         self.engine.set_new_parameter_to_polygon(pol, 'notcutted', 'some_string')
         self.engine.set_new_parameter_to_polygon(pol, 'thisnameshouldbecuttedsomewhere', 'A very interesting string')
 
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 60)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 60)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(2, 60)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(3, 60)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 60)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(1, 60)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(2, 60)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(3, 60)
 
         # export
         self.engine.export_polygon_with_id(pol, 'resources/test_resources/temp/'
@@ -172,27 +172,27 @@ class TestExportPolygons(unittest.TestCase):
 
         # add points to the polygons
         self.engine.set_active_polygon(pol_1)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 1)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 2)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 3)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 4)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 5)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 1)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 2)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 3)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 4)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 5)
 
         self.engine.set_active_polygon(pol_2)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(2, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(3, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(4, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(5, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(1, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(2, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(3, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(4, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(5, 0)
 
         self.engine.set_active_polygon(pol_3)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 1)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(2, 2)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(2, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 0.1)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(1, 1)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(2, 2)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(2, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(1, 0.1)
         self.engine.set_new_parameter_to_polygon(pol_3, 'float_val', 15.567)
         self.engine.set_new_parameter_to_polygon(pol_3, 'bool_val', True)
         self.engine.set_new_parameter_to_polygon(pol_3, 'other_val', None)

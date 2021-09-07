@@ -75,7 +75,7 @@ class Engine:
         self.__thread_manager = ThreadManager()
         self.__task_manager = TaskManager()
 
-    def add_new_vertex_to_activate_polygon_using_real_coords(self, position_x: float, position_y: float) -> None:
+    def add_new_vertex_to_active_polygon_using_real_coords(self, position_x: float, position_y: float) -> None:
         """
         Add a new point to the polygon using map coordinates.
 

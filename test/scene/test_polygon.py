@@ -58,22 +58,22 @@ class TestAddPoints(unittest.TestCase):
         self.assertEqual(self.engine.get_points_from_polygon(pol_1),
                          [])
 
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 0)
         self.assertEqual(self.engine.get_points_from_polygon(pol_1),
                          [0, 0, 0.5])
 
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 1)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 1)
         self.assertEqual(self.engine.get_points_from_polygon(pol_1),
                          [0, 0, 0.5,
                           0, 1, 0.5])
 
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 2)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 2)
         self.assertEqual(self.engine.get_points_from_polygon(pol_1),
                          [0, 0, 0.5,
                           0, 1, 0.5,
                           0, 2, 0.5])
 
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 3)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 3)
         self.assertEqual(self.engine.get_points_from_polygon(pol_1),
                          [0, 0, 0.5,
                           0, 1, 0.5,
@@ -85,10 +85,10 @@ class TestAddPoints(unittest.TestCase):
 
         pol = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 0)
 
         self.assertEqual(self.engine.get_points_from_polygon(pol),
                          [0, 0, 0.5])
@@ -98,10 +98,10 @@ class TestAddPoints(unittest.TestCase):
 
         pol = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0.5, 0.5)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0.5, -0.5)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(1, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0.5, 0.5)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0.5, -0.5)
 
         self.assertEqual([0, 0, 0.5, 1, 0, 0.5, 0.5, 0.5, 0.5],
                          self.engine.get_points_from_polygon(pol))
@@ -123,20 +123,20 @@ class TestPlanarity(unittest.TestCase):
 
         pol_planar = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol_planar)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(2, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(2, 1)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 1)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 1)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(1, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(2, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(2, 1)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(1, 1)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 1)
         self.assertTrue(self.engine.is_polygon_planar(pol_planar))
 
         pol_not_planar = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol_not_planar)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(0, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, 0)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(1, -1)
-        self.engine.add_new_vertex_to_activate_polygon_using_real_coords(2, -0.5)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(1, 0)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(1, -1)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(2, -0.5)
         self.assertFalse(self.engine.is_polygon_planar(pol_not_planar))
 
         self.program.remove_temp_files()
