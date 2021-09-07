@@ -1172,7 +1172,8 @@ class GUIManager:
                 frame.set_loading_message(new_msg)
                 return
 
-        raise AssertionError('There is not a frame from the Loading class to set a loading message.')
+        raise AssertionError('There is not a frame from the Loading class on the list of frames '
+                             'handled by the GUIManager.')
 
     def set_modal_text(self, modal_title: str, msg: str) -> None:
         """
