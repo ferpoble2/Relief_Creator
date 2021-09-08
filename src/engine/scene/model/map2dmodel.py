@@ -54,7 +54,7 @@ class Map2DModel(MapModel):
 
     """
 
-    def __init__(self, scene=None):
+    def __init__(self, scene=None, filename: Union[str, None] = None):
         """
         Constructor of the model class.
         """
@@ -96,6 +96,7 @@ class Map2DModel(MapModel):
         # utilities variables
         self.__triangles_to_delete = np.array([])  # triangles overlapped to delete when optimizing memory
         self.__new_indices = None  # new indices of triangles calculated using parallelism
+        self.__filename = filename  # file from which the model was loaded. None if there is no file associated
 
     def __add_triangles_inside_zone_to_delete_list(self,
                                                    left_coordinate: float,
