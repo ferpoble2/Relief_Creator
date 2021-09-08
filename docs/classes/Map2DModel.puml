@@ -18,6 +18,7 @@
                     - __bottom_coordinate: int
                     - __triangles_to_delete: list
                     - __new_indices: list
+                    - __filename: str
                     + hbo : int
 
 
