@@ -40,6 +40,7 @@
                     + get_height_on_coordinates(x_coordinate, y_coordinate): float
                     + get_showed_limits(): dict
                     + get_vertices_shape(): tuple
+                    + get_filename(): str
                     + move(x_movement, y_movement)
                     + optimize_gpu_memory_async(then)
                     + recalculate_vertices_from_grid_async(quality, then)
