@@ -262,19 +262,6 @@ class Engine:
         """
         self.scene.change_map_unit_3D_model(model_id, measure_unit)
 
-    def change_polygon_draw_order(self, polygon_id: str, new_position: int) -> None:
-        """
-        Ask the scene to change the order in which the polygons are draw.
-
-        Args:
-            polygon_id: Polygon to change the order.
-            new_position: New position in the order of drawing. If value is negative, then the polygon will be changed
-                          to be draw the last.
-
-        Returns: None
-        """
-        return self.scene.change_polygon_draw_order(polygon_id, new_position)
-
     def change_camera_elevation(self, angle) -> None:
         """
         Ask the scene to change the camera elevation.
@@ -365,6 +352,19 @@ class Engine:
         """
         Settings.HEIGHT = height
 
+    def change_polygon_draw_order(self, polygon_id: str, new_position: int) -> None:
+        """
+        Ask the scene to change the order in which the polygons are draw.
+
+        Args:
+            polygon_id: Polygon to change the order.
+            new_position: New position in the order of drawing. If value is negative, then the polygon will be changed
+                          to be draw the last.
+
+        Returns: None
+        """
+        return self.scene.change_polygon_draw_order(polygon_id, new_position)
+
     def change_quality(self, quality: int) -> None:
         """
         Change the quality used to render the maps.
@@ -417,6 +417,16 @@ class Engine:
         """
         self.scene.delete_polygon_by_id(polygon_id)
 
+    def disable_only_gui_keyboard_callback(self) -> None:
+        """
+        Enable the glfw callback defined in the controller.
+
+        The GUI callback is not affected.
+
+        Returns: None
+        """
+        self.controller.enable_only_gui_keyboard_callback()
+
     def enable_only_gui_keyboard_callback(self) -> None:
         """
         Disable the glfw callback defined in the controller.
@@ -427,15 +437,18 @@ class Engine:
         """
         self.controller.disable_only_gui_keyboard_callback()
 
-    def disable_only_gui_keyboard_callback(self) -> None:
+    def exit(self):
         """
-        Enable the glfw callback defined in the controller.
+        Terminate the process in charge of rendering the windows and the scene, closing the windows and returning the
+        resources to the OS.
 
-        The GUI callback is not affected.
+        This method do not close the program, just exit the process executed by the engine, to close the program
+        completely call the method close() from the Program class.
 
         Returns: None
         """
-        self.controller.enable_only_gui_keyboard_callback()
+        # Terminate process external to the engine, returning the resources to the OS.
+        glfw.terminate()
 
     def export_model_as_netcdf(self, model_id: str, directory_file: str = None) -> None:
         """
@@ -578,6 +591,14 @@ class Engine:
         """
         Settings.fix_frames(fix)
 
+    def get_3d_model_list(self) -> List[str]:
+        """
+        Get the list of all 3D models generated in the program.
+
+        Returns: List with the ID of the 3D models in the program.
+        """
+        return self.scene.get_3d_model_list()
+
     def get_active_model_id(self) -> str:
         """
         Returns the active model being used by the program.
@@ -678,48 +699,6 @@ class Engine:
         """
         return self.gui_manager.get_gui_mouse_scroll_callback()
 
-    def get_map_height_on_coordinates(self, x_coordinate: float, y_coordinate: float) -> float:
-        """
-        Get the height of the current active map on the specified coordinates.
-
-        If there is no map loaded or the coordinates are outside of the map, then None is returned.
-
-        Args:
-            x_coordinate: x-axis coordinate.
-            y_coordinate: y-axis coordinate.
-
-        Returns: Height of the active model on the specified location.
-        """
-        return self.scene.get_active_model_height_on_coordinates(x_coordinate, y_coordinate)
-
-    def get_3d_model_list(self) -> List[str]:
-        """
-        Get the list of all 3D models generated in the program.
-
-        Returns: List with the ID of the 3D models in the program.
-        """
-        return self.scene.get_3d_model_list()
-
-    def get_map_coordinates_from_window_coordinates(self, x_coordinate: int, y_coordinate: int) -> (float, float):
-        """
-        Get the position of a point in the map given in screen coordinates.
-
-        Screen coordinates have the origin of the system at the top-left of the window, being the x-axis positive to
-        the right and the y-axis positive to the bottom.
-
-        The returned tuple is the real coordinates (coordinates used in the map) of the point specified in screen
-        coordinates.
-
-        If there is no map loaded on the program, then (None, None) is returned.
-
-        Args:
-            x_coordinate: x-axis component of the screen coordinate to evaluate on the map.
-            y_coordinate: y-axis component of the screen coordinate to evaluate on the map.
-
-        Returns: (x, y) tuple with the coordinates of the point on the map.
-        """
-        return self.scene.calculate_map_position_from_window(x_coordinate, y_coordinate)
-
     def get_gui_setting_data(self) -> dict:
         """
         Get the GUI setting data.
@@ -746,6 +725,40 @@ class Engine:
         except KeyError:
             return -1
 
+    def get_map_coordinates_from_window_coordinates(self, x_coordinate: int, y_coordinate: int) -> (float, float):
+        """
+        Get the position of a point in the map given in screen coordinates.
+
+        Screen coordinates have the origin of the system at the top-left of the window, being the x-axis positive to
+        the right and the y-axis positive to the bottom.
+
+        The returned tuple is the real coordinates (coordinates used in the map) of the point specified in screen
+        coordinates.
+
+        If there is no map loaded on the program, then (None, None) is returned.
+
+        Args:
+            x_coordinate: x-axis component of the screen coordinate to evaluate on the map.
+            y_coordinate: y-axis component of the screen coordinate to evaluate on the map.
+
+        Returns: (x, y) tuple with the coordinates of the point on the map.
+        """
+        return self.scene.calculate_map_position_from_window(x_coordinate, y_coordinate)
+
+    def get_map_height_on_coordinates(self, x_coordinate: float, y_coordinate: float) -> float:
+        """
+        Get the height of the current active map on the specified coordinates.
+
+        If there is no map loaded or the coordinates are outside of the map, then None is returned.
+
+        Args:
+            x_coordinate: x-axis coordinate.
+            y_coordinate: y-axis coordinate.
+
+        Returns: Height of the active model on the specified location.
+        """
+        return self.scene.get_active_model_height_on_coordinates(x_coordinate, y_coordinate)
+
     def get_map_position(self) -> list:
         """
         Get the map position on the program.
@@ -753,6 +766,14 @@ class Engine:
         Returns: List with the position of the map.
         """
         return self.program.get_map_position()
+
+    def get_model_list(self) -> List[str]:
+        """
+        Get a list with the id of all the 2D models loaded into the program.
+
+        Returns: List of models loaded into the program.
+        """
+        return self.scene.get_model_list()
 
     def get_parameters_from_polygon(self, polygon_id: str) -> list:
         """
@@ -775,27 +796,6 @@ class Engine:
         Returns: List with the points of the polygon.
         """
         return self.scene.get_polygon_points(polygon_id)
-
-    def exit(self):
-        """
-        Terminate the process in charge of rendering the windows and the scene, closing the windows and returning the
-        resources to the OS.
-
-        This method do not close the program, just exit the process executed by the engine, to close the program
-        completely call the method close() from the Program class.
-
-        Returns: None
-        """
-        # Terminate process external to the engine, returning the resources to the OS.
-        glfw.terminate()
-
-    def get_model_list(self) -> List[str]:
-        """
-        Get a list with the id of all the 2D models loaded into the program.
-
-        Returns: List of models loaded into the program.
-        """
-        return self.scene.get_model_list()
 
     def get_polygon_id_list(self) -> list:
         """
