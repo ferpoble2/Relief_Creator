@@ -667,6 +667,17 @@ class Engine:
         """
         return Settings.EXTRA_RELOAD_PROPORTION
 
+    def get_model_information(self, model_id: str) -> dict:
+        """
+        Get the information of a model in a dictionary.
+
+        Args:
+            model_id: ID of the model on the program.
+
+        Returns: Information of the model
+        """
+        return self.scene.get_model_information(model_id)
+
     def get_float_bytes(self) -> int:
         """
         Return the number of bytes used to represent a float number in opengl.
