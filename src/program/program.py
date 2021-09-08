@@ -70,9 +70,9 @@ class Program:
 
         # State variables
         # -----------------------
-        self.__active_model: str | None = None
-        self.__active_tool: str | None = None
-        self.__active_polygon: str | None = None
+        self.__active_model: Union[str, None] = None
+        self.__active_tool: Union[str, None] = None
+        self.__active_polygon: Union[str, None] = None
 
         self.__view_mode: str = '2D'
 
