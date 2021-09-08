@@ -1242,7 +1242,7 @@ class Scene:
         X, Y, Z = self.__engine.read_netcdf_info(path_model)
 
         log.debug("Generating model")
-        model = Map2DModel(self)
+        model = Map2DModel(self, filename=path_model)
 
         # noinspection PyMissingOrEmptyDocstring
         def then_routine():
