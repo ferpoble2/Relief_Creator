@@ -905,6 +905,39 @@ class Scene:
         """
         return list(self.__model_hash.keys())
 
+    def get_model_information(self, model_id: str) -> dict:
+        """
+        Get the information related to a model on the program.
+
+        The dictionary generated has the following shape:
+        {
+            'height_array': Numpy array
+            'coordinates_array': (Numpy array, Numpy array),
+            'projection_matrix': Numpy array,
+            'showed_limits': {
+                'left': Number,
+                'right': Number,
+                'top': Number,
+                'bottom': Number
+            },
+            'shape': (Int, Int, Int),
+            'filename': string
+        }
+
+        Any parameter can be None if the model has not been initialized yet.
+
+        Returns: Dictionary with the information of the model.
+        """
+        model = self.__model_hash[model_id]
+        return {
+            'height_array': model.get_height_array(),
+            'coordinates_array': model.get_model_coordinate_array(),
+            'projection_matrix': model.get_projection_matrix(),
+            'showed_limits': model.get_showed_limits(),
+            'shape': model.get_vertices_shape(),
+            'filename': model.get_filename()
+        }
+
     def get_3d_model_list(self) -> List[str]:
         """
         Get a list with the ID of the 3D models generated on the program.
