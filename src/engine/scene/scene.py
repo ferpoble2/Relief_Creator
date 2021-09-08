@@ -1235,7 +1235,6 @@ class Scene:
             path_model: Path to the model to use in the application
 
         Returns: None
-
         """
 
         log.debug("Reading information from file.")
