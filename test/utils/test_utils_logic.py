@@ -242,6 +242,8 @@ class TestSaveDictToJson(unittest.TestCase):
                          json_to_dict('resources/test_resources/temp/json_temp_data.json'),
                          'Data stored in the file is not equal to the original data.')
 
+        os.remove('resources/test_resources/temp/json_temp_data.json')
+
 
 if __name__ == '__main__':
     unittest.main()
