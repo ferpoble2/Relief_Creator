@@ -25,6 +25,7 @@ import imgui
 
 from src.engine.GUI.frames.frame import Frame
 from src.engine.GUI.frames.tools.interpolation_tools import InterpolationTools
+from src.engine.GUI.frames.tools.map_tools import MapTools
 from src.engine.GUI.frames.tools.polygon_tools import PolygonTools
 from src.engine.GUI.frames.tools.relief_tools import ReliefTools
 from src.utils import get_logger
@@ -56,10 +57,12 @@ class Tools(Frame):
             'create_polygon': 'Create Polygon'
         }
 
-        # object in charge of render the relief tools
+        # Generate the objects in charge of rendering the information of the different tools
+        # ----------------------------------------------------------------------------------
         self.__relief_tools = ReliefTools(gui_manager)
         self.__polygon_tools = PolygonTools(gui_manager, self.__button_margin_width)
         self.__interpolation_tools = InterpolationTools(gui_manager)
+        self.__map_tools = MapTools(gui_manager)
 
     def __show_active_tool(self):
         """
@@ -156,5 +159,8 @@ class Tools(Frame):
 
             imgui.separator()
             self.__interpolation_tools.render()
+
+        imgui.separator()
+        self.__map_tools.render()
 
         imgui.end()
