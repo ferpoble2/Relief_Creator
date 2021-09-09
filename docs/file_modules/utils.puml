@@ -19,5 +19,6 @@ class utils <<$file>> {
     + is_clockwise(points): boolean
     + is_numeric(value) : boolean
     + json_to_dict(json_filename): dict
+    + list_to_serializable_list(list_obj): list
 }
 @enduml
