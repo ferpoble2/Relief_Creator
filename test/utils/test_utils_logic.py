@@ -227,7 +227,9 @@ class TestSaveDictToJson(unittest.TestCase):
                         'test_4': np.zeros((2, 2)),
                         'test_5': {
                             'test_5_1': np.zeros((1, 1)),
-                            'test_5_2': 'some string 2'
+                            'test_5_2': 'some string 2',
+                            'test_5_3': [np.zeros((2, 2)), np.ones((1, 1))],
+                            'test_5_4': (np.zeros((2, 2)), np.ones((1, 1)))
                         }}
         dict_to_json(dict_to_save, 'resources/test_resources/temp/json_temp_data.json')
 
@@ -237,7 +239,9 @@ class TestSaveDictToJson(unittest.TestCase):
                           'test_4': [[0, 0], [0, 0]],
                           'test_5': {
                               'test_5_1': [[0]],
-                              'test_5_2': 'some string 2'
+                              'test_5_2': 'some string 2',
+                              'test_5_3': [[[0, 0], [0, 0]], [[1]]],
+                              'test_5_4': [[[0, 0], [0, 0]], [[1]]]
                           }},
                          json_to_dict('resources/test_resources/temp/json_temp_data.json'),
                          'Data stored in the file is not equal to the original data.')
