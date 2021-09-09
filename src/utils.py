@@ -20,6 +20,7 @@ File with utils functions for the engine.
 """
 import json
 import logging
+from typing import Union
 
 import numpy as np
 
@@ -180,6 +181,26 @@ def is_clockwise(points):
     for p1, p2 in zip(points, points[1:] + [points[0]]):
         s += (p2[0] - p1[0]) * (p2[1] + p1[1])
     return s > 0.0
+
+
+def list_to_serializable_list(list_obj: Union[list, tuple]) -> list:
+    """
+    Converts all the values in a list to arguments serializable on a json file.
+
+    Args:
+        list_obj: List to serialize
+
+    Returns: New List with the new serializable values.
+    """
+    serializable_list = []
+    for value in list_obj:
+        if type(value) == np.ndarray:
+            serializable_list.append(value.tolist())
+        elif type(value) == dict:
+            serializable_list.append(dict_to_serializable_dict(value))
+        else:
+            serializable_list.append(value)
+    return serializable_list
 
 
 def dict_to_serializable_dict(dictionary) -> dict:
