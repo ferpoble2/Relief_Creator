@@ -920,7 +920,7 @@ class Scene:
                 'bottom': Number
             },
             'shape': (Int, Int, Int),
-            'filename': string
+            'name': string
         }
 
         Any parameter can be None if the model has not been initialized yet.
@@ -934,7 +934,7 @@ class Scene:
             'projection_matrix': model.get_projection_matrix(),
             'showed_limits': model.get_showed_limits(),
             'shape': model.get_vertices_shape(),
-            'filename': model.get_filename()
+            'name': model.get_name()
         }
 
     def get_3d_model_list(self) -> List[str]:
