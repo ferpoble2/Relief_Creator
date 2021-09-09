@@ -218,6 +218,8 @@ def dict_to_serializable_dict(dictionary) -> dict:
             dict_cpy[key] = value.tolist()
         elif type(value) == dict:
             dict_cpy[key] = dict_to_serializable_dict(value)
+        elif type(value) == tuple or type(value) == list:
+            dict_cpy[key] = list_to_serializable_list(value)
 
     return dict_cpy
 
