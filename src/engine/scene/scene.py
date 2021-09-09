@@ -20,6 +20,7 @@ File that contain the Scene class. This class is in charge of the management of 
 
 Class is in charge of the drawing of the models2D, models3D and polygons.
 """
+from pathlib import Path
 from typing import Dict, List, TYPE_CHECKING, Union
 
 import OpenGL.GL as GL
@@ -1273,7 +1274,7 @@ class Scene:
         X, Y, Z = self.__engine.read_netcdf_info(path_model)
 
         log.debug("Generating model")
-        model = Map2DModel(self, name=path_model)
+        model = Map2DModel(self, name=Path(path_model).name)
 
         # noinspection PyMissingOrEmptyDocstring
         def then_routine():
