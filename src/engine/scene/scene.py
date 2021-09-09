@@ -48,7 +48,6 @@ log = get_logger(module="SCENE")
 FILTER_LIST = ['is_in', 'is_not_in', 'height_less_than', 'height_greater_than']
 
 
-# TODO: Scene does too much logic. PolygonManager and ModelManager class are necessary to make class smaller.
 class Scene:
     """
     Class in charge of all the elements that are rendered using Opengl.
