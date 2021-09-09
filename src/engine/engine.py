@@ -671,6 +671,21 @@ class Engine:
         """
         Get the information of a model in a dictionary.
 
+        The dictionary generated has the following shape:
+        {
+            'height_array': Numpy array
+            'coordinates_array': (Numpy array, Numpy array),
+            'projection_matrix': Numpy array,
+            'showed_limits': {
+                'left': Number,
+                'right': Number,
+                'top': Number,
+                'bottom': Number
+            },
+            'shape': (Int, Int, Int),
+            'name': string
+        }
+
         Args:
             model_id: ID of the model on the program.
 
