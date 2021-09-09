@@ -91,7 +91,7 @@ class Scene:
         # auxiliary variables
         # -------------------
 
-        # variable that indicated witch function then to use when there is
+        # variable that indicate which function to use when there is
         # more than one model on the scene.
         self.__should_execute_then_reload: int = 0
         self.__should_execute_then_optimize_gpu_memory: int = 0
@@ -111,7 +111,7 @@ class Scene:
             is_in: str (polygon id)
             is_not_in: str (polygon id)
 
-        Use of filters not listed here will raise or in the FILTER_LIST variable of the module will raise a
+        Use of filters not listed here or in the FILTER_LIST variable of the module will raise a
         NotImplemented error.
 
         Args:
@@ -807,10 +807,10 @@ class Scene:
 
     def get_active_polygon_id(self) -> str:
         """
-                Get the id of the active polygon on the program.
+        Get the id of the active polygon on the program.
 
-                Returns: the id of the active polygon.
-                """
+        Returns: the id of the active polygon.
+        """
         return self.__engine.get_active_polygon_id()
 
     def get_camera_data(self) -> dict:
