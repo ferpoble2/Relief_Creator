@@ -632,13 +632,13 @@ class Map2DModel(MapModel):
             'bottom': self.__bottom_coordinate
         }
 
-    def get_filename(self) -> str:
+    def get_name(self) -> Union[str, None]:
         """
-        Return the filename used to generate the model. None if there is no file associated with the model.
+        Return the name of the model. None if there is no name associated with the model.
 
-        Returns: Filename used to generate the model. None if there is no file.
+        Returns: Name of the model.
         """
-        return self.__filename
+        return self.__name
 
     def get_vertices_shape(self) -> tuple:
         """

@@ -18,7 +18,7 @@
                     - __bottom_coordinate: int
                     - __triangles_to_delete: list
                     - __new_indices: list
-                    - __filename: str
+                    - __name: str
                     + hbo : int
 
 
@@ -35,12 +35,12 @@
                     + calculate_projection_matrix(scene_data, zoom_level)
                     + get_color_file(): str
                     + get_height_array(): array
-                    + get_model_coordinate_array(): (array, array)
-                    + get_projection_matrix(): array
                     + get_height_on_coordinates(x_coordinate, y_coordinate): float
+                    + get_model_coordinate_array(): (array, array)
+                    + get_name(): str
+                    + get_projection_matrix(): array
                     + get_showed_limits(): dict
                     + get_vertices_shape(): tuple
-                    + get_filename(): str
                     + move(x_movement, y_movement)
                     + optimize_gpu_memory_async(then)
                     + recalculate_vertices_from_grid_async(quality, then)
