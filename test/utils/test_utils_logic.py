@@ -23,7 +23,10 @@ import os
 import unittest
 import warnings
 
-from src.utils import get_logger, interpolate, is_clockwise, is_numeric
+import numpy as np
+
+from src.utils import dict_to_json, dict_to_serializable_dict, get_logger, interpolate, is_clockwise, is_numeric, \
+    json_to_dict
 
 
 class TestIsClockwise(unittest.TestCase):
@@ -181,6 +184,63 @@ class TestInterpolation(unittest.TestCase):
                          interpolate(5, 10, 0, 100, 0, True),
                          'Interpolate function does not return correct value when intervals are given in different'
                          'order (max store min values and min store maximum values)')
+
+
+class TestSerializeDict(unittest.TestCase):
+
+    def test_serialize_json(self):
+        dict_to_serialize = {'test_1': 125346,
+                             'test_2': np.zeros((3, 3)),
+                             'test_3': {
+                                 'test_3_1': 1645,
+                                 'test_3_2': 'someString',
+                                 'test_3_3': np.zeros((1, 1)),
+                                 'test_3_4': {
+                                     'test_3_4_1': np.zeros((2, 2))
+                                 }
+                             }}
+
+        self.assertEqual({'test_1': 125346,
+                          'test_2': [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
+                          'test_3': {'test_3_1': 1645,
+                                     'test_3_2': 'someString',
+                                     'test_3_3': [[0.0]],
+                                     'test_3_4': {'test_3_4_1': [[0.0, 0.0],
+                                                                 [0.0, 0.0]]}}},
+                         dict_to_serializable_dict(dict_to_serialize),
+                         'Dictionary was not serialized  correctly.')
+
+
+class TestSaveDictToJson(unittest.TestCase):
+
+    def test_read_json_data(self):
+        self.assertEqual({'test_1': 1234,
+                          'test_2': 'some string',
+                          'test_3': [1, 2, 3, 4, 5]},
+                         json_to_dict('resources/test_resources/expected_data/json_data/random_data.json'),
+                         'The information read is not equal to the expected.')
+
+    def test_save_json_file(self):
+        dict_to_save = {'test_1': 'some string',
+                        'test_2': 17463,
+                        'test_3': [1, 2, 3, 4, 5],
+                        'test_4': np.zeros((2, 2)),
+                        'test_5': {
+                            'test_5_1': np.zeros((1, 1)),
+                            'test_5_2': 'some string 2'
+                        }}
+        dict_to_json(dict_to_save, 'resources/test_resources/temp/json_temp_data.json')
+
+        self.assertEqual({'test_1': 'some string',
+                          'test_2': 17463,
+                          'test_3': [1, 2, 3, 4, 5],
+                          'test_4': [[0, 0], [0, 0]],
+                          'test_5': {
+                              'test_5_1': [[0]],
+                              'test_5_2': 'some string 2'
+                          }},
+                         json_to_dict('resources/test_resources/temp/json_temp_data.json'),
+                         'Data stored in the file is not equal to the original data.')
 
 
 if __name__ == '__main__':

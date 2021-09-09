@@ -21,6 +21,8 @@ File with utils functions for the engine.
 import json
 import logging
 
+import numpy as np
+
 # Get the keys to search in the reading process of the NetCDF file from the files located in the resources.
 with open('resources/longitude_keys.json', 'r') as lon_file:
     LONGITUDE_KEYS = json.load(lon_file)
@@ -178,3 +180,54 @@ def is_clockwise(points):
     for p1, p2 in zip(points, points[1:] + [points[0]]):
         s += (p2[0] - p1[0]) * (p2[1] + p1[1])
     return s > 0.0
+
+
+def dict_to_serializable_dict(dictionary) -> dict:
+    """
+    Converts all the values in a dictionary to arguments serializable on a json file.
+
+    Args:
+        dictionary: Dictionary to serialize
+
+    Returns: New dictionary with the new arguments.
+    """
+    dict_cpy = dict(dictionary)
+    for key, value in dict_cpy.items():
+        if type(value) == np.ndarray:
+            dict_cpy[key] = value.tolist()
+        elif type(value) == dict:
+            dict_cpy[key] = dict_to_serializable_dict(value)
+
+    return dict_cpy
+
+
+def json_to_dict(json_filename: str) -> dict:
+    """
+    Read the data inside a JSON file.
+
+    Args:
+        json_filename: File to read the information.
+
+    Returns: Dictionary with the values stored on the JSON file.
+    """
+    with open(json_filename) as json_file:
+        data = json.load(json_file)
+
+    return data
+
+
+def dict_to_json(dictionary: dict, json_filename: str) -> None:
+    """
+    Store the values in the dictionary on a JSON file.
+
+    If values are numpy arrays, then this method convert those values to list before storing them in the JSON file.
+
+    Args:
+        dictionary: Dictionary to store in a JSON file.
+        json_filename: Filename of the generated file.
+
+    Returns: None
+    """
+    new_dict = dict_to_serializable_dict(dictionary)
+    with open(json_filename, 'w') as fp:
+        json.dump(new_dict, fp)
