@@ -28,7 +28,7 @@ work correctly.
 """
 
 # noinspection PyPep8Naming
-from typing import List, TYPE_CHECKING, Union
+from typing import Dict, List, TYPE_CHECKING, Union
 
 import OpenGL.constant as OGLConstant
 import imgui
@@ -706,6 +706,21 @@ class GUIManager:
         Returns: List of models loaded into the program.
         """
         return self.__engine.get_model_list()
+
+    def get_model_names(self) -> Dict[str, Union[str, None]]:
+        """
+        Get a dictionary with the models on the program and their names.
+
+        Returns: Dictionary with the ID of the models and the name of each one.
+        """
+        model_list_id = self.__engine.get_model_list()
+        model_dict = {}
+
+        for model_id in model_list_id:
+            model_info = self.__engine.get_model_information(model_id)
+            model_dict[model_id] = model_info.get('name', None)
+
+        return model_dict
 
     def get_polygon_folder_id_list(self) -> list:
         """
