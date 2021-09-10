@@ -91,34 +91,24 @@ class TestGetModelCoordinates(unittest.TestCase):
         # Test the coordinates obtained when asking for points in the the left-middle border
         # ----------------------------------------------------------------------------------
         self.assertEqual((None, None),
-                         self.engine.get_map_coordinates_from_window_coordinates(begin_scene_x - 1,
-                                                                                 np.average([begin_scene_y,
-                                                                                             end_scene_y])))
-
-        self.assertEqual((-179.95, 9.134517766497467),
                          self.engine.get_map_coordinates_from_window_coordinates(begin_scene_x,
                                                                                  np.average([begin_scene_y,
                                                                                              end_scene_y])))
 
-        self.assertEqual((-179.58461928934008, 9.134517766497467),
+        self.assertEqual((-179.63451776649745, 9.137055837563466),
                          self.engine.get_map_coordinates_from_window_coordinates(begin_scene_x + 1,
                                                                                  np.average([begin_scene_y,
                                                                                              end_scene_y])))
 
         # Test the coordinates obtained when asking for points in the the right-middle border
         # ----------------------------------------------------------------------------------
-        self.assertEqual((179.58461928934008, 9.134517766497467),
+        self.assertEqual((179.63451776649748, 9.137055837563466),
                          self.engine.get_map_coordinates_from_window_coordinates(end_scene_x - 1,
                                                                                  np.average([begin_scene_y,
                                                                                              end_scene_y])))
 
-        self.assertEqual((179.95, 9.134517766497467),
-                         self.engine.get_map_coordinates_from_window_coordinates(end_scene_x,
-                                                                                 np.average([begin_scene_y,
-                                                                                             end_scene_y])))
-
         self.assertEqual((None, None),
-                         self.engine.get_map_coordinates_from_window_coordinates(end_scene_x + 1,
+                         self.engine.get_map_coordinates_from_window_coordinates(end_scene_x,
                                                                                  np.average([begin_scene_y,
                                                                                              end_scene_y])))
 
