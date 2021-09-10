@@ -261,7 +261,7 @@ class Map2DModel(MapModel):
                                          top_coordinate,
                                          bottom_coordinate)
 
-    def __generate_vertices_list(self, x: np.ndarray, y: np.ndarray, z: np.ndarray, z_value: int = 0) -> np.ndarray:
+    def __generate_vertices_list(self, x: np.ndarray, y: np.ndarray, z: np.ndarray) -> np.ndarray:
         """
         Generate a list of vertices given the data of a 3D grid.
         The z value of the vertices is set to 0.
@@ -291,7 +291,7 @@ class Map2DModel(MapModel):
         vertices = np.zeros((z.shape[0], z.shape[1], 3))
         vertices[:, :, 0] = x
         vertices[:, :, 1] = y
-        vertices[:, :, 2] = z_value
+        vertices[:, :, 2] = z
         vertices = vertices.reshape(-1)
         log.debug('End of creation array of vertices')
         return vertices
