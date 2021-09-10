@@ -137,7 +137,7 @@ class Engine:
         Returns: None
         """
         self.program.add_zoom()
-        self.scene.update_models_projection_matrix()
+        self.scene.update_projection_matrix_2D()
 
     def apply_smoothing(self, polygon_id: str, model_id: str, distance_to_polygon: float) -> None:
         """
@@ -1033,7 +1033,7 @@ class Engine:
         Returns: None
         """
         self.program.less_zoom()
-        self.scene.update_models_projection_matrix()
+        self.scene.update_projection_matrix_2D()
 
     def load_netcdf_file(self, path_color_file: str, path_model: str, then: callable = lambda: None) -> None:
         """
@@ -1219,7 +1219,20 @@ class Engine:
 
         Returns: None
         """
-        self.scene.move_models(x_movement, y_movement)
+
+        # Get the data to move the maps
+        width_scene = self.get_scene_setting_data()['SCENE_WIDTH_X']
+        height_scene = self.get_scene_setting_data()['SCENE_HEIGHT_Y']
+        showed_limits = self.scene.get_2D_showed_limits()
+        map_position = self.get_map_position()
+
+        # Calculate the amount to move the scene depending on the coordinates showed on the screen
+        # The more coordinates are showing on the scene, the bigger the movement.
+        map_position[0] += (x_movement * (showed_limits['right'] - showed_limits['left'])) / width_scene
+        map_position[1] += (y_movement * (showed_limits['top'] - showed_limits['bottom'])) / height_scene
+
+        # Update projection matrix
+        self.scene.update_projection_matrix_2D()
 
     def optimize_gpu_memory(self) -> None:
         """
