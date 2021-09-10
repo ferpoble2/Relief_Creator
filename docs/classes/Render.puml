@@ -9,6 +9,7 @@ class Render {
     - __show_framerate: boolean
 
     + init(window_name)
+    + enable_depth_buffer(enable_buffer)
     + on_loop(on_frame_task)
 }
 @enduml
