@@ -425,8 +425,8 @@ class Map2DModel(MapModel):
         z_values = self.__z
 
         # Return None if the coordinate asked is outside of the model.
-        if x_coordinate < np.min(x_values) or x_coordinate > np.max(x_values) or y_coordinate < np.min(y_values) \
-                or y_coordinate > np.max(y_values):
+        if x_coordinate <= np.min(x_values) or x_coordinate >= np.max(x_values) or y_coordinate <= np.min(y_values) \
+                or y_coordinate >= np.max(y_values):
             return None
 
         x_ind_1 = np.abs(x_values - x_coordinate).argmin()
