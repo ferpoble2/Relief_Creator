@@ -89,7 +89,7 @@ class TestModelInformation(unittest.TestCase):
                          len(model_list),
                          'Model list does not have only one element.')
         self.assertEqual(
-            ['height_array', 'coordinates_array', 'projection_matrix', 'showed_limits', 'shape', 'filename'],
+            ['height_array', 'coordinates_array', 'projection_matrix', 'showed_limits', 'shape', 'name'],
             list(self.engine.get_model_information(model_list[0]).keys()),
             'Keys in the dictionary are not equal to the expected keys.'
         )
