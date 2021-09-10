@@ -780,7 +780,7 @@ class Scene:
 
         return self.__projection_matrix_3D
 
-    def get_active_model_coordinates_arrays(self) -> (np.ndarray, np.ndarray):
+    def get_active_model_coordinates_arrays(self) -> (Union[np.ndarray, None], Union[np.ndarray, None]):
         """
         Get two arrays, the first containing the coordinates used in the active model for the x-axis and the second
         containing the coordinates used in the active model for the y-axis.
