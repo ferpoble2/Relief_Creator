@@ -68,4 +68,9 @@ class MapTools:
         active_model = self.__gui_manager.get_active_model_id()
 
         for key, value in model_name_dict.items():
-            imgui.text(value)
+            if active_model == key:
+                self.__gui_manager.set_bold_font()
+                imgui.text(value)
+                self.__gui_manager.set_regular_font()
+            else:
+                imgui.text(value)
