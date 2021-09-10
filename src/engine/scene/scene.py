@@ -83,6 +83,10 @@ class Scene:
         # Polygons that are not in the list will not be draw
         self.__polygon_draw_order: List[str] = []
 
+        # Models can be draw in different orders, this list store the order in which hey must be draw.
+        # Models not in this list will not be draw on the scene
+        self.__model_draw_order: List[str] = []
+
         # Variables used by the scene to execute the main logic
         # -----------------------------------------------------
         self.__engine = engine
@@ -716,9 +720,10 @@ class Scene:
         # check if draw the 2D or the 3D of the models.
         if self.__engine.get_program_view_mode() == '2D':
 
-            # Draw map2DModel
-            if active_model is not None:
-                self.__model_hash[active_model].draw()
+            # Draw all the Map2DModels
+            for model_2d, draw_order in zip(self.__model_draw_order, range(len(self.__model_draw_order))):
+                # Change the height of the maps and draw them
+                self.__model_hash[model_2d].draw()
 
             # Draw all the interpolation areas
             for area_models in self.__interpolation_area_hash.values():
@@ -1295,10 +1300,11 @@ class Scene:
             self.update_projection_matrix_2D()
             model.wireframes = False
 
-            # even if the model is not in the program anymore, we do not want repeated ids.
-            model.id = self.__model_id_count
-            self.__model_id_count += 1
+            model.id = str(self.__model_id_count)
+            self.__model_draw_order.append(model.id)
             self.add_model(model)
+
+            self.__model_id_count += 1
 
             self.__engine.reset_zoom_level()
 
@@ -1461,6 +1467,9 @@ class Scene:
         Returns: None
         """
         for model in self.__model_hash.values():
+            model.polygon_mode = polygon_mode
+
+        for model in self.__3d_model_hash.values():
             model.polygon_mode = polygon_mode
 
     def set_polygon_name(self, polygon_id: str, new_name: str) -> None:
