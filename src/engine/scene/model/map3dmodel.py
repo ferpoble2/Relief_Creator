@@ -76,8 +76,6 @@ class Map3DModel(MapModel):
         # Rendering variables
         # -------------------
         self.__model = identity()
-        self.__view = self.scene.get_camera_view_matrix()
-
         self.__quality = 0  # Quality of the 3D model (0 is maximum)
 
         # Set the data for the model
@@ -142,7 +140,7 @@ class Map3DModel(MapModel):
 
         # set the value
         GL.glUniformMatrix4fv(model_location, 1, GL.GL_TRUE, self.__model)
-        GL.glUniformMatrix4fv(view_location, 1, GL.GL_TRUE, self.__view)
+        GL.glUniformMatrix4fv(view_location, 1, GL.GL_TRUE, self.scene.get_camera_view_matrix())
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_projection_matrix_3D())
 
         # set colors if using
