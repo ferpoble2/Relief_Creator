@@ -399,17 +399,6 @@ class Map2DModel(MapModel):
         """
         return self.__z
 
-    def get_model_coordinate_array(self) -> (np.ndarray, np.ndarray):
-        """
-        Return the arrays containing the information used to generate the models in the format
-        (x-axis array, y-axis array).
-
-        The returned arrays can be empty if the model is not initialized with data yet.
-
-        Returns: (x-axis, y-axis) tuple with the data of the coordinates of the model.
-        """
-        return np.array(self.__x), np.array(self.__y)
-
     def get_height_on_coordinates(self, x_coordinate: float, y_coordinate: float) -> Union[float, None]:
         """
         Get the height of the model on the specified coordinates.
@@ -456,6 +445,17 @@ class Map2DModel(MapModel):
                                                  (x_values[x_ind_2], y_values[y_ind_1], z_values[y_ind_2, x_ind_1]),
                                                  (x_values[x_ind_2], y_values[y_ind_2], z_values[y_ind_2, x_ind_2])
                                              ])
+
+    def get_model_coordinate_array(self) -> (np.ndarray, np.ndarray):
+        """
+        Return the arrays containing the information used to generate the models in the format
+        (x-axis array, y-axis array).
+
+        The returned arrays can be empty if the model is not initialized with data yet.
+
+        Returns: (x-axis, y-axis) tuple with the data of the coordinates of the model.
+        """
+        return np.array(self.__x), np.array(self.__y)
 
     def get_name(self) -> Union[str, None]:
         """
@@ -652,31 +652,6 @@ class Map2DModel(MapModel):
         self.__colors = np.array(colors, dtype=np.float32)
         self.__height_limit = np.array(height_limit, dtype=np.float32)
 
-    def update_heights(self, new_height: np.ndarray) -> None:
-        """
-        Change the values of the heights of the model.
-
-        Array of new heights must have the same shape that the array of vertices but with only one element per
-        vertex. For example, if the vertices have shape (row, cols, 3), the new_height variable must have shape
-        (row, cols).
-
-        Args:
-            new_height: Numpy array with the new height values.
-
-        Returns: None
-        """
-
-        # Update vertices of the model
-        vertices = self.__vertices.reshape(self.get_vertices_shape())
-        vertices[:, :, 2] = new_height
-
-        # Update utility variables
-        self.__z = vertices[:, :, 2]
-
-        # Set the vertices in the buffer
-        vertices = vertices.reshape(-1)
-        self.set_vertices(vertices)
-
     def set_vertices_from_grid_async(self, x, y, z, quality=1, then=lambda: None) -> None:
         """
         Set the vertices of the model from a grid.
@@ -743,3 +718,28 @@ class Map2DModel(MapModel):
             then()
 
         self.scene.set_thread_task(parallel_routine, then_routine)
+
+    def update_heights(self, new_height: np.ndarray) -> None:
+        """
+        Change the values of the heights of the model.
+
+        Array of new heights must have the same shape that the array of vertices but with only one element per
+        vertex. For example, if the vertices have shape (row, cols, 3), the new_height variable must have shape
+        (row, cols).
+
+        Args:
+            new_height: Numpy array with the new height values.
+
+        Returns: None
+        """
+
+        # Update vertices of the model
+        vertices = self.__vertices.reshape(self.get_vertices_shape())
+        vertices[:, :, 2] = new_height
+
+        # Update utility variables
+        self.__z = vertices[:, :, 2]
+
+        # Set the vertices in the buffer
+        vertices = vertices.reshape(-1)
+        self.set_vertices(vertices)
