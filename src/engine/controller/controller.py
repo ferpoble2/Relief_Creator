@@ -180,7 +180,8 @@ class Controller:
 
                 if active_tool == 'move_map' and self.__move_map_tool_activated:
                     if self.__is_left_mouse_being_pressed:
-                        self.__engine.move_scene(x_pos - self.__mouse_old_pos[0], self.__mouse_old_pos[1] - y_pos)
+                        self.__engine.move_map_position(x_pos - self.__mouse_old_pos[0],
+                                                        self.__mouse_old_pos[1] - y_pos)
 
             if self.__engine.get_program_view_mode() == '3D':
 
@@ -412,13 +413,13 @@ class Controller:
 
                     # Check for in-frame actions
                     if self.__is_w_pressed:
-                        self.__engine.move_scene(0, self.__map_movement_velocity)
+                        self.__engine.move_map_position(0, self.__map_movement_velocity)
                     if self.__is_s_pressed:
-                        self.__engine.move_scene(0, -1 * self.__map_movement_velocity)
+                        self.__engine.move_map_position(0, -1 * self.__map_movement_velocity)
                     if self.__is_a_pressed:
-                        self.__engine.move_scene(-1 * self.__map_movement_velocity, 0)
+                        self.__engine.move_map_position(-1 * self.__map_movement_velocity, 0)
                     if self.__is_d_pressed:
-                        self.__engine.move_scene(self.__map_movement_velocity, 0)
+                        self.__engine.move_map_position(self.__map_movement_velocity, 0)
 
                 elif self.__engine.get_program_view_mode() == '3D':
                     if self.__is_w_pressed:

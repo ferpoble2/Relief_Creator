@@ -1209,7 +1209,7 @@ class Engine:
         """
         self.scene.move_camera(movement)
 
-    def move_scene(self, x_movement: int, y_movement: int) -> None:
+    def move_map_position(self, x_movement: int, y_movement: int) -> None:
         """
         Tell the scene to move given the parameters specified.
 
