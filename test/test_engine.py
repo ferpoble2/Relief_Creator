@@ -74,7 +74,7 @@ class TestModelInformation(unittest.TestCase):
         cls.program = Program(cls.engine)
 
         cls.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                    'resources/test_resources/netcdf/test_file_1.nc')
+                                    'resources/test_resources/netcdf/test_file_50_50.nc')
 
     @classmethod
     def tearDownClass(cls) -> None:
