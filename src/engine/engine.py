@@ -1505,8 +1505,10 @@ class Engine:
         """
         if mode == '2D':
             self.program.set_view_mode_2D()
+            self.render.enable_depth_buffer(False)
         elif mode == '3D':
             self.program.set_view_mode_3D()
+            self.render.enable_depth_buffer(True)
         else:
             raise ValueError(f'Can not change program view mode to {mode}.')
 

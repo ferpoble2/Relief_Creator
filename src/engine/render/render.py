@@ -101,7 +101,6 @@ class Render:
         )
         GL.glEnable(GL.GL_BLEND)
         GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
-        GL.glEnable(GL.GL_DEPTH_TEST)
 
         # Indicate to openGL about the screen used in glfw to render.
         scene_data = engine.get_scene_setting_data()
@@ -109,6 +108,26 @@ class Render:
                       scene_data['SCENE_HEIGHT_Y'])
 
         return self.__window
+
+    def enable_depth_buffer(self, enable_buffer: bool) -> None:
+        """
+        Set if enable the depth buffer or not.
+
+        When Depth Buffer is enabled, the depth of the points is considered when rendering the models on the screen.
+        Otherwise, the last drown model is the one who is drawn in front of all the other models.
+
+        It is recommended to enable the depth buffer when rendering 3D scenes and to disable it when rendering 2D
+        scenes.
+
+        Args:
+            enable_buffer: Boolean indicating if to enable or not the depth buffer on the rendering process.
+
+        Returns: None
+        """
+        if enable_buffer:
+            GL.glEnable(GL.GL_DEPTH_TEST)
+        else:
+            GL.glDisable(GL.GL_DEPTH_TEST)
 
     def on_loop(self, on_frame_tasks: list = None) -> None:
         """
