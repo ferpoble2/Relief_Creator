@@ -728,7 +728,6 @@ class Scene:
             # Draw all the polygons
             for polygon, draw_order in zip(self.__polygon_draw_order, range(len(self.__polygon_draw_order))):
                 # Change the height of the polygon depending on the draw order and draw them
-                self.__polygon_hash[polygon].set_z_offset(len(self.__polygon_draw_order) - draw_order + 1)
                 self.__polygon_hash[polygon].draw()
 
         elif self.__engine.get_program_view_mode() == '3D':

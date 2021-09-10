@@ -56,9 +56,6 @@ class Points(Model):
         self.__vertex_shader_file = './src/engine/shaders/point_vertex.glsl'
         self.__fragment_shader_file = './src/engine/shaders/point_fragment.glsl'
 
-        # How much to move the z-axis coordinate of the points in the shader
-        self.__z_offset = 0
-
         # Data of the points
         # ------------------
         self.__point_list = []
@@ -174,26 +171,6 @@ class Points(Model):
         # Set the color and projection matrix to use
         # ------------------------------------------
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_projection_matrix_2D())
-        GL.glUniform1f(z_value_location, self.__z_offset)
-
-    def set_z_offset(self, new_value: float) -> None:
-        """
-        Set a new value to the variable z_offset.
-
-        The variable z_offset store a value that will be applied to the vertices of the model in the shader and will
-        modify the z-axis value used by the points of the model.
-
-        The value used as z-axis in the shader will be as follows: z_used_for_render = z_point + z_offset.
-
-        This variable is useful to modify the z-position of the points without having to modify the vertex and indices
-        arrays that are stored in the GPU.
-
-        Args:
-            new_value: New value for the z_offset value.
-
-        Returns: None
-        """
-        self.__z_offset = new_value
 
     def add_point(self, x: float, y: float, z: float) -> None:
         """

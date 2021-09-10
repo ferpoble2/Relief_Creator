@@ -33,7 +33,7 @@ class Lines(Model):
     Class in charge of the modeling and drawing lines in the engine.
     """
 
-    def __init__(self, scene, border_z_offset: float = -0.1, point_list: np.ndarray = None):
+    def __init__(self, scene, point_list: np.ndarray = None):
         """
         Constructor of the class
 
@@ -43,7 +43,6 @@ class Lines(Model):
         Args:
             point_list: List of points to use as initial value. This array will not be modified.
                         Format of the array must be [[x, y, z], [x, y, z], ...]
-            border_z_offset: Offset to add to the position of the points of the line to draw the border of the line.
         """
         super().__init__(scene)
 
@@ -60,9 +59,6 @@ class Lines(Model):
         self.__line_color = (1, 1, 0, 1)
         self.__border_color = (0, 0, 0, 1)
         self.__use_border = False
-
-        self.__z_offset_border = border_z_offset
-        self.__z_offset = 0  # this variable is passed to the shader
 
         self.set_shaders(self.__vertex_shader_file, self.__fragment_shader_file)
 
@@ -99,7 +95,6 @@ class Lines(Model):
         # Update values for the polygon shader
         projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
         polygon_color_location = GL.glGetUniformLocation(self.shader_program, "lines_color")
-        z_value_location = GL.glGetUniformLocation(self.shader_program, "z_offset")
 
         # Set the color and projection matrix to use
         GL.glUniform4f(polygon_color_location,
@@ -107,7 +102,6 @@ class Lines(Model):
                        self.__line_color[1],
                        self.__line_color[2],
                        self.__line_color[3])
-        GL.glUniform1f(z_value_location, self.__z_offset)
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_projection_matrix_2D())
 
     def add_line(self, first_point: tuple, second_point: tuple):
@@ -138,25 +132,6 @@ class Lines(Model):
         self.__indices_list.append(self.get_number_of_points() - 1)
         self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
 
-    def set_z_offset(self, new_value: float) -> None:
-        """
-        Set a new value to the variable z_offset.
-
-        The variable z_offset store a value that will be applied to the vertices of the model in the shader and will
-        modify the z-axis value used by the points of the model.
-
-        The value used as z-axis in the shader will be as follows: z_used_for_render = z_point + z_offset.
-
-        This variable is useful to modify the z-position of the points without having to modify the vertex and indices
-        arrays that are stored in the GPU.
-
-        Args:
-            new_value: New value for the z_offset value.
-
-        Returns: None
-        """
-        self.__z_offset = new_value
-
     def get_number_of_points(self) -> int:
         """
         Get the number of points that are defined in the model.
@@ -186,17 +161,14 @@ class Lines(Model):
             if self.__use_border:
                 # Store the old color
                 old_color = self.__line_color
-                old_z_offset = self.__z_offset
 
                 # Change the color and width of the line to draw
                 self.__line_color = self.__border_color
-                self.__z_offset = self.__z_offset + self.__z_offset_border
                 GL.glLineWidth(active_polygon_line_width)
                 super().draw()
 
                 # Return the original color
                 self.__line_color = old_color
-                self.__z_offset = old_z_offset
 
             # Draw the lines using OpenGL
             GL.glLineWidth(polygon_line_width)
