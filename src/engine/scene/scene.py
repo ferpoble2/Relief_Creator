@@ -1301,10 +1301,6 @@ class Scene:
             # even if the model is not in the program anymore, we do not want repeated ids.
             model.id = self.__model_id_count
             self.__model_id_count += 1
-
-            # this line have to be removed for the program to accept more than one model at the same time
-            self.remove_all_models()
-            self.remove_all_3d_models()
             self.add_model(model)
 
             self.__engine.reset_zoom_level()
