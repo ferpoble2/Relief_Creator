@@ -721,7 +721,7 @@ class Scene:
         if self.__engine.get_program_view_mode() == '2D':
 
             # Draw all the Map2DModels
-            for model_2d, draw_order in zip(self.__model_draw_order, range(len(self.__model_draw_order))):
+            for model_2d in reversed(self.__model_draw_order):
                 # Change the height of the maps and draw them
                 self.__model_hash[model_2d].draw()
 
@@ -731,7 +731,7 @@ class Scene:
                     model.draw()
 
             # Draw all the polygons
-            for polygon, draw_order in zip(self.__polygon_draw_order, range(len(self.__polygon_draw_order))):
+            for polygon in reversed(self.__polygon_draw_order):
                 # Change the height of the polygon depending on the draw order and draw them
                 self.__polygon_hash[polygon].draw()
 
