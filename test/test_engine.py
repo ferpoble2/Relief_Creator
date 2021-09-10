@@ -39,7 +39,7 @@ class TestViewMode(unittest.TestCase):
 
     def test_view_mode_3D(self):
         engine = Engine()
-        program = Program(engine, initialize_engine=False)
+        program = Program(engine, initialize_engine=True)
 
         engine.set_program_view_mode('3D')
         self.assertEqual('3D',
@@ -48,7 +48,7 @@ class TestViewMode(unittest.TestCase):
 
     def test_view_mode_2D(self):
         engine = Engine()
-        program = Program(engine, initialize_engine=False)
+        program = Program(engine, initialize_engine=True)
 
         engine.set_program_view_mode('3D')
         engine.set_program_view_mode('2D')
