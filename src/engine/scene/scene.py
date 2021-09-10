@@ -79,13 +79,15 @@ class Scene:
         self.__polygon_hash: Dict[str, 'Polygon'] = {}
         self.__interpolation_area_hash: Dict[str, List['Model']] = {}
 
-        # Polygons can be draw in different orders, this list store the order in which they must be draw
-        # Polygons that are not in the list will not be draw
-        self.__polygon_draw_order: List[str] = []
+        # Polygons can be draw in different orders, this list store the priority of each polygon so the polygon with
+        # high priority can be draw over the polygons with less priority. Polygons that are not in the list will not
+        # be draw.
+        self.__polygon_draw_priority: List[str] = []
 
-        # Models can be draw in different orders, this list store the order in which hey must be draw.
-        # Models not in this list will not be draw on the scene
-        self.__model_draw_order: List[str] = []
+        # Polygons can be draw in different orders, this list store the priority of each model so the models with
+        # high priority can be draw over the models with less priority. Models that are not in the list will not
+        # be draw.
+        self.__model_draw_priority: List[str] = []
 
         # Variables used by the scene to execute the main logic
         # -----------------------------------------------------
@@ -511,13 +513,16 @@ class Scene:
         """
         self.__camera.modify_elevation(angle)
 
-    def change_polygon_draw_order(self, polygon_id: str, new_position: int) -> None:
+    def change_polygon_draw_priority(self, polygon_id: str, new_priority: int) -> None:
         """
         Change the order on which the polygons are draw on the scene.
 
+        The closer the priority is to 0, the higher the priority. Polygons with high priority will be draw over 
+        polygons with less priority.
+
         Args:
             polygon_id: ID of the polygon to modify the draw order.
-            new_position: New position in the list that store the drawing order of the polygons.
+            new_priority: New priority to be assigned to the polygon.
 
         Returns: None
         """
@@ -527,12 +532,12 @@ class Scene:
 
         # Remove the polygon from the drawing list, raise exception if it is not in the list
         try:
-            self.__polygon_draw_order.remove(polygon_id)
+            self.__polygon_draw_priority.remove(polygon_id)
         except ValueError:
             raise SceneError(6)
 
         # Insert element in the new position
-        self.__polygon_draw_order.insert(new_position, polygon_id)
+        self.__polygon_draw_priority.insert(new_priority, polygon_id)
 
     def change_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
@@ -630,7 +635,8 @@ class Scene:
         self.__engine.set_loading_message('Generating 3D model...')
         self.__engine.set_task_with_loading_frame(task_loading)
 
-    def create_new_polygon(self, point_list: list = None, parameters: dict = None, draw_position: int = None) -> str:
+    def create_new_polygon(self, point_list: list = None, parameters: dict = None,
+                           priority_position: int = None) -> str:
         """
         Create a new polygon and adds it to the list of polygons of the scene.
 
@@ -639,8 +645,8 @@ class Scene:
         RepeatedPointError will be raised.
 
         Args:
-            draw_position: Where, in the draw order, set the polygon. Negative values will place the polygon at the end
-                           of the list (will be draw the last).
+            priority_position: Where, in the draw order, set the polygon. Negative values will place the polygon at the end
+                               of the list (will be draw the last).
             point_list: List with the points to add to the polygon. [[x,y],[x,y],...]
             parameters: Parameters to set in the polygon. {parameter_name:value,...}
 
@@ -653,10 +659,10 @@ class Scene:
 
         # Add the id to the list of drawing polygons
         # ------------------------------------------
-        if draw_position is None:
-            self.__polygon_draw_order.append(new_polygon_id)
+        if priority_position is None:
+            self.__polygon_draw_priority.append(new_polygon_id)
         else:
-            self.__polygon_draw_order.insert(draw_position, new_polygon_id)
+            self.__polygon_draw_priority.insert(priority_position, new_polygon_id)
 
         # Create the polygon and return its id
         # ------------------------------------
@@ -682,8 +688,8 @@ class Scene:
                 self.__interpolation_area_hash.pop(polygon_id)
 
             # remove it from the draw list
-            if polygon_id in self.__polygon_draw_order:
-                self.__polygon_draw_order.remove(polygon_id)
+            if polygon_id in self.__polygon_draw_priority:
+                self.__polygon_draw_priority.remove(polygon_id)
 
     def delete_polygon_param(self, polygon_id: str, key: str) -> None:
         """
@@ -721,7 +727,7 @@ class Scene:
         if self.__engine.get_program_view_mode() == '2D':
 
             # Draw all the Map2DModels
-            for model_2d in reversed(self.__model_draw_order):
+            for model_2d in reversed(self.__model_draw_priority):
                 # Change the height of the maps and draw them
                 self.__model_hash[model_2d].draw()
 
@@ -731,7 +737,7 @@ class Scene:
                     model.draw()
 
             # Draw all the polygons
-            for polygon in reversed(self.__polygon_draw_order):
+            for polygon in reversed(self.__polygon_draw_priority):
                 # Change the height of the polygon depending on the draw order and draw them
                 self.__polygon_hash[polygon].draw()
 
@@ -1301,7 +1307,7 @@ class Scene:
             model.wireframes = False
 
             model.id = str(self.__model_id_count)
-            self.__model_draw_order.append(model.id)
+            self.__model_draw_priority.append(model.id)
             self.add_model(model)
 
             self.__model_id_count += 1

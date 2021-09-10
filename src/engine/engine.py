@@ -352,18 +352,21 @@ class Engine:
         """
         Settings.HEIGHT = height
 
-    def change_polygon_draw_order(self, polygon_id: str, new_position: int) -> None:
+    def change_polygon_draw_priority(self, polygon_id: str, new_priority_value: int) -> None:
         """
         Ask the scene to change the order in which the polygons are draw.
 
+        The closer the priority is to 0, the higher the priority. Polygons with high priority will be draw over 
+        polygons with less priority.
+
         Args:
             polygon_id: Polygon to change the order.
-            new_position: New position in the order of drawing. If value is negative, then the polygon will be changed
-                          to be draw the last.
+            new_priority_value: New position in the order of drawing. If value is negative, then the polygon will be the
+                                draw over all the other polygons.
 
         Returns: None
         """
-        return self.scene.change_polygon_draw_order(polygon_id, new_position)
+        return self.scene.change_polygon_draw_priority(polygon_id, new_priority_value)
 
     def change_quality(self, quality: int) -> None:
         """

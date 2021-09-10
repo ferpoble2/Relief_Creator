@@ -176,8 +176,8 @@ class GUIManager:
 
         # Change the draw order of the polygon to match the showed folder on the GUI
         # --------------------------------------------------------------------------
-        self.__engine.change_polygon_draw_order(polygon_id,
-                                                self.__polygon_folder_manager.get_polygon_position(polygon_id))
+        self.__engine.change_polygon_draw_priority(polygon_id,
+                                                   self.__polygon_folder_manager.get_polygon_position(polygon_id))
 
     def add_zoom(self) -> None:
         """
@@ -1005,8 +1005,8 @@ class GUIManager:
 
         # Change the draw order of the polygons inside the folder
         for polygon_id in self.get_polygons_id_from_polygon_folder(polygon_folder_id):
-            self.__engine.change_polygon_draw_order(polygon_id,
-                                                    self.__polygon_folder_manager.get_polygon_position(polygon_id))
+            self.__engine.change_polygon_draw_priority(polygon_id,
+                                                       self.__polygon_folder_manager.get_polygon_position(polygon_id))
 
     def move_polygon_position(self, polygon_id: str, polygon_folder_id: str, movement_offset: int) -> None:
         """
@@ -1040,8 +1040,8 @@ class GUIManager:
         self.__polygon_folder_manager.move_polygon_position(polygon_folder_id, polygon_id, movement_offset)
 
         # Update the draw order of the polygons
-        self.__engine.change_polygon_draw_order(polygon_id,
-                                                self.__polygon_folder_manager.get_polygon_position(polygon_id))
+        self.__engine.change_polygon_draw_priority(polygon_id,
+                                                   self.__polygon_folder_manager.get_polygon_position(polygon_id))
 
     def move_polygon_to_polygon_folder(self, old_folder_id: str, polygon_id: str, folder_id: str) -> None:
         """
@@ -1063,8 +1063,8 @@ class GUIManager:
 
         # Change the draw order of the polygon to match the showed folder on the GUI
         # --------------------------------------------------------------------------
-        self.__engine.change_polygon_draw_order(polygon_id,
-                                                self.__polygon_folder_manager.get_polygon_position(polygon_id))
+        self.__engine.change_polygon_draw_priority(polygon_id,
+                                                   self.__polygon_folder_manager.get_polygon_position(polygon_id))
 
     def optimize_gpu_memory(self) -> None:
         """
