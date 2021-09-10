@@ -262,7 +262,7 @@ class Scene:
         # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
         def then(new_height: list, engine: 'Engine', model: Map2DModel):
             # Tell the polygon the new height of the vertices
-            model.set_height_buffer(new_height[0])
+            model.update_heights(new_height[0])
             engine.set_program_loading(False)
 
         # Define the parallel functions to use
@@ -389,7 +389,7 @@ class Scene:
                                                                        vertices_model,
                                                                        heights_model)
 
-        model.set_height_buffer(new_heights)
+        model.update_heights(new_heights)
 
     def calculate_map_position_from_window(self, position_x: int, position_y: int, allow_outside_map=False,
                                            allow_outside_scene=False) -> (float, float):
@@ -1147,7 +1147,7 @@ class Scene:
                 engine: Engine used in the program.
             """
             # save the changes to the model
-            map2d_model.set_height_buffer(new_height)
+            map2d_model.update_heights(new_height)
             engine.set_program_loading(False)
 
         self.__engine.set_loading_message('Interpolating points, this may take a while.')

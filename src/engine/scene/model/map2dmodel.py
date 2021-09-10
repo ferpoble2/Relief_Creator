@@ -18,7 +18,6 @@
 """
 Class in charge of managing the models of the maps in 2 dimensions.
 """
-import ctypes as ctypes
 from typing import List, Union
 
 import OpenGL.GL as GL
@@ -61,18 +60,10 @@ class Map2DModel(MapModel):
         self.__z = None
 
         # vertices values (used in the buffer)
-        self.__vertices = []
+        self.__vertices: np.ndarray = np.array([])
 
         # indices of the model (used in the buffer)
-        self.__indices = []
-
-        # height values
-        self.__height_array = np.array([])
-        self.__max_height = None
-        self.__min_height = None
-
-        # height buffer object
-        self.hbo = GL.glGenBuffers(1)
+        self.__indices: np.ndarray = np.array([])
 
         # utilities variables
         self.__triangles_to_delete = np.array([])  # triangles overlapped to delete when optimizing memory
@@ -366,32 +357,6 @@ class Map2DModel(MapModel):
         for i in range(int(len(self.__vertices) / 3)):
             print(f"P{i}: " + "".join(str(self.__vertices[i * 3:(i + 1) * 3])))
 
-    def __set_height_buffer(self) -> None:
-        """
-        Set the buffer object for the heights to be used in the shaders.
-
-        IMPORTANT:
-            Uses the index 1 of the attributes pointers.
-
-        Returns: None
-
-        """
-        height = np.array(self.__height_array, dtype=np.float32)
-
-        # Set the buffer data in the buffer
-        GL.glBindVertexArray(self.vao)
-        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.hbo)
-        GL.glBufferData(GL.GL_ARRAY_BUFFER,
-                        len(height) * self.scene.get_float_bytes(),
-                        height,
-                        GL.GL_STATIC_DRAW)
-
-        # Enable the data to the shaders
-        GL.glVertexAttribPointer(1, 1, GL.GL_FLOAT, GL.GL_FALSE, 0, ctypes.c_void_p(0))
-        GL.glEnableVertexAttribArray(1)
-
-        return
-
     def _update_uniforms(self) -> None:
         """
         Update the uniforms in the model.
@@ -400,13 +365,9 @@ class Map2DModel(MapModel):
         Returns: None
         """
         # get the location
-        max_height_location = GL.glGetUniformLocation(self.shader_program, "max_height")
-        min_height_location = GL.glGetUniformLocation(self.shader_program, "min_height")
         projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
 
         # set the value
-        GL.glUniform1f(max_height_location, float(self.__max_height))
-        GL.glUniform1f(min_height_location, float(self.__min_height))
         GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_projection_matrix_2D())
 
         # set colors if using
@@ -429,11 +390,14 @@ class Map2DModel(MapModel):
 
     def get_height_array(self) -> np.ndarray:
         """
-        Get the array used to set the height buffer in the object.
+        Get a numpy array with the heights used in the model.
+
+        The numpy array has shape (rows, cols). Where rows and cols is the number of rows and cols of the grid that
+        stores the vertices of the model.
 
         Returns: numpy array with the values of the buffer.
         """
-        return self.__height_array
+        return self.__z
 
     def get_model_coordinate_array(self) -> (np.ndarray, np.ndarray):
         """
@@ -688,9 +652,13 @@ class Map2DModel(MapModel):
         self.__colors = np.array(colors, dtype=np.float32)
         self.__height_limit = np.array(height_limit, dtype=np.float32)
 
-    def set_height_buffer(self, new_height: np.ndarray) -> None:
+    def update_heights(self, new_height: np.ndarray) -> None:
         """
-        Change the values of the height buffer.
+        Change the values of the heights of the model.
+
+        Array of new heights must have the same shape that the array of vertices but with only one element per
+        vertex. For example, if the vertices have shape (row, cols, 3), the new_height variable must have shape
+        (row, cols).
 
         Args:
             new_height: Numpy array with the new height values.
@@ -698,10 +666,16 @@ class Map2DModel(MapModel):
         Returns: None
         """
 
-        self.__height_array = new_height.reshape(-1)
-        self.__max_height = np.nanmax(self.__height_array)
-        self.__min_height = np.nanmin(self.__height_array)
-        self.__set_height_buffer()
+        # Update vertices of the model
+        vertices = self.__vertices.reshape(self.get_vertices_shape())
+        vertices[:, :, 2] = new_height
+
+        # Update utility variables
+        self.__z = vertices[:, :, 2]
+
+        # Set the vertices in the buffer
+        vertices = vertices.reshape(-1)
+        self.set_vertices(vertices)
 
     def set_vertices_from_grid_async(self, x, y, z, quality=1, then=lambda: None) -> None:
         """
@@ -725,9 +699,9 @@ class Map2DModel(MapModel):
         """
 
         # store the data for future operations.
-        self.__x = x
-        self.__y = y
-        self.__z = z
+        self.__x = np.array(x)
+        self.__y = np.array(y)
+        self.__z = np.array(z)
 
         def parallel_routine():
             """
@@ -764,9 +738,6 @@ class Map2DModel(MapModel):
                 self.set_shaders(
                     "./src/engine/shaders/model_2d_vertex.glsl", "./src/engine/shaders/model_2d_fragment.glsl"
                 )
-
-            # set the height buffer for rendering and store height values
-            self.set_height_buffer(np.array(z))
 
             # call the then routine
             then()

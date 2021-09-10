@@ -19,8 +19,6 @@
 #version 330 core
 
 in float height_value;
-in float max_height_value;
-in float min_height_value;
 
 uniform int length;
 uniform float height_color[500];
