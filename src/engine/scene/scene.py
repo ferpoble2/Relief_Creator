@@ -1262,7 +1262,7 @@ class Scene:
         if len(self.__model_hash) == 0:
             then()
 
-    def refresh_with_model_2d_async(self, path_color_file: str, path_model: str, then=lambda x: None) -> None:
+    def load_model_from_file_async(self, path_color_file: str, path_model: str, then=lambda x: None) -> None:
         """
         Refresh the scene, removing all the models, and adding the new model specified
         in the input.

@@ -1066,7 +1066,7 @@ class Engine:
         self.set_loading_message("Please wait a moment...")
 
         try:
-            self.scene.refresh_with_model_2d_async(path_color_file, path_model, then_routine)
+            self.scene.load_model_from_file_async(path_color_file, path_model, then_routine)
 
         except OSError:
             self.program.set_loading(False)
