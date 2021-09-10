@@ -108,7 +108,7 @@ class Lines(Model):
                        self.__line_color[2],
                        self.__line_color[3])
         GL.glUniform1f(z_value_location, self.__z_offset)
-        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_active_2d_model_projection_matrix())
+        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_projection_matrix_2D())
 
     def add_line(self, first_point: tuple, second_point: tuple):
         """

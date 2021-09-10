@@ -34,6 +34,7 @@ from src.engine.scene.model.map2dmodel import Map2DModel
 from src.engine.scene.model.map3dmodel import Map3DModel
 from src.engine.scene.model.model import Model
 from src.engine.scene.model.polygon import Polygon
+from src.engine.scene.model.tranformations.transformations import ortho, perspective
 from src.engine.scene.transformation_helper import TransformationHelper
 from src.error.interpolation_error import InterpolationError
 from src.error.model_transformation_error import ModelTransformationError
@@ -89,10 +90,24 @@ class Scene:
         self.__width_viewport: int = 0
         self.__height_viewport: int = 0
 
-        # auxiliary variables
+        # Variables used to calculate the projection matrix used on the scene
+        # -------------------------------------------------------------------
+        self.__projection_matrix_2D = None
+        self.__x = [-180, 180]  # Range of values to show on the scene by default
+        self.__y = [-90, 90]  # Range of values to show on the scene by default
+        self.__left_coordinate = None  # Left coordinate showed on the scene
+        self.__right_coordinate = None  # Right coordinate showed on the scene
+        self.__bottom_coordinate = None  # Bottom coordinate showed on the scene
+        self.__top_coordinate = None  # Top coordinate showed on the scene
+        self.__projection_z_axis_min_value = -99999
+        self.__projection_z_axis_max_value = 99999
+
+        self.__projection_matrix_3D = None
+
+        # Auxiliary variables
         # -------------------
 
-        # variable that indicate which function to use when there is
+        # Variable that indicate which function to use when there is
         # more than one model on the scene.
         self.__should_execute_then_reload: int = 0
         self.__should_execute_then_optimize_gpu_memory: int = 0
@@ -403,7 +418,7 @@ class Scene:
         # Calculate the position of the mouse on the map
         # ----------------------------------------------
         scene_settings = self.__engine.get_scene_setting_data()
-        map_positions = self.get_active_model_showed_limits()
+        map_positions = self.get_2D_showed_limits()
         window_settings = self.__engine.get_window_setting_data()
 
         x_dist_pixel = position_x - scene_settings['SCENE_BEGIN_X']
@@ -730,7 +745,7 @@ class Scene:
                                                self.__model_hash[active_model])
 
     # noinspection PyUnresolvedReferences
-    def get_active_2d_model_projection_matrix(self) -> np.array:
+    def get_projection_matrix_2D(self) -> np.array:
         """
         Get the projection matrix from the active 2D model being showed on the screen.
 
@@ -749,13 +764,21 @@ class Scene:
 
         Returns: array with the projection matrix of the active model.
         """
-        active_model_id = self.__engine.get_active_model_id()
+        if self.__projection_matrix_2D is None:
+            self.update_projection_matrix_2D()
 
-        # Return active model projection matrix if the model exists
-        if active_model_id in self.__model_hash:
-            return self.__model_hash[active_model_id].get_projection_matrix()
-        else:
-            raise SceneError(7)
+        return self.__projection_matrix_2D
+
+    def get_projection_matrix_3D(self) -> np.array:
+        """
+        Return the projection matrix to use when rendering 3D models.
+
+        Returns: Projection matrix to use when rendering 3D models.
+        """
+        if self.__projection_matrix_3D is None:
+            self.update_projection_matrix_3D()
+
+        return self.__projection_matrix_3D
 
     def get_active_model_coordinates_arrays(self) -> (np.ndarray, np.ndarray):
         """
@@ -792,19 +815,6 @@ class Scene:
             return self.__model_hash[active_model_id].get_height_on_coordinates(x_coordinate, y_coordinate)
         else:
             return None
-
-    def get_active_model_showed_limits(self) -> dict:
-        """
-        Get a dictionary with the limits of the coordinates being showed by the current model on the scene.
-
-        Returns: Dictionary with the limits
-        """
-        active_model_id = self.__engine.get_active_model_id()
-        if active_model_id is None:
-            raise AssertionError("There is no active model.")
-
-        if active_model_id in self.__model_hash:
-            return self.__model_hash[active_model_id].get_showed_limits()
 
     def get_active_polygon_id(self) -> str:
         """
@@ -875,6 +885,25 @@ class Scene:
         model = self.__3d_model_hash[model_3d_id]
         return model.get_normalization_height_factor()
 
+    def get_2D_showed_limits(self) -> dict:
+        """
+        Get a dictionary with the limits of the model being showed on the screen.
+
+        Returns: Dictionary with the limits showing on the scene
+        """
+        if self.__left_coordinate is None or \
+                self.__right_coordinate is None or \
+                self.__top_coordinate is None or \
+                self.__bottom_coordinate is None:
+            self.update_projection_matrix_2D()
+
+        return {
+            'left': self.__left_coordinate,
+            'right': self.__right_coordinate,
+            'top': self.__top_coordinate,
+            'bottom': self.__bottom_coordinate
+        }
+
     # noinspection SpellCheckingInspection
     def get_map2dmodel_vertices_array(self, model_id: str) -> np.ndarray:
         """
@@ -932,8 +961,8 @@ class Scene:
         return {
             'height_array': model.get_height_array(),
             'coordinates_array': model.get_model_coordinate_array(),
-            'projection_matrix': model.get_projection_matrix(),
-            'showed_limits': model.get_showed_limits(),
+            'projection_matrix': self.get_projection_matrix_2D(),
+            'showed_limits': self.get_2D_showed_limits(),
             'shape': model.get_vertices_shape(),
             'name': model.get_name()
         }
@@ -1205,20 +1234,6 @@ class Scene:
         """
         self.__camera.modify_camera_offset(movement)
 
-    def move_models(self, x_movement: int, y_movement: int) -> None:
-        """
-        Move the models on the scene.
-
-        Args:
-            x_movement: Movement in the x-axis
-            y_movement: Movement in the y-axis
-
-        Returns: None
-        """
-        log.debug("Moving models")
-        for model in self.__model_hash.values():
-            model.move(x_movement, y_movement)
-
     def optimize_gpu_memory_async(self, then: callable) -> None:
         """
         Optimize the gpu memory of the models.
@@ -1280,7 +1295,7 @@ class Scene:
         def then_routine():
             log.debug("Settings colors from file.")
             model.set_color_file(path_color_file)
-            model.calculate_projection_matrix(self.__engine.get_scene_setting_data())
+            self.update_projection_matrix_2D()
             model.wireframes = False
 
             # even if the model is not in the program anymore, we do not want repeated ids.
@@ -1552,20 +1567,119 @@ class Scene:
         for model in self.__model_hash.values():
             model.set_color_file(color_file)
 
-    def update_models_projection_matrix(self) -> None:
+    def update_projection_matrix_3D(self) -> None:
         """
-        Update the projection matrix of the models with the current zoom level and map position of the application.
+        Recalculate the projection matrix to use when rendering 3D models.
 
         Returns: None
         """
-        log.debug("Updating projection matrix of models.")
+        log.debug('Recalculated projection.')
+        scene_settings_data = self.__engine.get_scene_setting_data()
+        camera_settings_data = self.__engine.get_camera_settings()
+        self.__projection_matrix_3D = perspective(camera_settings_data['FIELD_OF_VIEW'],
+                                                  scene_settings_data['SCENE_WIDTH_X'] / scene_settings_data[
+                                                      'SCENE_HEIGHT_Y'],
+                                                  camera_settings_data['PROJECTION_NEAR'],
+                                                  camera_settings_data['PROJECTION_FAR'])
+
+    def update_projection_matrix_2D(self) -> None:
+        """
+        Generate the projection matrix on the model. Method must be called before drawing.
+
+        The projection matrix is the one in charge of converting the coordinates from the view space (camera point of
+        view) into the range (-1, 1), when the points are converted to this range of coordinates it is
+        called that they are in the clip space.
+
+        OpenGL is the one in charge of converting the coordinates from the clipping space into the screen space. showing
+        the points on the screen.
+
+        Since the projection matrix is the one who converts the coordinates of the model into the space accepted by
+        OpenGL (-1, 1), the matrix is also the one in charge of keeping the aspect ratio of the models
+        showed on the screen.
+
+        More information in: https://learnopengl.com/Getting-started/Coordinate-Systems
+
+        Returns: None
+        """
+
+        # Get the data and the proportions to generate the projection matrix
+        # ------------------------------------------------------------------
+        map_position = self.__engine.get_map_position()
         scene_data = self.__engine.get_scene_setting_data()
+        zoom_level = self.__engine.get_zoom_level()
 
-        for model in self.__model_hash.values():
-            model.calculate_projection_matrix(scene_data, self.get_zoom_level())
+        width_scene = scene_data['SCENE_WIDTH_X']
+        height_scene = scene_data['SCENE_HEIGHT_Y']
+        proportion_panoramic = width_scene / float(height_scene)
+        proportion_portrait = height_scene / float(width_scene)
 
-        for model in self.__3d_model_hash.values():
-            model.calculate_projection_matrix()
+        # maximum and minimum values of the map coordinates.
+        min_x = min(self.__x)
+        max_x = max(self.__x)
+        min_y = min(self.__y)
+        max_y = max(self.__y)
+
+        # width and height of the loaded maps.
+        width_map = max_x - min_x
+        height_map = max_y - min_y
+
+        # CASE PANORAMIC DATA
+        # -------------------
+        if width_map > height_map:
+            # calculate the height of the viewport on map coordinates
+            # the width of the viewport in map coordinates is the same as x_width
+            calculated_height_viewport = width_map / proportion_panoramic
+
+            # calculates the coordinates to use to clip the map on the scene to keep the aspect ratio.
+            projection_min_y = (max_y + min_y) / 2 - calculated_height_viewport / 2
+            projection_max_y = (max_y + min_y) / 2 + calculated_height_viewport / 2
+
+            # Calculate the distance to use as offset when applying zoom on the maps.
+            zoom_difference_x = (width_map - (width_map / zoom_level)) / 2
+            zoom_difference_y = (calculated_height_viewport - (calculated_height_viewport / zoom_level)) / 2
+
+            # calculate the coordinates to show on the viewport.
+            # NOTE: The coordinates can be values outside of the map.
+            self.__left_coordinate = min_x + zoom_difference_x
+            self.__right_coordinate = max_x - zoom_difference_x
+            self.__bottom_coordinate = projection_min_y + zoom_difference_y
+            self.__top_coordinate = projection_max_y - zoom_difference_y
+
+        # CASE PORTRAIT DATA
+        # -------------------
+        else:
+            # calculate the width of the viewport on map coordinates
+            # the width of the viewport in map coordinates is the same as x_width
+            calculated_width_viewport = height_map / proportion_portrait
+
+            # calculates the coordinates to use to clip the map on the scene to keep the aspect ratio.
+            projection_min_x = (max_x + min_x) / 2 - calculated_width_viewport / 2
+            projection_max_x = (max_x + min_x) / 2 + calculated_width_viewport / 2
+
+            # Calculate the distance to use as offset when applying zoom on the maps.
+            zoom_difference_y = (height_map - (height_map / zoom_level)) / 2
+            zoom_difference_x = (calculated_width_viewport - (calculated_width_viewport / zoom_level)) / 2
+
+            # calculate the coordinates to show on the viewport.
+            # NOTE: The coordinates can be values outside of the map.
+            self.__left_coordinate = projection_min_x + zoom_difference_x
+            self.__right_coordinate = projection_max_x - zoom_difference_x
+            self.__bottom_coordinate = min_y + zoom_difference_y
+            self.__top_coordinate = max_y - zoom_difference_y
+
+        # Move the coordinates to show on the model depending on the position that the model is located.
+        self.__left_coordinate -= map_position[0]
+        self.__right_coordinate -= map_position[0]
+        self.__top_coordinate -= map_position[1]
+        self.__bottom_coordinate -= map_position[1]
+
+        # Calculate the projection matrix given the calculated coordinates to show on the model.
+        self.__projection_matrix_2D = ortho(self.__left_coordinate,
+                                            self.__right_coordinate,
+                                            self.__bottom_coordinate,
+                                            self.__top_coordinate,
+                                            self.__projection_z_axis_min_value,
+                                            self.__projection_z_axis_max_value)
 
     def update_viewport(self) -> None:
         """
@@ -1578,7 +1692,8 @@ class Scene:
         GL.glViewport(scene_data['SCENE_BEGIN_X'], scene_data['SCENE_BEGIN_Y'], scene_data['SCENE_WIDTH_X'],
                       scene_data['SCENE_HEIGHT_Y'])
 
-        self.update_models_projection_matrix()
+        self.update_projection_matrix_2D()
+        self.update_projection_matrix_3D()
 
     def update_viewport_variables(self):
         """

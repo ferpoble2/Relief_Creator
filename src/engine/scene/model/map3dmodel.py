@@ -25,7 +25,7 @@ import OpenGL.GL as GL
 import numpy as np
 
 from src.engine.scene.model.mapmodel import MapModel
-from src.engine.scene.model.tranformations.transformations import identity, perspective
+from src.engine.scene.model.tranformations.transformations import identity
 from src.engine.scene.unit_converter import UnitConverter
 from src.input.CTP import read_file
 from src.utils import get_logger
@@ -89,10 +89,6 @@ class Map3DModel(MapModel):
         # projection matrix to use for the rendering
         scene_settings_data = self.scene.get_scene_setting_data()
         camera_settings_data = self.scene.get_camera_settings()
-        self.__projection = perspective(camera_settings_data['FIELD_OF_VIEW'],
-                                        scene_settings_data['SCENE_WIDTH_X'] / scene_settings_data['SCENE_HEIGHT_Y'],
-                                        camera_settings_data['PROJECTION_NEAR'],
-                                        camera_settings_data['PROJECTION_FAR'])
 
         # set the data for the model
         # --------------------------
@@ -161,7 +157,7 @@ class Map3DModel(MapModel):
         # set the value
         GL.glUniformMatrix4fv(model_location, 1, GL.GL_TRUE, self.__model)
         GL.glUniformMatrix4fv(view_location, 1, GL.GL_TRUE, self.__view)
-        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.__projection)
+        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_projection_matrix_3D())
         GL.glUniform1f(max_height_location, float(self.__max_height))
         GL.glUniform1f(min_height_location, float(self.__min_height))
 
@@ -174,20 +170,6 @@ class Map3DModel(MapModel):
             GL.glUniform3fv(colors_location, len(self.__colors), self.__colors)
             GL.glUniform1fv(height_color_location, len(self.__height_limit), self.__height_limit)
             GL.glUniform1i(length_location, len(self.__colors))
-
-    def calculate_projection_matrix(self) -> None:
-        """
-        Recalculate the projection matrix to use to draw the model.
-
-        Returns: None
-        """
-        log.debug('Recalculated projection.')
-        scene_settings_data = self.scene.get_scene_setting_data()
-        camera_settings_data = self.scene.get_camera_settings()
-        self.__projection = perspective(camera_settings_data['FIELD_OF_VIEW'],
-                                        scene_settings_data['SCENE_WIDTH_X'] / scene_settings_data['SCENE_HEIGHT_Y'],
-                                        camera_settings_data['PROJECTION_NEAR'],
-                                        camera_settings_data['PROJECTION_FAR'])
 
     def change_height_measure_unit(self, new_measure_unit: str) -> None:
         """
