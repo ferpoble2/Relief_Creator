@@ -1285,7 +1285,7 @@ class Engine:
         using the method optimize_gpu_memory.
 
         IMPORTANT:
-            This method is Asynchronous, this is, the logic that make the reload of the models run in another thread
+            This method is asynchronous, this is, the logic that make the reload of the models run in another thread
             while the main thread is still in charge of rendering the program.
 
         Returns: None
