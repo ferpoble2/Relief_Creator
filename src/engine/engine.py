@@ -1234,6 +1234,9 @@ class Engine:
         map_position[0] += (x_movement * (showed_limits['right'] - showed_limits['left'])) / width_scene
         map_position[1] += (y_movement * (showed_limits['top'] - showed_limits['bottom'])) / height_scene
 
+        # Update the position on the program
+        self.program.set_map_position(map_position)
+
         # Update projection matrix
         self.scene.update_projection_matrix_2D()
 
