@@ -1402,17 +1402,6 @@ class Engine:
         """
         self.gui_manager.set_loading_message(new_msg)
 
-    def set_map_position(self, new_position: list) -> None:
-        """
-        Tell the program the new position of the map.
-
-        Args:
-            new_position: New position to use.
-
-        Returns: None
-        """
-        self.program.set_map_position(new_position)
-
     def set_modal_text(self, title_modal, msg) -> None:
         """
         Set a modal in the program.

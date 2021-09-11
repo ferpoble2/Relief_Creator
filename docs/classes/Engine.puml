@@ -89,7 +89,6 @@ class Engine {
     + set_active_polygon(polygon_id)
     + set_active_tool(tool)
     + set_loading_message(new_msg)
-    + set_map_position(new_position)
     + set_modal_text(title_modal, msg)
     + set_models_polygon_mode(polygon_mode)
     + set_new_parameter_to_polygon(polygon_id, key, value)

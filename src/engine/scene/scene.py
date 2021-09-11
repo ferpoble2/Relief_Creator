@@ -1433,17 +1433,6 @@ class Scene:
         """
         self.__engine.set_loading_message(new_msg)
 
-    def set_map_position(self, new_position: list) -> None:
-        """
-        Tell the engine the new position of the map.
-
-        Args:
-            new_position: New position to use.
-
-        Returns: None
-        """
-        self.__engine.set_map_position(new_position)
-
     def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
         Change the polygon mode used by the models.
