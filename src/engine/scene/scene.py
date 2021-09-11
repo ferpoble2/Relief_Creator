@@ -438,6 +438,7 @@ class Scene:
 
         # Return None, None if mouse is outside the map.
         # ----------------------------------------------
+        # noinspection PyTypeChecker
         outside_map = x_pos < np.min(x_array) or \
                       x_pos > np.max(x_array) or \
                       y_pos < np.min(y_array) or \
@@ -638,8 +639,8 @@ class Scene:
         RepeatedPointError will be raised.
 
         Args:
-            priority_position: Where, in the draw order, set the polygon. Negative values will place the polygon at the end
-                               of the list (will be draw the last).
+            priority_position: Where, in the draw order, set the polygon. Negative values will place the polygon at the
+                               end of the list (will be draw the last).
             point_list: List with the points to add to the polygon. [[x,y],[x,y],...]
             parameters: Parameters to set in the polygon. {parameter_name:value,...}
 
