@@ -1424,8 +1424,10 @@ class Scene:
         """
         Change the loading message shown in the loading frame.
 
+        This method ask the engine to change the message showed on the loading frame.
+
         Args:
-            new_msg: New message to show
+            new_msg: New message to show on the loading frame.
 
         Returns: None
         """

@@ -1284,6 +1284,9 @@ class Engine:
         After the process, the old indices that were in the same position than the new triangles will be deleted
         using the method optimize_gpu_memory.
 
+        NOTE:
+            This method will create a loading frame on the application while the models are being reloaded.
+
         IMPORTANT:
             This method is asynchronous, this is, the logic that make the reload of the models run in another thread
             while the main thread is still in charge of rendering the program.

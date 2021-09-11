@@ -1084,7 +1084,14 @@ class GUIManager:
 
     def reload_models(self):
         """
-        Ask the Scene to reload the models to better the definitions.
+        Ask the Engine to reload the models into a better definition.
+
+        NOTE:
+            This method will create a loading frame on the application while the models are being reloaded.
+
+        IMPORTANT:
+            This method is asynchronous, this is, the logic that make the reload of the models run in another thread
+            while the main thread will still render the program in real time.
 
         Returns: None
         """
