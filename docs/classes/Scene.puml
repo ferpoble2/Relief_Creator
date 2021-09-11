@@ -59,7 +59,6 @@
                 + reset_camera_values()
                 + set_loading_message(new_msg)
                 + set_map_position(new_position)
-                + set_modal_text(title_modal, msg)
                 + set_models_polygon_mode(polygon_mode)
                 + set_polygon_name(polygon_id, new_name)
                 + set_polygon_param(polygon_id, key, value)

@@ -1439,14 +1439,6 @@ class Scene:
         """
         self.__engine.set_map_position(new_position)
 
-    def set_modal_text(self, title_modal: str, msg: str) -> None:
-        """
-        Calls the engine to set a modal text on the screen.
-
-        Returns: None
-        """
-        self.__engine.set_modal_text(title_modal, msg)
-
     def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
         Change the polygon mode used by the models.
