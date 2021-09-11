@@ -620,12 +620,13 @@ class Scene:
 
         Returns: Id of the new map3Dmodel
         """
-        self.reset_camera_values()
-        new_model = Map3DModel(self, self.__model_hash[self.__engine.get_active_model_id()])
-        new_model.id = self.__engine.get_active_model_id()
+        if self.__engine.get_active_model_id() not in self.__3d_model_hash:
+            self.reset_camera_values()
+            new_model = Map3DModel(self, self.__model_hash[self.__engine.get_active_model_id()])
+            new_model.id = self.__engine.get_active_model_id()
 
-        # add the model to the hash
-        self.__3d_model_hash[self.__engine.get_active_model_id()] = new_model
+            # add the model to the hash
+            self.__3d_model_hash[self.__engine.get_active_model_id()] = new_model
 
     def create_new_polygon(self, point_list: list = None, parameters: dict = None,
                            priority_position: int = None) -> str:
