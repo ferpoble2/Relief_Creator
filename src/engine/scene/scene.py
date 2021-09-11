@@ -1350,6 +1350,9 @@ class Scene:
     def remove_all_models(self) -> None:
         """
         Remove all models from the hash of models.
+
+        Only removes the 2D models.
+
         Returns: None
         """
         self.__model_hash = {}
