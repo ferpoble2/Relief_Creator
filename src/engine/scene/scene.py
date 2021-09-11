@@ -612,28 +612,20 @@ class Scene:
         self.__3d_model_hash[active_model].change_height_normalization_factor(new_factor)
 
     # noinspection SpellCheckingInspection
-    def create_and_add_map3Dmodel(self, model_id: str, model_2d: Map2DModel) -> None:
+    def create_3D_model_if_not_exists(self) -> None:
         """
         Create a new map3Dmodel object and add it to the scene.
 
+        By default, the data used to generate the model is the one of the active model on the scene.
+
         Returns: Id of the new map3Dmodel
-
-        Args:
-            model_id: Id of the model.
-            model_2d: Model 2D from wich extract the data to use to see the model in 3D.
         """
+        self.reset_camera_values()
+        new_model = Map3DModel(self, self.__model_hash[self.__engine.get_active_model_id()])
+        new_model.id = self.__engine.get_active_model_id()
 
-        # noinspection PyMissingOrEmptyDocstring
-        def task_loading():
-            self.reset_camera_values()
-            new_model = Map3DModel(self, model_2d)
-            new_model.id = model_id
-
-            # add the model to the hash
-            self.__3d_model_hash[model_id] = new_model
-
-        self.__engine.set_loading_message('Generating 3D model...')
-        self.__engine.set_task_with_loading_frame(task_loading)
+        # add the model to the hash
+        self.__3d_model_hash[self.__engine.get_active_model_id()] = new_model
 
     def create_new_polygon(self, point_list: list = None, parameters: dict = None,
                            priority_position: int = None) -> str:
