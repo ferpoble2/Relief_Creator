@@ -739,11 +739,6 @@ class Scene:
             if active_model in self.__3d_model_hash:
                 self.__3d_model_hash[active_model].draw()
 
-            # Create the model if it does not exists
-            else:
-                self.create_and_add_map3Dmodel(active_model,
-                                               self.__model_hash[active_model])
-
     # noinspection PyUnresolvedReferences
     def get_projection_matrix_2D(self) -> np.array:
         """
