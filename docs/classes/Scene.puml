@@ -13,12 +13,12 @@
                 + change_camera_azimuthal_angle(angle)
                 + change_camera_elevation(angle)
                 + change_color_of_polygon(polygon_id, color)
-                + change_polygon_draw_order(polygon_id, new_position)
                 + change_dot_color_of_polygon(polygon_id, color)
                 + change_height_unit_3D_model(model_id, measure_unit)
                 + change_map_unit_3D_model(model_id, measure_unit)
                 + change_normalization_height_factor(active_model, new_factor)
-                + create_and_add_map3Dmodel(model_id, model_2d): str
+                + change_polygon_draw_priority(polygon_id, new_position)
+                + create_3D_model_if_not_exists()
                 + create_new_polygon(): str
                 + delete_polygon_by_id(polygon_id)
                 + delete_polygon_param(polygon_id, key)
@@ -45,12 +45,12 @@
                 + initialize(engine)
                 + interpolate_points(polygon_id, model_id, distance, type_interpolation)
                 + is_polygon_planar(polygon_id)
+                + load_model_from_file_async(path_color_file, path_model, model_id)
                 + load_preview_interpolation_area(distance, z_value)
                 + modify_camera_radius(distance)
                 + move_camera(movement)
                 + move_models(x_movement, y_movement)
                 + optimize_gpu_memory_async(then)
-                + load_model_from_file_async(path_color_file, path_model, model_id)
                 + reload_models_async(then)
                 + remove_all_models()
                 + remove_interpolation_preview(polygon_id)
@@ -63,6 +63,7 @@
                 + set_models_polygon_mode(polygon_mode)
                 + set_polygon_name(polygon_id, new_name)
                 + set_polygon_param(polygon_id, key, value)
+                + set_thread_task(parallel_task, then)
                 + transform_points(polygon_id, model_id, min_height, max_height, transformation_type, filters)
                 + update_3D_model(model_id)
                 + update_models_colors()
@@ -71,14 +72,25 @@
                 + update_viewport_variables()
 
                 - __3d_model_hash: dictionary
+                - __bottom_coordinate: float
+                - __camera: Camera
                 - __engine : Engine
                 - __height_viewport: int
+                - __left_coordinate: float
+                - __model_draw_priority: list
                 - __model_hash : dictionary
+                - __polygon_draw_priority: list
                 - __polygon_id_count: int
-                - __polygon_list: list
+                - __projection_matrix_2D: array
+                - __projection_matrix_3D: array
+                - __projection_z_axis_max_value: int
+                - __projection_z_axis_min_value: int
+                - __right_coordinate: float
                 - __should_execute_then_optimize_gpu_memory: int
                 - __should_execute_then_reload: int
+                - __top_coordinate: float
                 - __width_viewport: int
-                - __camera: Camera
+                - __x: list
+                - __y: list
             }
 @enduml
