@@ -1512,6 +1512,9 @@ class Engine:
         elif mode == '3D':
             self.program.set_view_mode_3D()
             self.render.enable_depth_buffer(True)
+
+            self.set_loading_message('Generating 3D model...')
+            self.set_task_with_loading_frame(lambda: self.scene.create_3D_model_if_not_exists())
         else:
             raise ValueError(f'Can not change program view mode to {mode}.')
 
