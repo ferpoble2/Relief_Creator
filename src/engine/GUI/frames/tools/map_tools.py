@@ -97,13 +97,13 @@ class MapTools:
                 # ---------------
                 imgui.selectable("Move up")
                 if imgui.is_item_clicked():
-                    self.__gui_manager.change_model_priority(str(model_id), -1)
+                    self.__gui_manager.move_model_position(str(model_id), -1)
 
                 # Move down the map
                 # -----------------
                 imgui.selectable("Move down")
                 if imgui.is_item_clicked():
-                    self.__gui_manager.change_model_priority(str(model_id), 1)
+                    self.__gui_manager.move_model_position(str(model_id), 1)
 
                 # Delete the map
                 # --------------

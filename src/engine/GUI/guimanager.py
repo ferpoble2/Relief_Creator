@@ -325,7 +325,7 @@ class GUIManager:
         else:
             raise NotImplementedError(f'Measure {measure_unit} not implemented.')
 
-    def change_model_priority(self, model_id: str, offset: int) -> None:
+    def move_model_position(self, model_id: str, offset: int) -> None:
         """
         Change the priority of the selected model, making the rendering of the model before/after the others models.
 
