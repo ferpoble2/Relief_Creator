@@ -514,32 +514,6 @@ class Scene:
         """
         self.__camera.modify_elevation(angle)
 
-    def change_polygon_draw_priority(self, polygon_id: str, new_priority: int) -> None:
-        """
-        Change the order on which the polygons are draw on the scene.
-
-        The closer the priority is to 0, the higher the priority. Polygons with high priority will be draw over 
-        polygons with less priority.
-
-        Args:
-            polygon_id: ID of the polygon to modify the draw order.
-            new_priority: New priority to be assigned to the polygon.
-
-        Returns: None
-        """
-        # Check that polygon exists in the scene
-        if polygon_id not in self.__polygon_hash.keys():
-            raise SceneError(5)
-
-        # Remove the polygon from the drawing list, raise exception if it is not in the list
-        try:
-            self.__polygon_draw_priority.remove(polygon_id)
-        except ValueError:
-            raise SceneError(6)
-
-        # Insert element in the new position
-        self.__polygon_draw_priority.insert(new_priority, polygon_id)
-
     def change_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
         Change the color of the polygon with the specified id.
@@ -613,6 +587,32 @@ class Scene:
         self.__3d_model_hash[active_model].change_height_normalization_factor(new_factor)
 
     # noinspection SpellCheckingInspection
+    def change_polygon_draw_priority(self, polygon_id: str, new_priority: int) -> None:
+        """
+        Change the order on which the polygons are draw on the scene.
+
+        The closer the priority is to 0, the higher the priority. Polygons with high priority will be draw over
+        polygons with less priority.
+
+        Args:
+            polygon_id: ID of the polygon to modify the draw order.
+            new_priority: New priority to be assigned to the polygon.
+
+        Returns: None
+        """
+        # Check that polygon exists in the scene
+        if polygon_id not in self.__polygon_hash.keys():
+            raise SceneError(5)
+
+        # Remove the polygon from the drawing list, raise exception if it is not in the list
+        try:
+            self.__polygon_draw_priority.remove(polygon_id)
+        except ValueError:
+            raise SceneError(6)
+
+        # Insert element in the new position
+        self.__polygon_draw_priority.insert(new_priority, polygon_id)
+
     def create_3D_model_if_not_exists(self) -> None:
         """
         Create a new map3Dmodel object and add it to the scene.
@@ -742,40 +742,36 @@ class Scene:
                 self.__3d_model_hash[active_model].draw()
 
     # noinspection PyUnresolvedReferences
-    def get_projection_matrix_2D(self) -> np.array:
+    def get_2D_showed_limits(self) -> dict:
         """
-        Get the projection matrix from the active 2D model being showed on the screen.
+        Get a dictionary with the limits of the model being showed on the screen.
 
-        The projection matrix of the 2D models limit the coordinates showed on the screen depending on the position
-        of the map and the level of zoom. This method is useful when rendering objects that need to be over the 2D
-        map.
-
-        The projection matrix used in 2D mode are orthogonal, and the camera is always on the z-axis coordinate, so the
-        value for near/far in the matrix does not affect the way that the models are viewed on the scene. Even with
-        this, models draw in the 2D mode that have a z-coordinate value that is outside the near/far range will not be
-        rendered (since they are out of the projection matrix).
-
-        The near/far range is the one used by the Map2DModel class for their projection matrix. That should
-        be [-99999, 99999]. Points that use this matrix and have points with z-axis coordinate outside this range
-        will not be rendered.
-
-        Returns: array with the projection matrix of the active model.
+        Returns: Dictionary with the limits showing on the scene
         """
-        if self.__projection_matrix_2D is None:
+        if self.__left_coordinate is None or \
+                self.__right_coordinate is None or \
+                self.__top_coordinate is None or \
+                self.__bottom_coordinate is None:
             self.update_projection_matrix_2D()
 
-        return self.__projection_matrix_2D
+        return {
+            'left': self.__left_coordinate,
+            'right': self.__right_coordinate,
+            'top': self.__top_coordinate,
+            'bottom': self.__bottom_coordinate
+        }
 
-    def get_projection_matrix_3D(self) -> np.array:
+    # noinspection SpellCheckingInspection
+    def get_3d_model_list(self) -> List[str]:
         """
-        Return the projection matrix to use when rendering 3D models.
+        Get a list with the ID of the 3D models generated on the program.
 
-        Returns: Projection matrix to use when rendering 3D models.
+        The ID used by the 3D models is the same as the ID used by the 2D model from which they were generated. All 3D
+        models have a 2D model associated, but not all 2D models have a 3D model.
+
+        Returns: List with the ID of the 3D models generated on the program.
         """
-        if self.__projection_matrix_3D is None:
-            self.update_projection_matrix_3D()
-
-        return self.__projection_matrix_3D
+        return list(self.__3d_model_hash.keys())
 
     def get_active_model_coordinates_arrays(self) -> (Union[np.ndarray, None], Union[np.ndarray, None]):
         """
@@ -882,26 +878,6 @@ class Scene:
         model = self.__3d_model_hash[model_3d_id]
         return model.get_normalization_height_factor()
 
-    def get_2D_showed_limits(self) -> dict:
-        """
-        Get a dictionary with the limits of the model being showed on the screen.
-
-        Returns: Dictionary with the limits showing on the scene
-        """
-        if self.__left_coordinate is None or \
-                self.__right_coordinate is None or \
-                self.__top_coordinate is None or \
-                self.__bottom_coordinate is None:
-            self.update_projection_matrix_2D()
-
-        return {
-            'left': self.__left_coordinate,
-            'right': self.__right_coordinate,
-            'top': self.__top_coordinate,
-            'bottom': self.__bottom_coordinate
-        }
-
-    # noinspection SpellCheckingInspection
     def get_map2dmodel_vertices_array(self, model_id: str) -> np.ndarray:
         """
         Get the array of vertices of the specified model.
@@ -922,14 +898,6 @@ class Scene:
 
         vertices_array[:, :, 2] = heights
         return vertices_array
-
-    def get_model_list(self) -> List[str]:
-        """
-        Get a list with the ID of all the 2D models loaded into the program.
-
-        Returns: List with the ID of the models.
-        """
-        return list(self.__model_hash.keys())
 
     def get_model_information(self, model_id: str) -> dict:
         """
@@ -964,16 +932,13 @@ class Scene:
             'name': model.get_name()
         }
 
-    def get_3d_model_list(self) -> List[str]:
+    def get_model_list(self) -> List[str]:
         """
-        Get a list with the ID of the 3D models generated on the program.
+        Get a list with the ID of all the 2D models loaded into the program.
 
-        The ID used by the 3D models is the same as the ID used by the 2D model from which they were generated. All 3D
-        models have a 2D model associated, but not all 2D models have a 3D model.
-
-        Returns: List with the ID of the 3D models generated on the program.
+        Returns: List with the ID of the models.
         """
-        return list(self.__3d_model_hash.keys())
+        return list(self.__model_hash.keys())
 
     def get_point_list_from_polygon(self, polygon_id: str) -> list:
         """
@@ -1040,6 +1005,41 @@ class Scene:
 
         except KeyError:
             raise SceneError(5)
+
+    def get_projection_matrix_2D(self) -> np.array:
+        """
+        Get the projection matrix from the active 2D model being showed on the screen.
+
+        The projection matrix of the 2D models limit the coordinates showed on the screen depending on the position
+        of the map and the level of zoom. This method is useful when rendering objects that need to be over the 2D
+        map.
+
+        The projection matrix used in 2D mode are orthogonal, and the camera is always on the z-axis coordinate, so the
+        value for near/far in the matrix does not affect the way that the models are viewed on the scene. Even with
+        this, models draw in the 2D mode that have a z-coordinate value that is outside the near/far range will not be
+        rendered (since they are out of the projection matrix).
+
+        The near/far range is the one used by the Map2DModel class for their projection matrix. That should
+        be [-99999, 99999]. Points that use this matrix and have points with z-axis coordinate outside this range
+        will not be rendered.
+
+        Returns: array with the projection matrix of the active model.
+        """
+        if self.__projection_matrix_2D is None:
+            self.update_projection_matrix_2D()
+
+        return self.__projection_matrix_2D
+
+    def get_projection_matrix_3D(self) -> np.array:
+        """
+        Return the projection matrix to use when rendering 3D models.
+
+        Returns: Projection matrix to use when rendering 3D models.
+        """
+        if self.__projection_matrix_3D is None:
+            self.update_projection_matrix_3D()
+
+        return self.__projection_matrix_3D
 
     def get_render_settings(self) -> dict:
         """
@@ -1159,6 +1159,56 @@ class Scene:
         if polygon_id in self.__polygon_hash:
             return self.__polygon_hash[polygon_id].is_planar()
 
+    def load_model_from_file_async(self, path_color_file: str, path_model: str, then=lambda x: None) -> None:
+        """
+        Refresh the scene, removing all the models, and adding the new model specified
+        in the input.
+
+        The model added will be added as a 2d model to the program with the id 'main'.
+
+        The model must  be in netCDF format.
+
+        The color file must be in CTP format.
+
+        The 'then' parameter is the logic that will be executed after the process finish loading the model into memory.
+        This parameter is a function that must receive one parameter and will be called with the model id as the
+        value for that parameter.
+
+        Args:
+            then: Function to be executed at the end of the async routine. Must receive one parameter (the model id).
+            path_color_file: Path to the CTP file with the colors
+            path_model: Path to the model to use in the application
+
+        Returns: None
+        """
+
+        log.debug("Reading information from file.")
+        X, Y, Z = self.__engine.read_netcdf_info(path_model)
+
+        log.debug("Generating model")
+        model = Map2DModel(self, name=Path(path_model).name)
+
+        # noinspection PyMissingOrEmptyDocstring
+        def then_routine():
+            log.debug("Settings colors from file.")
+            model.set_color_file(path_color_file)
+            self.update_projection_matrix_2D()
+            model.wireframes = False
+
+            model.id = str(self.__model_id_count)
+            self.__model_draw_priority.append(model.id)
+            self.add_model(model)
+
+            self.__model_id_count += 1
+
+            self.__engine.reset_zoom_level()
+
+            # call the then routine
+            then(model.id)
+
+        log.debug("Setting vertices from grid.")
+        model.set_vertices_from_grid_async(X, Y, Z, self.__engine.get_quality(), then_routine)
+
     def load_preview_interpolation_area(self, distance: float, polygon_id: str) -> None:
         """
         Calculate the interpolation area for the active polygon and draw it on the scene.
@@ -1259,56 +1309,6 @@ class Scene:
         if len(self.__model_hash) == 0:
             then()
 
-    def load_model_from_file_async(self, path_color_file: str, path_model: str, then=lambda x: None) -> None:
-        """
-        Refresh the scene, removing all the models, and adding the new model specified
-        in the input.
-
-        The model added will be added as a 2d model to the program with the id 'main'.
-
-        The model must  be in netCDF format.
-
-        The color file must be in CTP format.
-
-        The 'then' parameter is the logic that will be executed after the process finish loading the model into memory.
-        This parameter is a function that must receive one parameter and will be called with the model id as the
-        value for that parameter.
-
-        Args:
-            then: Function to be executed at the end of the async routine. Must receive one parameter (the model id).
-            path_color_file: Path to the CTP file with the colors
-            path_model: Path to the model to use in the application
-
-        Returns: None
-        """
-
-        log.debug("Reading information from file.")
-        X, Y, Z = self.__engine.read_netcdf_info(path_model)
-
-        log.debug("Generating model")
-        model = Map2DModel(self, name=Path(path_model).name)
-
-        # noinspection PyMissingOrEmptyDocstring
-        def then_routine():
-            log.debug("Settings colors from file.")
-            model.set_color_file(path_color_file)
-            self.update_projection_matrix_2D()
-            model.wireframes = False
-
-            model.id = str(self.__model_id_count)
-            self.__model_draw_priority.append(model.id)
-            self.add_model(model)
-
-            self.__model_id_count += 1
-
-            self.__engine.reset_zoom_level()
-
-            # call the then routine
-            then(model.id)
-
-        log.debug("Setting vertices from grid.")
-        model.set_vertices_from_grid_async(X, Y, Z, self.__engine.get_quality(), then_routine)
-
     def reload_models_async(self, then):
         """
         Ask the 2D models to reload with the new resolution of the screen.
@@ -1347,6 +1347,14 @@ class Scene:
         if len(self.__model_hash) == 0:
             then()
 
+    def remove_all_3d_models(self) -> None:
+        """
+        Remove all the 3D models from the hash of 3D models.
+
+        Returns: None
+        """
+        self.__3d_model_hash = {}
+
     def remove_all_models(self) -> None:
         """
         Remove all models from the hash of models.
@@ -1356,14 +1364,6 @@ class Scene:
         Returns: None
         """
         self.__model_hash = {}
-
-    def remove_all_3d_models(self) -> None:
-        """
-        Remove all the 3D models from the hash of 3D models.
-
-        Returns: None
-        """
-        self.__3d_model_hash = {}
 
     def remove_interpolation_preview(self, polygon_id: str) -> None:
         """
@@ -1550,21 +1550,6 @@ class Scene:
         for model in self.__model_hash.values():
             model.set_color_file(color_file)
 
-    def update_projection_matrix_3D(self) -> None:
-        """
-        Recalculate the projection matrix to use when rendering 3D models.
-
-        Returns: None
-        """
-        log.debug('Recalculated projection.')
-        scene_settings_data = self.__engine.get_scene_setting_data()
-        camera_settings_data = self.__engine.get_camera_settings()
-        self.__projection_matrix_3D = perspective(camera_settings_data['FIELD_OF_VIEW'],
-                                                  scene_settings_data['SCENE_WIDTH_X'] / scene_settings_data[
-                                                      'SCENE_HEIGHT_Y'],
-                                                  camera_settings_data['PROJECTION_NEAR'],
-                                                  camera_settings_data['PROJECTION_FAR'])
-
     def update_projection_matrix_2D(self) -> None:
         """
         Generate the projection matrix on the model. Method must be called before drawing.
@@ -1663,6 +1648,21 @@ class Scene:
                                             self.__top_coordinate,
                                             self.__projection_z_axis_min_value,
                                             self.__projection_z_axis_max_value)
+
+    def update_projection_matrix_3D(self) -> None:
+        """
+        Recalculate the projection matrix to use when rendering 3D models.
+
+        Returns: None
+        """
+        log.debug('Recalculated projection.')
+        scene_settings_data = self.__engine.get_scene_setting_data()
+        camera_settings_data = self.__engine.get_camera_settings()
+        self.__projection_matrix_3D = perspective(camera_settings_data['FIELD_OF_VIEW'],
+                                                  scene_settings_data['SCENE_WIDTH_X'] / scene_settings_data[
+                                                      'SCENE_HEIGHT_Y'],
+                                                  camera_settings_data['PROJECTION_NEAR'],
+                                                  camera_settings_data['PROJECTION_FAR'])
 
     def update_viewport(self) -> None:
         """
