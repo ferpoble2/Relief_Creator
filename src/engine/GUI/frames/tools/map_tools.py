@@ -68,9 +68,32 @@ class MapTools:
         active_model = self.__gui_manager.get_active_model_id()
 
         for key, value in model_name_dict.items():
-            if active_model == key:
-                self.__gui_manager.set_bold_font()
-                imgui.text(value)
-                self.__gui_manager.set_regular_font()
-            else:
-                imgui.text(value)
+            imgui.text(value)
+
+            if imgui.is_item_clicked(1):
+                imgui.open_popup(f'popup_model_{key}')
+
+        # Set the logic for the popups
+        # ----------------------------
+        self.popup_logic()
+
+    def popup_logic(self) -> None:
+        """
+        Render the popup for each model.
+
+        The id of the popup to open is as follows: popup_model_{model_id}, where {model_id} is the id of the model
+        selected.
+
+        Returns: None
+        """
+        model_id_list = self.__gui_manager.get_model_list()
+
+        for model_id in model_id_list:
+            if imgui.begin_popup(f'popup_model_{model_id}'):
+                imgui.text("Select an action")
+                imgui.separator()
+                imgui.selectable("Move up")
+                imgui.selectable("Move down")
+                imgui.separator()
+                imgui.selectable("Delete")
+                imgui.end_popup()
