@@ -60,6 +60,7 @@ class GUIManager{
     + get_height_normalization_factor_of_active_3D_model(): float
     + get_icon(icon_name): Icon
     + get_left_frame_width(): int
+    + change_model_priority(model_id, offset)
     + get_main_menu_bar_height(): int
     + get_map_coordinates_from_window_coordinates(x_coordinate, y_coordinate): (float, float)
     + get_map_height_on_coordinates(x_coordinate, y_coordinate): float

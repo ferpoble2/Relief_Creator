@@ -92,10 +92,24 @@ class MapTools:
             if imgui.begin_popup(f'popup_model_{model_id}'):
                 imgui.text("Select an action")
                 imgui.separator()
+
+                # Move up the map
+                # ---------------
                 imgui.selectable("Move up")
+                if imgui.is_item_clicked():
+                    self.__gui_manager.change_model_priority(str(model_id), -1)
+
+                # Move down the map
+                # -----------------
                 imgui.selectable("Move down")
+                if imgui.is_item_clicked():
+                    self.__gui_manager.change_model_priority(str(model_id), 1)
+
+                # Delete the map
+                # --------------
                 imgui.separator()
                 imgui.selectable("Delete")
                 if imgui.is_item_clicked():
                     self.__gui_manager.remove_model(model_id)
+
                 imgui.end_popup()

@@ -195,6 +195,27 @@ class GUIManager:
         """
         self.__model_id_list.append(model_id)
 
+    def change_model_priority(self, model_id: str, offset: int) -> None:
+        """
+        Change the priority of the selected model, making the rendering of the model before/after the others models.
+
+        The offset specify how many elements to move the element in the list of models. Can be a positive or negative
+        integer.
+
+        Args:
+            model_id: ID of the model to change.
+            offset: How many elements to move the selected model.
+
+        Returns: None
+        """
+        # Rearrange the models in the GUI
+        index = self.__model_id_list.index(model_id)
+        self.__model_id_list.pop(index)
+        self.__model_id_list.insert(index + offset, model_id)
+
+        # Change the drawing priority on the Engine
+        self.__engine.change_model_draw_priority(model_id, index + offset)
+
     def add_zoom(self) -> None:
         """
         Ask the engine to add more zoom to the maps. Only works on the 2D mode.
@@ -726,7 +747,7 @@ class GUIManager:
 
         Returns: List of models loaded into the program.
         """
-        return self.__engine.get_model_list()
+        return self.__model_id_list
 
     def get_model_names_dict(self) -> Dict[str, Union[str, None]]:
         """
