@@ -114,7 +114,7 @@ class Tools(Frame):
             log.debug("------------------------")
             log.debug(f"Changed to value {values}")
             self.__slide_bar_quality = values
-            self._GUI_manager.change_quality(values)
+            self._GUI_manager.change_map_quality(values)
 
     def add_new_polygon(self, polygon_id: str) -> None:
         """

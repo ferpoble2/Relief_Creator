@@ -377,7 +377,7 @@ class GUIManager:
                                        transformation_type,
                                        filters)
 
-    def change_quality(self, quality: int) -> None:
+    def change_map_quality(self, quality: int) -> None:
         """
         Change the quality used to render the maps.
 
