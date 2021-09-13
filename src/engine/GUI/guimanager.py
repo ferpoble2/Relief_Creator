@@ -789,7 +789,7 @@ class GUIManager:
 
     def get_polygon_id_list(self) -> list:
         """
-        Get the full list of polygon ids currently being used on the program.
+        Get a list with all the IDs of the polygons being used by the program.
 
         Returns: list with the polygons
         """
@@ -816,7 +816,7 @@ class GUIManager:
 
     def get_polygons_id_from_polygon_folder(self, polygon_folder_id: str) -> list:
         """
-        Get the list of polygons id that a folder contains.
+        Get a list with the IDs of the polygons stored inside a folder.
 
         Args:
             polygon_folder_id: ID of the polygon folder.
