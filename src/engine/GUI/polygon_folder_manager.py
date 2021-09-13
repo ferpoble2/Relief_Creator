@@ -93,21 +93,22 @@ class PolygonFolderManager:
 
         return polygons.index(polygon_id)
 
-    def add_polygon_to_imported_polygon_folder(self, polygon_id: str) -> None:
+    def get_imported_polygon_folder_id(self) -> str:
         """
-        Add the polygon to the imported polygon folder. It creates the folder if it does not exist.
+        Get the id of the folder that stores all the imported polygons.
 
-        Args:
-            polygon_id: ID of the polygon to add.
+        If the folder does not exist, this method creates it.
 
-        Returns: None
+        Returns: ID of the imported polygon folder.
         """
+
+        # create folder if not exist
         if 'imported_polygons' not in self.__folders:
             folder = PolygonFolder('imported_polygons')
             folder.set_name('Imported Polygons')
             self.__folders[folder.get_id()] = folder
 
-        self.add_polygon_to_folder('imported_polygons', polygon_id)
+        return 'imported_polygons'
 
     def create_new_folder(self, name='new_folder') -> str:
         """

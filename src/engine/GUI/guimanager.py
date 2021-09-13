@@ -160,7 +160,8 @@ class GUIManager:
 
         Returns: None
         """
-        self.__polygon_folder_manager.add_polygon_to_imported_polygon_folder(polygon_id)
+        imported_polygon_id = self.__polygon_folder_manager.get_imported_polygon_folder_id()
+        self.__add_polygon_to_polygon_folder(imported_polygon_id, polygon_id)
 
         # update gui
         self.__update_frames_with_new_polygon(polygon_id)
