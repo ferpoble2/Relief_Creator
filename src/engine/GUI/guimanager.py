@@ -158,7 +158,7 @@ class GUIManager:
         else:
             self.add_polygon_to_polygon_folder(polygon_folder_id, polygon_id)
 
-        # update gui
+        # Update the frames on the gui
         self.__update_frames_with_new_polygon(polygon_id)
 
     def add_polygon_to_polygon_folder(self, folder_id: str, polygon_id: str) -> None:
