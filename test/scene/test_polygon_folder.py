@@ -84,17 +84,17 @@ class TestPolygonFolderCreation(unittest.TestCase):
         folder_0_id = self.gui_manager.create_polygon_folder('folder_0')
         polygon_id = self.engine.create_new_polygon()
 
-        self.gui_manager.add_polygon_to_polygon_folder(folder_0_id, polygon_id)
+        self.gui_manager.add_polygon_to_gui(polygon_id, folder_0_id)
         self.assertEqual([polygon_id], self.gui_manager.get_polygons_id_from_polygon_folder(folder_0_id),
                          'Folder does not have the ID of the added polygon.')
 
         polygon_id_2 = self.engine.create_new_polygon()
-        self.gui_manager.add_polygon_to_polygon_folder(folder_0_id, polygon_id_2)
+        self.gui_manager.add_polygon_to_gui(polygon_id_2, folder_0_id)
         self.assertEqual([polygon_id, polygon_id_2], self.gui_manager.get_polygons_id_from_polygon_folder(folder_0_id),
                          'Folder does not have the ID of the added polygon.')
 
         polygon_id_3 = self.engine.create_new_polygon()
-        self.gui_manager.add_polygon_to_polygon_folder(folder_0_id, polygon_id_3)
+        self.gui_manager.add_polygon_to_gui(polygon_id_3, folder_0_id)
         self.assertEqual([polygon_id, polygon_id_2, polygon_id_3],
                          self.gui_manager.get_polygons_id_from_polygon_folder(folder_0_id),
                          'Folder does not have the ID of the added polygon.')
@@ -105,9 +105,9 @@ class TestPolygonFolderCreation(unittest.TestCase):
         polygon2_id = self.engine.create_new_polygon()
         polygon3_id = self.engine.create_new_polygon()
 
-        self.gui_manager.add_polygon_to_polygon_folder(folder_0_id, polygon1_id)
-        self.gui_manager.add_polygon_to_polygon_folder(folder_0_id, polygon2_id)
-        self.gui_manager.add_polygon_to_polygon_folder(folder_0_id, polygon3_id)
+        self.gui_manager.add_polygon_to_gui(polygon1_id, folder_0_id)
+        self.gui_manager.add_polygon_to_gui(polygon2_id, folder_0_id)
+        self.gui_manager.add_polygon_to_gui(polygon3_id, folder_0_id)
 
         self.assertEqual([polygon1_id, polygon2_id, polygon3_id],
                          self.gui_manager.get_polygons_id_from_polygon_folder(folder_0_id),
@@ -134,9 +134,9 @@ class TestPolygonFolderCreation(unittest.TestCase):
         polygon2_id = self.engine.create_new_polygon()
         polygon3_id = self.engine.create_new_polygon()
 
-        self.gui_manager.add_polygon_to_polygon_folder(folder_0_id, polygon1_id)
-        self.gui_manager.add_polygon_to_polygon_folder(folder_0_id, polygon2_id)
-        self.gui_manager.add_polygon_to_polygon_folder(folder_0_id, polygon3_id)
+        self.gui_manager.add_polygon_to_gui(polygon1_id, folder_0_id)
+        self.gui_manager.add_polygon_to_gui(polygon2_id, folder_0_id)
+        self.gui_manager.add_polygon_to_gui(polygon3_id, folder_0_id)
 
         self.assertEqual([polygon1_id, polygon2_id, polygon3_id],
                          self.gui_manager.get_polygons_id_from_polygon_folder(folder_0_id),

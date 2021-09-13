@@ -167,14 +167,14 @@ class GUIManager:
         """
         if polygon_folder_id is None:
             folder_id = self.__polygon_folder_manager.create_new_folder('New Folder')
-            self.add_polygon_to_polygon_folder(folder_id, polygon_id)
+            self.__add_polygon_to_polygon_folder(folder_id, polygon_id)
         else:
-            self.add_polygon_to_polygon_folder(polygon_folder_id, polygon_id)
+            self.__add_polygon_to_polygon_folder(polygon_folder_id, polygon_id)
 
         # Update the frames on the gui
         self.__update_frames_with_new_polygon(polygon_id)
 
-    def add_polygon_to_polygon_folder(self, folder_id: str, polygon_id: str) -> None:
+    def __add_polygon_to_polygon_folder(self, folder_id: str, polygon_id: str) -> None:
         """
         Add an already existent polygon to the specified folder.
 
