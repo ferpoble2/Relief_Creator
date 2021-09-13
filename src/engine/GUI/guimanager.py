@@ -427,6 +427,7 @@ class GUIManager:
 
         Returns: None
         """
+        self.delete_all_polygons_inside_folder(folder_id)
         self.__polygon_folder_manager.delete_folder(folder_id)
 
     def delete_polygon_parameter(self, polygon_id: str, key: str) -> None:

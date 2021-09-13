@@ -321,9 +321,6 @@ class PolygonTools:
                     if self.__GUI_manager.get_active_polygon_id() in polygon_id_list:
                         self.__GUI_manager.set_active_polygon(None)
 
-                    # delete all the polygons in the folder
-                    self.__GUI_manager.delete_all_polygons_inside_folder(folder_id)
-
                     # delete the folder from the list of folders and don't render it's polygons
                     self.__GUI_manager.delete_polygon_folder(folder_id)
 
