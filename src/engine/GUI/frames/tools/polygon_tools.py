@@ -190,12 +190,7 @@ class PolygonTools:
 
         # create the polygon and add it to a folder
         # -----------------------------------------
-        new_polygon_id = self.__GUI_manager.create_new_polygon()
-        if folder_id is None:
-            folder_id = self.__GUI_manager.create_polygon_folder('New Folder')
-            self.__GUI_manager.add_polygon_to_polygon_folder(folder_id, new_polygon_id)
-        else:
-            self.__GUI_manager.add_polygon_to_polygon_folder(folder_id, new_polygon_id)
+        new_polygon_id = self.__GUI_manager.create_new_polygon(folder_id)
 
         # add the colors to the list of colors data
         # -----------------------------------------

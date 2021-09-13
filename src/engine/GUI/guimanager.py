@@ -755,7 +755,7 @@ class GUIManager:
 
         Returns: list with the polygons
         """
-        return self.__engine.get_polygon_id_list()
+        return self.__polygon_folder_manager.get_polygon_id_list()
 
     def get_polygon_name(self, polygon_id: str) -> str:
         """

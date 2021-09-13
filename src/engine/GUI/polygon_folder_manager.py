@@ -201,21 +201,29 @@ class PolygonFolderManager:
 
         return folder.get_name()
 
-    def get_polygon_id_list(self, folder_id: str) -> list:
+    def get_polygon_id_list(self, folder_id: str = None) -> list:
         """
         Get the list of polygons ids inside a folder.
 
-        Returns: list with the list of polygons id inside the folder.
+        If no folder specified, get a list of all the polygon IDs from all the folders.
 
         Args:
-            folder_id (object): id of the folder.
+            folder_id: ID of the folder.
+
+        Returns: list with the list of polygons id inside the folder.
         """
-        folder = self.__folders.get(folder_id)
+        if folder_id is not None:
+            folder = self.__folders.get(folder_id)
+            if folder is None:
+                raise PolygonFolderNotFoundError(0)
 
-        if folder is None:
-            raise PolygonFolderNotFoundError(0)
+            return folder.get_polygon_list()
 
-        return folder.get_polygon_list()
+        else:
+            polygon_id = []
+            for folder in self.__folders.values():
+                polygon_id += folder.get_polygon_list()
+            return polygon_id
 
     def move_polygon_to_folder(self, old_folder_id: str, polygon_id: str, folder_id: str) -> None:
         """
