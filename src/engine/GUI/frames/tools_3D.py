@@ -63,7 +63,7 @@ class Tools3D(Frame):
 
         # Create the window on the screen depending on the mode selected on the program
         # -----------------------------------------------------------------------------
-        if self._GUI_manager.are_frame_fixed():
+        if self._GUI_manager.get_frame_fixed_state():
             imgui.begin('Tools 3D', False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE |
                         imgui.WINDOW_NO_FOCUS_ON_APPEARING)
             imgui.set_window_position(self.get_position()[0], self.get_position()[1])

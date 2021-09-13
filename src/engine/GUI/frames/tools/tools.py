@@ -134,7 +134,7 @@ class Tools(Frame):
         Returns: None
         """
 
-        if self._GUI_manager.are_frame_fixed():
+        if self._GUI_manager.get_frame_fixed_state():
             imgui.begin('Tools', False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE)
             imgui.set_window_position(self.get_position()[0], self.get_position()[1])
             imgui.set_window_size(self._GUI_manager.get_left_frame_width(),

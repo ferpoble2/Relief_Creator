@@ -112,7 +112,7 @@ class MainMenuBar(Frame):
         if imgui.begin_menu('View'):
 
             # Option to fix/unfix the frames of the application
-            if self._GUI_manager.are_frame_fixed():
+            if self._GUI_manager.get_frame_fixed_state():
                 imgui.menu_item('Unfix windows positions')
                 if imgui.is_item_clicked():
                     self._GUI_manager.fix_frames_position(False)

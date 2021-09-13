@@ -84,7 +84,7 @@ class PolygonInformation(Frame):
 
             # Open the window with the selected options depending on the state of the program
             # -------------------------------------------------------------------------------
-            if self._GUI_manager.are_frame_fixed():
+            if self._GUI_manager.get_frame_fixed_state():
                 imgui.begin('Polygon Information', False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE |
                             imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_FOCUS_ON_APPEARING)
                 self.change_position([self._GUI_manager.get_window_width() - self.__width,

@@ -237,7 +237,7 @@ class GUIManager:
         """
         self.__engine.apply_smoothing(polygon_id, model_id, distance_to_polygon)
 
-    def are_frame_fixed(self) -> bool:
+    def get_frame_fixed_state(self) -> bool:
         """
         Return the state of the frames. True if they are fixed (position and size can not be changed),  False  if not.
 
