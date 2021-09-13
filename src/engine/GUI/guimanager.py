@@ -141,17 +141,21 @@ class GUIManager:
         # update gui
         self.__update_frames_with_new_polygon(polygon_id)
 
-    def add_polygon_to_gui(self, polygon_id: str) -> None:
+    def add_polygon_to_gui(self, polygon_id: str, polygon_folder_id: str = None) -> None:
         """
-        Tells the frames that make use of the polygon information that a new polygon was created.
+        Add a new polygon to the GUI and broadcast a method to all the frames that uses the information of the polygons.
 
         Args:
-            polygon_id: Id of the created polygon
+            polygon_folder_id: Polygon folder to add the polygon to.
+            polygon_id: ID of the created polygon.
 
         Returns: None
         """
-        folder_id = self.__polygon_folder_manager.create_new_folder('New Folder')
-        self.__polygon_folder_manager.add_polygon_to_folder(folder_id, polygon_id)
+        if polygon_folder_id is None:
+            folder_id = self.__polygon_folder_manager.create_new_folder('New Folder')
+            self.__polygon_folder_manager.add_polygon_to_folder(folder_id, polygon_id)
+        else:
+            self.add_polygon_to_polygon_folder(polygon_folder_id, polygon_id)
 
         # update gui
         self.__update_frames_with_new_polygon(polygon_id)
@@ -359,13 +363,17 @@ class GUIManager:
         """
         self.__engine.change_quality(quality)
 
-    def create_new_polygon(self) -> str:
+    def create_new_polygon(self, folder_id: str = None) -> str:
         """
-        Create a new polygon on the scene
+        Create a new polygon on the program and add it to a folder to be shown in the GUI.
+
+        If no folder is specified, a new folder is created.
 
         Returns: the id of the new polygon
         """
-        return self.__engine.create_new_polygon()
+        polygon_id = self.__engine.create_new_polygon()
+        self.add_polygon_to_gui(polygon_id, folder_id)
+        return polygon_id
 
     def create_polygon_folder(self, name: str = 'folder') -> str:
         """
