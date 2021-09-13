@@ -18,6 +18,7 @@
                 + change_map_unit_3D_model(model_id, measure_unit)
                 + change_normalization_height_factor(active_model, new_factor)
                 + change_polygon_draw_priority(polygon_id, new_position)
+                + change_model_draw_priority(model_id, new_position)
                 + create_3D_model_if_not_exists()
                 + create_new_polygon(): str
                 + delete_polygon_by_id(polygon_id)

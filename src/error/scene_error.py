@@ -43,5 +43,6 @@ class SceneError(BaseError):
             4: 'Polygon id can not be None.',
             5: 'Polygon ID not found.',
             6: 'Polygon not in the list of polygons to be draw.',
-            7: 'Model not found in the scene'
+            7: 'Model not found in the scene.',
+            8: 'Model not in the list of models to be draw.'
         }

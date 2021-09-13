@@ -613,6 +613,32 @@ class Scene:
         # Insert element in the new position
         self.__polygon_draw_priority.insert(new_priority, polygon_id)
 
+    def change_model_draw_priority(self, model_id: str, new_priority: int) -> None:
+        """
+        Change the order on which the models are draw on the scene.
+
+        The closer the priority is to 0, the higher the priority. Models with high priority will be draw over
+        models with less priority.
+
+        Args:
+            model_id: ID of the model to modify.
+            new_priority: New priority for the model to be draw.
+
+        Returns: None
+        """
+        # Check that polygon exists in the scene
+        if model_id not in self.__polygon_hash.keys():
+            raise SceneError(7)
+
+        # Remove the polygon from the drawing list, raise exception if it is not in the list
+        try:
+            self.__model_draw_priority.remove(model_id)
+        except ValueError:
+            raise SceneError(8)
+
+        # Insert element in the new position
+        self.__model_draw_priority.insert(new_priority, model_id)
+
     def create_3D_model_if_not_exists(self) -> None:
         """
         Create a new map3Dmodel object and add it to the scene.

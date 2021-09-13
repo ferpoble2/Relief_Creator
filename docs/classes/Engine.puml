@@ -23,6 +23,7 @@ class Engine {
     + change_dot_color_of_polygon(polygon_id,  color)
     + change_height_window(height)
     + change_polygon_draw_order(polygon_id, new_position)
+    + change_model_draw_priority(model_id, new_position)
     + change_quality(quality)
     + change_width_window(width)
     + create_new_polygon(): str

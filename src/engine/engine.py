@@ -368,6 +368,22 @@ class Engine:
         """
         return self.scene.change_polygon_draw_priority(polygon_id, new_priority_value)
 
+    def change_model_draw_priority(self, model_id: str, new_priority_value: int) -> None:
+        """
+        Ask the scene to change the order in which the models are draw.
+
+        The closer the priority is to 0, the higher the priority. Models with high priority will be draw over
+        models with less priority.
+
+        Args:
+            model_id: Model to change the order.
+            new_priority_value: New position in the order of drawing. If value is negative, then the model will be the
+                                draw over all the other models.
+
+        Returns: None
+        """
+        return self.scene.change_model_draw_priority(model_id, new_priority_value)
+
     def change_quality(self, quality: int) -> None:
         """
         Change the quality used to render the maps.
