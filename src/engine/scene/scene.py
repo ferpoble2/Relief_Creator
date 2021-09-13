@@ -1408,7 +1408,6 @@ class Scene:
 
         Returns: None
         """
-
         if id_model in self.__model_hash:
             self.__model_hash.pop(id_model)
 

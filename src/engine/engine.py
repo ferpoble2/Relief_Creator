@@ -1639,19 +1639,15 @@ class Engine:
             elif e.code == 3:
                 self.set_modal_text('Error',
                                     'The polygon is not planar. Try using a planar polygon.')
-
             elif e.code == 6:
                 self.set_modal_text('Error',
                                     'Polygon not selected or invalid in filter.')
-
             elif e.code == 7:
                 self.set_modal_text('Error',
                                     'Polygons used in filters must have at least 3 vertices.')
-
             elif e.code == 8:
                 self.set_modal_text('Error',
                                     'One of the polygons used in a filter is not simple/planar.')
-
             else:
                 raise NotImplementedError(f'ModelTransformationError with code {e.code} not handled.')
 
