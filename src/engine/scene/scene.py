@@ -1410,6 +1410,8 @@ class Scene:
         """
         if id_model in self.__model_hash:
             self.__model_hash.pop(id_model)
+        if id_model in self.__model_draw_priority:
+            self.__model_draw_priority.remove(id_model)
 
     def remove_model_3d(self, id_model: str) -> None:
         """
