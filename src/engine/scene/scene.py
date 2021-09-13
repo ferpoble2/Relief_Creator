@@ -627,7 +627,7 @@ class Scene:
         Returns: None
         """
         # Check that polygon exists in the scene
-        if model_id not in self.__polygon_hash.keys():
+        if model_id not in self.__model_hash.keys():
             raise SceneError(7)
 
         # Remove the polygon from the drawing list, raise exception if it is not in the list
