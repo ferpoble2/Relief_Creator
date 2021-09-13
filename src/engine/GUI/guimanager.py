@@ -146,6 +146,8 @@ class GUIManager:
         """
         Add a new model to the list of models to show on the GUI.
 
+        The model is added at the end of the list of models.
+
         Args:
             model_id: Name of the model to add.
 
