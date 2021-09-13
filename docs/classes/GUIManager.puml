@@ -87,6 +87,7 @@ class GUIManager{
     + process_input()
     + reload_models()
     + remove_interpolation_preview(polygon_id)
+    + remove_model(model_id)
     + render()
     + reset_camera_values()
     + set_active_polygon(polygon_id)

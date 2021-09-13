@@ -1110,6 +1110,19 @@ class GUIManager:
         """
         self.__engine.remove_interpolation_preview(polygon_id)
 
+    def remove_model(self, model_id: str) -> None:
+        """
+        Ask the engine to remove the model with the specified ID.
+
+        This method removes the 2D model and the 3D model if ti exists.
+
+        Args:
+            model_id: ID of the model to remove.
+
+        Returns: None
+        """
+        self.__engine.remove_model(model_id)
+
     def render(self) -> None:
         """
         Render the GUI (Components must be drew first).
