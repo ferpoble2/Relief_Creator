@@ -142,6 +142,17 @@ class GUIManager:
         # update gui
         self.__update_frames_with_new_polygon(polygon_id)
 
+    def add_model_to_gui(self, model_id: str) -> None:
+        """
+        Add a new model to the list of models to show on the GUI.
+
+        Args:
+            model_id: Name of the model to add.
+
+        Returns: Add the model to the list of models to be showed on the GUI.
+        """
+        self.__model_id_list.append(model_id)
+
     def add_polygon_to_gui(self, polygon_id: str, polygon_folder_id: str = None) -> None:
         """
         Add a new polygon to the GUI and broadcast a method to all the frames that uses the information of the polygons.
@@ -184,38 +195,6 @@ class GUIManager:
         self.__engine.change_polygon_draw_priority(polygon_id,
                                                    self.__polygon_folder_manager.get_polygon_position(polygon_id))
 
-    def add_model_to_gui(self, model_id: str) -> None:
-        """
-        Add a new model to the list of models to show on the GUI.
-
-        Args:
-            model_id: Name of the model to add.
-
-        Returns: Add the model to the list of models to be showed on the GUI.
-        """
-        self.__model_id_list.append(model_id)
-
-    def change_model_priority(self, model_id: str, offset: int) -> None:
-        """
-        Change the priority of the selected model, making the rendering of the model before/after the others models.
-
-        The offset specify how many elements to move the element in the list of models. Can be a positive or negative
-        integer.
-
-        Args:
-            model_id: ID of the model to change.
-            offset: How many elements to move the selected model.
-
-        Returns: None
-        """
-        # Rearrange the models in the GUI
-        index = self.__model_id_list.index(model_id)
-        self.__model_id_list.pop(index)
-        self.__model_id_list.insert(index + offset, model_id)
-
-        # Change the drawing priority on the Engine
-        self.__engine.change_model_draw_priority(model_id, index + offset)
-
     def add_zoom(self) -> None:
         """
         Ask the engine to add more zoom to the maps. Only works on the 2D mode.
@@ -236,14 +215,6 @@ class GUIManager:
         Returns: None
         """
         self.__engine.apply_smoothing(polygon_id, model_id, distance_to_polygon)
-
-    def get_frame_fixed_state(self) -> bool:
-        """
-        Return the state of the frames. True if they are fixed (position and size can not be changed),  False  if not.
-
-        Returns: if frames are fixed or not.
-        """
-        return self.__engine.are_frames_fixed()
 
     def calculate_max_min_height(self, model_id: str, polygon_id: str, return_data: list) -> None:
         """
@@ -350,6 +321,27 @@ class GUIManager:
             self.__engine.change_3D_model_position_unit(self.get_active_model_id(), 'utm')
         else:
             raise NotImplementedError(f'Measure {measure_unit} not implemented.')
+
+    def change_model_priority(self, model_id: str, offset: int) -> None:
+        """
+        Change the priority of the selected model, making the rendering of the model before/after the others models.
+
+        The offset specify how many elements to move the element in the list of models. Can be a positive or negative
+        integer.
+
+        Args:
+            model_id: ID of the model to change.
+            offset: How many elements to move the selected model.
+
+        Returns: None
+        """
+        # Rearrange the models in the GUI
+        index = self.__model_id_list.index(model_id)
+        self.__model_id_list.pop(index)
+        self.__model_id_list.insert(index + offset, model_id)
+
+        # Change the drawing priority on the Engine
+        self.__engine.change_model_draw_priority(model_id, index + offset)
 
     def change_points_height(self, polygon_id: str,
                              model_id: str,
@@ -625,6 +617,14 @@ class GUIManager:
 
         """
         return self.__engine.get_cpt_file()
+
+    def get_frame_fixed_state(self) -> bool:
+        """
+        Return the state of the frames. True if they are fixed (position and size can not be changed),  False  if not.
+
+        Returns: if frames are fixed or not.
+        """
+        return self.__engine.are_frames_fixed()
 
     def get_gui_key_callback(self) -> callable:
         """
