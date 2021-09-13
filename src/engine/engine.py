@@ -1073,6 +1073,8 @@ class Engine:
 
         # noinspection PyMissingOrEmptyDocstring
         def then_routine(model_id):
+            self.gui_manager.add_model_to_gui(model_id)
+
             self.program.set_active_model(model_id)
             self.program.set_loading(False)
 

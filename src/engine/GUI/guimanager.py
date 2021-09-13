@@ -92,6 +92,7 @@ class GUIManager:
         # ----------------
         self.__engine = engine
         self.__polygon_folder_manager = PolygonFolderManager()
+        self.__model_id_list = []
         self.__component_list_2D = []
         self.__component_list_3D = []
         self.__icons_dict = None
@@ -182,6 +183,17 @@ class GUIManager:
         # --------------------------------------------------------------------------
         self.__engine.change_polygon_draw_priority(polygon_id,
                                                    self.__polygon_folder_manager.get_polygon_position(polygon_id))
+
+    def add_model_to_gui(self, model_id: str) -> None:
+        """
+        Add a new model to the list of models to show on the GUI.
+
+        Args:
+            model_id: Name of the model to add.
+
+        Returns: Add the model to the list of models to be showed on the GUI.
+        """
+        self.__model_id_list.append(model_id)
 
     def add_zoom(self) -> None:
         """
@@ -716,16 +728,17 @@ class GUIManager:
         """
         return self.__engine.get_model_list()
 
-    def get_model_names(self) -> Dict[str, Union[str, None]]:
+    def get_model_names_dict(self) -> Dict[str, Union[str, None]]:
         """
         Get a dictionary with the models on the program and their names.
 
+        The dictionary uses the models ID as the key and the name as the values of the dictionary.
+
         Returns: Dictionary with the ID of the models and the name of each one.
         """
-        model_list_id = self.__engine.get_model_list()
         model_dict = {}
 
-        for model_id in model_list_id:
+        for model_id in self.__model_id_list:
             model_info = self.__engine.get_model_information(model_id)
             model_dict[model_id] = model_info.get('name', None)
 
@@ -1130,6 +1143,7 @@ class GUIManager:
 
         Returns: None
         """
+        self.__model_id_list.remove(model_id)
         self.__engine.remove_model(model_id)
 
     def render(self) -> None:

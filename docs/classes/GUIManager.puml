@@ -11,6 +11,7 @@ class GUIManager{
     - __icons_dict: dict
     - __implementation: GlfwRenderer
     - __io: IMGUI.io
+    - __model_id_list: list
     - __is_mouse_inside_frame: boolean
     - __polygon_folder_manager: PolygonFolderManager
     - __scene: Scene
@@ -20,6 +21,7 @@ class GUIManager{
     + add_imported_polygon(polygon_id)
     + add_polygon_to_gui(polygon_id)
     + add_polygon_to_polygon_folder(folder_id, polygon_id)
+    + add_model_to_gui(model_id)
     + add_zoom()
     + apply_smoothing(polygon_id, model_id, distance_to_polygon)
     + are_frame_fixed()
@@ -62,6 +64,7 @@ class GUIManager{
     + get_map_coordinates_from_window_coordinates(x_coordinate, y_coordinate): (float, float)
     + get_map_height_on_coordinates(x_coordinate, y_coordinate): float
     + get_map_position(): list
+    + get_model_names_dict(): dict
     + get_polygon_folder_id_list(): list
     + get_polygon_folder_name(polygon_folder_id): str
     + get_polygon_id_list(): list

@@ -64,7 +64,7 @@ class MapTools:
 
         # Render maps names
         # -----------------
-        model_name_dict = self.__gui_manager.get_model_names()
+        model_name_dict = self.__gui_manager.get_model_names_dict()
         active_model = self.__gui_manager.get_active_model_id()
 
         for key, value in model_name_dict.items():
