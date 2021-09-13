@@ -433,7 +433,7 @@ class GUIManager:
 
     def delete_polygon_by_id(self, polygon_id: str) -> None:
         """
-        Delete the polygon with the specified id from the scene
+        Delete the polygon with the specified id from the scene and the GUIManager.
 
         Args:
             polygon_id: Id of the polygon to delete
