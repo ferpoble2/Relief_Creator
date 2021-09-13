@@ -96,4 +96,6 @@ class MapTools:
                 imgui.selectable("Move down")
                 imgui.separator()
                 imgui.selectable("Delete")
+                if imgui.is_item_clicked():
+                    self.__gui_manager.remove_model(model_id)
                 imgui.end_popup()
