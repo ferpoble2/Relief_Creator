@@ -101,6 +101,29 @@ class GUIManager:
         # --------------------
         self.__is_mouse_inside_frame = False
 
+    def __add_polygon_to_polygon_folder(self, folder_id: str, polygon_id: str) -> None:
+        """
+        Add an already existent polygon to the specified folder.
+
+        This methods change the polygon draw order so the polygons are draw in the order they are shown on the
+        GUI.
+
+        Args:
+            folder_id: Folder to use
+            polygon_id: Polygon to add to the folder
+
+        Returns: None
+        """
+
+        # Add the polygon to the folder
+        # -----------------------------
+        self.__polygon_folder_manager.add_polygon_to_folder(folder_id, polygon_id)
+
+        # Change the draw order of the polygon to match the showed folder on the GUI
+        # --------------------------------------------------------------------------
+        self.__engine.change_polygon_draw_priority(polygon_id,
+                                                   self.__polygon_folder_manager.get_polygon_position(polygon_id))
+
     def __load_icons(self) -> None:
         """
         Load the icons of the application in the icons dictionary.
@@ -173,29 +196,6 @@ class GUIManager:
 
         # Update the frames on the gui
         self.__update_frames_with_new_polygon(polygon_id)
-
-    def __add_polygon_to_polygon_folder(self, folder_id: str, polygon_id: str) -> None:
-        """
-        Add an already existent polygon to the specified folder.
-
-        This methods change the polygon draw order so the polygons are draw in the order they are shown on the
-        GUI.
-
-        Args:
-            folder_id: Folder to use
-            polygon_id: Polygon to add to the folder
-
-        Returns: None
-        """
-
-        # Add the polygon to the folder
-        # -----------------------------
-        self.__polygon_folder_manager.add_polygon_to_folder(folder_id, polygon_id)
-
-        # Change the draw order of the polygon to match the showed folder on the GUI
-        # --------------------------------------------------------------------------
-        self.__engine.change_polygon_draw_priority(polygon_id,
-                                                   self.__polygon_folder_manager.get_polygon_position(polygon_id))
 
     def add_zoom(self) -> None:
         """
