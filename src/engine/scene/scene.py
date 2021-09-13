@@ -1411,6 +1411,20 @@ class Scene:
         if id_model in self.__model_hash:
             self.__model_hash.pop(id_model)
 
+    def remove_model_3d(self, id_model: str) -> None:
+        """
+        Delete the 3D model with the specified id.
+
+        Do nothing if the model does not exists.
+
+        Args:
+            id_model: ID of the model to remove.
+
+        Returns: None
+        """
+        if id_model in self.__3d_model_hash:
+            self.__3d_model_hash.pop(id_model)
+
     def reset_camera_values(self) -> None:
         """
         Reset the camera values to the initial ones.

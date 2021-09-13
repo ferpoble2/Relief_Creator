@@ -1317,6 +1317,23 @@ class Engine:
         """
         self.scene.remove_interpolation_preview(polygon_id)
 
+    def remove_model(self, model_id: str) -> None:
+        """
+        Removes the model from the program.
+
+        This method removes the 2D and 3D if exists. Do nothing if the model id does not exists on the program.
+
+        Args:
+            model_id: ID of the model to remove from the program.
+
+        Returns: None
+        """
+        self.scene.remove_model(model_id)
+        self.scene.remove_model_3d(model_id)
+
+        if model_id == self.program.get_active_model():
+            self.program.set_active_model(None)
+
     def reset_camera_values(self) -> None:
         """
         Ask the scene to reset the values of the camera.

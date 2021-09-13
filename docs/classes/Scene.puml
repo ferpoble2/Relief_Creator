@@ -56,6 +56,7 @@
                 + remove_interpolation_preview(polygon_id)
                 + remove_last_point_from_active_polygon()
                 + remove_model(id_model)
+                + remove_model_3d(id_model)
                 + reset_camera_values()
                 + set_loading_message(new_msg)
                 + set_models_polygon_mode(polygon_mode)

@@ -83,6 +83,7 @@ class Engine {
     + refresh_with_model_2d_async(path_color_file, path_model, model_id, then)
     + reload_models()
     + remove_interpolation_preview(polygon_id)
+    + remove_model(model_id)
     + reset_camera_values()
     + reset_zoom_level()
     + run()
