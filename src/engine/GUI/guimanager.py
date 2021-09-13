@@ -325,26 +325,16 @@ class GUIManager:
         else:
             raise NotImplementedError(f'Measure {measure_unit} not implemented.')
 
-    def move_model_position(self, model_id: str, offset: int) -> None:
+    def change_map_quality(self, quality: int) -> None:
         """
-        Change the priority of the selected model, making the rendering of the model before/after the others models.
-
-        The offset specify how many elements to move the element in the list of models. Can be a positive or negative
-        integer.
+        Change the quality used to render the maps.
 
         Args:
-            model_id: ID of the model to change.
-            offset: How many elements to move the selected model.
+            quality: Quality to use in the rendering process
 
         Returns: None
         """
-        # Rearrange the models in the GUI
-        index = self.__model_id_list.index(model_id)
-        self.__model_id_list.pop(index)
-        self.__model_id_list.insert(index + offset, model_id)
-
-        # Change the drawing priority on the Engine
-        self.__engine.change_model_draw_priority(model_id, index + offset)
+        self.__engine.change_quality(quality)
 
     def change_points_height(self, polygon_id: str,
                              model_id: str,
@@ -379,17 +369,6 @@ class GUIManager:
                                        max_height,
                                        transformation_type,
                                        filters)
-
-    def change_map_quality(self, quality: int) -> None:
-        """
-        Change the quality used to render the maps.
-
-        Args:
-            quality: Quality to use in the rendering process
-
-        Returns: None
-        """
-        self.__engine.change_quality(quality)
 
     def create_new_polygon(self, folder_id: str = None) -> str:
         """
@@ -1053,6 +1032,27 @@ class GUIManager:
         for polygon_id in self.get_polygons_id_from_polygon_folder(polygon_folder_id):
             self.__engine.change_polygon_draw_priority(polygon_id,
                                                        self.__polygon_folder_manager.get_polygon_position(polygon_id))
+
+    def move_model_position(self, model_id: str, offset: int) -> None:
+        """
+        Change the priority of the selected model, making the rendering of the model before/after the others models.
+
+        The offset specify how many elements to move the element in the list of models. Can be a positive or negative
+        integer.
+
+        Args:
+            model_id: ID of the model to change.
+            offset: How many elements to move the selected model.
+
+        Returns: None
+        """
+        # Rearrange the models in the GUI
+        index = self.__model_id_list.index(model_id)
+        self.__model_id_list.pop(index)
+        self.__model_id_list.insert(index + offset, model_id)
+
+        # Change the drawing priority on the Engine
+        self.__engine.change_model_draw_priority(model_id, index + offset)
 
     def move_polygon_position(self, polygon_id: str, polygon_folder_id: str, movement_offset: int) -> None:
         """
