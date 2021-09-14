@@ -460,7 +460,7 @@ class GUIManager:
         Returns: None
         """
         log.debug('key callback disabled')
-        self.__engine.enable_only_gui_keyboard_callback()
+        self.__engine.disable_controller_key_callback()
 
     def draw_frames(self) -> None:
         """
@@ -495,7 +495,7 @@ class GUIManager:
         Returns: None
         """
         log.debug('key callback enabled')
-        self.__engine.disable_only_gui_keyboard_callback()
+        self.__engine.enable_controller_key_callback()
 
     def export_model_as_netcdf(self, model_id: str) -> None:
         """
@@ -591,6 +591,15 @@ class GUIManager:
         Returns: Data related to the camera.
         """
         return self.__engine.get_camera_data()
+
+    def get_controller_keyboard_callback_state(self) -> bool:
+        """
+        Returns True if the keyboard callback defined by the controller (different from the one used by the GUI) is
+        enabled. Return false if the keyboard callback defined by the controller is disabled.
+
+        Returns: Boolean indicating the state of the controller keyboard callback.
+        """
+        return self.__engine.get_controller_key_callback_state()
 
     def get_cpt_file(self) -> str:
         """

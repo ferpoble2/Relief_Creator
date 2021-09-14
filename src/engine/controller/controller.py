@@ -51,7 +51,7 @@ class Controller:
         self.__scene = engine.scene
         self.__engine = engine
 
-        self.__only_gui_keyboard_callback_enabled = True
+        self.__keyboard_callback_enabled = True
 
         # Auxiliary variables
         self.__mouse_old_pos = (0, 0)
@@ -143,7 +143,7 @@ class Controller:
         """
         self.__mouse_old_pos = (new_x, new_y)
 
-    def enable_only_gui_keyboard_callback(self) -> None:
+    def enable_keyboard_callback(self) -> None:
         """
         Enable the functionality of the keyboard callback function defined in the glfw call.
 
@@ -151,9 +151,9 @@ class Controller:
 
         Returns: None
         """
-        self.__only_gui_keyboard_callback_enabled = True
+        self.__keyboard_callback_enabled = True
 
-    def disable_only_gui_keyboard_callback(self) -> None:
+    def disable_keyboard_callback(self) -> None:
         """
         Disable the functionality of the keyboard callback function defined in the glfw call.
 
@@ -161,7 +161,18 @@ class Controller:
 
         Returns: None
         """
-        self.__only_gui_keyboard_callback_enabled = False
+        self.__keyboard_callback_enabled = False
+
+    def get_keyboard_callback_state(self) -> bool:
+        """
+        Get the state of the keyboard callback defined by this class.
+
+        Return True if the keyboard callback defined by this class is working correctly, return False if the keyboard
+        callback defined by this class is not being considered when polling events.
+
+        Returns: Boolean indicating the state of the keyboard callback function.
+        """
+        return self.__keyboard_callback_enabled
 
     def get_cursor_position_callback(self):
         """
@@ -375,7 +386,7 @@ class Controller:
 
             # logic: only work if the glfw functionality is enabled
             # -----------------------------------------------------
-            if self.__only_gui_keyboard_callback_enabled:
+            if self.__keyboard_callback_enabled:
 
                 # shortcuts shared between 2D and 3D modes
                 # ----------------------------------------

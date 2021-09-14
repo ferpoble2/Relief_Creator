@@ -29,8 +29,9 @@ class Engine {
     + create_new_polygon(): str
     + delete_parameter_from_polygon(polygon_id, key)
     + delete_polygon_by_id(polygon_id)
-    + disable_glfw_keyboard_callback()
-    + enable_glfw_keyboard_callback()
+    + disable_controller_key_callback()
+    + enable_controller_key_callback()
+    + get_controller_key_callback_state(): boolean
     + exit()
     + export_model_as_netcdf(model_id)
     + export_polygon_list_id(polygon_id_list, filename)
