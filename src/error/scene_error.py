@@ -28,14 +28,14 @@ class SceneError(BaseError):
     Class used to represent the scene related exceptions.
     """
 
-    def __init__(self, code: int = 0):
+    def __init__(self, code: int = 0, data: Dict[str, any] = None):
         """
         Constructor of the class
 
         Args:
             code: Code of the error.
         """
-        super(SceneError, self).__init__(code)
+        super(SceneError, self).__init__(code, data)
 
         self.codes: Dict[int, str] = {
             0: 'Default Error',
