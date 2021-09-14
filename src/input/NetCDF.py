@@ -160,6 +160,19 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
     y = np.array(y)
     z = np.array(z)
 
+    # Change the order of the arrays if they are not sorted with ascending values
+    # ---------------------------------------------------------------------------
+    x_is_descending = x[0] > x[-1]
+    y_is_descending = y[0] > y[-1]
+
+    x = x if not x_is_descending else np.flip(x)
+    y = y if not y_is_descending else np.flip(y)
+
+    z = np.flip(z, 0) if y_is_descending else z
+    z = np.flip(z, 1) if x_is_descending else z
+
+    log.debug(f"Where X values descending: {x_is_descending}")
+    log.debug(f"Where Y values descending: {y_is_descending}")
     log.debug(f"X values: {x}")
     log.debug(f"Y values: {y}")
 

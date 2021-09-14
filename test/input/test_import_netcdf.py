@@ -35,9 +35,10 @@ class TestImportNetcdfFile(unittest.TestCase):
         self.assertIsInstance(y, np.ndarray)
         self.assertIsInstance(z, np.ndarray)
 
-        self.assertTrue((x == np.array([0, 1, 2])).all())
-        self.assertTrue((y == np.array([0, 2, 4])).all(), f'{y} is not equal to {[0, 2, 4]}')
-        self.assertTrue((z == np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])).all())
+        np.testing.assert_array_equal(x, np.array([0, 1, 2]), f'{x} is not equal to {[0, 1, 2]}')
+        np.testing.assert_array_equal(y, np.array([0, 2, 4]), f'{y} is not equal to {[0, 2, 4]}')
+        np.testing.assert_array_equal(z, np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]),
+                                      f'The values of the matrix are not the same as the expected.')
 
     def test_read_file_real_data_1(self):
         x, y, z = read_info('resources/test_resources/netcdf/test_file_1.nc')
@@ -55,9 +56,9 @@ class TestImportNetcdfFile(unittest.TestCase):
 
         z_array = np.concatenate((z_array_part_1, z_array_part_2))
 
-        self.assertTrue((x == x_array).all())
-        self.assertTrue((y == y_array).all())
-        self.assertTrue((z == z_array).all())
+        np.testing.assert_array_almost_equal(x, x_array, 3)
+        np.testing.assert_array_almost_equal(y, y_array, 3)
+        np.testing.assert_array_almost_equal(z, z_array, 3)
 
     def test_read_file_real_data_2(self):
         x, y, z = read_info('resources/test_resources/netcdf/test_file_2.nc')
@@ -75,9 +76,9 @@ class TestImportNetcdfFile(unittest.TestCase):
 
         z_array = np.concatenate((z_array_part_1, z_array_part_2))
 
-        self.assertTrue((x == x_array).all())
-        self.assertTrue((y == y_array).all())
-        self.assertTrue((z == z_array).all())
+        np.testing.assert_array_almost_equal(x, x_array, 3)
+        np.testing.assert_array_almost_equal(y, y_array, 3)
+        np.testing.assert_array_almost_equal(z, z_array, 3)
 
     def test_read_file_real_data_3(self):
         x, y, z = read_info('resources/test_resources/netcdf/test_file_3.nc')
@@ -91,9 +92,9 @@ class TestImportNetcdfFile(unittest.TestCase):
         y_array = np.load('resources/test_resources/expected_data/npy_data/test_file_3_data_y_array.npy')
         z_array = np.load('resources/test_resources/expected_data/npy_data/test_file_3_data_z_array.npy')
 
-        self.assertTrue((x == x_array).all())
-        self.assertTrue((y == y_array).all())
-        self.assertTrue((z == z_array).all())
+        np.testing.assert_array_almost_equal(x, x_array, 3)
+        np.testing.assert_array_almost_equal(y, y_array, 3)
+        np.testing.assert_array_almost_equal(z, z_array, 3)
 
     def test_read_info_errors(self):
 

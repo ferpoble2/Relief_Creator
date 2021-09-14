@@ -420,17 +420,10 @@ class Map2DModel(MapModel):
         if self.__x is None or self.__y is None or self.__z is None:
             return None
 
-        # Check if the arrays with the information of the model are sorted
-        y_is_descending = self.__y[0] > self.__y[-1]
-        x_is_descending = self.__x[0] > self.__x[-1]
-
         # Change the order of the arrays if they are not sorted with ascending values
-        x_values = self.__x if not x_is_descending else np.flip(self.__x)
-        y_values = self.__y if not y_is_descending else np.flip(self.__y)
-
+        x_values = self.__x
+        y_values = self.__y
         z_values = self.__z
-        z_values = np.flip(z_values, 0) if y_is_descending else z_values
-        z_values = np.flip(z_values, 1) if x_is_descending else z_values
 
         # Return None if the coordinate asked is outside of the model.
         if x_coordinate <= np.min(x_values) or x_coordinate >= np.max(x_values) or y_coordinate <= np.min(y_values) \
