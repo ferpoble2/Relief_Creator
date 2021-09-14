@@ -150,6 +150,7 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
     # If the Z variable is defined as unidimensional array, then it is necessary to flip the contents of the array once
     # it is converted to a 2D matrix since the order of the y-axis is inverted.
     if z.ndim == 1:
+        log.debug("Height of file is unidimensional.")
         z = np.array(z)
         z = z.reshape((len(y), len(x)))
         z = np.flipud(z)
@@ -158,6 +159,9 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
     x = np.array(x)
     y = np.array(y)
     z = np.array(z)
+
+    log.debug(f"X values: {x}")
+    log.debug(f"Y values: {y}")
 
     # Close the file
     root_grp.close()
