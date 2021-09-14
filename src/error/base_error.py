@@ -26,7 +26,7 @@ class BaseError(Exception):
     Class to use as parent to all the new exceptions.
     """
 
-    def __init__(self, code: int = 0):
+    def __init__(self, code: int = 0, data: Dict[str, any] = None):
         """
         Constructor of the class.
 
@@ -34,7 +34,7 @@ class BaseError(Exception):
             code: Code of the error.
         """
         # Data associated with the error.
-        self.data: Dict[str, any] = {}
+        self.data: Dict[str, any] = data if data is not None else {}
 
         # Code of the error
         self.code: int = code
