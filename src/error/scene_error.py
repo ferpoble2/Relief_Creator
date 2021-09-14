@@ -18,6 +18,8 @@
 """
 File that contains all the exceptions related to the scene.
 """
+from typing import Dict
+
 from src.error.base_error import BaseError
 
 
@@ -35,7 +37,7 @@ class SceneError(BaseError):
         """
         super(SceneError, self).__init__(code)
 
-        self.codes = {
+        self.codes: Dict[int, str] = {
             0: 'Default Error',
             1: 'Polygon used is not planar.',
             2: 'The polygon used doesnt have at least 3 vertices.',
@@ -44,5 +46,10 @@ class SceneError(BaseError):
             5: 'Polygon ID not found.',
             6: 'Polygon not in the list of polygons to be draw.',
             7: 'Model not found in the scene.',
-            8: 'Model not in the list of models to be draw.'
+            8: 'Model not in the list of models to be draw.',
+
+            # Loading model error codes
+            9: 'Axis X of the new model is not the same as the active model.',
+            10: 'Axis Y of the new model is not the same as the active model.',
+            11: 'Shape of the model loaded is not the same as the active model.'
         }
