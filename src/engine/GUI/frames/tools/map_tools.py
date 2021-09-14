@@ -68,7 +68,10 @@ class MapTools:
         active_model = self.__gui_manager.get_active_model_id()
 
         for key, value in model_name_dict.items():
+
+            self.__gui_manager.set_bold_font() if key == active_model else None
             imgui.text(value)
+            self.__gui_manager.set_regular_font() if key == active_model else None
 
             if imgui.is_item_clicked(1):
                 imgui.open_popup(f'popup_model_{key}')
