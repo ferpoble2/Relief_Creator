@@ -1101,6 +1101,29 @@ class Engine:
             self.program.set_loading(False)
             self.set_modal_text('Error', 'Error reading selected file. Is the file a netcdf file?')
 
+        except SceneError as e:
+            self.program.set_loading(False)
+            active_model_info = self.scene.get_model_information(self.program.get_active_model())
+
+            if e.code == 9:
+                self.set_modal_text('Error',
+                                    'The model loaded does not use the same values for the x-axis as the active '
+                                    'model in the application.\n'
+                                    f'Current model x-axis: {e.data.get("expected", None)}\n'
+                                    f'Loaded model x-axis: {e.data.get("actual", None)}')
+            if e.code == 10:
+                self.set_modal_text('Error',
+                                    'The model loaded does not use the same values for the y-axis as the active '
+                                    'model in the application.\n'
+                                    f'Current model y-axis: {e.data.get("expected", None)}\n'
+                                    f'Loaded model y-axis: {e.data.get("actual", None)}')
+            if e.code == 11:
+                self.set_modal_text('Error',
+                                    'The resolution of the model loaded is no the same as the active model.\n'
+                                    f'Current model shape: {e.data.get("expected", None)}\n'
+                                    f'Loaded model shape: {e.data.get("actual", None)}'
+                                    )
+
         except NetCDFImportError as e:
             self.program.set_loading(False)
 

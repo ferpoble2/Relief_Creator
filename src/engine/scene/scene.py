@@ -1215,6 +1215,31 @@ class Scene:
         log.debug(f"Reading information from file: {path_model}")
         X, Y, Z = self.__engine.read_netcdf_info(path_model)
 
+        # Check if the new model is compatible with the new model used as base
+        # --------------------------------------------------------------------
+        active_model = self.__engine.get_active_model_id()
+        if active_model is not None:
+            model_information = self.get_model_information(active_model)
+            x_array, y_array = model_information['coordinates_array']
+            shape = model_information['height_array'].shape
+
+            if x_array.shape != X.shape or not np.isclose(x_array, X).all():
+                log.debug(f"Current model X axis: {x_array}")
+                log.debug(f"New model X axis: {X}")
+                raise SceneError(9, {'expected': x_array, 'actual': X})
+
+            if y_array.shape != Y.shape or not np.isclose(y_array, Y).all():
+                log.debug(f"Current model Y axis: {y_array}")
+                log.debug(f"New model Y axis: {Y}")
+                raise SceneError(10, {'expected': y_array, 'actual': Y})
+
+            if shape != Z.shape:
+                log.debug(f"Model current shape: {shape}")
+                log.debug(f"New model shape: {Z.shape}")
+                raise SceneError(11, {'expected': shape, 'actual': Z.shape})
+
+        # Generate the model and add it to the scene
+        # ------------------------------------------
         log.debug("Generating model")
         model = Map2DModel(self, name=Path(path_model).name)
 
