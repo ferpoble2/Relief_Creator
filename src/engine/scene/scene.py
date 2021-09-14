@@ -1187,18 +1187,20 @@ class Scene:
 
     def load_model_from_file_async(self, path_color_file: str, path_model: str, then=lambda x: None) -> None:
         """
-        Refresh the scene, removing all the models, and adding the new model specified
-        in the input.
+        Refresh the scene, adding the new model to the hash of models and rendering it.
 
-        The model added will be added as a 2d model to the program with the id 'main'.
-
-        The model must  be in netCDF format.
-
-        The color file must be in CTP format.
+        The model must  be in netCDF format and the color file must be in CTP format.
 
         The 'then' parameter is the logic that will be executed after the process finish loading the model into memory.
         This parameter is a function that must receive one parameter and will be called with the model id as the
         value for that parameter.
+
+        IMPORTANT:
+            This method is asynchronous, this is, the logic defined in this method (the load of the model into the
+            program) is executed in a different thread from the main one, and thus, this method returns immediately
+            after being called.
+
+            To execute logic after the load of the model into the program, use the 'then' parameter.
 
         Args:
             then: Function to be executed at the end of the async routine. Must receive one parameter (the model id).
@@ -1208,7 +1210,9 @@ class Scene:
         Returns: None
         """
 
-        log.debug("Reading information from file.")
+        # Read the information from the file
+        # ----------------------------------
+        log.debug(f"Reading information from file: {path_model}")
         X, Y, Z = self.__engine.read_netcdf_info(path_model)
 
         log.debug("Generating model")
@@ -1216,16 +1220,19 @@ class Scene:
 
         # noinspection PyMissingOrEmptyDocstring
         def then_routine():
-            log.debug("Settings colors from file.")
-            model.set_color_file(path_color_file)
-            self.update_projection_matrix_2D()
-            model.wireframes = False
+            log.debug("Initializing models and adding to the scene.")
 
+            # Initialize model information
+            # -----------------------------
+            model.set_color_file(path_color_file)
             model.id = str(self.__model_id_count)
+            self.__model_id_count += 1
+
+            # Update scene model information
+            # ------------------------------
+            self.update_projection_matrix_2D()
             self.__model_draw_priority.append(model.id)
             self.add_model(model)
-
-            self.__model_id_count += 1
 
             # Reset the zoom level, position and projection if there was no active model before.
             # ----------------------------------------------------------------------------------
