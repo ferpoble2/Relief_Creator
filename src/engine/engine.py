@@ -1073,18 +1073,20 @@ class Engine:
 
         # noinspection PyMissingOrEmptyDocstring
         def then_routine(model_id):
-
-            # Add the model to the GUI and create the model
+            # Update the GUI
+            # --------------
             self.gui_manager.add_model_to_gui(model_id)
 
-            # Set the model as active and create the 3D model if it is necessary
+            # Update the program and create 3D model if required
+            # --------------------------------------------------
             self.program.set_active_model(model_id)
             self.program.set_loading(False)
 
             if self.program.get_view_mode() == '3D':
                 self.set_task_with_loading_frame(lambda: self.scene.create_3D_model_if_not_exists())
 
-            # Copy the file to a temp file
+            # Create temporary file with the information of the model
+            # -------------------------------------------------------
             self.program.create_model_temp_file(path_model)
 
             then()
