@@ -22,6 +22,8 @@ import os
 import unittest
 import warnings
 
+import numpy as np
+
 from src.engine.engine import Engine
 from src.input.NetCDF import read_info
 from src.program.program import Program
@@ -43,8 +45,6 @@ class TestModifyHeight(unittest.TestCase):
 
         # initialize variables
         self.engine.should_use_threads(False)
-        self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
-                                     'resources/test_resources/netcdf/test_model_2.nc')
 
     def tearDown(self) -> None:
         """
@@ -79,11 +79,11 @@ class TestModifyHeight(unittest.TestCase):
         info_written = read_info('resources/test_resources/temp/temp_transformation_1.nc')
         info_expected = read_info('resources/test_resources/expected_data/netcdf/expected_transformation_1.nc')
 
-        self.assertTrue((info_written[0] == info_expected[0]).all(),
-                        'Info on the x array is not equal to the expected.')
-        self.assertTrue((info_written[1] == info_expected[1]).all(),
-                        'Info on the y array is not equal to the expected.')
-        self.assertTrue((info_written[2] == info_expected[2]).all(),
-                        'Info on the height matrix is not equal to the expected.')
+        np.testing.assert_array_almost_equal(info_written[0], info_expected[0], 3,
+                                             'Info on the x array is not equal to the expected.')
+        np.testing.assert_array_almost_equal(info_written[1], info_expected[1], 3,
+                                             'Info on the y array is not equal to the expected.')
+        np.testing.assert_array_almost_equal(info_written[2], info_expected[2], 3,
+                                             'Info on the height matrix is not equal to the expected.')
 
         os.remove('resources/test_resources/temp/temp_transformation_1.nc')

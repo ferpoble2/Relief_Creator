@@ -56,11 +56,11 @@ class TestLoadedModelsList(unittest.TestCase):
         self.engine.run(10, False)
         self.assertEqual(['0'], self.engine.get_3d_model_list(), 'First models should be assigned to the ID 0.')
 
-        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_2)
+        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_1)
         self.engine.run(10, False)
-        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_3)
+        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_1)
         self.engine.run(10, False)
-        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_4)
+        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_1)
         self.engine.run(10, False)
         self.assertEqual(['0', '1', '2', '3'], self.engine.get_3d_model_list(),
                          'The fourth models is not assigned to the ID 3.')
@@ -70,12 +70,12 @@ class TestLoadedModelsList(unittest.TestCase):
 
         self.assertEqual([], self.engine.get_model_list(), 'List of models is not empty.')
 
-        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_1)
+        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_3)
         self.assertEqual(['0'], self.engine.get_model_list(), 'First models should be assigned to the ID 0.')
 
-        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_2)
         self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_3)
-        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_4)
+        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_3)
+        self.engine.load_netcdf_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_3)
         self.assertEqual(['0', '1', '2', '3'], self.engine.get_model_list(),
                          'The fourth models is not assigned to the ID 3.')
 
