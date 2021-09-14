@@ -18,6 +18,7 @@
 """
 File that contains the Engine class. Class in charge of the management of all the logic of the application.
 """
+from pathlib import Path
 from typing import List, TYPE_CHECKING, Union
 
 import glfw
@@ -1079,6 +1080,10 @@ class Engine:
 
             # Update the program and create 3D model if required
             # --------------------------------------------------
+            if self.program.get_active_model() is None:
+                self.reset_zoom_level()
+                self.reset_map_position()
+
             self.program.set_active_model(model_id)
             self.program.set_loading(False)
 
@@ -1095,7 +1100,33 @@ class Engine:
         self.set_loading_message("Please wait a moment...")
 
         try:
-            self.scene.load_model_from_file_async(path_color_file, path_model, then_routine)
+            # Read the information for the new model
+            # --------------------------------------
+            X, Y, Z = read_info(path_model)
+
+            # Get the information of the current active model on the scene
+            # ------------------------------------------------------------
+            if self.program.get_active_model() is not None:
+                model_information = self.scene.get_model_information(self.program.get_active_model())
+                model_coordinates_array = model_information.get('coordinates_array')
+                model_heights_shape = model_information.get('height_array').shape
+            else:
+                model_information = None
+                model_coordinates_array = (None, None)
+                model_heights_shape = (None, None)
+
+            # Load the new model in the program
+            # ---------------------------------
+            self.scene.load_model_from_file_async(path_color_file,
+                                                  X,
+                                                  Y,
+                                                  Z,
+                                                  Path(path_model).name,
+                                                  self.program.get_active_model(),
+                                                  model_coordinates_array,
+                                                  model_heights_shape,
+                                                  self.get_quality(),
+                                                  then_routine)
 
         except OSError:
             self.program.set_loading(False)

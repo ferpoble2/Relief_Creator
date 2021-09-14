@@ -20,7 +20,6 @@ File that contain the Scene class. This class is in charge of the management of 
 
 Class is in charge of the drawing of the models2D, models3D and polygons.
 """
-from pathlib import Path
 from typing import Dict, List, TYPE_CHECKING, Union
 
 import OpenGL.GL as GL
@@ -1185,7 +1184,17 @@ class Scene:
         if polygon_id in self.__polygon_hash:
             return self.__polygon_hash[polygon_id].is_planar()
 
-    def load_model_from_file_async(self, path_color_file: str, path_model: str, then=lambda x: None) -> None:
+    def load_model_from_file_async(self,
+                                   path_color_file: str,
+                                   X_values: np.array,
+                                   Y_values: np.array,
+                                   Z_values: np.array,
+                                   model_name: str,
+                                   active_model_id: Union[str, None],
+                                   active_model_coordinates_array: tuple = (None, None),
+                                   active_model_heights_shape: tuple = (None, None),
+                                   quality_maps: int = 3,
+                                   then=lambda x: None) -> None:
         """
         Refresh the scene, adding the new model to the hash of models and rendering it.
 
@@ -1203,25 +1212,29 @@ class Scene:
             To execute logic after the load of the model into the program, use the 'then' parameter.
 
         Args:
+            quality_maps:
+            model_name:
+            Z_values:
+            Y_values:
+            X_values:
+            active_model_id:
+            active_model_heights_shape:
+            active_model_coordinates_array:
             then: Function to be executed at the end of the async routine. Must receive one parameter (the model id).
             path_color_file: Path to the CTP file with the colors
-            path_model: Path to the model to use in the application
 
         Returns: None
         """
-
-        # Read the information from the file
-        # ----------------------------------
-        log.debug(f"Reading information from file: {path_model}")
-        X, Y, Z = self.__engine.read_netcdf_info(path_model)
+        X = X_values
+        Y = Y_values
+        Z = Z_values
 
         # Check if the new model is compatible with the new model used as base
         # --------------------------------------------------------------------
-        active_model = self.__engine.get_active_model_id()
-        if active_model is not None:
-            model_information = self.get_model_information(active_model)
-            x_array, y_array = model_information['coordinates_array']
-            shape = model_information['height_array'].shape
+        if active_model_id is not None:
+
+            x_array, y_array = active_model_coordinates_array
+            shape = active_model_heights_shape
 
             if x_array.shape != X.shape or not np.isclose(x_array, X).all():
                 log.debug(f"Current model X axis: {x_array}")
@@ -1241,7 +1254,7 @@ class Scene:
         # Generate the model and add it to the scene
         # ------------------------------------------
         log.debug("Generating model")
-        model = Map2DModel(self, name=Path(path_model).name)
+        model = Map2DModel(self, name=model_name)
 
         # noinspection PyMissingOrEmptyDocstring
         def then_routine():
@@ -1261,16 +1274,14 @@ class Scene:
 
             # Reset the zoom level, position and projection if there was no active model before.
             # ----------------------------------------------------------------------------------
-            if self.__engine.get_active_model_id() is None:
-                self.__engine.reset_zoom_level()
-                self.__engine.reset_map_position()
+            if active_model_id is None:
                 self.__projection_matrix_2D = None
 
             # call the then routine
             then(model.id)
 
         log.debug("Setting vertices from grid.")
-        model.set_vertices_from_grid_async(X, Y, Z, self.__engine.get_quality(), then_routine)
+        model.set_vertices_from_grid_async(X, Y, Z, quality_maps, then_routine)
 
     def load_preview_interpolation_area(self, distance: float, polygon_id: str) -> None:
         """
