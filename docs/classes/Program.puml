@@ -16,7 +16,7 @@ class Program {
     + check_model_temp_file_exists()
     + close()
     + copy_model_temp_file(target_directory)
-    + create_model_temp_file(reference_file)
+    + update_model_temp_file(reference_file)
     + get_active_model(): str
     + get_active_polygon_id(): str
     + get_active_tool(): str
