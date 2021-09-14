@@ -1376,6 +1376,14 @@ class Engine:
         """
         self.program.reset_zoom_level()
 
+    def reset_map_position(self) -> None:
+        """
+        Set the position of the map to the coordinates (0, 0)
+
+        Returns: None
+        """
+        self.program.set_map_position([0, 0])
+
     def run(self, n_frames: int = None, terminate_process: bool = True) -> None:
         """
         Run the main logic of the application.

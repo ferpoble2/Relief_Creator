@@ -86,6 +86,7 @@ class Engine {
     + remove_interpolation_preview(polygon_id)
     + remove_model(model_id)
     + reset_camera_values()
+    + reset_map_position()
     + reset_zoom_level()
     + run()
     + set_active_polygon(polygon_id)

@@ -1227,7 +1227,12 @@ class Scene:
 
             self.__model_id_count += 1
 
-            self.__engine.reset_zoom_level()
+            # Reset the zoom level, position and projection if there was no active model before.
+            # ----------------------------------------------------------------------------------
+            if self.__engine.get_active_model_id() is None:
+                self.__engine.reset_zoom_level()
+                self.__engine.reset_map_position()
+                self.__projection_matrix_2D = None
 
             # call the then routine
             then(model.id)
