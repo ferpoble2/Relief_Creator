@@ -112,9 +112,9 @@ class Tools3D(Frame):
         self.__normalization_height_value = max(self.__normalization_height_value, 0)
 
         # Disable the keyboard controller if the user is writing something on the GUI
-        if imgui.is_item_active():
+        if imgui.is_item_active() and self._GUI_manager.get_controller_keyboard_callback_state():
             self._GUI_manager.disable_controller_keyboard_callback()
-        else:
+        if (not imgui.is_item_active()) and (not self._GUI_manager.get_controller_keyboard_callback_state()):
             self._GUI_manager.enable_controller_keyboard_callback()
 
         # Apply changes using the data written by the user in the options
