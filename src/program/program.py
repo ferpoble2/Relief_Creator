@@ -127,14 +127,15 @@ class Program:
         """
         shutil.copy(self.get_model_temp_file(), target_directory)
 
-    def create_model_temp_file(self, reference_file: str) -> None:
+    def update_model_temp_file(self, reference_file: str) -> None:
         """
-        Creates a temporary file to store the model data inside.
+        Creates or updates the temporary file used to store the model data.
 
-        The reference file must be a netcdf file with the same information than the model that is being showed in
-        the program.
+        The reference file must be a netcdf file with the information of the model that will be used as a temporary
+        file.
 
-        This temporary file will be used in the export process of the models.
+        This temporary file will be used in the export process of the models, only replacing the height values of the
+        file.
 
         It can be only one temporary file on the program.
 

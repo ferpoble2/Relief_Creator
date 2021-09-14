@@ -1087,7 +1087,7 @@ class Engine:
 
             # Create temporary file with the information of the model
             # -------------------------------------------------------
-            self.program.create_model_temp_file(path_model)
+            self.program.update_model_temp_file(path_model)
 
             then()
 
