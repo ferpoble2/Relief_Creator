@@ -3,5 +3,8 @@
 class NetCDF  <<$file>>{
     + read_info(filename): array, array, array
     + get_variables_from_grp(grp, key_values): list
+    + get_height_list_from_file(root_grp): list
+    + get_longitude_list_from_file(root_grp): list
+    + get_latitude_list_from_file(root_grp): list
 }
 @enduml
