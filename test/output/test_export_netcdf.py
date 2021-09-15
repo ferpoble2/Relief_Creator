@@ -107,5 +107,31 @@ class TestExportNetcdfFile(unittest.TestCase):
         os.remove('resources/test_resources/temp/actual_range_metadata_file.nc')
 
 
+class TestExportNetcdfAscendingValues(unittest.TestCase):
+
+    def test_map_ascending_y_values(self):
+        exporter = NetcdfExporter()
+
+        # Copy file to modify to not modify the original file
+        shutil.copy('resources/test_resources/netcdf/test_file_y_values_ascending.nc',
+                    'resources/test_resources/temp/temp_file_y_values_ascending.nc')
+
+        # Read the info of the file and generate new data with the same dimension that the one stored in the file
+        x, y, z = read_info('resources/test_resources/temp/temp_file_y_values_ascending.nc')
+
+        # Modify the data of the file and read it to compare
+        exporter.modify_heights_existent_netcdf_file(z,
+                                                     'resources/test_resources/temp/temp_file_y_values_ascending.nc')
+        new_x, new_y, new_z = read_info('resources/test_resources/temp/temp_file_y_values_ascending.nc')
+
+        # Compare the data of the file
+        np.testing.assert_array_equal(x, new_x, 'x-values are not the same.')
+        np.testing.assert_array_equal(y, new_y, 'y-values are not the same.')
+        np.testing.assert_array_equal(z, new_z, 'z-values are not the same.')
+
+        # Delete temporal files generated in the test
+        os.remove('resources/test_resources/temp/temp_file_y_values_ascending.nc')
+
+
 if __name__ == '__main__':
     unittest.main()
