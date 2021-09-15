@@ -113,7 +113,7 @@ class TestExportNetcdfAscendingValues(unittest.TestCase):
         exporter = NetcdfExporter()
 
         # Copy file to modify to not modify the original file
-        shutil.copy('resources/test_resources/netcdf/test_file_y_values_ascending.nc',
+        shutil.copy('resources/test_resources/netcdf/test_file_y_values_descending.nc',
                     'resources/test_resources/temp/temp_file_y_values_ascending.nc')
 
         # Read the info of the file and generate new data with the same dimension that the one stored in the file
