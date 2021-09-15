@@ -912,6 +912,14 @@ class Engine:
         """
         return Settings.TOOL_TITLE_FONT_SIZE
 
+    def get_tool_sub_title_font_size(self) -> int:
+        """
+        Get the font size to use for the tool titles.
+
+        Returns: Int with the font size to use.
+        """
+        return Settings.TOOL_SUB_TITLE_FONT_SIZE
+
     def get_window_setting_data(self) -> dict:
         """
         Get the window setting data.

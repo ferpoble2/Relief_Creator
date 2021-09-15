@@ -66,6 +66,7 @@ class Settings:
 
     # GUI settings
     FONT_SIZE = 18
+    TOOL_SUB_TITLE_FONT_SIZE = 22
     TOOL_TITLE_FONT_SIZE = 25
     FIXED_FRAMES = True
 

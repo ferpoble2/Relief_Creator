@@ -134,7 +134,9 @@ class ReliefTools:
         # variable to store if it is necessary to delete a filter
         filter_to_remove = None
 
-        imgui.text_wrapped('Filters:')
+        self.__gui_manager.set_tool_sub_title_font()
+        imgui.text_wrapped('Filters')
+        self.__gui_manager.set_regular_font()
 
         # render the filters on the GUI
         for filter_ind in range(len(self.__filters)):
@@ -248,7 +250,10 @@ class ReliefTools:
         imgui.text('Relief Tools')
         self.__gui_manager.set_regular_font()
 
-        imgui.text('Current polygon information:')
+        self.__gui_manager.set_tool_sub_title_font()
+        imgui.text('Polygon Information')
+        self.__gui_manager.set_regular_font()
+
         imgui.columns(2, None, False)
         imgui.text(f'Max height:')
         imgui.next_column()
@@ -291,8 +296,10 @@ class ReliefTools:
             active_polygon_id: Active polygon ID.
 
         Returns: None
-
         """
+        self.__gui_manager.set_tool_sub_title_font()
+        imgui.text('Transformation')
+        self.__gui_manager.set_regular_font()
 
         clicked, self.__current_combo_option = imgui.combo(
             "Transformation", self.__current_combo_option, self.__combo_options

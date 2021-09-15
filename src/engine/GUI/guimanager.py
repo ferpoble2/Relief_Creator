@@ -83,6 +83,7 @@ class GUIManager:
         self.__font_regular = None
         self.__font_bold = None
         self.__font_tool_title = None
+        self.__font_tool_sub_title = None
 
         # GLFW parameters
         # ---------------
@@ -889,6 +890,9 @@ class GUIManager:
         self.__font_tool_title = self.__io.fonts.add_font_from_file_ttf(
             'resources/fonts/open_sans/OpenSans-Regular.ttf', engine.get_tool_title_font_size()
         )
+        self.__font_tool_sub_title = self.__io.fonts.add_font_from_file_ttf(
+            'resources/fonts/open_sans/OpenSans-Regular.ttf', engine.get_tool_sub_title_font_size()
+        )
 
         self.__implementation.refresh_font_texture()
 
@@ -1357,6 +1361,17 @@ class GUIManager:
         """
         imgui.pop_font()
         imgui.push_font(self.__font_regular)
+
+    def set_tool_sub_title_font(self) -> None:
+        """
+        Set the font to use of the type sub_title.
+
+        The font will be smaller than the title font but bigger than the regular text.
+
+        Returns: None
+        """
+        imgui.pop_font()
+        imgui.push_font(self.__font_tool_sub_title)
 
     def set_tool_title_font(self) -> None:
         """

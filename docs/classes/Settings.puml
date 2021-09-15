@@ -27,6 +27,7 @@ class Settings  {
     {static} + VIEW_MODE: str
     {static} + TOP_FRAME_HEIGHT: int
     {static} + TOOL_TITLE_FONT_SIZE: int
+    {static} + TOOL_SUB_TITLE_FONT_SIZE: int
     {static} + WIDTH: int
     {static} + MIN_WIDTH: int
     {static} + MIN_HEIGHT: int

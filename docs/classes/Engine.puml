@@ -32,6 +32,7 @@ class Engine {
     + disable_controller_key_callback()
     + enable_controller_key_callback()
     + get_controller_key_callback_state(): boolean
+    + get_tool_sub_title_font_size(): int
     + exit()
     + export_model_as_netcdf(model_id)
     + export_polygon_list_id(polygon_id_list, filename)
