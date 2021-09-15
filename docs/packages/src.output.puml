@@ -21,5 +21,6 @@ package output {
 ' Code that will affect only the current diagram
 ' can be messy since will not be imported
 ShapefileExporter .> src.utils
+NetcdfExporter .> src.input.NetCDF
 
 @enduml

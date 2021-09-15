@@ -22,6 +22,8 @@ import numpy as np
 from netCDF4 import Dataset
 
 from src.error.export_error import ExportError
+from src.error.netcdf_import_error import NetCDFImportError
+from src.input.NetCDF import get_latitude_list_from_file, get_longitude_list_from_file
 from src.utils import HEIGHT_KEYS
 
 
@@ -46,18 +48,27 @@ class NetcdfExporter:
         specified heights.
 
         Args:
-            heights: New heights to store in the netcdf file.
+            heights: New heights to store in the netcdf file. (array must have shape (rows, cols))
             filename: Directory + filename to modify. Default value is the one created for the read_info method
                       from the Input module.
 
         Returns: None
         """
         # Read the information of the file
+        # --------------------------------
         root_grp = Dataset(filename, 'r+')
         file_keys = root_grp.variables.keys()
 
+        try:
+            x_values = get_longitude_list_from_file(root_grp)
+            y_values = get_latitude_list_from_file(root_grp)
+        except NetCDFImportError as e:
+            if e.code == 2 or e.code == 3:
+                raise ExportError(4)
+
         # Check for the key that stores the height information. This key must be in the file, otherwise, an exception
         # is raised
+        # -----------------------------------------------------------------------------------------------------------
         height_key = None
         for key in HEIGHT_KEYS:
             if key in file_keys:
@@ -67,16 +78,25 @@ class NetcdfExporter:
         if height_key is None:
             raise ExportError(3)
 
-        # Invert the generated matrix if the array is one dimensional
+        # Invert the generated matrix if the array is one dimensional or if the axis are sorted in ascending values
+        # ---------------------------------------------------------------------------------------------------------
         if root_grp.variables[height_key].ndim == 1:
             heights = np.flipud(heights)
 
+        if y_values[0] > y_values[-1]:  # Case y-axis is inverted on the file
+            heights = np.flipud(heights)
+
+        if x_values[0] > x_values[-1]:  # Case x-axis is inverted on the file
+            heights = np.fliplr(heights)
+
         # Get the shape of the file and change only the data that is defined in the inside of the variable that stores
         # the heights of the file
+        # ------------------------------------------------------------------------------------------------------------
         height_shape = np.array(root_grp.variables[height_key]).shape
         root_grp.variables[height_key][:] = heights.reshape(height_shape)
 
         # Change the metadata of the file to match the new heights
+        # --------------------------------------------------------
         if 'z_range' in file_keys:
             root_grp.variables['z_range'][:] = [np.nanmin(heights), np.nanmax(heights)]
 
@@ -84,6 +104,7 @@ class NetcdfExporter:
             root_grp.variables[height_key].actual_range = np.array([np.nanmin(heights), np.nanmax(heights)])
 
         # Close the file
+        # --------------
         root_grp.close()
 
     def export_model_vertices_to_netcdf_file(self,
