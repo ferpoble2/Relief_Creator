@@ -105,7 +105,9 @@ class Engine:
         Returns: None
         """
         try:
-            self.scene.add_new_vertex_to_polygon_using_map_coords(position_x, position_y)
+            self.scene.add_new_vertex_to_polygon_using_map_coords(position_x,
+                                                                  position_y,
+                                                                  self.program.get_active_polygon_id())
         except RepeatedPointError:
             log.info('Handling repeated point.')
             self.set_modal_text('Error', 'Point already exist in polygon.')

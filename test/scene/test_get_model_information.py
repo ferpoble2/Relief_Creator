@@ -227,7 +227,7 @@ class TestModelInformationGetters(unittest.TestCase):
                                      'resources/test_resources/netcdf/test_file_1.nc')
 
         # read the info of the active model
-        x_array, y_array = self.engine.scene.get_active_model_coordinates_arrays()
+        x_array, y_array = self.engine.scene.get_model_coordinates_arrays(self.program.get_active_model())
 
         # read the info of the file loaded
         x, y, z = read_info('resources/test_resources/netcdf/test_file_1.nc')
@@ -236,7 +236,7 @@ class TestModelInformationGetters(unittest.TestCase):
         self.assertTrue((np.array(y) == y_array).all())
 
     def test_get_model_arrays_no_model(self):
-        self.assertEqual((None, None), self.engine.scene.get_active_model_coordinates_arrays())
+        self.assertEqual((None, None), self.engine.scene.get_model_coordinates_arrays(self.program.get_active_model()))
 
 
 if __name__ == '__main__':
