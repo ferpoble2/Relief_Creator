@@ -1082,14 +1082,6 @@ class Scene:
         """
         return self.__engine.get_scene_setting_data()
 
-    def get_zoom_level(self) -> float:
-        """
-        Get the zoom level used by the program.
-
-        Returns:  Zoom level
-        """
-        return self.__engine.get_zoom_level()
-
     def interpolate_points(self, polygon_id: str, model_id: str, distance: float, type_interpolation: str) -> None:
         """
         Interpolate the points at the exterior of the polygon using the given interpolation type.

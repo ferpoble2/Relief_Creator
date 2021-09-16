@@ -42,7 +42,6 @@
                 + get_polygon_name(polygon_id): str
                 + get_polygon_params(polygon_id)
                 + get_render_settings(): dict
-                + get_zoom_level(): float
                 + initialize(engine)
                 + interpolate_points(polygon_id, model_id, distance, type_interpolation)
                 + is_polygon_planar(polygon_id)
