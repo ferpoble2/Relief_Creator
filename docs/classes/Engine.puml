@@ -9,6 +9,7 @@ class Engine {
     - __process_manager: ProcessManager
     - __task_manager: TaskManager
 
+    - __initialize_components()
     + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
     + add_zoom()
     + are_frames_fixed(): boolean
@@ -68,7 +69,6 @@ class Engine {
     + get_tool_title_font_size(): int
     + get_window_setting_data(): dict
     + get_zoom_level(): float
-    + initialize(engine)
     + interpolate_points(polygon_id, model_id, distance, type_interpolation)
     + is_mouse_hovering_frame()
     + is_polygon_planar(polygon_id)

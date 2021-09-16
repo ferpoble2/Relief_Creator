@@ -50,6 +50,7 @@ from src.utils import get_logger
 
 if TYPE_CHECKING:
     from src.engine.engine import Engine
+    from glfw import _GLFWwindow
 
 # noinspection SpellCheckingInspection
 log = get_logger(module='GUIMANAGER')
@@ -69,11 +70,25 @@ class GUIManager:
     the logic defined it its callbacks correctly.
     """
 
-    def __init__(self, engine: 'Engine'):
+    def __init__(self,
+                 engine: 'Engine',
+                 window: '_GLFWwindow',
+                 regular_font_size: int,
+                 tool_title_font_size: int,
+                 tool_sub_title_font_size: int,
+                 debug_mode: bool = False):
         """
         Constructor of the class.
 
         Must receive the engine in which the class will be used to make calls.
+
+        Args:
+            engine: Engine to use to execute the logic of the class.
+            debug_mode: Boolean indicating if the GUI should render debug frames.
+            tool_sub_title_font_size: Font size to use for the sub_title text.
+            tool_title_font_size: Font size to use for the tool_tile text.
+            regular_font_size: Font size to use for the regular font.
+            window: Window to use to draw the GUI.
         """
 
         # IMGUI parameters
@@ -101,6 +116,12 @@ class GUIManager:
         # Auxiliary parameters
         # --------------------
         self.__is_mouse_inside_frame = False
+
+        self.__initialize_variables(window,
+                                    regular_font_size,
+                                    tool_title_font_size,
+                                    tool_sub_title_font_size,
+                                    debug_mode)
 
     def __add_polygon_to_polygon_folder(self, folder_id: str, polygon_id: str) -> None:
         """
@@ -857,13 +878,20 @@ class GUIManager:
         """
         return self.__engine.get_zoom_level()
 
-    def initialize(self, window, engine: 'Engine', gui_manager: 'GUIManager') -> None:
+    def __initialize_variables(self,
+                               window,
+                               regular_font_size: int,
+                               tool_title_font_size: int,
+                               tool_sub_title_font_size: int,
+                               debug_mode: bool = False) -> None:
         """
         Set the initial configurations of the GUI.
 
         Args:
-            gui_manager: The object used to make this call.
-            engine: Engine used in the application
+            debug_mode: Boolean indicating if the GUI should render debug frames.
+            tool_sub_title_font_size: Font size to use for the sub_title text.
+            tool_title_font_size: Font size to use for the tool_tile text.
+            regular_font_size: Font size to use for the regular font.
             window: Window to use to draw the GUI
 
         Returns: None
@@ -882,16 +910,16 @@ class GUIManager:
         # Font options
         self.__io = imgui.get_io()
         self.__font_regular = self.__io.fonts.add_font_from_file_ttf(
-            'resources/fonts/open_sans/OpenSans-Regular.ttf', engine.get_font_size()
+            'resources/fonts/open_sans/OpenSans-Regular.ttf', regular_font_size
         )
         self.__font_bold = self.__io.fonts.add_font_from_file_ttf(
-            'resources/fonts/open_sans/OpenSans-Bold.ttf', engine.get_font_size()
+            'resources/fonts/open_sans/OpenSans-Bold.ttf', regular_font_size
         )
         self.__font_tool_title = self.__io.fonts.add_font_from_file_ttf(
-            'resources/fonts/open_sans/OpenSans-Regular.ttf', engine.get_tool_title_font_size()
+            'resources/fonts/open_sans/OpenSans-Regular.ttf', tool_title_font_size
         )
         self.__font_tool_sub_title = self.__io.fonts.add_font_from_file_ttf(
-            'resources/fonts/open_sans/OpenSans-Regular.ttf', engine.get_tool_sub_title_font_size()
+            'resources/fonts/open_sans/OpenSans-Regular.ttf', tool_sub_title_font_size
         )
 
         self.__implementation.refresh_font_texture()
@@ -901,14 +929,14 @@ class GUIManager:
 
         # initialize the components of the manager
         # ----------------------------------------
-        main_menu_bar = MainMenuBar(gui_manager)
-        text_modal = TextModal(gui_manager)
-        tools = Tools(gui_manager)
-        loading = Loading(gui_manager)
-        polygon_information = PolygonInformation(gui_manager)
-        confirmation_modal = ConfirmationModal(gui_manager)
-        tools_3d = Tools3D(gui_manager)
-        mouse_coordinates = MouseCoordinates(gui_manager)
+        main_menu_bar = MainMenuBar(self)
+        text_modal = TextModal(self)
+        tools = Tools(self)
+        loading = Loading(self)
+        polygon_information = PolygonInformation(self)
+        confirmation_modal = ConfirmationModal(self)
+        tools_3d = Tools3D(self)
+        mouse_coordinates = MouseCoordinates(self)
 
         self.__component_list_2D = [
             main_menu_bar,
@@ -928,9 +956,9 @@ class GUIManager:
             tools_3d
         ]
 
-        if self.__engine.is_program_debug_mode():
-            debug = Debug(gui_manager)
-            test_window = TestWindow(gui_manager)
+        if debug_mode:
+            debug = Debug(self)
+            test_window = TestWindow(self)
 
             self.__component_list_2D += [debug, test_window]
             self.__component_list_3D += [debug, test_window]

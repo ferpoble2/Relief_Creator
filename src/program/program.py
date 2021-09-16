@@ -21,14 +21,12 @@ File that contains the main class of the program.
 import os
 import shutil
 import time
-from typing import TYPE_CHECKING, Union
+from typing import Union
 
 import easygui
 
+from src.engine.engine import Engine
 from src.utils import get_logger
-
-if TYPE_CHECKING:
-    from engine.engine import Engine
 
 log = get_logger(module='PROGRAM')
 
@@ -42,19 +40,17 @@ class Program:
     """
 
     # noinspection PyUnresolvedReferences
-    def __init__(self,
-                 engine: 'Engine',
-                 debug_mode: bool = False,
-                 initialize_engine: bool = True):
+    def __init__(self, debug_mode: bool = False):
         """
         Constructor of the class.
 
         Args:
-            engine: Engine to use in the program.
+            debug_mode: Boolean indicating if the program should begin in debug mode.
         """
         # PROGRAM VARIABLES
         # -----------------
-        self.__engine: Engine = engine
+        self.__engine: Engine = Engine(self,
+                                       debug_mode)
 
         # Default color file to use when loading maps on the application.
         self.__CPT_file: str = os.path.join(os.getcwd(), 'resources', 'colors', 'default.cpt')
@@ -80,12 +76,14 @@ class Program:
 
         self.__debug_mode: bool = debug_mode
 
-        # Do the logic of the initialization
-        # ----------------------------------
-        self.__engine.program = self
+    @property
+    def engine(self) -> 'Engine':
+        """
+        Return the engine used by the program to render and control the actions of the user.
 
-        if initialize_engine:
-            self.__engine.initialize(self.__engine, self)
+        Returns: Engine used by the program.
+        """
+        return self.__engine
 
     def add_zoom(self) -> None:
         """

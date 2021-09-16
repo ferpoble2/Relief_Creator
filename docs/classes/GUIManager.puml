@@ -7,7 +7,7 @@ class GUIManager{
     - __font_bold: IMGUI.font
     - __font_regular: IMGUI.font
     - __font_tool_title: IMGUI.font
-    = __font_tool_sub_title: IMGUI.font
+    - __font_tool_sub_title: IMGUI.font
     - __glfw_window: GLFWWindow
     - __icons_dict: dict
     - __implementation: GlfwRenderer
@@ -19,6 +19,7 @@ class GUIManager{
 
     - __load_icons()
     - __update_frames_with_new_polygon(polygon_id)
+    - __initialize_variables(window, regular_font_size, tool_title_font_size, tool_sub_title_font_size, debug_mode)
     + add_imported_polygon(polygon_id)
     + add_polygon_to_gui(polygon_id)
     + add_polygon_to_polygon_folder(folder_id, polygon_id)

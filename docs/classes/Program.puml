@@ -10,6 +10,7 @@ class Program {
     - __map_position: list
     - __view_mode: str
     - __zoom_level: float
+    + engine: Engine
 
     + add_zoom()
     + change_cpt_file_with_dialog()
