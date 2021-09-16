@@ -20,7 +20,7 @@ File that contain the Scene class. This class is in charge of the management of 
 
 Class is in charge of the drawing of the models2D, models3D and polygons.
 """
-from typing import Dict, List, TYPE_CHECKING, Union
+from typing import Callable, Dict, List, TYPE_CHECKING, Union
 
 import OpenGL.GL as GL
 # noinspection PyPep8Naming
@@ -1283,7 +1283,9 @@ class Scene:
         log.debug("Setting vertices from grid.")
         model.set_vertices_from_grid_async(X, Y, Z, quality_maps, then_routine)
 
-    def load_preview_interpolation_area(self, distance: float, polygon_id: str) -> None:
+    def load_preview_interpolation_area(self,
+                                        distance: float,
+                                        polygon_id: str) -> None:
         """
         Calculate the interpolation area for the active polygon and draw it on the scene.
 
@@ -1329,7 +1331,7 @@ class Scene:
         #   lines_external.add_line(point_1, point_2)
 
         # Add the model to the hash of interpolation areas
-        self.__interpolation_area_hash[self.__engine.get_active_polygon_id()] = [lines_external]
+        self.__interpolation_area_hash[polygon_id] = [lines_external]
 
     def modify_camera_radius(self, distance: float) -> None:
         """
@@ -1383,13 +1385,14 @@ class Scene:
         if len(self.__model_hash) == 0:
             then()
 
-    def reload_models_async(self, then):
+    def reload_models_async(self, quality: int, then: Callable):
         """
         Ask the 2D models to reload with the new resolution of the screen.
 
         Returns: None
 
         Args:
+            quality: Quality to use for the reload of the models. The closer to 1 the better the resolution.
             then: Function to be called after all the async routine.
         """
 
@@ -1415,7 +1418,7 @@ class Scene:
                 then()
 
         for model in self.__model_hash.values():
-            model.recalculate_vertices_from_grid_async(quality=self.__engine.get_quality(), then=then_routine)
+            model.recalculate_vertices_from_grid_async(quality=quality, then=then_routine)
 
         # if there is no models, call the then routine doing nothing
         if len(self.__model_hash) == 0:

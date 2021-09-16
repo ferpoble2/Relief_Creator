@@ -1395,7 +1395,7 @@ class Engine:
             self.optimize_gpu_memory()  # async function
             self.program.set_loading(False)
 
-        self.scene.reload_models_async(then_routine)
+        self.scene.reload_models_async(Settings.QUALITY, then_routine)
 
     def remove_interpolation_preview(self, polygon_id: str) -> None:
         """

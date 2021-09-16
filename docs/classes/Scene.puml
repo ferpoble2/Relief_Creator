@@ -52,7 +52,7 @@
                 + move_camera(movement)
                 + move_models(x_movement, y_movement)
                 + optimize_gpu_memory_async(then)
-                + reload_models_async(then)
+                + reload_models_async(quality, then)
                 + remove_all_models()
                 + remove_interpolation_preview(polygon_id)
                 + remove_last_point_from_active_polygon()
