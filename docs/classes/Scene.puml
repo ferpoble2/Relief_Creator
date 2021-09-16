@@ -30,7 +30,6 @@
                 + get_active_model_projection_matrix(): array
                 + get_active_model_showed_limits(): dict
                 + get_active_polygon_id(): str
-                + get_camera_settings(): dict
                 + get_camera_view_matrix(): array
                 + get_extra_reload_proportion_setting(): float
                 + get_height_normalization_factor(model_3d_id): float
