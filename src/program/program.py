@@ -21,12 +21,15 @@ File that contains the main class of the program.
 import os
 import shutil
 import time
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
 import easygui
 
 from src.engine.engine import Engine
 from src.utils import get_logger
+
+if TYPE_CHECKING:
+    import argparse
 
 log = get_logger(module='PROGRAM')
 
@@ -366,7 +369,7 @@ class Program:
         log.debug('Running program...')
         self.__engine.run()
 
-    def set_active_model(self, new_model_id: str) -> None:
+    def set_active_model(self, new_model_id: Union[str, None]) -> None:
         """
         Set the id of the model used in the application.
         Args:

@@ -1136,7 +1136,6 @@ class Engine:
                 model_coordinates_array = model_information.get('coordinates_array')
                 model_heights_shape = model_information.get('height_array').shape
             else:
-                model_information = None
                 model_coordinates_array = (None, None)
                 model_heights_shape = (None, None)
 
@@ -1159,7 +1158,6 @@ class Engine:
 
         except SceneError as e:
             self.program.set_loading(False)
-            active_model_info = self.scene.get_model_information(self.program.get_active_model())
 
             if e.code == 9:
                 self.set_modal_text('Error',
