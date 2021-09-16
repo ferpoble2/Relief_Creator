@@ -23,7 +23,6 @@ import sys
 import unittest
 import warnings
 
-from src.engine.engine import Engine
 from src.program.parser import get_command_line_arguments
 from src.program.program import Program
 

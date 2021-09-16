@@ -21,7 +21,6 @@ import warnings
 
 import numpy as np
 
-from src.engine.engine import Engine
 from src.input.NetCDF import read_info
 from src.program.program import Program
 

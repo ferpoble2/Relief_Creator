@@ -22,7 +22,6 @@ import os
 import unittest
 import warnings
 
-from src.engine.engine import Engine
 from src.input.NetCDF import read_info
 from src.program.program import Program
 

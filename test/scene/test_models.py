@@ -18,7 +18,6 @@
 import unittest
 import warnings
 
-from src.engine.engine import Engine
 from src.program.program import Program
 
 COLOR_FILE_LOCATION = 'resources/test_resources/cpt/colors_0_100_200.cpt'

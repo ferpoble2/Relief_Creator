@@ -20,7 +20,6 @@ File with tests related to the polygon class.
 import unittest
 import warnings
 
-from src.engine.engine import Engine
 from src.program.program import Program
 
 

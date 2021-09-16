@@ -18,7 +18,6 @@
 import unittest
 
 from src.engine.GUI.icon import Icon
-from src.engine.engine import Engine
 from src.program.program import Program
 
 

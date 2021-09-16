@@ -22,7 +22,6 @@ import os
 import unittest
 import warnings
 
-from src.engine.engine import Engine
 from src.error.export_error import ExportError
 from src.input.shapefile_importer import ShapefileImporter
 from src.output.shapefile_exporter import ShapefileExporter
