@@ -68,7 +68,7 @@ class Scene:
         camera.
 
         Args:
-            engine: Engine of the program.
+            engine: Engine to use for the execution of the logic.
         """
 
         # Dictionaries storing the id representing each model and the model itself
