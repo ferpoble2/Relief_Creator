@@ -816,7 +816,10 @@ class Scene:
         else:
             return None, None
 
-    def get_active_model_height_on_coordinates(self, x_coordinate: float, y_coordinate: float) -> Union[float, None]:
+    def get_model_height_on_coordinates(self,
+                                        x_coordinate: float,
+                                        y_coordinate: float,
+                                        model_id: str) -> Union[float, None]:
         """
         Get the height of the active model in the specified coordinates.
 
@@ -825,12 +828,12 @@ class Scene:
         Args:
             x_coordinate: x-axis coordinate.
             y_coordinate: y-axis coordinate.
+            model_id: ID of the model to check for the coordinates.
 
         Returns: Height of the model in the coordinates.
         """
-        active_model_id = self.__engine.get_active_model_id()
-        if active_model_id in self.__model_hash:
-            return self.__model_hash[active_model_id].get_height_on_coordinates(x_coordinate, y_coordinate)
+        if model_id in self.__model_hash:
+            return self.__model_hash[model_id].get_height_on_coordinates(x_coordinate, y_coordinate)
         else:
             return None
 

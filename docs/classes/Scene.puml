@@ -26,7 +26,7 @@
                 + draw()
                 + get_3d_model_list(): List[str]
                 + get_active_model_coordinates_arrays(): (array, array)
-                + get_active_model_height_on_coordinates(x_coordinate, y_coordinate): float
+                + get_model_height_on_coordinates(x_coordinate, y_coordinate, model_id): float
                 + get_active_model_projection_matrix(): array
                 + get_active_model_showed_limits(): dict
                 + get_active_polygon_id(): str

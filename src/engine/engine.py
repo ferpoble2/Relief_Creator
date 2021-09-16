@@ -819,7 +819,9 @@ class Engine:
 
         Returns: Height of the active model on the specified location.
         """
-        return self.scene.get_active_model_height_on_coordinates(x_coordinate, y_coordinate)
+        return self.scene.get_model_height_on_coordinates(x_coordinate,
+                                                          y_coordinate,
+                                                          self.get_active_model_id())
 
     def get_map_position(self) -> list:
         """
