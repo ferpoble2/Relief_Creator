@@ -5,10 +5,12 @@
                 - __transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height, filters)
                 + add_model(model)
                 + add_new_vertex_to_polygon_using_map_coords(x_coord, y_coord, polygon_id)
-                + add_new_vertex_to_polygon_using_window_coords(position_x, position_y, polygon_id)
+                + add_new_vertex_to_polygon_using_window_coords(position_x, position_y, polygon_id, model_id,
+                                                                scene_settings_data, window_settings_data)
                 + add_polygon(polygon)
                 + apply_smoothing_algorithm(polygon_id, model_id, distance_to_polygon)
-                + calculate_map_position_from_window(): (float, float)
+                + calculate_map_position_from_window(position_x, position_y, polygon_id, model_id, scene_settings_data,
+                                                       window_settings_data): (float, float)
                 + calculate_max_min_height(model_id, polygon_id): tuple
                 + change_camera_azimuthal_angle(angle)
                 + change_camera_elevation(angle)
@@ -25,13 +27,13 @@
                 + delete_polygon_param(polygon_id, key)
                 + draw(active_model_id, active_polygon_id, program_view_mode)
                 + get_3d_model_list(): List[str]
-                + get_active_model_coordinates_arrays(): (array, array)
                 + get_active_model_projection_matrix(): array
                 + get_active_model_showed_limits(): dict
                 + get_camera_view_matrix(): array
                 + get_extra_reload_proportion_setting(): float
                 + get_height_normalization_factor(model_3d_id): float
                 + get_map2dmodel_vertices_array(model_id): array
+                + get_model_coordinates_arrays(model_id): (array, array)
                 + get_model_height_on_coordinates(x_coordinate, y_coordinate, model_id): float
                 + get_model_information(): dict
                 + get_model_list(): List[str]

@@ -316,19 +316,25 @@ class Scene:
     def add_new_vertex_to_polygon_using_window_coords(self,
                                                       position_x: int,
                                                       position_y: int,
-                                                      polygon_id: str) -> None:
+                                                      polygon_id: str,
+                                                      model_id: str,
+                                                      scene_settings_data: Dict[str, int],
+                                                      window_settings_data: Dict[str, int]) -> None:
         """
         Add a new vertex to the active polygon on the screen.
 
         The coordinates expected as arguments are screen coordinates, these coordinates have the
         origin at the top-left of the screen with the x-axis positive to the right and the y-axis positive to the
         bottom. The coordinates given as parameters will be processed and transformed to the coordinates used in the
-        map being showed on the scene.
+        specified map.
 
         The new vertex will not be added if it falls outside of the space considered for the scene on the program, but
         will be added if it falls outside of the map (but still inside of the scene).
 
         Args:
+            window_settings_data: Dictionary with the settings values of the window.
+            scene_settings_data: Dictionary with the settings values of the scene.
+            model_id: ID of the model to use to get the coordinates of the point.
             polygon_id: ID of the polygon to add the point.
             position_x: Position x of the point in window coordinates
             position_y: Position y of the point in window coordinates (from top to bottom)
@@ -343,6 +349,9 @@ class Scene:
         if polygon_id in self.__polygon_hash:
             new_x, new_y = self.calculate_map_position_from_window(position_x,
                                                                    position_y,
+                                                                   model_id,
+                                                                   scene_settings_data,
+                                                                   window_settings_data,
                                                                    allow_outside_map=True,
                                                                    allow_outside_scene=False)
             self.__polygon_hash[polygon_id].add_point(new_x, new_y)
@@ -396,15 +405,24 @@ class Scene:
 
         model.update_heights(new_heights)
 
-    def calculate_map_position_from_window(self, position_x: int, position_y: int, allow_outside_map=False,
+    def calculate_map_position_from_window(self,
+                                           position_x: int,
+                                           position_y: int,
+                                           model_id: str,
+                                           scene_settings_data: Dict[str, int],
+                                           window_settings_data: Dict[str, int],
+                                           allow_outside_map=False,
                                            allow_outside_scene=False) -> (float, float):
         """
-        Calculate the position of a point on the map currently being showed on the screen.
+        Calculate the position of a point on the specified map.
 
         Returns (None, None) if there is no active model on the program or if the position of the mouse is outside of
         the map.
 
         Args:
+            window_settings_data: Dictionary with the settings of the window of the program.
+            scene_settings_data: Dictionary with the settings of the scene of the program.
+            model_id: ID of the model to use for the calculus of the position.
             allow_outside_map: If to enable to calculate the map position even when the positions given fall outside of
                                the rendered map. When disabled, (None, None) is returned if points are outside of map.
             allow_outside_scene: If to enable to calculate the map position when the position given fall outside of
@@ -418,19 +436,19 @@ class Scene:
         # ----------------------
 
         # Model has to exist on the program
-        if self.__engine.get_active_model_id() is None:
+        if model_id is None:
             return None, None
 
         # Model must be initialized to obtain the data
-        x_array, y_array = self.get_active_model_coordinates_arrays()
+        x_array, y_array = self.get_model_coordinates_arrays(model_id)
         if x_array is None and y_array is None:
             return None, None
 
         # Calculate the position of the mouse on the map
         # ----------------------------------------------
-        scene_settings = self.__engine.get_scene_setting_data()
+        scene_settings = scene_settings_data
         map_positions = self.get_2D_showed_limits()
-        window_settings = self.__engine.get_window_setting_data()
+        window_settings = window_settings_data
 
         x_dist_pixel = position_x - scene_settings['SCENE_BEGIN_X']
         y_dist_pixel = (window_settings['HEIGHT'] - position_y) - scene_settings['SCENE_BEGIN_Y']
@@ -812,20 +830,18 @@ class Scene:
         """
         return list(self.__3d_model_hash.keys())
 
-    def get_active_model_coordinates_arrays(self) -> (Union[np.ndarray, None], Union[np.ndarray, None]):
+    def get_model_coordinates_arrays(self, model_id: str) -> (Union[np.ndarray, None], Union[np.ndarray, None]):
         """
-        Get two arrays, the first containing the coordinates used in the active model for the x-axis and the second
-        containing the coordinates used in the active model for the y-axis.
-
-        The lists can be sorted ascended or descended. (must be verified, can vary)
-
-        If there is no active model or if there is a problem retrieving the model, then (None, None) is returned.
+        Get two arrays, the first containing the coordinates used in the model for the x-axis and the second
+        containing the coordinates used in the model for the y-axis.
 
         Returns: (x-axis array, y-axis array) coordinates used in the active model.
+
+        Args:
+            model_id: Model to use to get the coordinate arrays.
         """
-        active_model_id = self.__engine.get_active_model_id()
-        if active_model_id in self.__model_hash:
-            model = self.__model_hash[active_model_id]
+        if model_id in self.__model_hash:
+            model = self.__model_hash[model_id]
             return model.get_model_coordinate_array()
         else:
             return None, None

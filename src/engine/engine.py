@@ -139,7 +139,10 @@ class Engine:
         try:
             self.scene.add_new_vertex_to_polygon_using_window_coords(position_x,
                                                                      position_y,
-                                                                     self.program.get_active_polygon_id())
+                                                                     self.program.get_active_polygon_id(),
+                                                                     self.program.get_active_model(),
+                                                                     self.get_scene_setting_data(),
+                                                                     self.get_window_setting_data())
 
         except RepeatedPointError:
             log.info('Handling repeated point.')
@@ -807,7 +810,11 @@ class Engine:
 
         Returns: (x, y) tuple with the coordinates of the point on the map.
         """
-        return self.scene.calculate_map_position_from_window(x_coordinate, y_coordinate)
+        return self.scene.calculate_map_position_from_window(x_coordinate,
+                                                             y_coordinate,
+                                                             self.program.get_active_model(),
+                                                             self.get_scene_setting_data(),
+                                                             self.get_window_setting_data())
 
     def get_map_height_on_coordinates(self, x_coordinate: float, y_coordinate: float) -> float:
         """
