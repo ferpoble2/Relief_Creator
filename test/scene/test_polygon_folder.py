@@ -32,8 +32,8 @@ class TestPolygonFolderCreation(unittest.TestCase):
 
         Create the variables necessary to check the logic of the program.
         """
-        self.engine = Engine()
-        self.program = Program(self.engine)
+        self.program = Program()
+        self.engine = self.program.engine
         self.gui_manager = self.engine.gui_manager
 
     def tearDown(self) -> None:

@@ -33,8 +33,8 @@ class TestAddPoints(unittest.TestCase):
         warnings.simplefilter("ignore", ResourceWarning)
 
         # create program
-        self.engine = Engine()
-        self.program = Program(self.engine)
+        self.program = Program()
+        self.engine = self.program.engine
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -113,8 +113,8 @@ class TestPlanarity(unittest.TestCase):
         warnings.simplefilter("ignore", ResourceWarning)
 
         # create program
-        self.engine = Engine()
-        self.program = Program(self.engine)
+        self.program = Program()
+        self.engine = self.program.engine
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -147,8 +147,8 @@ class TestUndoAction(unittest.TestCase):
     def test_undo_point_added(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        engine = Engine()
-        program = Program(engine)
+        program = Program()
+        engine = program.engine
 
         engine.should_use_threads(False)
         engine.load_netcdf_file(

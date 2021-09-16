@@ -30,16 +30,16 @@ from src.utils import dict_to_serializable_dict, json_to_dict
 class TestViewMode(unittest.TestCase):
 
     def test_default_view_mode(self):
-        engine = Engine()
-        program = Program(engine, initialize_engine=False)
+        program = Program()
+        engine = program.engine
 
         self.assertEqual('2D',
                          program.get_view_mode(),
                          '2D is not the default mode when creating the program.')
 
     def test_view_mode_3D(self):
-        engine = Engine()
-        program = Program(engine, initialize_engine=True)
+        program = Program()
+        engine = program.engine
 
         engine.set_program_view_mode('3D')
         self.assertEqual('3D',
@@ -47,8 +47,8 @@ class TestViewMode(unittest.TestCase):
                          'Mode was not changed to 3D after calling set_program_view_mode')
 
     def test_view_mode_2D(self):
-        engine = Engine()
-        program = Program(engine, initialize_engine=True)
+        program = Program()
+        engine = program.engine
 
         engine.set_program_view_mode('3D')
         engine.set_program_view_mode('2D')
@@ -69,9 +69,9 @@ class TestModelInformation(unittest.TestCase):
         Create program and load a map into it.
         """
         warnings.simplefilter('ignore', category=ResourceWarning)
-        cls.engine = Engine()
+        cls.program = Program()
+        cls.engine = cls.program.engine
         cls.engine.should_use_threads(False)
-        cls.program = Program(cls.engine)
 
         cls.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                     'resources/test_resources/netcdf/test_file_50_50.nc')

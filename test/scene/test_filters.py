@@ -36,8 +36,8 @@ class TestContainsFilter(unittest.TestCase):
         warnings.simplefilter('ignore', category=DeprecationWarning)
 
         # create program
-        self.engine = Engine()
-        self.program = Program(self.engine)
+        self.program = Program()
+        self.engine = self.program.engine
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -188,8 +188,8 @@ class TestHeightGreaterFilter(unittest.TestCase):
         warnings.simplefilter('ignore', category=DeprecationWarning)
 
         # create program
-        self.engine = Engine()
-        self.program = Program(self.engine)
+        self.program = Program()
+        self.engine = self.program.engine
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -307,8 +307,8 @@ class TestMixedFilters(unittest.TestCase):
         warnings.simplefilter('ignore', category=DeprecationWarning)
 
         # create program
-        self.engine = Engine()
-        self.program = Program(self.engine)
+        self.program = Program()
+        self.engine = self.program.engine
 
         # initialize variables
         self.engine.should_use_threads(False)

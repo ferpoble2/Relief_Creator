@@ -29,8 +29,8 @@ class TestIconCreation(unittest.TestCase):
         Code executed before every test. Initializes a program to work with.
         """
         # create program
-        self.engine = Engine()
-        self.program = Program(self.engine)
+        self.program = Program()
+        self.engine = self.program.engine
 
         # initialize variables
         self.engine.should_use_threads(False)

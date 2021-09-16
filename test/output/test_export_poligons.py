@@ -38,8 +38,8 @@ class TestExportPolygons(unittest.TestCase):
         warnings.simplefilter("ignore", ResourceWarning)
 
         # create program
-        self.engine = Engine()
-        self.program = Program(self.engine)
+        self.program = Program()
+        self.engine = self.program.engine
 
         # initialize variables
         self.engine.should_use_threads(False)

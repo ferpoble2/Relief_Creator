@@ -34,9 +34,9 @@ class TestLoadedModelsList(unittest.TestCase):
         """
         Initialize variables for the testing. Code is executed before every test.
         """
-        self.engine = Engine()
+        self.program = Program()
+        self.engine = self.program.engine
         self.engine.should_use_threads(False)
-        self.program = Program(self.engine)
 
     def tearDown(self) -> None:
         """

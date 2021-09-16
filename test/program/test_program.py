@@ -35,8 +35,8 @@ class TestZoomParameters(unittest.TestCase):
         Code executed before every test. Initializes a program to work with.
         """
         # create program
-        self.engine = Engine()
-        self.program = Program(self.engine, initialize_engine=False)
+        self.program = Program()
+        self.engine = self.program.engine
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -86,8 +86,8 @@ class TestViewModeParameters(unittest.TestCase):
         Code executed before every test. Initializes a program to work with.
         """
         # create program
-        self.engine = Engine()
-        self.program = Program(self.engine, initialize_engine=False)
+        self.program = Program()
+        self.engine = self.program.engine
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -119,8 +119,8 @@ class TestMapPositionParameters(unittest.TestCase):
         Code executed before every test. Initializes a program to work with.
         """
         # create program
-        self.engine = Engine()
-        self.program = Program(self.engine, initialize_engine=False)
+        self.program = Program()
+        self.engine = self.program.engine
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -149,8 +149,8 @@ class TestActiveToolParameters(unittest.TestCase):
         Code executed before every test. Initializes a program to work with.
         """
         # create program
-        self.engine = Engine()
-        self.program = Program(self.engine, initialize_engine=False)
+        self.program = Program()
+        self.engine = self.program.engine
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -186,8 +186,8 @@ class TestLoadingParameters(unittest.TestCase):
         Code executed before every test. Initializes a program to work with.
         """
         # create program
-        self.engine = Engine()
-        self.program = Program(self.engine, initialize_engine=False)
+        self.program = Program()
+        self.engine = self.program.engine
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -217,8 +217,8 @@ class TestCPTFilesParameters(unittest.TestCase):
         Code executed before every test. Initializes a program to work with.
         """
         # create program
-        self.engine = Engine()
-        self.program = Program(self.engine, initialize_engine=False)
+        self.program = Program()
+        self.engine = self.program.engine
 
         # initialize variables
         self.engine.should_use_threads(False)
@@ -244,16 +244,16 @@ class TestCPTFilesParameters(unittest.TestCase):
 class TestDebugMode(unittest.TestCase):
 
     def test_debug_mode_default_value(self):
-        engine = Engine()
-        program = Program(engine, initialize_engine=False)
+        program = Program()
+        engine = program.engine
 
         self.assertFalse(program.get_debug_mode())
 
         program.close()
 
     def test_debug_mode_false(self):
-        engine = Engine()
-        program = Program(engine, debug_mode=True, initialize_engine=False)
+        program = Program(debug_mode=True)
+        engine = program.engine
 
         self.assertTrue(program.get_debug_mode())
 
@@ -265,8 +265,8 @@ class TestParser(unittest.TestCase):
     def test_parser_model(self):
         warnings.simplefilter('ignore', ResourceWarning)
 
-        engine = Engine()
-        program = Program(engine)
+        program = Program()
+        engine = program.engine
 
         engine.should_use_threads(False)
 
