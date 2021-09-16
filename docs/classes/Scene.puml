@@ -4,8 +4,8 @@
                 - __process_filters(filters): list
                 - __transform_points_using_linear_transformation(polygon_id, model_id, min_height, max_height, filters)
                 + add_model(model)
-                + add_new_vertex_to_active_polygon_using_real_coords(x_coord, y_coord)
-                + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
+                + add_new_vertex_to_polygon_using_map_coords(x_coord, y_coord, polygon_id)
+                + add_new_vertex_to_polygon_using_window_coords(position_x, position_y, polygon_id)
                 + add_polygon(polygon)
                 + apply_smoothing_algorithm(polygon_id, model_id, distance_to_polygon)
                 + calculate_map_position_from_window(): (float, float)
@@ -16,24 +16,23 @@
                 + change_dot_color_of_polygon(polygon_id, color)
                 + change_height_unit_3D_model(model_id, measure_unit)
                 + change_map_unit_3D_model(model_id, measure_unit)
+                + change_model_draw_priority(model_id, new_position)
                 + change_normalization_height_factor(active_model, new_factor)
                 + change_polygon_draw_priority(polygon_id, new_position)
-                + change_model_draw_priority(model_id, new_position)
-                + create_3D_model_if_not_exists()
+                + create_3D_model_if_not_exists(model_id)
                 + create_new_polygon(): str
                 + delete_polygon_by_id(polygon_id)
                 + delete_polygon_param(polygon_id, key)
-                + draw()
+                + draw(active_model_id, active_polygon_id, program_view_mode)
                 + get_3d_model_list(): List[str]
                 + get_active_model_coordinates_arrays(): (array, array)
-                + get_model_height_on_coordinates(x_coordinate, y_coordinate, model_id): float
                 + get_active_model_projection_matrix(): array
                 + get_active_model_showed_limits(): dict
-                + get_active_polygon_id(): str
                 + get_camera_view_matrix(): array
                 + get_extra_reload_proportion_setting(): float
                 + get_height_normalization_factor(model_3d_id): float
                 + get_map2dmodel_vertices_array(model_id): array
+                + get_model_height_on_coordinates(x_coordinate, y_coordinate, model_id): float
                 + get_model_information(): dict
                 + get_model_list(): List[str]
                 + get_point_list_from_polygon(polygon_id): list

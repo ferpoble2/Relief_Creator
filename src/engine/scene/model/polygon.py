@@ -276,13 +276,13 @@ class Polygon(Model):
         """
         self.__parameters.pop(key)
 
-    def draw(self) -> None:
+    def draw(self, active_polygon=False) -> None:
         """
         Set how and when to draw the polygons.
         """
 
         # draw the components on the screen
-        if self.scene.get_active_polygon_id() == self.id:
+        if active_polygon:
             self.__lines_model.set_use_borders(True)
             self.__last_line_model.set_use_borders(True)
         else:

@@ -105,7 +105,7 @@ class Engine:
         Returns: None
         """
         try:
-            self.scene.add_new_vertex_to_active_polygon_using_map_coords(position_x, position_y)
+            self.scene.add_new_vertex_to_polygon_using_map_coords(position_x, position_y)
         except RepeatedPointError:
             log.info('Handling repeated point.')
             self.set_modal_text('Error', 'Point already exist in polygon.')
@@ -137,7 +137,9 @@ class Engine:
         # Add  the new vertex to the polygon located on the scene. In case of error, then open a modal text with a
         # message explaining the error.
         try:
-            self.scene.add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
+            self.scene.add_new_vertex_to_polygon_using_window_coords(position_x,
+                                                                     position_y,
+                                                                     self.program.get_active_polygon_id())
 
         except RepeatedPointError:
             log.info('Handling repeated point.')
@@ -1101,7 +1103,8 @@ class Engine:
             self.program.set_loading(False)
 
             if self.program.get_view_mode() == '3D':
-                self.set_task_with_loading_frame(lambda: self.scene.create_3D_model_if_not_exists())
+                self.set_task_with_loading_frame(
+                    lambda: self.scene.create_3D_model_if_not_exists(self.program.get_active_model()))
 
             # Create temporary file with the information of the model
             # -------------------------------------------------------
@@ -1478,7 +1481,11 @@ class Engine:
                 self.__thread_manager.update_threads()
                 self.__process_manager.update_process()
                 self.render.on_loop([lambda: self.gui_manager.process_input(),
-                                     lambda: self.scene.draw(),
+                                     lambda: self.scene.draw(
+                                         self.program.get_active_model(),
+                                         self.program.get_active_polygon_id(),
+                                         self.program.get_view_mode()
+                                     ),
                                      lambda: self.gui_manager.draw_frames(),
                                      lambda: self.gui_manager.render()])
 
@@ -1488,7 +1495,11 @@ class Engine:
                 self.__thread_manager.update_threads()
                 self.__process_manager.update_process()
                 self.render.on_loop([lambda: self.gui_manager.process_input(),
-                                     lambda: self.scene.draw(),
+                                     lambda: self.scene.draw(
+                                         self.program.get_active_model(),
+                                         self.program.get_active_polygon_id(),
+                                         self.program.get_view_mode()
+                                     ),
                                      lambda: self.gui_manager.draw_frames(),
                                      lambda: self.gui_manager.render()])
 
@@ -1638,7 +1649,8 @@ class Engine:
             self.render.enable_depth_buffer(True)
 
             self.set_loading_message('Generating 3D model...')
-            self.set_task_with_loading_frame(lambda: self.scene.create_3D_model_if_not_exists())
+            self.set_task_with_loading_frame(
+                lambda: self.scene.create_3D_model_if_not_exists(self.program.get_active_model()))
 
         else:
             raise ValueError(f'Can not change program view mode to {mode}.')

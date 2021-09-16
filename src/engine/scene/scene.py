@@ -293,7 +293,10 @@ class Scene:
         """
         self.__model_hash[model.id] = model
 
-    def add_new_vertex_to_active_polygon_using_map_coords(self, x_coord: float, y_coord: float) -> None:
+    def add_new_vertex_to_polygon_using_map_coords(self,
+                                                   x_coord: float,
+                                                   y_coord: float,
+                                                   polygon_id: str) -> None:
         """
         Add a new point to the active polygon using the coordinates of the map.
 
@@ -301,16 +304,19 @@ class Scene:
         same coordinates specified on the arguments.
 
         Args:
+            polygon_id: ID of the polygon to add the point.
             x_coord: x coordinate of the new point
             y_coord: y coordinate of the new point
 
         Returns: None
         """
-        active_polygon = self.__engine.get_active_polygon_id()
-        if active_polygon in self.__polygon_hash:
-            self.__polygon_hash[active_polygon].add_point(x_coord, y_coord)
+        if polygon_id in self.__polygon_hash:
+            self.__polygon_hash[polygon_id].add_point(x_coord, y_coord)
 
-    def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
+    def add_new_vertex_to_polygon_using_window_coords(self,
+                                                      position_x: int,
+                                                      position_y: int,
+                                                      polygon_id: str) -> None:
         """
         Add a new vertex to the active polygon on the screen.
 
@@ -323,23 +329,23 @@ class Scene:
         will be added if it falls outside of the map (but still inside of the scene).
 
         Args:
+            polygon_id: ID of the polygon to add the point.
             position_x: Position x of the point in window coordinates
             position_y: Position y of the point in window coordinates (from top to bottom)
 
         Returns: None
         """
-        active_polygon = self.__engine.get_active_polygon_id()
 
         # Raise exception when there is no active polygon.
-        if active_polygon is None:
-            raise AssertionError('There is no active polygon.')
+        if polygon_id is None:
+            raise AssertionError('Polygon does not exists.')
 
-        if active_polygon in self.__polygon_hash:
+        if polygon_id in self.__polygon_hash:
             new_x, new_y = self.calculate_map_position_from_window(position_x,
                                                                    position_y,
                                                                    allow_outside_map=True,
                                                                    allow_outside_scene=False)
-            self.__polygon_hash[active_polygon].add_point(new_x, new_y)
+            self.__polygon_hash[polygon_id].add_point(new_x, new_y)
 
     def add_polygon(self, polygon: 'Polygon') -> None:
         """
@@ -638,21 +644,25 @@ class Scene:
         # Insert element in the new position
         self.__model_draw_priority.insert(new_priority, model_id)
 
-    def create_3D_model_if_not_exists(self) -> None:
+    def create_3D_model_if_not_exists(self,
+                                      model_id: str) -> None:
         """
         Create a new map3Dmodel object and add it to the scene.
 
         By default, the data used to generate the model is the one of the active model on the scene.
 
         Returns: Id of the new map3Dmodel
+
+        Args:
+            model_id: ID of the model to generate the 3D model.
         """
-        if self.__engine.get_active_model_id() not in self.__3d_model_hash:
+        if model_id not in self.__3d_model_hash:
             self.reset_camera_values()
-            new_model = Map3DModel(self, self.__model_hash[self.__engine.get_active_model_id()])
-            new_model.id = self.__engine.get_active_model_id()
+            new_model = Map3DModel(self, self.__model_hash[model_id])
+            new_model.id = model_id
 
             # add the model to the hash
-            self.__3d_model_hash[self.__engine.get_active_model_id()] = new_model
+            self.__3d_model_hash[model_id] = new_model
 
     def create_new_polygon(self, point_list: list = None, parameters: dict = None,
                            priority_position: int = None) -> str:
@@ -726,7 +736,11 @@ class Scene:
             # noinspection PyTypeChecker
             raise SceneError(5)
 
-    def draw(self) -> None:
+    def draw(self,
+             active_model_id: str,
+             active_polygon_id: str,
+             program_view_mode: str,
+             ) -> None:
         """
         Draw the models in the hash of models.
 
@@ -737,13 +751,14 @@ class Scene:
         in place.
 
         Returns: None
+
+        Args:
+            active_model_id: ID of the active model on the program.
+            active_polygon_id: ID of the active polygon on the program.
+            program_view_mode: String representing if the program is in 2D or 3D mode.
         """
-
-        # get the active model
-        active_model = self.__engine.get_active_model_id()
-
         # check if draw the 2D or the 3D of the models.
-        if self.__engine.get_program_view_mode() == '2D':
+        if program_view_mode == '2D':
 
             # Draw all the Map2DModels
             for model_2d in reversed(self.__model_draw_priority):
@@ -757,14 +772,13 @@ class Scene:
 
             # Draw all the polygons
             for polygon in reversed(self.__polygon_draw_priority):
-                # Change the height of the polygon depending on the draw order and draw them
-                self.__polygon_hash[polygon].draw()
+                # Draw the polygons in order
+                self.__polygon_hash[polygon].draw(active_polygon_id == polygon)
 
-        elif self.__engine.get_program_view_mode() == '3D':
-
+        elif program_view_mode == '3D':
             # Draw model if it exists
-            if active_model in self.__3d_model_hash:
-                self.__3d_model_hash[active_model].draw()
+            if active_model_id in self.__3d_model_hash:
+                self.__3d_model_hash[active_model_id].draw()
 
     # noinspection PyUnresolvedReferences
     def get_2D_showed_limits(self) -> dict:
@@ -836,14 +850,6 @@ class Scene:
             return self.__model_hash[model_id].get_height_on_coordinates(x_coordinate, y_coordinate)
         else:
             return None
-
-    def get_active_polygon_id(self) -> str:
-        """
-        Get the id of the active polygon on the program.
-
-        Returns: the id of the active polygon.
-        """
-        return self.__engine.get_active_polygon_id()
 
     def get_camera_data(self) -> dict:
         """
