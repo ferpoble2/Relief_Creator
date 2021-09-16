@@ -23,7 +23,7 @@
     }
 
     Engine o--o Scene
-    Engine o--o Controller
+    Engine o-- Controller
     Engine o--o Render
     Engine o--o GUIManager
     Engine -u.> Settings

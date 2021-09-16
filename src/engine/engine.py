@@ -68,7 +68,7 @@ class Engine:
         self.gui_manager = GUIManager(self)
         self.window = None
         self.scene = Scene(self)
-        self.controller = Controller(self)
+        self.controller = Controller()
         self.program = None
 
         self.__use_threads = True
@@ -970,11 +970,11 @@ class Engine:
         self.gui_manager.initialize(self.window, engine, self.gui_manager)
 
         # CONTROLLER CODE
-        glfw.set_key_callback(self.window, self.controller.get_on_key_callback())
-        glfw.set_window_size_callback(self.window, self.controller.get_resize_callback())
-        glfw.set_mouse_button_callback(self.window, self.controller.get_mouse_button_callback())
-        glfw.set_cursor_pos_callback(self.window, self.controller.get_cursor_position_callback())
-        glfw.set_scroll_callback(self.window, self.controller.get_mouse_scroll_callback())
+        glfw.set_key_callback(self.window, self.controller.get_on_key_callback(self))
+        glfw.set_window_size_callback(self.window, self.controller.get_resize_callback(self, self.scene))
+        glfw.set_mouse_button_callback(self.window, self.controller.get_mouse_button_callback(self))
+        glfw.set_cursor_pos_callback(self.window, self.controller.get_cursor_position_callback(self))
+        glfw.set_scroll_callback(self.window, self.controller.get_mouse_scroll_callback(self))
 
     def interpolate_points(self, polygon_id: str, model_id: str, distance: float, type_interpolation: str) -> None:
         """

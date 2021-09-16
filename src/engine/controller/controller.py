@@ -25,13 +25,14 @@ application.
 All the events captured by the GUI must be processed so GLFW must be able to capture them for this module to
 work correctly.
 """
-from typing import Callable, TYPE_CHECKING
+from typing import Callable, Dict, TYPE_CHECKING
 
 import glfw
 
 from src.utils import get_logger
 
 if TYPE_CHECKING:
+    from src.engine.scene.scene import Scene
     from src.engine.engine import Engine
 
 log = get_logger(module="CONTROLLER")
@@ -43,14 +44,10 @@ class Controller:
     Controller of the engine, controls all things related to the input of the program.
     """
 
-    def __init__(self, engine: 'Engine'):
+    def __init__(self):
         """
         Constructor of the class.
         """
-        self.__render = engine.render
-        self.__scene = engine.scene
-        self.__engine = engine
-
         self.__keyboard_callback_enabled = True
 
         # Auxiliary variables
@@ -80,29 +77,24 @@ class Controller:
 
         self.__move_map_tool_activated = False
 
-    def __change_color_file_with_dialog(self) -> None:
-        """
-        Change the color file opening a dialog to select the file.
-
-        Returns: None
-        """
-        self.__engine.change_color_file_with_dialog()
-
-    def __is_inside_scene(self, mouse_x_pos: int, mouse_y_pos: int) -> bool:
+    def __is_inside_scene(self, mouse_x_pos: int, mouse_y_pos: int, scene_settings_data: Dict[str, int],
+                          window_setting_data: Dict[str, int]) -> bool:
         """
         Check if the mouse is inside the scene or not.
 
         Args:
+            scene_settings_data: Dictionary with the settings of the scene.
+            window_setting_data: Dictionary with the settings of the window.
             mouse_x_pos: X position of the mouse given by glfw
             mouse_y_pos: Y position of the mouse given by glfw
 
         Returns: Boolean indicating if mouse is inside the scene
         """
-        scene_data = self.__engine.get_scene_setting_data()
+        scene_data = scene_settings_data
         is_inside = True
 
         # invert the mouse position given by glfw to start at the bottom of the screen
-        mouse_y_pos = self.__engine.get_window_setting_data()['HEIGHT'] - mouse_y_pos
+        mouse_y_pos = window_setting_data['HEIGHT'] - mouse_y_pos
 
         # check if mouse is inside the scene
         if mouse_x_pos < scene_data['SCENE_BEGIN_X'] or \
@@ -112,24 +104,6 @@ class Controller:
             is_inside = False
 
         return is_inside
-
-    def __load_netcdf_file_with_dialog(self) -> None:
-        """
-        Load a netcdf file opening a dialog to select the file.
-
-        Returns: None
-        """
-        self.__engine.load_netcdf_file_with_dialog()
-
-    def __load_shapefile_file_with_dialog(self) -> None:
-        """
-        Calls the engine to open a dialog to load a shapefile file.
-
-        If there are errors, then open dialogs.
-
-        Returns: None
-        """
-        self.__engine.load_shapefile_file_with_dialog()
 
     def __set_mouse_pos(self, new_x: int, new_y: int) -> None:
         """
@@ -174,32 +148,35 @@ class Controller:
         """
         return self.__keyboard_callback_enabled
 
-    def get_cursor_position_callback(self):
+    def get_cursor_position_callback(self, engine: 'Engine'):
         """
         Get the mouse movement callback function.
 
         Returns: Function to use as callback
+
+        Args:
+            engine: Engine to use to execute the logic defined by the callback.
         """
 
         # noinspection PyMissingOrEmptyDocstring
         def cursor_position_callback(_, x_pos, y_pos):
 
             # get the active tool being used in the program
-            active_tool = self.__engine.get_active_tool()
+            active_tool = engine.get_active_tool()
 
-            if self.__engine.get_program_view_mode() == '2D':
+            if engine.get_program_view_mode() == '2D':
 
                 if active_tool == 'move_map' and self.__move_map_tool_activated:
                     if self.__is_left_mouse_being_pressed:
-                        self.__engine.move_map_position(x_pos - self.__mouse_old_pos[0],
-                                                        self.__mouse_old_pos[1] - y_pos)
+                        engine.move_map_position(x_pos - self.__mouse_old_pos[0],
+                                                 self.__mouse_old_pos[1] - y_pos)
 
-            if self.__engine.get_program_view_mode() == '3D':
+            if engine.get_program_view_mode() == '3D':
 
                 if self.__is_mouse_middle_being_pressed:
-                    self.__engine.change_camera_elevation(
+                    engine.change_camera_elevation(
                         (self.__mouse_old_pos[1] - y_pos) * self.__camera_mouse_movement_factor)
-                    self.__engine.change_camera_xy_angle(
+                    engine.change_camera_xy_angle(
                         (self.__mouse_old_pos[0] - x_pos) * self.__camera_mouse_movement_factor)
 
             # update the move position at the end
@@ -207,9 +184,12 @@ class Controller:
 
         return cursor_position_callback
 
-    def get_mouse_button_callback(self):
+    def get_mouse_button_callback(self, engine: 'Engine'):
         """
         Get the mouse callback function to use when a mouse button is pressed.
+
+        Args:
+            engine: Engine to use to execute the logic defined by the callback.
 
         Returns: Function to use as callback
         """
@@ -233,12 +213,12 @@ class Controller:
                     self.__is_mouse_middle_being_pressed = False
 
             # logic of the controller.
-            if not self.__engine.is_mouse_hovering_frame():
+            if not engine.is_mouse_hovering_frame():
 
-                if self.__engine.get_program_view_mode() == '2D':
+                if engine.get_program_view_mode() == '2D':
 
                     if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
-                        active_tool = self.__engine.get_active_tool()
+                        active_tool = engine.get_active_tool()
 
                         if active_tool == 'move_map':
                             self.__move_map_tool_activated = True
@@ -246,25 +226,29 @@ class Controller:
                         if active_tool == 'create_polygon':
                             pos_x, pos_y = glfw.get_cursor_pos(window)
 
-                            if self.__is_inside_scene(pos_x, pos_y):
+                            if self.__is_inside_scene(pos_x, pos_y, engine.get_scene_setting_data(),
+                                                      engine.get_window_setting_data()):
                                 log.debug(f"Creating points for active polygon at: {pos_x} {pos_y}")
 
-                                self.__engine.add_new_vertex_to_active_polygon_using_window_coords(pos_x, pos_y)
+                                engine.add_new_vertex_to_active_polygon_using_window_coords(pos_x, pos_y)
 
                     if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.RELEASE:
-                        active_tool = self.__engine.get_active_tool()
+                        active_tool = engine.get_active_tool()
 
                         if active_tool == 'move_map':
                             self.__move_map_tool_activated = False
 
-                elif self.__engine.get_program_view_mode() == '3D':
+                elif engine.get_program_view_mode() == '3D':
                     pass
 
         return mouse_button_callback
 
-    def get_mouse_scroll_callback(self) -> Callable:
+    def get_mouse_scroll_callback(self, engine: 'Engine') -> Callable:
         """
         Get the callback for the mouse wheel.
+
+        Args:
+            engine: Engine to use to execute the logic defined by the callback.
 
         Returns: Function to call for the mouse wheel.
         """
@@ -273,32 +257,35 @@ class Controller:
         def mouse_wheel_callback(window, x_offset, y_offset):
 
             # do something only if not hovering frames
-            if not self.__engine.is_mouse_hovering_frame():
+            if not engine.is_mouse_hovering_frame():
 
-                if self.__engine.get_program_view_mode() == '2D':
+                if engine.get_program_view_mode() == '2D':
                     if y_offset > 0:
-                        self.__engine.add_zoom()
+                        engine.add_zoom()
 
                     if y_offset < 0:
-                        self.__engine.less_zoom()
+                        engine.less_zoom()
 
-                elif self.__engine.get_program_view_mode() == '3D':
+                elif engine.get_program_view_mode() == '3D':
                     if y_offset > 0:
-                        self.__engine.modify_camera_radius(-1 * self.__radius_movement_velocity)
+                        engine.modify_camera_radius(-1 * self.__radius_movement_velocity)
 
                     if y_offset < 0:
-                        self.__engine.modify_camera_radius(1 * self.__radius_movement_velocity)
+                        engine.modify_camera_radius(1 * self.__radius_movement_velocity)
 
-            self.__engine.get_gui_scroll_callback()(window, x_offset, y_offset)
+            engine.get_gui_scroll_callback()(window, x_offset, y_offset)
 
         return mouse_wheel_callback
 
-    def get_on_key_callback(self) -> Callable:
+    def get_on_key_callback(self, engine: 'Engine') -> Callable:
         """
         Get the callback function to use when a key is pressed.
 
         This function also calls the key_callback defined by the GUI, executing the logic defined inside after the
         logic defined in the controller.
+
+        Args:
+            engine: Engine to use to execute the logic defined by the callback.
 
         Returns: Function to use as callback.
         """
@@ -393,17 +380,17 @@ class Controller:
                 if action == glfw.PRESS:
                     if key == glfw.KEY_O and self.__is_left_ctrl_pressed:
                         log.debug("Shortcut open file")
-                        self.__load_netcdf_file_with_dialog()
+                        engine.load_netcdf_file_with_dialog()
 
                     if key == glfw.KEY_T and self.__is_left_ctrl_pressed:
                         log.debug("Pressed shortcut to change color file")
-                        self.__change_color_file_with_dialog()
+                        engine.change_color_file_with_dialog()
 
                     if key == glfw.KEY_L:
                         if self.__is_left_ctrl_pressed:
-                            self.__load_shapefile_file_with_dialog()
+                            engine.load_shapefile_file_with_dialog()
 
-                if self.__engine.get_program_view_mode() == '2D':
+                if engine.get_program_view_mode() == '2D':
 
                     # Check what to do if a key is pressed
                     if action == glfw.PRESS:
@@ -412,53 +399,58 @@ class Controller:
                         # -------------------------
                         if key == glfw.KEY_M:
                             log.debug("Pressed shortcut to move map")
-                            self.__engine.set_active_tool('move_map')
+                            engine.set_active_tool('move_map')
 
                         if key == glfw.KEY_Z:
                             if self.__is_left_ctrl_pressed:
                                 log.debug("Pressed ctrl+z")
-                                self.__engine.undo_action()
+                                engine.undo_action()
 
                         if key == glfw.KEY_R:
-                            self.__engine.reload_models()
+                            engine.reload_models()
 
                     # Check for in-frame actions
                     if self.__is_w_pressed:
-                        self.__engine.move_map_position(0, self.__map_movement_velocity)
+                        engine.move_map_position(0, self.__map_movement_velocity)
                     if self.__is_s_pressed:
-                        self.__engine.move_map_position(0, -1 * self.__map_movement_velocity)
+                        engine.move_map_position(0, -1 * self.__map_movement_velocity)
                     if self.__is_a_pressed:
-                        self.__engine.move_map_position(-1 * self.__map_movement_velocity, 0)
+                        engine.move_map_position(-1 * self.__map_movement_velocity, 0)
                     if self.__is_d_pressed:
-                        self.__engine.move_map_position(self.__map_movement_velocity, 0)
+                        engine.move_map_position(self.__map_movement_velocity, 0)
 
-                elif self.__engine.get_program_view_mode() == '3D':
+                elif engine.get_program_view_mode() == '3D':
                     if self.__is_w_pressed:
-                        self.__engine.change_camera_elevation(self.__elevation_movement_velocity)
+                        engine.change_camera_elevation(self.__elevation_movement_velocity)
                     if self.__is_s_pressed:
-                        self.__engine.change_camera_elevation(-1 * self.__elevation_movement_velocity)
+                        engine.change_camera_elevation(-1 * self.__elevation_movement_velocity)
                     if self.__is_a_pressed:
-                        self.__engine.change_camera_xy_angle(-1 * self.__azimuthal_movement_velocity)
+                        engine.change_camera_xy_angle(-1 * self.__azimuthal_movement_velocity)
                     if self.__is_d_pressed:
-                        self.__engine.change_camera_xy_angle(self.__azimuthal_movement_velocity)
+                        engine.change_camera_xy_angle(self.__azimuthal_movement_velocity)
 
                     if self.__is_up_key_pressed:
-                        self.__engine.move_camera_position((0, self.__camera_movement_velocity, 0))
+                        engine.move_camera_position((0, self.__camera_movement_velocity, 0))
                     if self.__is_down_key_pressed:
-                        self.__engine.move_camera_position((0, -1 * self.__camera_movement_velocity, 0))
+                        engine.move_camera_position((0, -1 * self.__camera_movement_velocity, 0))
                     if self.__is_left_key_pressed:
-                        self.__engine.move_camera_position((-1 * self.__camera_movement_velocity, 0, 0))
+                        engine.move_camera_position((-1 * self.__camera_movement_velocity, 0, 0))
                     if self.__is_right_key_pressed:
-                        self.__engine.move_camera_position((self.__camera_movement_velocity, 0, 0))
+                        engine.move_camera_position((self.__camera_movement_velocity, 0, 0))
 
             # call the others callbacks defined in the program.
-            self.__engine.get_gui_key_callback()(window, key, scancode, action, mods)
+            engine.get_gui_key_callback()(window, key, scancode, action, mods)
 
         return on_key
 
-    def get_resize_callback(self) -> Callable:
+    def get_resize_callback(self, engine: 'Engine', scene: 'Scene') -> Callable:
         """
         Get the callback for when the resizing is done.
+
+        Args:
+            engine: Engine to use to execute the logic defined by the callback.
+            scene: Scene to use for the update of the viewport.
+
         Returns: Function to use as a callback.
         """
 
@@ -475,9 +467,9 @@ class Controller:
             if width == 0 and height == 0:
                 return
 
-            self.__engine.change_height_window(height)
-            self.__engine.change_width_window(width)
-            self.__engine.update_scene_values()
-            self.__scene.update_viewport()
+            engine.change_height_window(height)
+            engine.change_width_window(width)
+            engine.update_scene_values()
+            scene.update_viewport()
 
         return on_resize
