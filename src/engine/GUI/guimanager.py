@@ -415,9 +415,9 @@ class GUIManager:
         """
         return self.__polygon_folder_manager.create_new_folder(name)
 
-    def delete_all_polygons_inside_folder(self, polygon_folder_id: str) -> None:
+    def remove_all_polygons_inside_folder(self, polygon_folder_id: str) -> None:
         """
-        Delete all the polygons that are inside a folder from the system and from the folder.
+        Remove all the polygons that are inside a folder from the system and from the folder.
 
         If the polygon is on two folders at the same time (should not happen), this also deletes
         the polygon from the other folder.
@@ -430,11 +430,11 @@ class GUIManager:
 
         polygons_inside = self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id).copy()
         for polygon_id in polygons_inside:
-            self.delete_polygon_by_id(polygon_id)
+            self.remove_polygon_by_id(polygon_id)
 
-    def delete_polygon_by_id(self, polygon_id: str) -> None:
+    def remove_polygon_by_id(self, polygon_id: str) -> None:
         """
-        Delete the polygon with the specified id from the scene and the GUIManager.
+        Remove the polygon with the specified id from the scene and the GUIManager.
 
         Args:
             polygon_id: Id of the polygon to delete
@@ -445,23 +445,23 @@ class GUIManager:
         self.__polygon_folder_manager.delete_polygon_from_all_folders(polygon_id)
 
         # delete the polygon from the engine
-        self.__engine.delete_polygon_by_id(polygon_id)
+        self.__engine.remove_polygon_by_id(polygon_id)
 
-    def delete_polygon_folder(self, folder_id: str) -> None:
+    def remove_polygon_folder(self, folder_id: str) -> None:
         """
-        Delete a polygon folder from the list of folders.
+        Remove a polygon folder from the list of folders.
 
         Args:
             folder_id: ID of the folder to delete.
 
         Returns: None
         """
-        self.delete_all_polygons_inside_folder(folder_id)
+        self.remove_all_polygons_inside_folder(folder_id)
         self.__polygon_folder_manager.delete_folder(folder_id)
 
-    def delete_polygon_parameter(self, polygon_id: str, key: str) -> None:
+    def remove_polygon_parameter(self, polygon_id: str, key: str) -> None:
         """
-        Delete a parameter from a polygon.
+        Remove a parameter from a polygon.
 
         Args:
             polygon_id: ID of the polygon.
@@ -469,7 +469,7 @@ class GUIManager:
 
         Returns: None
         """
-        self.__engine.delete_parameter_from_polygon(polygon_id, key)
+        self.__engine.remove_parameter_from_polygon(polygon_id, key)
 
     def disable_controller_keyboard_callback(self) -> None:
         """

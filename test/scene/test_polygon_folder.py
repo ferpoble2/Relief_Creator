@@ -69,14 +69,14 @@ class TestPolygonFolderCreation(unittest.TestCase):
         self.assertEqual([folder_0_id, folder_1_id, folder_2_id], self.gui_manager.get_polygon_folder_id_list(),
                          'ID list is not [0, 1, 2].')
 
-        self.gui_manager.delete_polygon_folder(folder_1_id)
+        self.gui_manager.remove_polygon_folder(folder_1_id)
         self.assertEqual([folder_0_id, folder_2_id], self.gui_manager.get_polygon_folder_id_list(),
                          'ID list is not [0, 2].')
 
-        self.gui_manager.delete_polygon_folder(folder_0_id)
+        self.gui_manager.remove_polygon_folder(folder_0_id)
         self.assertEqual([folder_2_id], self.gui_manager.get_polygon_folder_id_list(), 'ID list is not [2].')
 
-        self.gui_manager.delete_polygon_folder(folder_2_id)
+        self.gui_manager.remove_polygon_folder(folder_2_id)
         self.assertEqual([], self.gui_manager.get_polygon_folder_id_list(), 'ID list must be empty.')
 
     def test_add_polygon_to_folder(self):
@@ -112,17 +112,17 @@ class TestPolygonFolderCreation(unittest.TestCase):
                          self.gui_manager.get_polygons_id_from_polygon_folder(folder_0_id),
                          'Folder does not have the polygons added.')
 
-        self.gui_manager.delete_polygon_by_id(polygon1_id)
+        self.gui_manager.remove_polygon_by_id(polygon1_id)
         self.assertEqual([polygon2_id, polygon3_id],
                          self.gui_manager.get_polygons_id_from_polygon_folder(folder_0_id),
                          'Polygon not deleted from the folder.')
 
-        self.gui_manager.delete_polygon_by_id(polygon3_id)
+        self.gui_manager.remove_polygon_by_id(polygon3_id)
         self.assertEqual([polygon2_id],
                          self.gui_manager.get_polygons_id_from_polygon_folder(folder_0_id),
                          'Polygon not deleted from the folder.')
 
-        self.gui_manager.delete_polygon_by_id(polygon2_id)
+        self.gui_manager.remove_polygon_by_id(polygon2_id)
         self.assertEqual([],
                          self.gui_manager.get_polygons_id_from_polygon_folder(folder_0_id),
                          'Polygon not deleted from the folder.')
@@ -141,7 +141,7 @@ class TestPolygonFolderCreation(unittest.TestCase):
                          self.gui_manager.get_polygons_id_from_polygon_folder(folder_0_id),
                          'Folder does not have the polygons added.')
 
-        self.gui_manager.delete_all_polygons_inside_folder(folder_0_id)
+        self.gui_manager.remove_all_polygons_inside_folder(folder_0_id)
         self.assertEqual([],
                          self.gui_manager.get_polygons_id_from_polygon_folder(folder_0_id),
                          'Polygons not deleted from the folder.')

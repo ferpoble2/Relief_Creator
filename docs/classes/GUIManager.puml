@@ -39,9 +39,9 @@ class GUIManager{
     + change_quality(quality)
     + create_new_polygon(): str
     + create_polygon_folder(name): PolygonFolder
-    + delete_all_polygons_inside_folder(polygon_folder_id)
-    + delete_polygon_by_id(polygon_id)
-    + delete_polygon_parameter(polygon_id, key)
+    + remove_all_polygons_inside_folder(polygon_folder_id)
+    + remove_polygon_by_id(polygon_id)
+    + remove_polygon_parameter(polygon_id, key)
     + disable_glfw_keyboard_callback()
     + draw_frames()
     + move_folder_position(polygon_folder_id, movement_offset)

@@ -144,7 +144,7 @@ class PolygonInformation(Frame):
                         self._GUI_manager.set_confirmation_modal(
                             'Delete parameter',
                             f'Are you sure you want to delete {parameter[0]}?',
-                            lambda: self._GUI_manager.delete_polygon_parameter(
+                            lambda: self._GUI_manager.remove_polygon_parameter(
                                 self._GUI_manager.get_active_polygon_id(),
                                 parameter[0]),
                             lambda: None)

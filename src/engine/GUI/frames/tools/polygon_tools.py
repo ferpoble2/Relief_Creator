@@ -227,7 +227,7 @@ class PolygonTools:
             # noinspection PyMissingOrEmptyDocstring
             def yes_function():
                 # delete the polygon from the program
-                self.__GUI_manager.delete_polygon_by_id(polygon_id)
+                self.__GUI_manager.remove_polygon_by_id(polygon_id)
 
                 # if the deleted polygon is the active, change the program status no None (deprecated code)
                 if active_polygon == polygon_id:
@@ -322,7 +322,7 @@ class PolygonTools:
                         self.__GUI_manager.set_active_polygon(None)
 
                     # delete the folder from the list of folders and don't render it's polygons
-                    self.__GUI_manager.delete_polygon_folder(folder_id)
+                    self.__GUI_manager.remove_polygon_folder(folder_id)
 
                 # ask for the confirmation of the action
                 self.__GUI_manager.set_confirmation_modal(

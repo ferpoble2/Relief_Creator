@@ -435,9 +435,9 @@ class Engine:
         """
         return self.scene.create_new_polygon()
 
-    def delete_parameter_from_polygon(self, polygon_id: str, key: str) -> None:
+    def remove_parameter_from_polygon(self, polygon_id: str, key: str) -> None:
         """
-        Delete a parameter from a polygon.
+        Remove a parameter from a polygon.
 
         Args:
             polygon_id: ID of the polygon.
@@ -447,9 +447,9 @@ class Engine:
         """
         self.scene.delete_polygon_param(polygon_id, key)
 
-    def delete_polygon_by_id(self, polygon_id: str) -> None:
+    def remove_polygon_by_id(self, polygon_id: str) -> None:
         """
-        Delete the polygon with the specified id from the scene
+        Remove the polygon with the specified id from the scene
 
         Args:
             polygon_id: Polygon id to use to delete

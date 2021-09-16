@@ -28,8 +28,8 @@ class Engine {
     + change_quality(quality)
     + change_width_window(width)
     + create_new_polygon(): str
-    + delete_parameter_from_polygon(polygon_id, key)
-    + delete_polygon_by_id(polygon_id)
+    + remove_parameter_from_polygon(polygon_id, key)
+    + remove_polygon_by_id(polygon_id)
     + disable_controller_key_callback()
     + enable_controller_key_callback()
     + get_controller_key_callback_state(): boolean
