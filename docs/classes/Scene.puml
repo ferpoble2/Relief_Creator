@@ -68,8 +68,7 @@
                 + update_3D_model(model_id)
                 + update_models_colors()
                 + update_models_projection_matrix()
-                + update_viewport()
-                + update_viewport_variables()
+                + update_viewport(scene_data)
 
                 - __3d_model_hash: dictionary
                 - __bottom_coordinate: float

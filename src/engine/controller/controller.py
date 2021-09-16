@@ -32,7 +32,6 @@ import glfw
 from src.utils import get_logger
 
 if TYPE_CHECKING:
-    from src.engine.scene.scene import Scene
     from src.engine.engine import Engine
 
 log = get_logger(module="CONTROLLER")
@@ -443,13 +442,12 @@ class Controller:
 
         return on_key
 
-    def get_resize_callback(self, engine: 'Engine', scene: 'Scene') -> Callable:
+    def get_resize_callback(self, engine: 'Engine') -> Callable:
         """
         Get the callback for when the resizing is done.
 
         Args:
             engine: Engine to use to execute the logic defined by the callback.
-            scene: Scene to use for the update of the viewport.
 
         Returns: Function to use as a callback.
         """
@@ -470,6 +468,6 @@ class Controller:
             engine.change_height_window(height)
             engine.change_width_window(width)
             engine.update_scene_values()
-            scene.update_viewport()
+            engine.update_scene_viewport()
 
         return on_resize

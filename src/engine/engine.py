@@ -974,7 +974,7 @@ class Engine:
 
         # CONTROLLER CODE
         glfw.set_key_callback(self.window, self.controller.get_on_key_callback(self))
-        glfw.set_window_size_callback(self.window, self.controller.get_resize_callback(self, self.scene))
+        glfw.set_window_size_callback(self.window, self.controller.get_resize_callback(self))
         glfw.set_mouse_button_callback(self.window, self.controller.get_mouse_button_callback(self))
         glfw.set_cursor_pos_callback(self.window, self.controller.get_cursor_position_callback(self))
         glfw.set_scroll_callback(self.window, self.controller.get_mouse_scroll_callback(self))
@@ -1826,7 +1826,7 @@ class Engine:
 
         Returns: None
         """
-        self.scene.update_viewport()
+        self.scene.update_viewport(self.get_scene_setting_data())
 
     def get_controller_key_callback_state(self) -> bool:
         """

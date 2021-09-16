@@ -1753,26 +1753,21 @@ class Scene:
                                                   camera_settings_data['PROJECTION_NEAR'],
                                                   camera_settings_data['PROJECTION_FAR'])
 
-    def update_viewport(self) -> None:
+    def update_viewport(self, scene_data: Dict[str, int]) -> None:
         """
         Update the viewport with the new values that exist in the Settings.
+
+        Args:
+            scene_data: Dictionary with the data of the scene.
         """
         log.debug("Updating viewport")
-        self.update_viewport_variables()
+        self.__width_viewport = scene_data['SCENE_WIDTH_X']
+        self.__height_viewport = scene_data['SCENE_HEIGHT_Y']
 
-        scene_data = self.__engine.get_scene_setting_data()
-        GL.glViewport(scene_data['SCENE_BEGIN_X'], scene_data['SCENE_BEGIN_Y'], scene_data['SCENE_WIDTH_X'],
+        GL.glViewport(scene_data['SCENE_BEGIN_X'],
+                      scene_data['SCENE_BEGIN_Y'],
+                      scene_data['SCENE_WIDTH_X'],
                       scene_data['SCENE_HEIGHT_Y'])
 
         self.update_projection_matrix_2D()
         self.update_projection_matrix_3D()
-
-    def update_viewport_variables(self):
-        """
-        Update the viewport variables.
-
-        Returns: None
-        """
-        viewport_data = self.__engine.get_scene_setting_data()
-        self.__width_viewport = viewport_data['SCENE_WIDTH_X']
-        self.__height_viewport = viewport_data['SCENE_HEIGHT_Y']
