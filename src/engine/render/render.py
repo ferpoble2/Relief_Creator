@@ -21,10 +21,13 @@ and the OpenGL rendering process.
 """
 import logging as log
 import sys
-from typing import Dict
+from typing import Dict, TYPE_CHECKING
 
 import OpenGL.GL as GL
 import glfw
+
+if TYPE_CHECKING:
+    from glfw import _GLFWwindow
 
 
 class Render:
@@ -131,7 +134,7 @@ class Render:
                       scene_data['SCENE_HEIGHT_Y'])
 
     @property
-    def window(self):
+    def window(self) -> '_GLFWwindow':
         """
         Get the window object used by the render to draw the models.
 
