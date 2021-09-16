@@ -116,26 +116,6 @@ class Controller:
         """
         self.__mouse_old_pos = (new_x, new_y)
 
-    def enable_keyboard_callback(self) -> None:
-        """
-        Enable the functionality of the keyboard callback function defined in the glfw call.
-
-        Does not affect to the keyboard callback from imgui.
-
-        Returns: None
-        """
-        self.__keyboard_callback_enabled = True
-
-    def disable_keyboard_callback(self) -> None:
-        """
-        Disable the functionality of the keyboard callback function defined in the glfw call.
-
-        Does not affect to the keyboard callback from imgui.
-
-        Returns: None
-        """
-        self.__keyboard_callback_enabled = False
-
     def get_keyboard_callback_state(self) -> bool:
         """
         Get the state of the keyboard callback defined by this class.
@@ -471,3 +451,16 @@ class Controller:
             engine.update_scene_viewport()
 
         return on_resize
+
+    def set_keyboard_callback(self, new_state: bool) -> None:
+        """
+        Enable/Disable the functionality of the keyboard callback function defined in the glfw call.
+
+        Does not affect to the keyboard callback from imgui.
+
+        Returns: None
+
+        Args:
+            new_state: New state of the keyboard callback used by the controller.
+        """
+        self.__keyboard_callback_enabled = new_state

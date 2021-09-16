@@ -18,14 +18,13 @@ class Controller {
     - __change_color_file_with_dialog()
     - __is_inside_scene(mouse_x_pos, mouse_y_pos): boolean
     - __set_mouse_pos(new_x, new_y)
-    + enable_keyboard_callback()
-    + disable_keyboard_callback()
     + get_keyboard_callback_state(): boolean
     + get_cursor_position_callback(engine): function
     + get_mouse_button_callback(engine): function
     + get_on_key_callback(engine): function
     + get_resize_callback(engine): function
     + get_mouse_scroll_callback(engine): function
+    + set_keyboard_callback(new_state)
     + init(render)
 }
 @enduml

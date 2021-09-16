@@ -471,19 +471,6 @@ class GUIManager:
         """
         self.__engine.remove_parameter_from_polygon(polygon_id, key)
 
-    def disable_controller_keyboard_callback(self) -> None:
-        """
-        Disable the logic defined on the controller keyboard callback, but keep executing the logic defined on the
-        IMGUI defined callback.
-
-        This method is useful when writing inside textbox, and the logic from the controller must not be executed but
-        the one in the GUI should.
-
-        Returns: None
-        """
-        log.debug('key callback disabled')
-        self.__engine.disable_controller_key_callback()
-
     def draw_frames(self) -> None:
         """
         Draw the components of the GUI (This dont render them).
@@ -507,17 +494,19 @@ class GUIManager:
         # check for the mouse component
         self.__is_mouse_inside_frame = imgui.get_io().want_capture_mouse
 
-    def enable_controller_keyboard_callback(self) -> None:
+    def set_controller_keyboard_callback_state(self, new_state: bool) -> None:
         """
-        Enable the logic defined on the controller keyboard callback.
+        Enable/Disable the logic defined on the controller keyboard callback.
 
         This method should be called after disable_controller_keyboard_callback to return the keyboard callbacks to its
         normal state.
 
+        Args:
+            new_state: New state of the keyboard callback used by the controller.
+
         Returns: None
         """
-        log.debug('key callback enabled')
-        self.__engine.enable_controller_key_callback()
+        self.__engine.set_controller_key_callback(new_state)
 
     def export_model_as_netcdf(self, model_id: str) -> None:
         """

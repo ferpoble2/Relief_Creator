@@ -90,7 +90,7 @@ class ConfirmationModal(Frame):
             # open the pop up and size it
             # ---------------------------
             imgui.open_popup(self.__modal_title)
-            self._GUI_manager.disable_controller_keyboard_callback()
+            self._GUI_manager.set_controller_keyboard_callback_state(False)
             self.__should_show = False
 
         if imgui.begin_popup_modal(self.__modal_title)[0]:
@@ -108,7 +108,7 @@ class ConfirmationModal(Frame):
                 # close the pop up
                 # ----------------
                 imgui.close_current_popup()
-                self._GUI_manager.enable_controller_keyboard_callback()
+                self._GUI_manager.set_controller_keyboard_callback_state(True)
 
             imgui.same_line()
             if imgui.button("no", self.__button_width):
@@ -123,7 +123,7 @@ class ConfirmationModal(Frame):
                 # close the pop up
                 # ----------------
                 imgui.close_current_popup()
-                self._GUI_manager.enable_controller_keyboard_callback()
+                self._GUI_manager.set_controller_keyboard_callback_state(True)
 
             imgui.end_popup()
 

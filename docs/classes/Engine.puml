@@ -30,8 +30,6 @@ class Engine {
     + create_new_polygon(): str
     + remove_parameter_from_polygon(polygon_id, key)
     + remove_polygon_by_id(polygon_id)
-    + disable_controller_key_callback()
-    + enable_controller_key_callback()
     + get_controller_key_callback_state(): boolean
     + get_tool_sub_title_font_size(): int
     + exit()
@@ -98,6 +96,7 @@ class Engine {
     + set_models_polygon_mode(polygon_mode)
     + set_new_parameter_to_polygon(polygon_id, key, value)
     + set_polygon_name(polygon_id, new_name)
+    + set_controller_key_callback(new_state)
     + set_process_task(parallel_task, then_task, parallel_task_args, then_task_args)
     + set_program_loading(new_state)
     + set_program_view_mode(mode)

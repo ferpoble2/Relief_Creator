@@ -113,9 +113,9 @@ class Tools3D(Frame):
 
         # Disable the keyboard controller if the user is writing something on the GUI
         if imgui.is_item_active() and self._GUI_manager.get_controller_keyboard_callback_state():
-            self._GUI_manager.disable_controller_keyboard_callback()
+            self._GUI_manager.set_controller_keyboard_callback_state(False)
         if (not imgui.is_item_active()) and (not self._GUI_manager.get_controller_keyboard_callback_state()):
-            self._GUI_manager.enable_controller_keyboard_callback()
+            self._GUI_manager.set_controller_keyboard_callback_state(True)
 
         # Apply changes using the data written by the user in the options
         if imgui.button('Change Factor', -1):

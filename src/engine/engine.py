@@ -460,25 +460,18 @@ class Engine:
         """
         self.scene.delete_polygon_by_id(polygon_id)
 
-    def enable_controller_key_callback(self) -> None:
+    def set_controller_key_callback(self, new_state: bool) -> None:
         """
         Enable the glfw callback defined in the controller.
 
         The GUI callback is not affected.
 
-        Returns: None
-        """
-        self.controller.enable_keyboard_callback()
-
-    def disable_controller_key_callback(self) -> None:
-        """
-        Disable the glfw callback defined in the controller.
-
-        The GUI callback is not affected.
+        Args:
+            new_state: New state of the keyboard callback used by the controller.
 
         Returns: None
         """
-        self.controller.disable_keyboard_callback()
+        self.controller.set_keyboard_callback(new_state)
 
     def exit(self):
         """
