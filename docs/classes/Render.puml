@@ -7,8 +7,9 @@ class Render {
     - __frame_count: int
     - __current_time: float
     - __show_framerate: boolean
+    + window
 
-    + init(window_name)
+    - __init_variables(window_settings, scene_settings_data, clear_color, window_name)
     + enable_depth_buffer(enable_buffer)
     + on_loop(on_frame_task)
 }

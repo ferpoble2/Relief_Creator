@@ -64,9 +64,11 @@ class Engine:
         """
         Constructor of the program.
         """
-        self.render = Render()
+        self.render = Render(self.get_window_setting_data(),
+                             self.get_scene_setting_data(),
+                             self.get_clear_color())
         self.gui_manager = GUIManager(self)
-        self.window = None
+        self.window = self.render.window
         self.scene = Scene(self)
         self.controller = Controller()
         self.program = None
@@ -957,10 +959,6 @@ class Engine:
         log.info('Starting Program')
         self.program = program
 
-        # GLFW CODE
-        log.debug("Creating windows.")
-        self.window = self.render.init("Relief Creator", engine)
-
         # Icon of the program
         program_icon = Image.open('resources/icons/program_icons/icon_program.png')
         glfw.set_window_icon(self.window, 1, [program_icon])
@@ -1472,14 +1470,20 @@ class Engine:
                 self.__task_manager.update_tasks()
                 self.__thread_manager.update_threads()
                 self.__process_manager.update_process()
-                self.render.on_loop([lambda: self.scene.draw()])
+                self.render.on_loop([lambda: self.gui_manager.process_input(),
+                                     lambda: self.scene.draw(),
+                                     lambda: self.gui_manager.draw_frames(),
+                                     lambda: self.gui_manager.render()])
 
         else:
             while not glfw.window_should_close(self.window):
                 self.__task_manager.update_tasks()
                 self.__thread_manager.update_threads()
                 self.__process_manager.update_process()
-                self.render.on_loop([lambda: self.scene.draw()])
+                self.render.on_loop([lambda: self.gui_manager.process_input(),
+                                     lambda: self.scene.draw(),
+                                     lambda: self.gui_manager.draw_frames(),
+                                     lambda: self.gui_manager.render()])
 
         # Terminate the process if the app ended the process.
         if terminate_process:

@@ -24,7 +24,7 @@
 
     Engine o--o Scene
     Engine o-- Controller
-    Engine o--o Render
+    Engine o-- Render
     Engine o--o GUIManager
     Engine -u.> Settings
     ProcessManager --o Engine
