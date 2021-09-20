@@ -34,6 +34,7 @@ import OpenGL.constant as OGLConstant
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
 
+from src.engine.GUI.frames.combine_map_modal import CombineMapModal
 from src.engine.GUI.frames.confirmation_modal import ConfirmationModal
 from src.engine.GUI.frames.debug import Debug
 from src.engine.GUI.frames.loading import Loading
@@ -145,6 +146,93 @@ class GUIManager:
         # --------------------------------------------------------------------------
         self.__engine.change_polygon_draw_priority(polygon_id,
                                                    self.__polygon_folder_manager.get_polygon_position(polygon_id))
+
+    def __initialize_variables(self,
+                               window,
+                               regular_font_size: int,
+                               tool_title_font_size: int,
+                               tool_sub_title_font_size: int,
+                               debug_mode: bool = False) -> None:
+        """
+        Set the initial configurations of the GUI.
+
+        Args:
+            debug_mode: Boolean indicating if the GUI should render debug frames.
+            tool_sub_title_font_size: Font size to use for the sub_title text.
+            tool_title_font_size: Font size to use for the tool_tile text.
+            regular_font_size: Font size to use for the regular font.
+            window: Window to use to draw the GUI
+
+        Returns: None
+
+        """
+        log.info("Initializing GUI")
+        imgui.create_context()
+        self.__implementation = GlfwRenderer(window)
+        self.__glfw_window = window
+
+        # Style options
+        style = imgui.get_style()
+        style.frame_rounding = 5
+        imgui.style_colors_light(style)
+
+        # Font options
+        self.__io = imgui.get_io()
+        self.__font_regular = self.__io.fonts.add_font_from_file_ttf(
+            'resources/fonts/open_sans/OpenSans-Regular.ttf', regular_font_size
+        )
+        self.__font_bold = self.__io.fonts.add_font_from_file_ttf(
+            'resources/fonts/open_sans/OpenSans-Bold.ttf', regular_font_size
+        )
+        self.__font_tool_title = self.__io.fonts.add_font_from_file_ttf(
+            'resources/fonts/open_sans/OpenSans-Regular.ttf', tool_title_font_size
+        )
+        self.__font_tool_sub_title = self.__io.fonts.add_font_from_file_ttf(
+            'resources/fonts/open_sans/OpenSans-Regular.ttf', tool_sub_title_font_size
+        )
+
+        self.__implementation.refresh_font_texture()
+
+        # load the icons on the GUI
+        self.__load_icons()
+
+        # initialize the components of the manager
+        # ----------------------------------------
+        main_menu_bar = MainMenuBar(self)
+        text_modal = TextModal(self)
+        tools = Tools(self)
+        loading = Loading(self)
+        polygon_information = PolygonInformation(self)
+        confirmation_modal = ConfirmationModal(self)
+        tools_3d = Tools3D(self)
+        mouse_coordinates = MouseCoordinates(self)
+        combine_map_modal = CombineMapModal(self)
+
+        self.__component_list_2D = [
+            main_menu_bar,
+            mouse_coordinates,
+            text_modal,
+            tools,
+            loading,
+            polygon_information,
+            confirmation_modal,
+            combine_map_modal
+        ]
+
+        self.__component_list_3D = [
+            main_menu_bar,
+            loading,
+            text_modal,
+            confirmation_modal,
+            tools_3d
+        ]
+
+        if debug_mode:
+            debug = Debug(self)
+            test_window = TestWindow(self)
+
+            self.__component_list_2D += [debug, test_window]
+            self.__component_list_3D += [debug, test_window]
 
     def __load_icons(self) -> None:
         """
@@ -866,91 +954,6 @@ class GUIManager:
 
         """
         return self.__engine.get_zoom_level()
-
-    def __initialize_variables(self,
-                               window,
-                               regular_font_size: int,
-                               tool_title_font_size: int,
-                               tool_sub_title_font_size: int,
-                               debug_mode: bool = False) -> None:
-        """
-        Set the initial configurations of the GUI.
-
-        Args:
-            debug_mode: Boolean indicating if the GUI should render debug frames.
-            tool_sub_title_font_size: Font size to use for the sub_title text.
-            tool_title_font_size: Font size to use for the tool_tile text.
-            regular_font_size: Font size to use for the regular font.
-            window: Window to use to draw the GUI
-
-        Returns: None
-
-        """
-        log.info("Initializing GUI")
-        imgui.create_context()
-        self.__implementation = GlfwRenderer(window)
-        self.__glfw_window = window
-
-        # Style options
-        style = imgui.get_style()
-        style.frame_rounding = 5
-        imgui.style_colors_light(style)
-
-        # Font options
-        self.__io = imgui.get_io()
-        self.__font_regular = self.__io.fonts.add_font_from_file_ttf(
-            'resources/fonts/open_sans/OpenSans-Regular.ttf', regular_font_size
-        )
-        self.__font_bold = self.__io.fonts.add_font_from_file_ttf(
-            'resources/fonts/open_sans/OpenSans-Bold.ttf', regular_font_size
-        )
-        self.__font_tool_title = self.__io.fonts.add_font_from_file_ttf(
-            'resources/fonts/open_sans/OpenSans-Regular.ttf', tool_title_font_size
-        )
-        self.__font_tool_sub_title = self.__io.fonts.add_font_from_file_ttf(
-            'resources/fonts/open_sans/OpenSans-Regular.ttf', tool_sub_title_font_size
-        )
-
-        self.__implementation.refresh_font_texture()
-
-        # load the icons on the GUI
-        self.__load_icons()
-
-        # initialize the components of the manager
-        # ----------------------------------------
-        main_menu_bar = MainMenuBar(self)
-        text_modal = TextModal(self)
-        tools = Tools(self)
-        loading = Loading(self)
-        polygon_information = PolygonInformation(self)
-        confirmation_modal = ConfirmationModal(self)
-        tools_3d = Tools3D(self)
-        mouse_coordinates = MouseCoordinates(self)
-
-        self.__component_list_2D = [
-            main_menu_bar,
-            mouse_coordinates,
-            text_modal,
-            tools,
-            loading,
-            polygon_information,
-            confirmation_modal
-        ]
-
-        self.__component_list_3D = [
-            main_menu_bar,
-            loading,
-            text_modal,
-            confirmation_modal,
-            tools_3d
-        ]
-
-        if debug_mode:
-            debug = Debug(self)
-            test_window = TestWindow(self)
-
-            self.__component_list_2D += [debug, test_window]
-            self.__component_list_3D += [debug, test_window]
 
     def interpolate_points(self, polygon_id: str, model_id: str, distance: float, type_interpolation: str) -> None:
         """
