@@ -503,62 +503,6 @@ class GUIManager:
         """
         return self.__polygon_folder_manager.create_new_folder(name)
 
-    def remove_all_polygons_inside_folder(self, polygon_folder_id: str) -> None:
-        """
-        Remove all the polygons that are inside a folder from the system and from the folder.
-
-        If the polygon is on two folders at the same time (should not happen), this also deletes
-        the polygon from the other folder.
-
-        Args:
-            polygon_folder_id: PolygonFolder ID of the folder to use.
-
-        Returns: None
-        """
-
-        polygons_inside = self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id).copy()
-        for polygon_id in polygons_inside:
-            self.remove_polygon_by_id(polygon_id)
-
-    def remove_polygon_by_id(self, polygon_id: str) -> None:
-        """
-        Remove the polygon with the specified id from the scene and the GUIManager.
-
-        Args:
-            polygon_id: Id of the polygon to delete
-
-        Returns: None
-        """
-        # delete it from the folders
-        self.__polygon_folder_manager.delete_polygon_from_all_folders(polygon_id)
-
-        # delete the polygon from the engine
-        self.__engine.remove_polygon_by_id(polygon_id)
-
-    def remove_polygon_folder(self, folder_id: str) -> None:
-        """
-        Remove a polygon folder from the list of folders.
-
-        Args:
-            folder_id: ID of the folder to delete.
-
-        Returns: None
-        """
-        self.remove_all_polygons_inside_folder(folder_id)
-        self.__polygon_folder_manager.delete_folder(folder_id)
-
-    def remove_polygon_parameter(self, polygon_id: str, key: str) -> None:
-        """
-        Remove a parameter from a polygon.
-
-        Args:
-            polygon_id: ID of the polygon.
-            key: key to delete.
-
-        Returns: None
-        """
-        self.__engine.remove_parameter_from_polygon(polygon_id, key)
-
     def draw_frames(self) -> None:
         """
         Draw the components of the GUI (This dont render them).
@@ -581,20 +525,6 @@ class GUIManager:
 
         # check for the mouse component
         self.__is_mouse_inside_frame = imgui.get_io().want_capture_mouse
-
-    def set_controller_keyboard_callback_state(self, new_state: bool) -> None:
-        """
-        Enable/Disable the logic defined on the controller keyboard callback.
-
-        This method should be called after disable_controller_keyboard_callback to return the keyboard callbacks to its
-        normal state.
-
-        Args:
-            new_state: New state of the keyboard callback used by the controller.
-
-        Returns: None
-        """
-        self.__engine.set_controller_key_callback(new_state)
 
     def export_model_as_netcdf(self, model_id: str) -> None:
         """
@@ -1176,6 +1106,23 @@ class GUIManager:
         """
         self.__engine.reload_models()
 
+    def remove_all_polygons_inside_folder(self, polygon_folder_id: str) -> None:
+        """
+        Remove all the polygons that are inside a folder from the system and from the folder.
+
+        If the polygon is on two folders at the same time (should not happen), this also deletes
+        the polygon from the other folder.
+
+        Args:
+            polygon_folder_id: PolygonFolder ID of the folder to use.
+
+        Returns: None
+        """
+
+        polygons_inside = self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id).copy()
+        for polygon_id in polygons_inside:
+            self.remove_polygon_by_id(polygon_id)
+
     def remove_interpolation_preview(self, polygon_id: str) -> None:
         """
         Ask the engine to remove the interpolation preview of the specified polygon.
@@ -1202,6 +1149,45 @@ class GUIManager:
         """
         self.__model_id_list.remove(model_id)
         self.__engine.remove_model(model_id)
+
+    def remove_polygon_by_id(self, polygon_id: str) -> None:
+        """
+        Remove the polygon with the specified id from the scene and the GUIManager.
+
+        Args:
+            polygon_id: Id of the polygon to delete
+
+        Returns: None
+        """
+        # delete it from the folders
+        self.__polygon_folder_manager.delete_polygon_from_all_folders(polygon_id)
+
+        # delete the polygon from the engine
+        self.__engine.remove_polygon_by_id(polygon_id)
+
+    def remove_polygon_folder(self, folder_id: str) -> None:
+        """
+        Remove a polygon folder from the list of folders.
+
+        Args:
+            folder_id: ID of the folder to delete.
+
+        Returns: None
+        """
+        self.remove_all_polygons_inside_folder(folder_id)
+        self.__polygon_folder_manager.delete_folder(folder_id)
+
+    def remove_polygon_parameter(self, polygon_id: str, key: str) -> None:
+        """
+        Remove a parameter from a polygon.
+
+        Args:
+            polygon_id: ID of the polygon.
+            key: key to delete.
+
+        Returns: None
+        """
+        self.__engine.remove_parameter_from_polygon(polygon_id, key)
 
     def render(self) -> None:
         """
@@ -1272,6 +1258,20 @@ class GUIManager:
                 return
 
         raise AssertionError('There is not a frame of class ConfirmationModal in the program.')
+
+    def set_controller_keyboard_callback_state(self, new_state: bool) -> None:
+        """
+        Enable/Disable the logic defined on the controller keyboard callback.
+
+        This method should be called after disable_controller_keyboard_callback to return the keyboard callbacks to its
+        normal state.
+
+        Args:
+            new_state: New state of the keyboard callback used by the controller.
+
+        Returns: None
+        """
+        self.__engine.set_controller_key_callback(new_state)
 
     def set_loading_message(self, new_msg: str) -> None:
         """
