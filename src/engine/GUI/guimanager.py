@@ -962,6 +962,19 @@ class GUIManager:
         """
         self.__engine.load_shapefile_file_with_dialog()
 
+    def merge_maps(self, base_model_id: str, second_model_id: str, model_name: str) -> None:
+        """
+        Ask the engine to merge two maps into a new one.
+
+        Args:
+            base_model_id: ID of the model to use as base for the merging of the maps.
+            second_model_id: ID of the model to use as the second model (the one who goes behind the base model).
+            model_name: Name of the generated model.
+
+        Returns: None
+        """
+        self.__engine.merge_maps(base_model_id, second_model_id, model_name)
+
     def move_folder_position(self, polygon_folder_id: str, movement_offset: int) -> None:
         """
         Move the order of the folders on the GUI.
