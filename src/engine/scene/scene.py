@@ -712,8 +712,6 @@ class Scene:
             Y_values: Y-axis values to use in the new model. (unidimensional array)
             X_values: X-axis values to use in the new model. (unidimensional array)
             active_model_id: ID of the active model on the program. Can be None.
-            active_model_heights_shape: Shape of the bi-dimensional matrix storing the active model heights.
-            active_model_coordinates_array: Tuple with the (x-axis, y-axis) values used by the active model.
             then: Function to be executed at the end of the async routine. Must receive one parameter (the model id).
             path_color_file: Path to the CTP file with the colors
 
@@ -727,8 +725,9 @@ class Scene:
         # --------------------------------------------------------------------
         if active_model_id is not None:
 
-            x_array, y_array = active_model_coordinates_array
-            shape = active_model_heights_shape
+            active_model_information = self.get_model_information(active_model_id)
+            x_array, y_array = active_model_information['coordinates_array']
+            shape = active_model_information['height_array'].shape
 
             if x_array.shape != X.shape or not np.isclose(x_array, X).all():
                 log.debug(f"Current model X axis: {x_array}")
