@@ -1560,7 +1560,7 @@ class Engine:
 
         Returns: None
         """
-        self.gui_manager.set_modal_text(title_modal, msg)
+        self.gui_manager.open_text_modal(title_modal, msg)
 
     # noinspection PyUnresolvedReferences
     def set_models_polygon_mode(self, polygon_mode: 'OGLConstant.IntConstant') -> None:

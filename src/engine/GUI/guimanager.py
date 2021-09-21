@@ -1250,7 +1250,8 @@ class GUIManager:
         imgui.pop_font()
         imgui.push_font(self.__font_bold)
 
-    def set_confirmation_modal(self, modal_title: str, msg: str, yes_function: callable, no_function: callable) -> None:
+    def open_confirmation_modal(self, modal_title: str, msg: str, yes_function: callable,
+                                no_function: callable) -> None:
         """
         Opens a confirmation modal in the screen with two options (yes and no), after clicking each one execute the
         functions given.
@@ -1303,7 +1304,7 @@ class GUIManager:
         raise AssertionError('There is not a frame from the Loading class on the list of frames '
                              'handled by the GUIManager.')
 
-    def set_modal_text(self, modal_title: str, msg: str) -> None:
+    def open_text_modal(self, modal_title: str, msg: str) -> None:
         """
         Set the text of the modal frame and set it to show in the next frame.
 

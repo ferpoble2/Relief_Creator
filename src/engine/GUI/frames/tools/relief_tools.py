@@ -268,9 +268,9 @@ class ReliefTools:
             log.debug('Recalculate polygon information')
 
             if active_model_id is None:
-                self.__gui_manager.set_modal_text('Error', 'You must load a model to try to calculate the '
-                                                           'height of the '
-                                                           'points inside it.')
+                self.__gui_manager.open_text_modal('Error', 'You must load a model to try to calculate the '
+                                                            'height of the '
+                                                            'points inside it.')
             else:
                 # Change the values of the max_min_data to waiting and execute the function to calculate the values.
                 # The method to calculate max_min_height is asynchronous, so it returns immediately.
@@ -308,12 +308,12 @@ class ReliefTools:
         _, self.__max_height_value = imgui.input_float('Max Height', self.__max_height_value)
         if imgui.button('Change Height', -1):
             if self.__min_height_value >= self.__max_height_value:
-                self.__gui_manager.set_modal_text('Error', 'The new minimum value is higher or equal to'
-                                                           ' the maximum value.')
+                self.__gui_manager.open_text_modal('Error', 'The new minimum value is higher or equal to'
+                                                            ' the maximum value.')
             elif active_model_id is None:
-                self.__gui_manager.set_modal_text('Error', 'You must load a model to try to calculate the '
-                                                           'height of the '
-                                                           'points inside it.')
+                self.__gui_manager.open_text_modal('Error', 'You must load a model to try to calculate the '
+                                                            'height of the '
+                                                            'points inside it.')
             else:
                 if self.__current_combo_option == 0:
                     self.__gui_manager.change_points_height(active_polygon_id,
