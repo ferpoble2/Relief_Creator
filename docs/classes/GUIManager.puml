@@ -100,6 +100,7 @@ class GUIManager{
     + set_active_tool(tool)
     + set_bold_font()
     + open_confirmation_modal(modal_title, msg, yes_function, no_function)
+    + open_combine_map_modal()
     + set_loading_message(new_msg)
     + open_text_modal(modal_title, msg)
     + set_models_polygon_mode(polygon_mode)
