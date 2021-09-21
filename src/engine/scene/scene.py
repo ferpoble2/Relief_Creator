@@ -776,6 +776,47 @@ class Scene:
         log.debug("Setting vertices from grid.")
         model.set_vertices_from_grid_async(X, Y, Z, quality_maps, then_routine)
 
+    def create_model_from_existent(self,
+                                   base_model_id: str,
+                                   second_model_id: str,
+                                   new_model_name: str,
+                                   path_color_file: str,
+                                   active_model_id: str,
+                                   then: Callable = lambda x: None) -> None:
+        """
+        Generate a new 2D model on the scene merging already existent models.
+
+        IMPORTANT:
+            This method is asynchronous, this is, the logic defined in this method (the load of the model into the
+            program) is executed in a different thread from the main one, and thus, this method returns immediately
+            after being called.
+
+            To execute logic after the load of the model into the program, use the 'then' parameter.
+
+        Args:
+            then: Routine to execute after the creation of the model. Receives the ID of the generated model as
+                  only parameter.
+            active_model_id: ID of the active model on the program.
+            path_color_file: Path to the color file to use for the coloring of the model.
+            base_model_id: ID of the model to use as base.
+            second_model_id: ID of the second model to use.
+            new_model_name: Name of the new model.
+        """
+        base_model_info = self.get_model_information(base_model_id)
+        second_model_info = self.get_model_information(second_model_id)
+
+        new_heights = TransformationHelper().merge_matrices(base_model_info["height_array"],
+                                                            second_model_info["height_array"])
+
+        self.create_model_from_data_async(path_color_file,
+                                          base_model_info['coordinates_array'][0],
+                                          base_model_info['coordinates_array'][1],
+                                          new_heights,
+                                          new_model_name,
+                                          active_model_id,
+                                          1,
+                                          then)
+
     def create_new_polygon(self, point_list: list = None, parameters: dict = None,
                            priority_position: int = None) -> str:
         """
