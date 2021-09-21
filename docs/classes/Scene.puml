@@ -22,6 +22,9 @@
                 + change_normalization_height_factor(active_model, new_factor)
                 + change_polygon_draw_priority(polygon_id, new_position)
                 + create_3D_model_if_not_exists(model_id)
+                + create_model_from_data_async(path_color_file, path_model, model_id)
+                + create_model_from_existent(base_model_id, second_model_id, new_model_name, path_color_file,
+                                              active_model_id)
                 + create_new_polygon(): str
                 + delete_polygon_by_id(polygon_id)
                 + delete_polygon_param(polygon_id, key)
