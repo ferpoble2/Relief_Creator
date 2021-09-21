@@ -667,8 +667,6 @@ class Scene:
         """
         Create a new map3Dmodel object and add it to the scene.
 
-        By default, the data used to generate the model is the one of the active model on the scene.
-
         Returns: Id of the new map3Dmodel
 
         Args:
