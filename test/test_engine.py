@@ -106,5 +106,47 @@ class TestModelInformation(unittest.TestCase):
                          'Model information generated is not equal to the expected.')
 
 
+class TestSetActiveModel(unittest.TestCase):
+
+    def test_set_active_model(self):
+        program = Program()
+        engine = program.engine
+        engine.should_use_threads(False)
+
+        self.assertIsNone(engine.get_active_model_id(),
+                          "Active model is not None when there is no model.")
+
+        engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                'resources/test_resources/netcdf/test_file_50_50.nc')
+        engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                'resources/test_resources/netcdf/test_file_50_50.nc')
+        self.assertEqual('1',
+                         engine.get_active_model_id(),
+                         "Active model id is not 1 after loading 2 models into the engine.")
+
+        engine.set_active_model('0')
+        self.assertEqual('0',
+                         engine.get_active_model_id(),
+                         "Active model was not changed to 0")
+
+    def test_set_active_model_to_None(self):
+        program = Program()
+        engine = program.engine
+        engine.should_use_threads(False)
+
+        self.assertIsNone(engine.get_active_model_id(),
+                          "Active model is not None when there is no model.")
+
+        engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                'resources/test_resources/netcdf/test_file_50_50.nc')
+        self.assertEqual('0',
+                         engine.get_active_model_id(),
+                         "Active model id is not 0 after loading a model into the engine.")
+
+        engine.set_active_model(None)
+        self.assertIsNone(engine.get_active_model_id(),
+                          "Model was not changed to None.")
+
+
 if __name__ == '__main__':
     unittest.main()
