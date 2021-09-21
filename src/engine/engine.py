@@ -1099,16 +1099,6 @@ class Engine:
             # --------------------------------------
             X, Y, Z = read_info(path_model)
 
-            # Get the information of the current active model on the scene
-            # ------------------------------------------------------------
-            if self.program.get_active_model() is not None:
-                model_information = self.scene.get_model_information(self.program.get_active_model())
-                model_coordinates_array = model_information.get('coordinates_array')
-                model_heights_shape = model_information.get('height_array').shape
-            else:
-                model_coordinates_array = (None, None)
-                model_heights_shape = (None, None)
-
             # Load the new model in the program
             # ---------------------------------
             self.scene.create_model_from_data_async(path_color_file,
@@ -1117,8 +1107,6 @@ class Engine:
                                                     Z,
                                                     Path(path_model).name,
                                                     self.program.get_active_model(),
-                                                    model_coordinates_array,
-                                                    model_heights_shape,
                                                     self.get_quality(),
                                                     then_routine)
 
