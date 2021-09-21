@@ -1053,7 +1053,10 @@ class Engine:
         This method also creates a copy of the loaded file in the directory specified by the program module. This file
         is used in the export process of the maps.
 
-        This method executes asynchronously, to keep executing things in the same thread use the then  function.
+        IMPORTANT:
+            This method uis asynchronous, this is, the execution of the logic in this method is executed in another
+            thread, returning immediately in the thread from which was called. To execute logic after the execution of
+            this method use the 'then' function parameter.
 
         Args:
             path_color_file: Path to the color file to use.
