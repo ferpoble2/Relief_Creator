@@ -77,6 +77,7 @@ class Engine {
     + load_polygon_from_shapefile(filename)
     + load_preview_interpolation_area(distance)
     + load_shapefile_file_with_dialog()
+    + create_model_from_existent(base_model_id, second_model_id, new_model_name)
     + modify_camera_radius(distance)
     + move_camera_position(movement)
     + move_scene(x_movement, y_movement)
