@@ -96,8 +96,8 @@ class CombineMapModal(Frame):
                                        0.5)
         if self.__should_show_frame:
             self.__tool_before_opening_modal = self._GUI_manager.get_active_tool()
-            self.__model_id_list = list(self._GUI_manager.get_model_names_dict().values())
-            self.__model_name_list = list(self._GUI_manager.get_model_names_dict().keys())
+            self.__model_id_list = list(self._GUI_manager.get_model_names_dict().keys())
+            self.__model_name_list = list(self._GUI_manager.get_model_names_dict().values())
             self._GUI_manager.set_active_tool(None)
 
             imgui.open_popup(self.__modal_title)
@@ -106,8 +106,8 @@ class CombineMapModal(Frame):
 
         if imgui.begin_popup_modal(self.__modal_title)[0]:
             imgui.text("Select the maps to merge:")
-            imgui.combo("Map 1", self.__selected_map_1, self.__model_name_list)
-            imgui.combo("Map 2", self.__selected_map_1, self.__model_name_list)
+            _, self.__selected_map_1 = imgui.combo("Primary map", self.__selected_map_1, self.__model_name_list)
+            _, self.__selected_map_2 = imgui.combo("Secondary map", self.__selected_map_2, self.__model_name_list)
 
             _, self.__new_map_name = imgui.input_text("Name of new map", self.__new_map_name, 500)
 
