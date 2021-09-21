@@ -538,5 +538,80 @@ class TestInterpolateExternalPoints(unittest.TestCase):
                                                              'method modify_points_inside_polygon_linear.')
 
 
+class TestMergeMatrices(unittest.TestCase):
+
+    def test_merge_normal_matrices(self):
+        helper = TransformationHelper()
+
+        first_matrix = np.array([[1, 2, 3],
+                                 [4, np.nan, 6],
+                                 [7, 8, 9]])
+        second_matrix = np.array([[np.nan, np.nan, np.nan],
+                                  [np.nan, 5, np.nan],
+                                  [np.nan, np.nan, np.nan]])
+
+        np.testing.assert_array_equal(np.array([[1, 2, 3],
+                                                [4, 5, 6],
+                                                [7, 8, 9]]),
+                                      helper.merge_matrices(first_matrix,
+                                                            second_matrix))
+
+    def test_do_not_modify_matrices(self):
+        helper = TransformationHelper()
+
+        first_matrix = np.array([[1, 2, 3],
+                                 [4, np.nan, 6],
+                                 [7, 8, 9]])
+        second_matrix = np.array([[np.nan, np.nan, np.nan],
+                                  [np.nan, 5, np.nan],
+                                  [np.nan, np.nan, np.nan]])
+
+        np.testing.assert_array_equal(np.array([[1, 2, 3],
+                                                [4, np.nan, 6],
+                                                [7, 8, 9]]),
+                                      first_matrix,
+                                      "Base matrix was modified on the process.")
+
+        np.testing.assert_array_equal(np.array([[np.nan, np.nan, np.nan],
+                                                [np.nan, 5, np.nan],
+                                                [np.nan, np.nan, np.nan]]),
+                                      second_matrix,
+                                      "Second matrix was modified on the process.")
+
+    def test_merge_shared_nan_values(self):
+        helper = TransformationHelper()
+
+        first_matrix = np.array([[1, 2, 3],
+                                 [4, np.nan, np.nan],
+                                 [np.nan, np.nan, np.nan]])
+        second_matrix = np.array([[np.nan, np.nan, np.nan],
+                                  [np.nan, 5, np.nan],
+                                  [np.nan, np.nan, 15]])
+
+        np.testing.assert_array_equal(np.array([[1, 2, 3],
+                                                [4, 5, np.nan],
+                                                [np.nan, np.nan, 15]]),
+                                      helper.merge_matrices(first_matrix,
+                                                            second_matrix),
+                                      "Matrix generated is not equal to the expected.")
+
+    def test_merge_shared_numeric_values(self):
+        helper = TransformationHelper()
+
+        first_matrix = np.array([[1, 2, 3],
+                                 [4, np.nan, np.nan],
+                                 [np.nan, np.nan, np.nan]])
+        second_matrix = np.array([[20, 15, 30],
+                                  [np.nan, 5, 6],
+                                  [7, 8, 9]])
+
+        np.testing.assert_array_equal(np.array([[1, 2, 3],
+                                                [4, 5, 6],
+                                                [7, 8, 9]]),
+                                      helper.merge_matrices(first_matrix,
+                                                            second_matrix),
+                                      "Matrix generated is not equal to the expected.")
+
+
 if __name__ == '__main__':
     unittest.main()

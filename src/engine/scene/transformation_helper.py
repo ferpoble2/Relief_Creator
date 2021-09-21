@@ -513,3 +513,26 @@ class TransformationHelper:
             height[min_y_index:max_y_index, min_x_index:max_x_index] = height_cut
 
         return height
+
+    def merge_matrices(self, first_matrix: np.ndarray, second_matrix: np.ndarray) -> np.ndarray:
+        """
+        Merge the values of the matrices.
+
+        Set the values of the second matrix on the cells where the first matrix has nan values. Both matrices must
+        be of the same shape.
+
+        The values of the proportioned matrices does not change. A new matrix is generated as result of this method.
+
+        Args:
+            first_matrix: Main matrix to use for the merge.
+            second_matrix: Second matrix to use for the merge.
+
+        Returns: Matrix that use the values of the first matrix and the second matrix.
+        """
+        assert first_matrix.shape == second_matrix.shape, "Matrices are not of the same shape."
+
+        new_matrix = np.zeros(first_matrix.shape)
+        new_matrix[:] = first_matrix[:]
+        new_matrix[np.isnan(first_matrix)] = second_matrix[np.isnan(first_matrix)]
+
+        return new_matrix

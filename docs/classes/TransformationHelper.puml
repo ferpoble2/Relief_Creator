@@ -14,6 +14,7 @@ class TransformationHelper {
     + modify_points_inside_polygon_linear(points, height, polygon_points, new_max_height, new_min_height)
     + get_interpolation_zone_triangulation(internal_polygon_points, external_polygon_points, distance, z_value): list
     + apply_smoothing_over_area(internal_polygon_points, external_polygon_points, points_array, heights): array
+    + merge_matrices(first_matrix, second_matrix): array
 }
 
 @enduml
