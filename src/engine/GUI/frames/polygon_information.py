@@ -141,7 +141,7 @@ class PolygonInformation(Frame):
                     if imgui.is_item_clicked():
                         # Set a confirmation modal before deleting the parameter
                         # ------------------------------------------------------
-                        self._GUI_manager.set_confirmation_modal(
+                        self._GUI_manager.open_confirmation_modal(
                             'Delete parameter',
                             f'Are you sure you want to delete {parameter[0]}?',
                             lambda: self._GUI_manager.remove_polygon_parameter(
