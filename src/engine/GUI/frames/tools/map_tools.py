@@ -96,6 +96,20 @@ class MapTools:
                 imgui.text("Select an action")
                 imgui.separator()
 
+                # Set model as active
+                # -------------------
+                imgui.selectable("Set model as active")
+                if imgui.is_item_clicked():
+                    self.__gui_manager.set_active_model(model_id)
+                imgui.separator()
+
+                # Create a new model
+                # ------------------
+                imgui.selectable("Generate new model")
+                if imgui.is_item_clicked():
+                    self.__gui_manager.open_combine_map_modal()
+                imgui.separator()
+
                 # Move up the map
                 # ---------------
                 imgui.selectable("Move up")
