@@ -1,13 +1,7 @@
 @startuml
 'https://plantuml.com/class-diagram
 class GUIManager{
-    - __component_list_2D: list
-    - __component_list_3D: list
     - __engine: Engine
-    - __font_bold: IMGUI.font
-    - __font_regular: IMGUI.font
-    - __font_tool_title: IMGUI.font
-    - __font_tool_sub_title: IMGUI.font
     - __glfw_window: GLFWWindow
     - __icons_dict: dict
     - __implementation: GlfwRenderer
@@ -16,6 +10,25 @@ class GUIManager{
     - __is_mouse_inside_frame: boolean
     - __polygon_folder_manager: PolygonFolderManager
     - __scene: Scene
+
+    FONTS
+    - __font_bold: IMGUI.font
+    - __font_regular: IMGUI.font
+    - __font_tool_title: IMGUI.font
+    - __font_tool_sub_title: IMGUI.font
+
+    FRAMES
+    - __component_list_2D: List[Frame]
+    - __component_list_3D: List[Frame]
+    - __main_menu_bar: Frame
+    - __text_modal: Frame
+    - __tools: Frame
+    - __loading: Frame
+    - __polygon_information: Frame
+    - __confirmation_modal : Frame
+    - __tools_3d: Frame
+    - __mouse_coordinates: Frame
+    - __combine_map_modal: Frame
 
     - __load_icons()
     - __update_frames_with_new_polygon(polygon_id)
