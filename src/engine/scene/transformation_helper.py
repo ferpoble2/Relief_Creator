@@ -21,10 +21,10 @@ File with the class TransformationHelper, class in charge of making transformati
 from typing import List
 
 import numpy as np
-import shapely.vectorized
 from scipy import interpolate as interpolate_scipy
 from shapely.geometry.polygon import LineString, LinearRing as LinearRing, Polygon
 from shapely.ops import triangulate
+from shapely.vectorized import contains
 from skimage.filters import gaussian as gaussian_filter
 
 from src.utils import get_logger, interpolate, is_clockwise
@@ -167,7 +167,7 @@ class TransformationHelper:
         # flags = p.contains_points(points_map)
         # flags = flags.reshape(xv.shape)
 
-        flags = shapely.vectorized.contains(Polygon(points_xy), points_array[:, :, 0], points_array[:, :, 1])
+        flags = contains(Polygon(points_xy), points_array[:, :, 0], points_array[:, :, 1])
         return flags
 
     # noinspection PyShadowingNames,PyUnresolvedReferences
