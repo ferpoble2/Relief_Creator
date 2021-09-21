@@ -504,7 +504,7 @@ class TransformationHelper:
             current_min_height = np.nanmin(height_cut[filtered_flags])
             current_max_height = np.nanmax(height_cut[filtered_flags])
 
-            new_height = interpolate(height_cut[filtered_flags], current_min_height, current_max_height,
+            new_height = interpolate(height_cut[filtered_flags], float(current_min_height), float(current_max_height),
                                      new_min_height,
                                      new_max_height,
                                      False)
