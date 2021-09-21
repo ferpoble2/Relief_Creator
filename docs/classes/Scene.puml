@@ -48,7 +48,6 @@
                 + initialize(engine)
                 + interpolate_points(polygon_id, model_id, distance, type_interpolation)
                 + is_polygon_planar(polygon_id)
-                + load_model_from_file_async(path_color_file, path_model, model_id)
                 + load_preview_interpolation_area(distance, z_value)
                 + modify_camera_radius(distance)
                 + move_camera(movement)
