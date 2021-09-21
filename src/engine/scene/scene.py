@@ -682,6 +682,105 @@ class Scene:
             # add the model to the hash
             self.__3d_model_hash[model_id] = new_model
 
+    def create_model_from_data_async(self,
+                                     path_color_file: str,
+                                     X_values: np.array,
+                                     Y_values: np.array,
+                                     Z_values: np.array,
+                                     model_name: str,
+                                     active_model_id: Union[str, None],
+                                     active_model_coordinates_array: tuple = (None, None),
+                                     active_model_heights_shape: tuple = (None, None),
+                                     quality_maps: int = 3,
+                                     then=lambda x: None) -> None:
+        """
+        Refresh the scene, adding the new model to the hash of models and rendering it.
+
+        The color file must be in CPT format to create the model correctly.
+
+        The 'then' parameter is the logic that will be executed after the process finish loading the model into memory.
+        This parameter is a function that must receive one parameter and will be called with the model id as the
+        value for that parameter.
+
+        IMPORTANT:
+            This method is asynchronous, this is, the logic defined in this method (the load of the model into the
+            program) is executed in a different thread from the main one, and thus, this method returns immediately
+            after being called.
+
+            To execute logic after the load of the model into the program, use the 'then' parameter.
+
+        Args:
+            quality_maps: Quality to use to generate the vertices of the map.
+            model_name: Name to put on the model.
+            Z_values: Height values of the new model. (bi-dimensional matrix)
+            Y_values: Y-axis values to use in the new model. (unidimensional array)
+            X_values: X-axis values to use in the new model. (unidimensional array)
+            active_model_id: ID of the active model on the program. Can be None.
+            active_model_heights_shape: Shape of the bi-dimensional matrix storing the active model heights.
+            active_model_coordinates_array: Tuple with the (x-axis, y-axis) values used by the active model.
+            then: Function to be executed at the end of the async routine. Must receive one parameter (the model id).
+            path_color_file: Path to the CTP file with the colors
+
+        Returns: None
+        """
+        X = X_values
+        Y = Y_values
+        Z = Z_values
+
+        # Check if the new model is compatible with the new model used as base
+        # --------------------------------------------------------------------
+        if active_model_id is not None:
+
+            x_array, y_array = active_model_coordinates_array
+            shape = active_model_heights_shape
+
+            if x_array.shape != X.shape or not np.isclose(x_array, X).all():
+                log.debug(f"Current model X axis: {x_array}")
+                log.debug(f"New model X axis: {X}")
+                raise SceneError(9, {'expected': x_array, 'actual': X})
+
+            if y_array.shape != Y.shape or not np.isclose(y_array, Y).all():
+                log.debug(f"Current model Y axis: {y_array}")
+                log.debug(f"New model Y axis: {Y}")
+                raise SceneError(10, {'expected': y_array, 'actual': Y})
+
+            if shape != Z.shape:
+                log.debug(f"Model current shape: {shape}")
+                log.debug(f"New model shape: {Z.shape}")
+                raise SceneError(11, {'expected': shape, 'actual': Z.shape})
+
+        # Generate the model and add it to the scene
+        # ------------------------------------------
+        log.debug("Generating model")
+        model = Map2DModel(self, name=model_name)
+
+        # noinspection PyMissingOrEmptyDocstring
+        def then_routine():
+            log.debug("Initializing models and adding to the scene.")
+
+            # Initialize model information
+            # -----------------------------
+            model.set_color_file(path_color_file)
+            model.id = str(self.__model_id_count)
+            self.__model_id_count += 1
+
+            # Update scene model information
+            # ------------------------------
+            self.update_projection_matrix_2D()
+            self.__model_draw_priority.append(model.id)
+            self.add_model(model)
+
+            # Reset the zoom level, position and projection if there was no active model before.
+            # ----------------------------------------------------------------------------------
+            if active_model_id is None:
+                self.__projection_matrix_2D = None
+
+            # call the then routine
+            then(model.id)
+
+        log.debug("Setting vertices from grid.")
+        model.set_vertices_from_grid_async(X, Y, Z, quality_maps, then_routine)
+
     def create_new_polygon(self, point_list: list = None, parameters: dict = None,
                            priority_position: int = None) -> str:
         """
@@ -1192,105 +1291,6 @@ class Scene:
         """
         if polygon_id in self.__polygon_hash:
             return self.__polygon_hash[polygon_id].is_planar()
-
-    def create_model_from_data_async(self,
-                                     path_color_file: str,
-                                     X_values: np.array,
-                                     Y_values: np.array,
-                                     Z_values: np.array,
-                                     model_name: str,
-                                     active_model_id: Union[str, None],
-                                     active_model_coordinates_array: tuple = (None, None),
-                                     active_model_heights_shape: tuple = (None, None),
-                                     quality_maps: int = 3,
-                                     then=lambda x: None) -> None:
-        """
-        Refresh the scene, adding the new model to the hash of models and rendering it.
-
-        The model must  be in netCDF format and the color file must be in CTP format.
-
-        The 'then' parameter is the logic that will be executed after the process finish loading the model into memory.
-        This parameter is a function that must receive one parameter and will be called with the model id as the
-        value for that parameter.
-
-        IMPORTANT:
-            This method is asynchronous, this is, the logic defined in this method (the load of the model into the
-            program) is executed in a different thread from the main one, and thus, this method returns immediately
-            after being called.
-
-            To execute logic after the load of the model into the program, use the 'then' parameter.
-
-        Args:
-            quality_maps: Quality to use to generate the vertices of the map.
-            model_name: Name to put on the model.
-            Z_values: Height values of the new model. (bi-dimensional matrix)
-            Y_values: Y-axis values to use in the new model. (unidimensional array)
-            X_values: X-axis values to use in the new model. (unidimensional array)
-            active_model_id: ID of the active model on the program. Can be None.
-            active_model_heights_shape: Shape of the bi-dimensional matrix storing the active model heights.
-            active_model_coordinates_array: Tuple with the (x-axis, y-axis) values used by the active model.
-            then: Function to be executed at the end of the async routine. Must receive one parameter (the model id).
-            path_color_file: Path to the CTP file with the colors
-
-        Returns: None
-        """
-        X = X_values
-        Y = Y_values
-        Z = Z_values
-
-        # Check if the new model is compatible with the new model used as base
-        # --------------------------------------------------------------------
-        if active_model_id is not None:
-
-            x_array, y_array = active_model_coordinates_array
-            shape = active_model_heights_shape
-
-            if x_array.shape != X.shape or not np.isclose(x_array, X).all():
-                log.debug(f"Current model X axis: {x_array}")
-                log.debug(f"New model X axis: {X}")
-                raise SceneError(9, {'expected': x_array, 'actual': X})
-
-            if y_array.shape != Y.shape or not np.isclose(y_array, Y).all():
-                log.debug(f"Current model Y axis: {y_array}")
-                log.debug(f"New model Y axis: {Y}")
-                raise SceneError(10, {'expected': y_array, 'actual': Y})
-
-            if shape != Z.shape:
-                log.debug(f"Model current shape: {shape}")
-                log.debug(f"New model shape: {Z.shape}")
-                raise SceneError(11, {'expected': shape, 'actual': Z.shape})
-
-        # Generate the model and add it to the scene
-        # ------------------------------------------
-        log.debug("Generating model")
-        model = Map2DModel(self, name=model_name)
-
-        # noinspection PyMissingOrEmptyDocstring
-        def then_routine():
-            log.debug("Initializing models and adding to the scene.")
-
-            # Initialize model information
-            # -----------------------------
-            model.set_color_file(path_color_file)
-            model.id = str(self.__model_id_count)
-            self.__model_id_count += 1
-
-            # Update scene model information
-            # ------------------------------
-            self.update_projection_matrix_2D()
-            self.__model_draw_priority.append(model.id)
-            self.add_model(model)
-
-            # Reset the zoom level, position and projection if there was no active model before.
-            # ----------------------------------------------------------------------------------
-            if active_model_id is None:
-                self.__projection_matrix_2D = None
-
-            # call the then routine
-            then(model.id)
-
-        log.debug("Setting vertices from grid.")
-        model.set_vertices_from_grid_async(X, Y, Z, quality_maps, then_routine)
 
     def load_preview_interpolation_area(self,
                                         distance: float,
