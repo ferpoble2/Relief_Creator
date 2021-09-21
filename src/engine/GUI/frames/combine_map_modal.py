@@ -117,9 +117,9 @@ class CombineMapModal(Frame):
             imgui.same_line()
 
             if imgui.button("Merge Maps", self.__button_width):
-                self._GUI_manager.merge_maps(self.__model_id_list[self.__selected_map_1],
-                                             self.__model_id_list[self.__selected_map_2],
-                                             self.__new_map_name)
+                self._GUI_manager.create_model_from_existent(self.__model_id_list[self.__selected_map_1],
+                                                             self.__model_id_list[self.__selected_map_2],
+                                                             self.__new_map_name)
                 imgui.close_current_popup()
 
             imgui.end_popup()
