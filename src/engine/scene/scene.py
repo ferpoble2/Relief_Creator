@@ -1193,17 +1193,17 @@ class Scene:
         if polygon_id in self.__polygon_hash:
             return self.__polygon_hash[polygon_id].is_planar()
 
-    def load_model_from_file_async(self,
-                                   path_color_file: str,
-                                   X_values: np.array,
-                                   Y_values: np.array,
-                                   Z_values: np.array,
-                                   model_name: str,
-                                   active_model_id: Union[str, None],
-                                   active_model_coordinates_array: tuple = (None, None),
-                                   active_model_heights_shape: tuple = (None, None),
-                                   quality_maps: int = 3,
-                                   then=lambda x: None) -> None:
+    def create_model_from_data_async(self,
+                                     path_color_file: str,
+                                     X_values: np.array,
+                                     Y_values: np.array,
+                                     Z_values: np.array,
+                                     model_name: str,
+                                     active_model_id: Union[str, None],
+                                     active_model_coordinates_array: tuple = (None, None),
+                                     active_model_heights_shape: tuple = (None, None),
+                                     quality_maps: int = 3,
+                                     then=lambda x: None) -> None:
         """
         Refresh the scene, adding the new model to the hash of models and rendering it.
 

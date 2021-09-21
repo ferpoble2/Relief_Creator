@@ -1108,16 +1108,16 @@ class Engine:
 
             # Load the new model in the program
             # ---------------------------------
-            self.scene.load_model_from_file_async(path_color_file,
-                                                  X,
-                                                  Y,
-                                                  Z,
-                                                  Path(path_model).name,
-                                                  self.program.get_active_model(),
-                                                  model_coordinates_array,
-                                                  model_heights_shape,
-                                                  self.get_quality(),
-                                                  then_routine)
+            self.scene.create_model_from_data_async(path_color_file,
+                                                    X,
+                                                    Y,
+                                                    Z,
+                                                    Path(path_model).name,
+                                                    self.program.get_active_model(),
+                                                    model_coordinates_array,
+                                                    model_heights_shape,
+                                                    self.get_quality(),
+                                                    then_routine)
 
         except OSError:
             self.program.set_loading(False)
