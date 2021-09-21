@@ -1321,6 +1321,14 @@ class GUIManager:
 
         raise AssertionError('There is not a frame from the TextModal class to set a modal message.')
 
+    def open_combine_map_modal(self) -> None:
+        """
+        Open the modal to merge two maps into one.
+
+        Returns:  None
+        """
+        self.__combine_map_modal.should_show = True
+
     def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
         Call the scene to change the polygon mode used by the models.
