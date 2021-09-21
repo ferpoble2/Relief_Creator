@@ -1339,6 +1339,17 @@ class GUIManager:
         """
         self.__engine.set_models_polygon_mode(polygon_mode)
 
+    def set_active_model(self, model_id: str) -> None:
+        """
+        Change the active model being used by the program.
+
+        Args:
+            model_id: ID of the model to set as active.
+
+        Returns: None
+        """
+        self.__engine.set_active_model(model_id)
+
     def set_polygon_folder_name(self, polygon_folder_id: str, new_name: str) -> None:
         """
         Change the name of a polygon folder.

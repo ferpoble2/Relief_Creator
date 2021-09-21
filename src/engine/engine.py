@@ -1851,3 +1851,21 @@ class Engine:
         Returns: None
         """
         self.scene.update_viewport(self.get_scene_setting_data())
+
+    def set_active_model(self, model_id: Union[str, None]) -> None:
+        """
+        Change the active model being used by the program.
+
+        Args:
+            model_id: ID of the model to set as active.
+
+        Returns: None
+        """
+        if model_id is None:
+            self.program.set_active_model(None)
+            return
+
+        if model_id in self.scene.get_model_list():
+            self.program.set_active_model(model_id)
+        else:
+            raise SceneError(7)
