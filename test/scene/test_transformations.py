@@ -419,7 +419,7 @@ class TestMinMaxPolygon(unittest.TestCase):
                          'Minimum and maximum values are not the one inside the polygon.')
 
 
-class InterpolateExternalPoints(unittest.TestCase):
+class TestInterpolateExternalPoints(unittest.TestCase):
 
     def setUp(self) -> None:
         """
