@@ -687,8 +687,6 @@ class Scene:
                                      Z_values: np.array,
                                      model_name: str,
                                      active_model_id: Union[str, None],
-                                     active_model_coordinates_array: tuple = (None, None),
-                                     active_model_heights_shape: tuple = (None, None),
                                      quality_maps: int = 3,
                                      then=lambda x: None) -> None:
         """
