@@ -110,9 +110,38 @@ class GUIManager:
         self.__engine = engine
         self.__polygon_folder_manager = PolygonFolderManager()
         self.__model_id_list = []
-        self.__component_list_2D = []
-        self.__component_list_3D = []
         self.__icons_dict = None
+
+        # Frames used by the GUI
+        # ----------------------
+        self.__main_menu_bar = MainMenuBar(self)
+        self.__text_modal = TextModal(self)
+        self.__tools = Tools(self)
+        self.__loading = Loading(self)
+        self.__polygon_information = PolygonInformation(self)
+        self.__confirmation_modal = ConfirmationModal(self)
+        self.__tools_3d = Tools3D(self)
+        self.__mouse_coordinates = MouseCoordinates(self)
+        self.__combine_map_modal = CombineMapModal(self)
+
+        self.__component_list_2D = [
+            self.__main_menu_bar,
+            self.__mouse_coordinates,
+            self.__text_modal,
+            self.__tools,
+            self.__loading,
+            self.__polygon_information,
+            self.__confirmation_modal,
+            self.__combine_map_modal
+        ]
+
+        self.__component_list_3D = [
+            self.__main_menu_bar,
+            self.__loading,
+            self.__text_modal,
+            self.__confirmation_modal,
+            self.__tools_3d
+        ]
 
         # Auxiliary parameters
         # --------------------
@@ -195,37 +224,6 @@ class GUIManager:
 
         # load the icons on the GUI
         self.__load_icons()
-
-        # initialize the components of the manager
-        # ----------------------------------------
-        main_menu_bar = MainMenuBar(self)
-        text_modal = TextModal(self)
-        tools = Tools(self)
-        loading = Loading(self)
-        polygon_information = PolygonInformation(self)
-        confirmation_modal = ConfirmationModal(self)
-        tools_3d = Tools3D(self)
-        mouse_coordinates = MouseCoordinates(self)
-        combine_map_modal = CombineMapModal(self)
-
-        self.__component_list_2D = [
-            main_menu_bar,
-            mouse_coordinates,
-            text_modal,
-            tools,
-            loading,
-            polygon_information,
-            confirmation_modal,
-            combine_map_modal
-        ]
-
-        self.__component_list_3D = [
-            main_menu_bar,
-            loading,
-            text_modal,
-            confirmation_modal,
-            tools_3d
-        ]
 
         if debug_mode:
             debug = Debug(self)
