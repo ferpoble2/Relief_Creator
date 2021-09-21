@@ -87,7 +87,7 @@ class GUIManager{
     + load_netcdf_file_with_dialog()
     + load_preview_interpolation_area(distance)
     + load_shapefile_file_with_dialog()
-    + merge_maps(base_model_id, second_model_id, model_name)
+    + create_model_from_existent(base_model_id, second_model_id, model_name)
     + move_polygon_to_polygon_folder(polygon_id, folder_id)
     + optimize_gpu_memory()
     + process_input()
