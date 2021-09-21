@@ -1251,6 +1251,41 @@ class Engine:
         except FileNotFoundError:
             self.set_modal_text('Error', 'File not loaded.')
 
+    def create_model_from_existent(self, base_model_id: str, second_model_id: str, new_model_name: str) -> None:
+        """
+        Ask the scene to merge thw two models into a new one.
+
+        The created model is added to the scene.
+
+        Args:
+            base_model_id: ID of the base model to use for the
+            second_model_id: ID of the second model to use for the merging (the one to use below the base model)
+            new_model_name: Name of the new generated model.
+
+        Returns: None
+        """
+        self.program.set_loading(True)
+        self.set_loading_message("Please wait a moment...")
+
+        def then_routine(model_id: str) -> None:
+            """
+            Routine to execute after the creation of the new model.
+
+            Args:
+                model_id: ID of the generated model.
+
+            Returns: None
+            """
+            self.gui_manager.add_model_to_gui(model_id)
+            self.program.set_loading(False)
+
+        self.scene.create_model_from_existent(base_model_id,
+                                              second_model_id,
+                                              new_model_name,
+                                              self.program.get_cpt_file(),
+                                              self.program.get_active_model(),
+                                              then_routine)
+
     def modify_camera_radius(self, distance: float) -> None:
         """
         Ask the scene to get the camera closer to the model.
