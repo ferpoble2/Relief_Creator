@@ -233,7 +233,7 @@ class PolygonTools:
                 if active_polygon == polygon_id:
                     self.__GUI_manager.set_active_polygon(None)
 
-            self.__GUI_manager.set_confirmation_modal(
+            self.__GUI_manager.open_confirmation_modal(
                 'Confirmation',
                 f'Do you want to delete the polygon {self.__GUI_manager.get_polygon_name(polygon_id)}?',
                 yes_function,
@@ -325,7 +325,7 @@ class PolygonTools:
                     self.__GUI_manager.remove_polygon_folder(folder_id)
 
                 # ask for the confirmation of the action
-                self.__GUI_manager.set_confirmation_modal(
+                self.__GUI_manager.open_confirmation_modal(
                     'Confirmation',
                     f'Do you want to delete the folder {self.__GUI_manager.get_polygon_folder_name(folder_id)}?',
                     yes_function,
