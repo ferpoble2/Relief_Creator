@@ -19,12 +19,15 @@
 Module with test related to the engine of the program.
 """
 
+import time
 import unittest
 import warnings
 
 from src.engine.engine import Engine
 from src.program.program import Program
 from src.utils import dict_to_serializable_dict, json_to_dict
+
+THREAD_ATTEMPT_TIMES = [0.1, 1, 3, 10, 20, 30]
 
 
 class TestViewMode(unittest.TestCase):
@@ -147,6 +150,40 @@ class TestSetActiveModel(unittest.TestCase):
         engine.set_active_model(None)
         self.assertIsNone(engine.get_active_model_id(),
                           "Model was not changed to None.")
+        program.close()
+
+
+class TestSetThreadTask(unittest.TestCase):
+
+    def test_set_thread_task(self):
+
+        program = Program()
+        engine = program.engine
+
+        for task_sleep_time in THREAD_ATTEMPT_TIMES:
+
+            try:
+                # Check if the task is iin fact executed in a new thread
+                initial_time = time.time()
+                engine.set_thread_task(lambda: time.sleep(task_sleep_time), lambda: None)
+                final_time = time.time()
+
+                # Check that the sleep logic is executing in another thread
+                self.assertTrue(final_time - initial_time < task_sleep_time / 2)
+
+                # Wait for the thread to end
+                time.sleep(task_sleep_time)
+
+            # Continue if there is more values to try, raise the exception if there is no more values.
+            except AssertionError as e:
+                if task_sleep_time == THREAD_ATTEMPT_TIMES[-1]:
+                    raise e
+                else:
+                    continue
+
+            else:
+                break
+
         program.close()
 
 
