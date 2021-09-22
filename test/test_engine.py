@@ -40,6 +40,8 @@ class TestViewMode(unittest.TestCase):
                          program.get_view_mode(),
                          '2D is not the default mode when creating the program.')
 
+        program.close()
+
     def test_view_mode_3D(self):
         program = Program()
         engine = program.engine
@@ -48,6 +50,8 @@ class TestViewMode(unittest.TestCase):
         self.assertEqual('3D',
                          program.get_view_mode(),
                          'Mode was not changed to 3D after calling set_program_view_mode')
+
+        program.close()
 
     def test_view_mode_2D(self):
         program = Program()
@@ -59,6 +63,7 @@ class TestViewMode(unittest.TestCase):
                          program.get_view_mode(),
                          'Mode was not changed to 2D after calling set_program_view_mode')
 
+        program.close()
 
 class TestModelInformation(unittest.TestCase):
     engine: Engine = None
