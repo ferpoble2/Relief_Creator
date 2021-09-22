@@ -448,6 +448,41 @@ class Engine:
         """
         Settings.WIDTH = width
 
+    def create_model_from_existent(self, base_model_id: str, second_model_id: str, new_model_name: str) -> None:
+        """
+        Ask the scene to merge thw two models into a new one.
+
+        The created model is added to the scene.
+
+        Args:
+            base_model_id: ID of the base model to use for the
+            second_model_id: ID of the second model to use for the merging (the one to use below the base model)
+            new_model_name: Name of the new generated model.
+
+        Returns: None
+        """
+        self.program.set_loading(True)
+        self.set_loading_message("Please wait a moment...")
+
+        def then_routine(model_id: str) -> None:
+            """
+            Routine to execute after the creation of the new model.
+
+            Args:
+                model_id: ID of the generated model.
+
+            Returns: None
+            """
+            self.gui_manager.add_model_to_gui(model_id)
+            self.program.set_loading(False)
+
+        self.scene.create_model_from_existent(base_model_id,
+                                              second_model_id,
+                                              new_model_name,
+                                              self.program.get_cpt_file(),
+                                              self.program.get_active_model(),
+                                              then_routine)
+
     def create_new_polygon(self) -> str:
         """
         Create a new polygon on the scene.
@@ -1251,41 +1286,6 @@ class Engine:
         except FileNotFoundError:
             self.set_modal_text('Error', 'File not loaded.')
 
-    def create_model_from_existent(self, base_model_id: str, second_model_id: str, new_model_name: str) -> None:
-        """
-        Ask the scene to merge thw two models into a new one.
-
-        The created model is added to the scene.
-
-        Args:
-            base_model_id: ID of the base model to use for the
-            second_model_id: ID of the second model to use for the merging (the one to use below the base model)
-            new_model_name: Name of the new generated model.
-
-        Returns: None
-        """
-        self.program.set_loading(True)
-        self.set_loading_message("Please wait a moment...")
-
-        def then_routine(model_id: str) -> None:
-            """
-            Routine to execute after the creation of the new model.
-
-            Args:
-                model_id: ID of the generated model.
-
-            Returns: None
-            """
-            self.gui_manager.add_model_to_gui(model_id)
-            self.program.set_loading(False)
-
-        self.scene.create_model_from_existent(base_model_id,
-                                              second_model_id,
-                                              new_model_name,
-                                              self.program.get_cpt_file(),
-                                              self.program.get_active_model(),
-                                              then_routine)
-
     def modify_camera_radius(self, distance: float) -> None:
         """
         Ask the scene to get the camera closer to the model.
@@ -1529,6 +1529,24 @@ class Engine:
         # Terminate the process if the app ended the process.
         if terminate_process:
             self.program.close()
+
+    def set_active_model(self, model_id: Union[str, None]) -> None:
+        """
+        Change the active model being used by the program.
+
+        Args:
+            model_id: ID of the model to set as active.
+
+        Returns: None
+        """
+        if model_id is None:
+            self.program.set_active_model(None)
+            return
+
+        if model_id in self.scene.get_model_list():
+            self.program.set_active_model(model_id)
+        else:
+            raise SceneError(7)
 
     def set_active_polygon(self, polygon_id: str or None) -> None:
         """
@@ -1877,21 +1895,3 @@ class Engine:
         Returns: None
         """
         self.scene.update_viewport(self.get_scene_setting_data())
-
-    def set_active_model(self, model_id: Union[str, None]) -> None:
-        """
-        Change the active model being used by the program.
-
-        Args:
-            model_id: ID of the model to set as active.
-
-        Returns: None
-        """
-        if model_id is None:
-            self.program.set_active_model(None)
-            return
-
-        if model_id in self.scene.get_model_list():
-            self.program.set_active_model(model_id)
-        else:
-            raise SceneError(7)
