@@ -58,7 +58,7 @@ class TestSmoothing(unittest.TestCase):
 
     def test_smoothing_normal_application(self):
         # load list of polygons
-        self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
 
         # apply transformation with filters
         self.engine.scene.apply_smoothing_algorithm(self.engine.get_active_polygon_id(),
@@ -88,7 +88,7 @@ class TestSmoothing(unittest.TestCase):
 
     def test_smoothing_multiple_applications(self):
         # load list of polygons
-        self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
 
         # apply transformation with filters
         for _ in range(5):

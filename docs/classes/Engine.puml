@@ -74,7 +74,7 @@ class Engine {
     + is_program_loading(): boolean
     + less_zoom()
     + load_netcdf_file_with_dialog()
-    + load_polygon_from_shapefile(filename)
+    + create_polygon_from_file(filename)
     + load_preview_interpolation_area(distance)
     + load_shapefile_file_with_dialog()
     + create_model_from_existent(base_model_id, second_model_id, new_model_name)

@@ -1239,7 +1239,7 @@ class Engine:
         self.set_loading_message('Loading preview, this may take a while.')
         self.set_task_with_loading_frame(load_preview_logic)
 
-    def load_shapefile_file(self, filename: str) -> None:
+    def create_polygon_from_file(self, filename: str) -> None:
         """
         Load the data from a shapefile file and tell the scene to create one or more polygons with the data.
 

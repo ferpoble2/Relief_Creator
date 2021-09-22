@@ -60,7 +60,7 @@ class TestModifyHeight(unittest.TestCase):
                                            'resources/test_resources/netcdf/test_file_1.nc')
 
         # load list of polygons
-        self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_south_america.shp')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_south_america.shp')
 
         # apply transformation with filters
         self.engine.transform_points(polygon_id=self.engine.get_active_polygon_id(),

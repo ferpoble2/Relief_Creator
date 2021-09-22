@@ -56,7 +56,7 @@ class TestContainsFilter(unittest.TestCase):
                                            'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
-        self.engine.load_shapefile_file('resources/test_resources/polygons/shape_two_concentric_polygons.shp')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_two_concentric_polygons.shp')
 
         # apply transformation with filters
         self.engine.transform_points(polygon_id='Polygon 0',
@@ -87,7 +87,7 @@ class TestContainsFilter(unittest.TestCase):
                                            'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
-        self.engine.load_shapefile_file('resources/test_resources/polygons/shape_three_concentric_polygons.shp')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_three_concentric_polygons.shp')
 
         # apply transformation with filters
         self.engine.transform_points(polygon_id='Polygon 0',
@@ -119,8 +119,8 @@ class TestContainsFilter(unittest.TestCase):
                                            'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
-        self.engine.load_shapefile_file('resources/test_resources/polygons/'
-                                        'shape_three_polygons_south_america.shp')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/'
+                                             'shape_three_polygons_south_america.shp')
 
         # apply transformation with filters
         self.engine.transform_points(polygon_id='Polygon 0',
@@ -151,8 +151,8 @@ class TestContainsFilter(unittest.TestCase):
                                            'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
-        self.engine.load_shapefile_file('resources/test_resources/polygons/'
-                                        'shape_three_polygons_south_america.shp')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/'
+                                             'shape_three_polygons_south_america.shp')
 
         # apply transformation with filters
         self.engine.transform_points(polygon_id='Polygon 0',
@@ -208,7 +208,7 @@ class TestHeightGreaterFilter(unittest.TestCase):
                                            'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load polygon
-        self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
 
         # create polygon to modify the scene.
         self.engine.transform_points(polygon_id=self.engine.get_active_polygon_id(),
@@ -239,7 +239,7 @@ class TestHeightGreaterFilter(unittest.TestCase):
                                            'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load polygon
-        self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
 
         # create polygon to modify the scene.
         self.engine.transform_points(polygon_id=self.engine.get_active_polygon_id(),
@@ -270,8 +270,8 @@ class TestHeightGreaterFilter(unittest.TestCase):
                                            'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
-        self.engine.load_shapefile_file('resources/test_resources/polygons/'
-                                        'shape_three_polygons_south_america.shp')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/'
+                                             'shape_three_polygons_south_america.shp')
 
         # apply transformation with filters
         self.engine.transform_points(polygon_id='Polygon 0',
@@ -327,8 +327,8 @@ class TestMixedFilters(unittest.TestCase):
                                            'resources/test_resources/netcdf/test_file_1.nc')
 
         # load polygon
-        self.engine.load_shapefile_file('resources/test_resources/polygons/'
-                                        'shape_three_polygons_south_america.shp')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/'
+                                             'shape_three_polygons_south_america.shp')
 
         # create polygon to modify the scene.
         with self.assertRaises(NotImplementedError):
@@ -357,8 +357,8 @@ class TestMixedFilters(unittest.TestCase):
                                            'resources/test_resources/netcdf/test_file_1.nc')
 
         # load polygon
-        self.engine.load_shapefile_file('resources/test_resources/polygons/'
-                                        'shape_three_polygons_south_america.shp')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/'
+                                             'shape_three_polygons_south_america.shp')
 
         # create polygon to modify the scene.
         self.engine.transform_points(polygon_id='Polygon 0',

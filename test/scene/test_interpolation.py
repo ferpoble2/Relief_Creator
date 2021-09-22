@@ -56,7 +56,7 @@ class TestInterpolation(unittest.TestCase):
 
     def test_cubic_normal_application(self):
         # load list of polygons
-        self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
 
         # apply transformation with filters
         self.engine.transform_points(polygon_id=self.engine.get_active_polygon_id(),
@@ -91,7 +91,7 @@ class TestInterpolation(unittest.TestCase):
 
     def test_nearest_normal_application(self):
         # load list of polygons
-        self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
 
         # apply transformation with filters
         self.engine.transform_points(polygon_id=self.engine.get_active_polygon_id(),
@@ -126,7 +126,7 @@ class TestInterpolation(unittest.TestCase):
 
     def test_linear_normal_application(self):
         # load list of polygons
-        self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
 
         # apply transformation with filters
         self.engine.transform_points(polygon_id=self.engine.get_active_polygon_id(),
