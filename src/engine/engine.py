@@ -1248,9 +1248,9 @@ class Engine:
         except FileNotFoundError:
             self.set_modal_text('Error', 'File not loaded.')
 
-    def load_preview_interpolation_area(self, distance: float) -> None:
+    def create_preview_interpolation_area(self, distance: float) -> None:
         """
-        Ask the scene to load the interpolation area for the active polygon.
+        Ask the scene to create the interpolation area for the active polygon.
 
         Args:
             distance: Distance to use to calculate the interpolation area.

@@ -963,7 +963,7 @@ class GUIManager:
 
         Returns: None
         """
-        self.__engine.load_preview_interpolation_area(distance)
+        self.__engine.create_preview_interpolation_area(distance)
 
     def load_shapefile_file_with_dialog(self) -> None:
         """
