@@ -23,15 +23,14 @@ class Engine {
     + change_current_3D_model_normalization_factor(new_factor)
     + change_dot_color_of_polygon(polygon_id,  color)
     + change_height_window(height)
-    + change_polygon_draw_order(polygon_id, new_position)
     + change_model_draw_priority(model_id, new_position)
+    + change_polygon_draw_order(polygon_id, new_position)
     + change_quality(quality)
     + change_width_window(width)
+    + create_model_from_existent(base_model_id, second_model_id, new_model_name)
     + create_new_polygon(): str
-    + remove_parameter_from_polygon(polygon_id, key)
-    + remove_polygon_by_id(polygon_id)
-    + get_controller_key_callback_state(): boolean
-    + get_tool_sub_title_font_size(): int
+    + create_polygon_from_file(filename)
+    + create_preview_interpolation_area(distance)
     + exit()
     + export_model_as_netcdf(model_id)
     + export_polygon_list_id(polygon_id_list, filename)
@@ -43,6 +42,7 @@ class Engine {
     + get_active_tool(): str
     + get_camera_settings(): dict
     + get_clear_color(): list
+    + get_controller_key_callback_state(): boolean
     + get_cpt_file(): str
     + get_extra_reload_proportion_setting(): float
     + get_float_bytes()
@@ -64,6 +64,7 @@ class Engine {
     + get_quality(): int
     + get_render_settings()
     + get_scene_setting_data(): dict
+    + get_tool_sub_title_font_size(): int
     + get_tool_title_font_size(): int
     + get_window_setting_data(): dict
     + get_zoom_level(): float
@@ -74,10 +75,7 @@ class Engine {
     + is_program_loading(): boolean
     + less_zoom()
     + load_netcdf_file_with_dialog()
-    + create_polygon_from_file(filename)
-    + create_preview_interpolation_area(distance)
     + load_shapefile_file_with_dialog()
-    + create_model_from_existent(base_model_id, second_model_id, new_model_name)
     + modify_camera_radius(distance)
     + move_camera_position(movement)
     + move_scene(x_movement, y_movement)
@@ -86,18 +84,20 @@ class Engine {
     + reload_models()
     + remove_interpolation_preview(polygon_id)
     + remove_model(model_id)
+    + remove_parameter_from_polygon(polygon_id, key)
+    + remove_polygon_by_id(polygon_id)
     + reset_camera_values()
     + reset_map_position()
     + reset_zoom_level()
     + run()
     + set_active_polygon(polygon_id)
     + set_active_tool(tool)
+    + set_controller_key_callback(new_state)
     + set_loading_message(new_msg)
     + set_modal_text(title_modal, msg)
     + set_models_polygon_mode(polygon_mode)
     + set_new_parameter_to_polygon(polygon_id, key, value)
     + set_polygon_name(polygon_id, new_name)
-    + set_controller_key_callback(new_state)
     + set_process_task(parallel_task, then_task, parallel_task_args, then_task_args)
     + set_program_loading(new_state)
     + set_program_view_mode(mode)

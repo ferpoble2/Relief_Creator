@@ -646,6 +646,32 @@ class Engine:
         except RepeatedPointError:
             self.set_modal_text('Error', 'One of the polygon loaded has repeated points.')
 
+    def create_preview_interpolation_area(self, distance: float) -> None:
+        """
+        Ask the scene to create the interpolation area for the active polygon.
+
+        Args:
+            distance: Distance to use to calculate the interpolation area.
+
+        Returns: None
+        """
+        if not self.scene.is_polygon_planar(self.get_active_polygon_id()):
+            self.set_modal_text('Error', 'Polygon selected is not planar.')
+            return
+
+        def load_preview_logic():
+            """Logic to load the preview of the polygons."""
+            try:
+                self.scene.load_preview_interpolation_area(distance, self.get_active_polygon_id())
+
+            except SceneError as e:
+                if e.code == 2:
+                    self.set_modal_text('Error', 'The polygon must have at least 3 vertices to load the '
+                                                 'interpolation area.')
+
+        self.set_loading_message('Loading preview, this may take a while.')
+        self.set_task_with_loading_frame(load_preview_logic)
+
     def exit(self):
         """
         Terminate the process in charge of rendering the windows and the scene, closing the windows and returning the
@@ -1247,32 +1273,6 @@ class Engine:
 
         except FileNotFoundError:
             self.set_modal_text('Error', 'File not loaded.')
-
-    def create_preview_interpolation_area(self, distance: float) -> None:
-        """
-        Ask the scene to create the interpolation area for the active polygon.
-
-        Args:
-            distance: Distance to use to calculate the interpolation area.
-
-        Returns: None
-        """
-        if not self.scene.is_polygon_planar(self.get_active_polygon_id()):
-            self.set_modal_text('Error', 'Polygon selected is not planar.')
-            return
-
-        def load_preview_logic():
-            """Logic to load the preview of the polygons."""
-            try:
-                self.scene.load_preview_interpolation_area(distance, self.get_active_polygon_id())
-
-            except SceneError as e:
-                if e.code == 2:
-                    self.set_modal_text('Error', 'The polygon must have at least 3 vertices to load the '
-                                                 'interpolation area.')
-
-        self.set_loading_message('Loading preview, this may take a while.')
-        self.set_task_with_loading_frame(load_preview_logic)
 
     def load_shapefile_file_with_dialog(self) -> None:
         """
