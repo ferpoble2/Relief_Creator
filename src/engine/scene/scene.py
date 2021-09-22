@@ -597,6 +597,32 @@ class Scene:
         """
         self.__3d_model_hash[model_id].change_vertices_measure_unit(measure_unit)
 
+    def change_model_draw_priority(self, model_id: str, new_priority: int) -> None:
+        """
+        Change the order on which the models are draw on the scene.
+
+        The closer the priority is to 0, the higher the priority. Models with high priority will be draw over
+        models with less priority.
+
+        Args:
+            model_id: ID of the model to modify.
+            new_priority: New priority for the model to be draw.
+
+        Returns: None
+        """
+        # Check that polygon exists in the scene
+        if model_id not in self.__model_hash.keys():
+            raise SceneError(7)
+
+        # Remove the polygon from the drawing list, raise exception if it is not in the list
+        try:
+            self.__model_draw_priority.remove(model_id)
+        except ValueError:
+            raise SceneError(8)
+
+        # Insert element in the new position
+        self.__model_draw_priority.insert(new_priority, model_id)
+
     def change_normalization_height_factor(self, active_model: str, new_factor: float) -> None:
         """
         Change the height normalization factor of the specified model.
@@ -635,32 +661,6 @@ class Scene:
 
         # Insert element in the new position
         self.__polygon_draw_priority.insert(new_priority, polygon_id)
-
-    def change_model_draw_priority(self, model_id: str, new_priority: int) -> None:
-        """
-        Change the order on which the models are draw on the scene.
-
-        The closer the priority is to 0, the higher the priority. Models with high priority will be draw over
-        models with less priority.
-
-        Args:
-            model_id: ID of the model to modify.
-            new_priority: New priority for the model to be draw.
-
-        Returns: None
-        """
-        # Check that polygon exists in the scene
-        if model_id not in self.__model_hash.keys():
-            raise SceneError(7)
-
-        # Remove the polygon from the drawing list, raise exception if it is not in the list
-        try:
-            self.__model_draw_priority.remove(model_id)
-        except ValueError:
-            raise SceneError(8)
-
-        # Insert element in the new position
-        self.__model_draw_priority.insert(new_priority, model_id)
 
     def create_3D_model_if_not_exists(self,
                                       model_id: str) -> None:
@@ -965,43 +965,6 @@ class Scene:
         """
         return list(self.__3d_model_hash.keys())
 
-    def get_model_coordinates_arrays(self, model_id: str) -> (Union[np.ndarray, None], Union[np.ndarray, None]):
-        """
-        Get two arrays, the first containing the coordinates used in the model for the x-axis and the second
-        containing the coordinates used in the model for the y-axis.
-
-        Returns: (x-axis array, y-axis array) coordinates used in the active model.
-
-        Args:
-            model_id: Model to use to get the coordinate arrays.
-        """
-        if model_id in self.__model_hash:
-            model = self.__model_hash[model_id]
-            return model.get_model_coordinate_array()
-        else:
-            return None, None
-
-    def get_model_height_on_coordinates(self,
-                                        x_coordinate: float,
-                                        y_coordinate: float,
-                                        model_id: str) -> Union[float, None]:
-        """
-        Get the height of the active model in the specified coordinates.
-
-        If coordinates are outside the model or there is no active model, then None is returned.
-
-        Args:
-            x_coordinate: x-axis coordinate.
-            y_coordinate: y-axis coordinate.
-            model_id: ID of the model to check for the coordinates.
-
-        Returns: Height of the model in the coordinates.
-        """
-        if model_id in self.__model_hash:
-            return self.__model_hash[model_id].get_height_on_coordinates(x_coordinate, y_coordinate)
-        else:
-            return None
-
     def get_camera_data(self) -> dict:
         """
         Get and returns the data related to the camera.
@@ -1075,6 +1038,43 @@ class Scene:
 
         vertices_array[:, :, 2] = heights
         return vertices_array
+
+    def get_model_coordinates_arrays(self, model_id: str) -> (Union[np.ndarray, None], Union[np.ndarray, None]):
+        """
+        Get two arrays, the first containing the coordinates used in the model for the x-axis and the second
+        containing the coordinates used in the model for the y-axis.
+
+        Returns: (x-axis array, y-axis array) coordinates used in the active model.
+
+        Args:
+            model_id: Model to use to get the coordinate arrays.
+        """
+        if model_id in self.__model_hash:
+            model = self.__model_hash[model_id]
+            return model.get_model_coordinate_array()
+        else:
+            return None, None
+
+    def get_model_height_on_coordinates(self,
+                                        x_coordinate: float,
+                                        y_coordinate: float,
+                                        model_id: str) -> Union[float, None]:
+        """
+        Get the height of the active model in the specified coordinates.
+
+        If coordinates are outside the model or there is no active model, then None is returned.
+
+        Args:
+            x_coordinate: x-axis coordinate.
+            y_coordinate: y-axis coordinate.
+            model_id: ID of the model to check for the coordinates.
+
+        Returns: Height of the model in the coordinates.
+        """
+        if model_id in self.__model_hash:
+            return self.__model_hash[model_id].get_height_on_coordinates(x_coordinate, y_coordinate)
+        else:
+            return None
 
     def get_model_information(self, model_id: str) -> dict:
         """
