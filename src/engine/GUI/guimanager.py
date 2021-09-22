@@ -1086,6 +1086,56 @@ class GUIManager:
         self.__engine.change_polygon_draw_priority(polygon_id,
                                                    self.__polygon_folder_manager.get_polygon_position(polygon_id))
 
+    def open_combine_map_modal(self) -> None:
+        """
+        Open the modal to merge two maps into one.
+
+        Returns:  None
+        """
+        self.__combine_map_modal.should_show = True
+
+    def open_confirmation_modal(self, modal_title: str, msg: str, yes_function: callable,
+                                no_function: callable) -> None:
+        """
+        Opens a confirmation modal in the screen with two options (yes and no), after clicking each one execute the
+        functions given.
+
+        Args:
+            modal_title: Title of the modal.
+            msg: Message to use in the modal.
+            yes_function: Function to execute when pressed yes.
+            no_function: Function to execute when pressed no.
+
+        Returns: None
+        """
+        log.debug('Setting confirmation modal')
+
+        for frame in self.__component_list_2D:
+            if isinstance(frame, ConfirmationModal):
+                frame.set_confirmation_text(modal_title, msg, yes_function, no_function)
+                return
+
+        raise AssertionError('There is not a frame of class ConfirmationModal in the program.')
+
+    def open_text_modal(self, modal_title: str, msg: str) -> None:
+        """
+        Set the text of the modal frame and set it to show in the next frame.
+
+        Returns: None
+
+        Args:
+            modal_title:  title to use in the modal
+            msg: message to show in the modal
+        """
+        log.debug("Setting modal text")
+
+        for frame in self.__component_list_2D:
+            if isinstance(frame, TextModal):
+                frame.set_modal_text(modal_title, msg)
+                return
+
+        raise AssertionError('There is not a frame from the TextModal class to set a modal message.')
+
     def optimize_gpu_memory(self) -> None:
         """
         Calls the engine to optimize the memory on the GPU.
@@ -1217,6 +1267,17 @@ class GUIManager:
         """
         self.__engine.reset_camera_values()
 
+    def set_active_model(self, model_id: str) -> None:
+        """
+        Change the active model being used by the program.
+
+        Args:
+            model_id: ID of the model to set as active.
+
+        Returns: None
+        """
+        self.__engine.set_active_model(model_id)
+
     def set_active_polygon(self, polygon_id: str) -> None:
         """
         Set a new active polygon on the program.
@@ -1247,29 +1308,6 @@ class GUIManager:
         """
         imgui.pop_font()
         imgui.push_font(self.__font_bold)
-
-    def open_confirmation_modal(self, modal_title: str, msg: str, yes_function: callable,
-                                no_function: callable) -> None:
-        """
-        Opens a confirmation modal in the screen with two options (yes and no), after clicking each one execute the
-        functions given.
-
-        Args:
-            modal_title: Title of the modal.
-            msg: Message to use in the modal.
-            yes_function: Function to execute when pressed yes.
-            no_function: Function to execute when pressed no.
-
-        Returns: None
-        """
-        log.debug('Setting confirmation modal')
-
-        for frame in self.__component_list_2D:
-            if isinstance(frame, ConfirmationModal):
-                frame.set_confirmation_text(modal_title, msg, yes_function, no_function)
-                return
-
-        raise AssertionError('There is not a frame of class ConfirmationModal in the program.')
 
     def set_controller_keyboard_callback_state(self, new_state: bool) -> None:
         """
@@ -1302,33 +1340,6 @@ class GUIManager:
         raise AssertionError('There is not a frame from the Loading class on the list of frames '
                              'handled by the GUIManager.')
 
-    def open_text_modal(self, modal_title: str, msg: str) -> None:
-        """
-        Set the text of the modal frame and set it to show in the next frame.
-
-        Returns: None
-
-        Args:
-            modal_title:  title to use in the modal
-            msg: message to show in the modal
-        """
-        log.debug("Setting modal text")
-
-        for frame in self.__component_list_2D:
-            if isinstance(frame, TextModal):
-                frame.set_modal_text(modal_title, msg)
-                return
-
-        raise AssertionError('There is not a frame from the TextModal class to set a modal message.')
-
-    def open_combine_map_modal(self) -> None:
-        """
-        Open the modal to merge two maps into one.
-
-        Returns:  None
-        """
-        self.__combine_map_modal.should_show = True
-
     def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
         Call the scene to change the polygon mode used by the models.
@@ -1344,17 +1355,6 @@ class GUIManager:
         Returns:
         """
         self.__engine.set_models_polygon_mode(polygon_mode)
-
-    def set_active_model(self, model_id: str) -> None:
-        """
-        Change the active model being used by the program.
-
-        Args:
-            model_id: ID of the model to set as active.
-
-        Returns: None
-        """
-        self.__engine.set_active_model(model_id)
 
     def set_polygon_folder_name(self, polygon_folder_id: str, new_name: str) -> None:
         """
