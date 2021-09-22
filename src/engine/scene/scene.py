@@ -496,7 +496,6 @@ class Scene:
 
         # get the important information.
         model = self.__model_hash[model_id]
-
         polygon = self.__polygon_hash[polygon_id]
 
         # ask the model and polygon for the parameters to calculate the new height
