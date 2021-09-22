@@ -21,6 +21,7 @@ import warnings
 
 import numpy as np
 
+from src.error.scene_error import SceneError
 from src.input.NetCDF import read_info
 from src.program.program import Program
 
@@ -237,6 +238,109 @@ class TestModelInformationGetters(unittest.TestCase):
 
     def test_get_model_arrays_no_model(self):
         self.assertEqual((None, None), self.engine.scene.get_model_coordinates_arrays(self.program.get_active_model()))
+
+
+class TestGetMaxMinHeights(unittest.TestCase):
+
+    def setUp(self) -> None:
+        """Initialize the program and the engine"""
+        self.program = Program()
+        self.engine = self.program.engine
+        self.engine.should_use_threads(False)
+
+    def tearDown(self) -> None:
+        """Close the program."""
+        self.program.close()
+
+    def test_get_max_min(self):
+        scene = self.engine.scene
+
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
+        polygon_id = self.__create_and_initialize_polygon(self.engine)
+        results = scene.calculate_max_min_height(self.engine.get_active_model_id(),
+                                                 polygon_id)
+        self.assertEqual((38, 22),
+                         results,
+                         "The maximum and minimum heights are not equal to the expected.")
+
+    def test_polygon_not_enough_points(self):
+        scene = self.engine.scene
+
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
+        polygon_id = self.engine.create_new_polygon()
+
+        with self.assertRaises(SceneError) as context:
+            scene.calculate_max_min_height(self.engine.get_active_model_id(),
+                                           polygon_id)
+
+        self.assertIsInstance(context.exception, SceneError, "Exception raised is not of the class SceneError")
+        self.assertEqual(2,
+                         context.exception.code,
+                         "The code of the exception is not the one expected.")
+
+    def test_polygon_not_planar(self):
+        scene = self.engine.scene
+
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
+        polygon_id = self.__create_and_initialize_non_planar_polygon(self.engine)
+
+        with self.assertRaises(SceneError) as context:
+            scene.calculate_max_min_height(self.engine.get_active_model_id(),
+                                           polygon_id)
+
+        self.assertIsInstance(context.exception, SceneError, "Exception raised is not of the class SceneError")
+        self.assertEqual(1,
+                         context.exception.code,
+                         "The code of the exception is not the one expected.")
+
+    def __create_and_initialize_non_planar_polygon(self, engine):
+        """
+        Create a non planar polygon on the engine and initialize it with four points.
+
+        Add the following points:
+            (10,10)
+            (10,20)
+            (20,10)
+            (20,20)
+
+        Args:
+            engine: Engine to use for the creation of the polygon.
+
+        Returns: The ID of the generated polygon.
+        """
+        polygon_id = engine.create_new_polygon()
+        engine.set_active_polygon(polygon_id)
+        engine.add_new_vertex_to_active_polygon_using_real_coords(10, 10)
+        engine.add_new_vertex_to_active_polygon_using_real_coords(10, 20)
+        engine.add_new_vertex_to_active_polygon_using_real_coords(20, 10)
+        engine.add_new_vertex_to_active_polygon_using_real_coords(20, 20)
+        return polygon_id
+
+    def __create_and_initialize_polygon(self, engine):
+        """
+        Create a polygon on the engine and initialize it with four points.
+
+        Add the following points:
+            (10,10)
+            (10,20)
+            (20,20)
+            (20,10)
+
+        Args:
+            engine: Engine to use for the creation of the polygon.
+
+        Returns: The ID of the generated polygon.
+        """
+        polygon_id = engine.create_new_polygon()
+        engine.set_active_polygon(polygon_id)
+        engine.add_new_vertex_to_active_polygon_using_real_coords(10, 10)
+        engine.add_new_vertex_to_active_polygon_using_real_coords(10, 20)
+        engine.add_new_vertex_to_active_polygon_using_real_coords(20, 20)
+        engine.add_new_vertex_to_active_polygon_using_real_coords(20, 10)
+        return polygon_id
 
 
 if __name__ == '__main__':
