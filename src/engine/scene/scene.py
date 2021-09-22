@@ -496,8 +496,6 @@ class Scene:
 
         # get the important information.
         model = self.__model_hash[model_id]
-        if not isinstance(model, Map2DModel):
-            raise SceneError(3)
 
         polygon = self.__polygon_hash[polygon_id]
 
@@ -1355,25 +1353,6 @@ class Scene:
         # generating lines model
         lines_external = Lines(self, point_list=np.array(polygon_external_points).reshape((-1, 3)))
         lines_external.set_line_color([1, 0, 0, 0.5])
-
-        # Deprecated Code
-        # ---------------
-        # # Add the lines of the external polygon to the lines model
-        # for ind in range(int(len(polygon_external_points) / 3)):
-        #
-        #     point_1 = (polygon_external_points[ind * 3],
-        #                polygon_external_points[ind * 3 + 1],
-        #                polygon_external_points[ind * 3 + 2])
-        #
-        #     if ind == len(polygon_external_points) / 3 - 1:
-        #         point_2 = (polygon_external_points[0],
-        #                    polygon_external_points[1],
-        #                    polygon_external_points[2])
-        #     else:
-        #         point_2 = (polygon_external_points[ind * 3 + 3],
-        #                    polygon_external_points[ind * 3 + 4],
-        #                    polygon_external_points[ind * 3 + 5])
-        #   lines_external.add_line(point_1, point_2)
 
         # Add the model to the hash of interpolation areas
         self.__interpolation_area_hash[polygon_id] = [lines_external]
