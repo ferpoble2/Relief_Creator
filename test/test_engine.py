@@ -192,6 +192,49 @@ class TestSetThreadTask(unittest.TestCase):
 
         program.close()
 
+    def test_set_thread_task_return_value(self):
+
+        program = Program()
+        engine = program.engine
+
+        def sleep_then_return_50(time_to_sleep):
+            """Function that sleep and then return the integer 50."""
+            time.sleep(time_to_sleep)
+            return 50
+
+        return_value = []
+
+        for task_sleep_time in THREAD_ATTEMPT_TIMES:
+
+            try:
+                # Check if the task is iin fact executed in a new thread
+                initial_time = time.time()
+                engine.set_thread_task(lambda: sleep_then_return_50(task_sleep_time),
+                                       lambda x: return_value.insert(0, x))
+                final_time = time.time()
+
+                # Check that the sleep logic is executing in another thread
+                self.assertTrue(final_time - initial_time < task_sleep_time / 2)
+
+                # Wait for the thread to end
+                time.sleep(task_sleep_time)
+                engine.run(1, False)
+                self.assertEqual(return_value[0],
+                                 50,
+                                 "Returned value from the thread was not stored in the list.")
+
+            # Continue if there is more values to try, raise the exception if there is no more values.
+            except AssertionError as e:
+                if task_sleep_time == THREAD_ATTEMPT_TIMES[-1]:
+                    raise e
+                else:
+                    continue
+
+            else:
+                break
+
+        program.close()
+
 
 if __name__ == '__main__':
     unittest.main()
