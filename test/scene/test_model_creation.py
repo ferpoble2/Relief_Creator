@@ -56,4 +56,5 @@ class TestCreateModelFromExistent(unittest.TestCase):
                                       z,
                                       "heights stored are not equal to the expected.")
 
+        program.close()
         os.remove('resources/test_resources/temp/combined_model_test.nc')

@@ -128,6 +128,7 @@ class TestSetActiveModel(unittest.TestCase):
         self.assertEqual('0',
                          engine.get_active_model_id(),
                          "Active model was not changed to 0")
+        program.close()
 
     def test_set_active_model_to_None(self):
         program = Program()
@@ -146,6 +147,7 @@ class TestSetActiveModel(unittest.TestCase):
         engine.set_active_model(None)
         self.assertIsNone(engine.get_active_model_id(),
                           "Model was not changed to None.")
+        program.close()
 
 
 if __name__ == '__main__':
