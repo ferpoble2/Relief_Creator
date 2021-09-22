@@ -51,8 +51,8 @@ class TestGetModelCoordinates(unittest.TestCase):
         self.program.close()
 
     def test_get_model_coordinates_from_window_coordinates(self):
-        self.engine.load_netcdf_file(self.program.get_cpt_file(),
-                                     'resources/test_resources/netcdf/test_file_1.nc')
+        self.engine.create_model_from_file(self.program.get_cpt_file(),
+                                           'resources/test_resources/netcdf/test_file_1.nc')
 
         scene_data = self.engine.get_scene_setting_data()
         begin_scene_x = scene_data['SCENE_BEGIN_X']
@@ -75,8 +75,8 @@ class TestGetModelCoordinates(unittest.TestCase):
         self.assertTrue((expected_array == values_array).all())
 
     def test_get_model_coordinates_from_window_coordinates_borders(self):
-        self.engine.load_netcdf_file(self.program.get_cpt_file(),
-                                     'resources/test_resources/netcdf/test_file_1.nc')
+        self.engine.create_model_from_file(self.program.get_cpt_file(),
+                                           'resources/test_resources/netcdf/test_file_1.nc')
 
         # Get data from the scene
         # -----------------------
@@ -151,8 +151,8 @@ class TestGetModelHeight(unittest.TestCase):
     def test_get_model_height_from_coordinates(self):
 
         # Load model with coordinates separated by 0.1 degrees.
-        self.engine.load_netcdf_file(self.program.get_cpt_file(),
-                                     'resources/test_resources/netcdf/test_file_1.nc')
+        self.engine.create_model_from_file(self.program.get_cpt_file(),
+                                           'resources/test_resources/netcdf/test_file_1.nc')
 
         # Get values from the model, step on the for cycle must be lower than 0.1
         values_array = []
@@ -170,8 +170,8 @@ class TestGetModelHeight(unittest.TestCase):
         self.assertTrue((expected_array == values_array).all())
 
     def test_get_model_height_from_coordinates_on_border(self):
-        self.engine.load_netcdf_file(self.program.get_cpt_file(),
-                                     'resources/test_resources/netcdf/test_file_1.nc')
+        self.engine.create_model_from_file(self.program.get_cpt_file(),
+                                           'resources/test_resources/netcdf/test_file_1.nc')
 
         # left border
         self.assertEqual(None, self.engine.get_map_height_on_coordinates(-181, 0))
@@ -223,8 +223,8 @@ class TestModelInformationGetters(unittest.TestCase):
         self.program.close()
 
     def test_get_model_arrays(self):
-        self.engine.load_netcdf_file(self.program.get_cpt_file(),
-                                     'resources/test_resources/netcdf/test_file_1.nc')
+        self.engine.create_model_from_file(self.program.get_cpt_file(),
+                                           'resources/test_resources/netcdf/test_file_1.nc')
 
         # read the info of the active model
         x_array, y_array = self.engine.scene.get_model_coordinates_arrays(self.program.get_active_model())

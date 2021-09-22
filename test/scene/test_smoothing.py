@@ -45,8 +45,8 @@ class TestSmoothing(unittest.TestCase):
 
         # initialize variables
         self.engine.should_use_threads(False)
-        self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
-                                     'resources/test_resources/netcdf/test_file_1.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
+                                           'resources/test_resources/netcdf/test_file_1.nc')
 
     def tearDown(self) -> None:
         """

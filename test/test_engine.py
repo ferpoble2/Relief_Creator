@@ -73,8 +73,8 @@ class TestModelInformation(unittest.TestCase):
         cls.engine = cls.program.engine
         cls.engine.should_use_threads(False)
 
-        cls.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                    'resources/test_resources/netcdf/test_file_50_50.nc')
+        cls.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                          'resources/test_resources/netcdf/test_file_50_50.nc')
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -116,10 +116,10 @@ class TestSetActiveModel(unittest.TestCase):
         self.assertIsNone(engine.get_active_model_id(),
                           "Active model is not None when there is no model.")
 
-        engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                'resources/test_resources/netcdf/test_file_50_50.nc')
-        engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                'resources/test_resources/netcdf/test_file_50_50.nc')
+        engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                      'resources/test_resources/netcdf/test_file_50_50.nc')
+        engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                      'resources/test_resources/netcdf/test_file_50_50.nc')
         self.assertEqual('1',
                          engine.get_active_model_id(),
                          "Active model id is not 1 after loading 2 models into the engine.")
@@ -138,8 +138,8 @@ class TestSetActiveModel(unittest.TestCase):
         self.assertIsNone(engine.get_active_model_id(),
                           "Active model is not None when there is no model.")
 
-        engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                'resources/test_resources/netcdf/test_file_50_50.nc')
+        engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                      'resources/test_resources/netcdf/test_file_50_50.nc')
         self.assertEqual('0',
                          engine.get_active_model_id(),
                          "Active model id is not 0 after loading a model into the engine.")

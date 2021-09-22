@@ -56,8 +56,8 @@ class TestModifyHeight(unittest.TestCase):
     def test_linear_transformation(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
-                                     'resources/test_resources/netcdf/test_file_1.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
+                                           'resources/test_resources/netcdf/test_file_1.nc')
 
         # load list of polygons
         self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_south_america.shp')

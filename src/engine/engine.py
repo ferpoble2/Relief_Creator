@@ -1081,9 +1081,9 @@ class Engine:
         self.program.less_zoom()
         self.scene.update_projection_matrix_2D()
 
-    def load_netcdf_file(self, path_color_file: str, path_model: str, then: callable = lambda: None) -> None:
+    def create_model_from_file(self, path_color_file: str, path_model: str, then: callable = lambda: None) -> None:
         """
-        Load a netcdf file on the engine, refreshing the scene and showing it.
+        Create a new model on the program from a specified netcdf file.
 
         This method also creates a copy of the loaded file in the directory specified by the program module. This file
         is used in the export process of the maps.

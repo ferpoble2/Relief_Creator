@@ -52,8 +52,8 @@ class TestContainsFilter(unittest.TestCase):
     def test_normal_application_is_not_in(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                     'resources/test_resources/netcdf/test_file_50_50.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
         self.engine.load_shapefile_file('resources/test_resources/polygons/shape_two_concentric_polygons.shp')
@@ -83,8 +83,8 @@ class TestContainsFilter(unittest.TestCase):
     def test_normal_application_is_in(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                     'resources/test_resources/netcdf/test_file_50_50.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
         self.engine.load_shapefile_file('resources/test_resources/polygons/shape_three_concentric_polygons.shp')
@@ -115,8 +115,8 @@ class TestContainsFilter(unittest.TestCase):
     def test_polygon_not_in_map_is_in_filter(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                     'resources/test_resources/netcdf/test_file_50_50.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
         self.engine.load_shapefile_file('resources/test_resources/polygons/'
@@ -147,8 +147,8 @@ class TestContainsFilter(unittest.TestCase):
     def test_polygon_not_in_map_is_not_in_filter(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                     'resources/test_resources/netcdf/test_file_50_50.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
         self.engine.load_shapefile_file('resources/test_resources/polygons/'
@@ -204,8 +204,8 @@ class TestHeightGreaterFilter(unittest.TestCase):
     def test_normal_application_less_than(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                     'resources/test_resources/netcdf/test_file_50_50.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load polygon
         self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
@@ -235,8 +235,8 @@ class TestHeightGreaterFilter(unittest.TestCase):
     def test_normal_application_greater_than(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                     'resources/test_resources/netcdf/test_file_50_50.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load polygon
         self.engine.load_shapefile_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
@@ -266,8 +266,8 @@ class TestHeightGreaterFilter(unittest.TestCase):
     def test_filters_not_in_map(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                     'resources/test_resources/netcdf/test_file_50_50.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
         # load list of polygons
         self.engine.load_shapefile_file('resources/test_resources/polygons/'
@@ -323,8 +323,8 @@ class TestMixedFilters(unittest.TestCase):
     def test_non_existent_filter(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
-                                     'resources/test_resources/netcdf/test_file_1.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
+                                           'resources/test_resources/netcdf/test_file_1.nc')
 
         # load polygon
         self.engine.load_shapefile_file('resources/test_resources/polygons/'
@@ -353,8 +353,8 @@ class TestMixedFilters(unittest.TestCase):
     def test_height_contain(self):
         warnings.simplefilter("ignore", ResourceWarning)
 
-        self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
-                                     'resources/test_resources/netcdf/test_file_1.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
+                                           'resources/test_resources/netcdf/test_file_1.nc')
 
         # load polygon
         self.engine.load_shapefile_file('resources/test_resources/polygons/'

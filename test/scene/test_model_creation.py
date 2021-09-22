@@ -34,10 +34,10 @@ class TestCreateModelFromExistent(unittest.TestCase):
         engine = program.engine
         engine.should_use_threads(False)
 
-        engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                'resources/test_resources/netcdf/test_model_3.nc')
-        engine.load_netcdf_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                'resources/test_resources/netcdf/test_model_4.nc')
+        engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                      'resources/test_resources/netcdf/test_model_3.nc')
+        engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                      'resources/test_resources/netcdf/test_model_4.nc')
 
         engine.create_model_from_existent('0', '1', 'new_model')
         engine.export_model_as_netcdf('2', 'resources/test_resources/temp/combined_model_test.nc')

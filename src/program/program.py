@@ -270,7 +270,7 @@ class Program:
         log.debug(f"path_color_File: {path_color_file}")
 
         if path_model is not None and path_color_file is not None:
-            self.__engine.load_netcdf_file(path_color_file, path_model)
+            self.__engine.create_model_from_file(path_color_file, path_model)
 
     def load_shapefile_file_with_dialog(self) -> None:
         """
@@ -338,7 +338,7 @@ class Program:
         """
         if 'model' in arguments and arguments.model is not None:
             log.debug('Loading model from command line  using default color file...')
-            self.__engine.load_netcdf_file(self.get_cpt_file(), arguments.model)
+            self.__engine.create_model_from_file(self.get_cpt_file(), arguments.model)
 
     def remove_temp_files(self) -> None:
         """

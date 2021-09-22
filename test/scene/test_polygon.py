@@ -37,8 +37,8 @@ class TestAddPoints(unittest.TestCase):
 
         # initialize variables
         self.engine.should_use_threads(False)
-        self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
-                                     'resources/test_resources/netcdf/test_model_2.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
+                                           'resources/test_resources/netcdf/test_model_2.nc')
 
     def tearDown(self) -> None:
         """
@@ -117,8 +117,8 @@ class TestPlanarity(unittest.TestCase):
 
         # initialize variables
         self.engine.should_use_threads(False)
-        self.engine.load_netcdf_file('resources/test_resources/cpt/cpt_1.cpt',
-                                     'resources/test_resources/netcdf/test_model_2.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
+                                           'resources/test_resources/netcdf/test_model_2.nc')
 
         pol_planar = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol_planar)
@@ -150,7 +150,7 @@ class TestUndoAction(unittest.TestCase):
         engine = program.engine
 
         engine.should_use_threads(False)
-        engine.load_netcdf_file(
+        engine.create_model_from_file(
             'resources/test_resources/cpt/colors_0_100_200.cpt',
             'resources/test_resources/netcdf/test_file_1.nc'
         )
