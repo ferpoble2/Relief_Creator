@@ -38,7 +38,7 @@ class CombineMapModal(Frame):
         Constructor of the class.
         """
         super().__init__(gui_manager)
-        self.__should_show_frame: bool = True
+        self.__should_show_frame: bool = False
         self.__model_id_list: List[str] = []
         self.__model_name_list: List[str] = []
 
