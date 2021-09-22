@@ -65,6 +65,7 @@ class TestViewMode(unittest.TestCase):
 
         program.close()
 
+
 class TestModelInformation(unittest.TestCase):
     engine: Engine = None
     program: Program = None
