@@ -483,6 +483,126 @@ class Engine:
                                               self.program.get_active_model(),
                                               then_routine)
 
+    def create_model_from_file(self, path_color_file: str, path_model: str, then: callable = lambda: None) -> None:
+        """
+        Create a new model on the program from a specified netcdf file.
+
+        This method also creates a copy of the loaded file in the directory specified by the program module. This file
+        is used in the export process of the maps.
+
+        IMPORTANT:
+            This method uis asynchronous, this is, the execution of the logic in this method is executed in another
+            thread, returning immediately in the thread from which was called. To execute logic after the execution of
+            this method use the 'then' function parameter.
+
+        Args:
+            path_color_file: Path to the color file to use.
+            path_model: Path to the model file (NetCDF) to use.
+            then: Function to call after the execution of the method.
+
+        Returns: none
+        """
+
+        # noinspection PyMissingOrEmptyDocstring
+        def then_routine(model_id):
+            # Update the GUI
+            # --------------
+            self.gui_manager.add_model_to_gui(model_id)
+
+            # Update the program and create 3D model if required
+            # --------------------------------------------------
+            if self.program.get_active_model() is None:
+                self.reset_zoom_level()
+                self.reset_map_position()
+
+            self.program.set_active_model(model_id)
+            self.program.set_loading(False)
+
+            if self.program.get_view_mode() == '3D':
+                self.set_task_with_loading_frame(
+                    lambda: self.scene.create_3D_model_if_not_exists(self.program.get_active_model()))
+
+            # Create temporary file with the information of the model
+            # -------------------------------------------------------
+            self.program.update_model_temp_file(path_model)
+
+            then()
+
+        self.program.set_loading(True)
+        self.set_loading_message("Please wait a moment...")
+
+        try:
+            # Read the information for the new model
+            # --------------------------------------
+            X, Y, Z = read_info(path_model)
+
+            # Load the new model in the program
+            # ---------------------------------
+            self.scene.create_model_from_data_async(path_color_file,
+                                                    X,
+                                                    Y,
+                                                    Z,
+                                                    Path(path_model).name,
+                                                    self.program.get_active_model(),
+                                                    self.get_quality(),
+                                                    then_routine)
+
+        except OSError:
+            self.program.set_loading(False)
+            self.set_modal_text('Error', 'Error reading selected file. Is the file a netcdf file?')
+
+        except SceneError as e:
+            self.program.set_loading(False)
+
+            if e.code == 9:
+                self.set_modal_text('Error',
+                                    'The model loaded does not use the same values for the x-axis as the active '
+                                    'model in the application.\n'
+                                    f'Current model x-axis: {e.data.get("expected", None)}\n'
+                                    f'Loaded model x-axis: {e.data.get("actual", None)}')
+            if e.code == 10:
+                self.set_modal_text('Error',
+                                    'The model loaded does not use the same values for the y-axis as the active '
+                                    'model in the application.\n'
+                                    f'Current model y-axis: {e.data.get("expected", None)}\n'
+                                    f'Loaded model y-axis: {e.data.get("actual", None)}')
+            if e.code == 11:
+                self.set_modal_text('Error',
+                                    'The resolution of the model loaded is no the same as the active model.\n'
+                                    f'Current model shape: {e.data.get("expected", None)}\n'
+                                    f'Loaded model shape: {e.data.get("actual", None)}'
+                                    )
+
+        except NetCDFImportError as e:
+            self.program.set_loading(False)
+
+            if e.code == 2:
+                self.set_modal_text('Error',
+                                    f'{e.get_code_message()}\n\n'
+                                    f'Current keys on the file are: {list(e.data["file_keys"])}\n\n'
+                                    f'Keys accepted by the program for latitude are: {list(e.data["accepted_keys"])}'
+                                    f'\n\nTry adding a key to the latitude_keys.json file located in the resources '
+                                    f'folder and restarting the application.')
+            if e.code == 3:
+                self.set_modal_text('Error',
+                                    f'{e.get_code_message()}\n\n'
+                                    f'Current keys on the file are: {list(e.data["file_keys"])}\n\n'
+                                    f'Keys accepted by the program for longitude are: {list(e.data["accepted_keys"])}'
+                                    f'\n\nTry adding a key to the longitude_keys.json file located in the resources '
+                                    f'folder and restarting the application.')
+            if e.code == 4:
+                self.set_modal_text('Error',
+                                    f'{e.get_code_message()}\n\n'
+                                    f'Current keys on the file are: {list(e.data["file_keys"])}\n\n'
+                                    f'Keys accepted by the program for height are: {list(e.data["accepted_keys"])}'
+                                    f'\n\nTry adding a key to the height_keys.json file located in the resources folder'
+                                    f' and restarting the application.')
+
+        except KeyError:
+            self.program.set_loading(False)
+            self.set_modal_text('Error', 'Error reading selected file. Is the key used in the file inside the '
+                                         'list of keys?')
+
     def create_new_polygon(self) -> str:
         """
         Create a new polygon on the scene.
@@ -490,6 +610,41 @@ class Engine:
         Returns: the id of the new polygon
         """
         return self.scene.create_new_polygon()
+
+    def create_polygon_from_file(self, filename: str) -> None:
+        """
+        Load the data from a shapefile file and tell the scene to create one or more polygons with the data.
+
+        In case of error, this method shows modal texts with messages.
+
+        The last polygon added is set as teh active polygon.
+
+        Args:
+            filename: Name of the shapefile file.
+
+        Returns: None
+        """
+        polygons_point_list, polygons_param_list = ShapefileImporter().get_polygon_information(filename)
+
+        if polygons_point_list is None and polygons_param_list is None:
+            self.set_modal_text('Error', 'An error happened while loading file.')
+            return
+
+        if self.get_active_model_id() is None:
+            self.set_modal_text('Error', 'Please load a model before loading polygons.')
+            return
+
+        try:
+            for polygon_points, params in zip(polygons_point_list, polygons_param_list):
+                polygon_id = self.scene.create_new_polygon(polygon_points, params)
+                self.gui_manager.add_imported_polygon(polygon_id)
+                self.set_active_polygon(polygon_id)
+
+        except LineIntersectionError:
+            self.set_modal_text('Error', 'One of the polygon loaded intersect itself.')
+
+        except RepeatedPointError:
+            self.set_modal_text('Error', 'One of the polygon loaded has repeated points.')
 
     def exit(self):
         """
@@ -1081,126 +1236,6 @@ class Engine:
         self.program.less_zoom()
         self.scene.update_projection_matrix_2D()
 
-    def create_model_from_file(self, path_color_file: str, path_model: str, then: callable = lambda: None) -> None:
-        """
-        Create a new model on the program from a specified netcdf file.
-
-        This method also creates a copy of the loaded file in the directory specified by the program module. This file
-        is used in the export process of the maps.
-
-        IMPORTANT:
-            This method uis asynchronous, this is, the execution of the logic in this method is executed in another
-            thread, returning immediately in the thread from which was called. To execute logic after the execution of
-            this method use the 'then' function parameter.
-
-        Args:
-            path_color_file: Path to the color file to use.
-            path_model: Path to the model file (NetCDF) to use.
-            then: Function to call after the execution of the method.
-
-        Returns: none
-        """
-
-        # noinspection PyMissingOrEmptyDocstring
-        def then_routine(model_id):
-            # Update the GUI
-            # --------------
-            self.gui_manager.add_model_to_gui(model_id)
-
-            # Update the program and create 3D model if required
-            # --------------------------------------------------
-            if self.program.get_active_model() is None:
-                self.reset_zoom_level()
-                self.reset_map_position()
-
-            self.program.set_active_model(model_id)
-            self.program.set_loading(False)
-
-            if self.program.get_view_mode() == '3D':
-                self.set_task_with_loading_frame(
-                    lambda: self.scene.create_3D_model_if_not_exists(self.program.get_active_model()))
-
-            # Create temporary file with the information of the model
-            # -------------------------------------------------------
-            self.program.update_model_temp_file(path_model)
-
-            then()
-
-        self.program.set_loading(True)
-        self.set_loading_message("Please wait a moment...")
-
-        try:
-            # Read the information for the new model
-            # --------------------------------------
-            X, Y, Z = read_info(path_model)
-
-            # Load the new model in the program
-            # ---------------------------------
-            self.scene.create_model_from_data_async(path_color_file,
-                                                    X,
-                                                    Y,
-                                                    Z,
-                                                    Path(path_model).name,
-                                                    self.program.get_active_model(),
-                                                    self.get_quality(),
-                                                    then_routine)
-
-        except OSError:
-            self.program.set_loading(False)
-            self.set_modal_text('Error', 'Error reading selected file. Is the file a netcdf file?')
-
-        except SceneError as e:
-            self.program.set_loading(False)
-
-            if e.code == 9:
-                self.set_modal_text('Error',
-                                    'The model loaded does not use the same values for the x-axis as the active '
-                                    'model in the application.\n'
-                                    f'Current model x-axis: {e.data.get("expected", None)}\n'
-                                    f'Loaded model x-axis: {e.data.get("actual", None)}')
-            if e.code == 10:
-                self.set_modal_text('Error',
-                                    'The model loaded does not use the same values for the y-axis as the active '
-                                    'model in the application.\n'
-                                    f'Current model y-axis: {e.data.get("expected", None)}\n'
-                                    f'Loaded model y-axis: {e.data.get("actual", None)}')
-            if e.code == 11:
-                self.set_modal_text('Error',
-                                    'The resolution of the model loaded is no the same as the active model.\n'
-                                    f'Current model shape: {e.data.get("expected", None)}\n'
-                                    f'Loaded model shape: {e.data.get("actual", None)}'
-                                    )
-
-        except NetCDFImportError as e:
-            self.program.set_loading(False)
-
-            if e.code == 2:
-                self.set_modal_text('Error',
-                                    f'{e.get_code_message()}\n\n'
-                                    f'Current keys on the file are: {list(e.data["file_keys"])}\n\n'
-                                    f'Keys accepted by the program for latitude are: {list(e.data["accepted_keys"])}'
-                                    f'\n\nTry adding a key to the latitude_keys.json file located in the resources '
-                                    f'folder and restarting the application.')
-            if e.code == 3:
-                self.set_modal_text('Error',
-                                    f'{e.get_code_message()}\n\n'
-                                    f'Current keys on the file are: {list(e.data["file_keys"])}\n\n'
-                                    f'Keys accepted by the program for longitude are: {list(e.data["accepted_keys"])}'
-                                    f'\n\nTry adding a key to the longitude_keys.json file located in the resources '
-                                    f'folder and restarting the application.')
-            if e.code == 4:
-                self.set_modal_text('Error',
-                                    f'{e.get_code_message()}\n\n'
-                                    f'Current keys on the file are: {list(e.data["file_keys"])}\n\n'
-                                    f'Keys accepted by the program for height are: {list(e.data["accepted_keys"])}'
-                                    f'\n\nTry adding a key to the height_keys.json file located in the resources folder'
-                                    f' and restarting the application.')
-
-        except KeyError:
-            self.program.set_loading(False)
-            self.set_modal_text('Error', 'Error reading selected file. Is the key used in the file inside the '
-                                         'list of keys?')
-
     def load_netcdf_file_with_dialog(self) -> None:
         """
         Open a dialog to load a new netcdf model into the program.
@@ -1238,41 +1273,6 @@ class Engine:
 
         self.set_loading_message('Loading preview, this may take a while.')
         self.set_task_with_loading_frame(load_preview_logic)
-
-    def create_polygon_from_file(self, filename: str) -> None:
-        """
-        Load the data from a shapefile file and tell the scene to create one or more polygons with the data.
-
-        In case of error, this method shows modal texts with messages.
-
-        The last polygon added is set as teh active polygon.
-
-        Args:
-            filename: Name of the shapefile file.
-
-        Returns: None
-        """
-        polygons_point_list, polygons_param_list = ShapefileImporter().get_polygon_information(filename)
-
-        if polygons_point_list is None and polygons_param_list is None:
-            self.set_modal_text('Error', 'An error happened while loading file.')
-            return
-
-        if self.get_active_model_id() is None:
-            self.set_modal_text('Error', 'Please load a model before loading polygons.')
-            return
-
-        try:
-            for polygon_points, params in zip(polygons_point_list, polygons_param_list):
-                polygon_id = self.scene.create_new_polygon(polygon_points, params)
-                self.gui_manager.add_imported_polygon(polygon_id)
-                self.set_active_polygon(polygon_id)
-
-        except LineIntersectionError:
-            self.set_modal_text('Error', 'One of the polygon loaded intersect itself.')
-
-        except RepeatedPointError:
-            self.set_modal_text('Error', 'One of the polygon loaded has repeated points.')
 
     def load_shapefile_file_with_dialog(self) -> None:
         """
