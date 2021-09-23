@@ -1,12 +1,13 @@
 # Folders to ignore
-env/
 .vscode/
-src/engine/__pycache__/
 __pycache__/
 venv/
-dist/
-build/
 .idea/
+
+# Specific folders to ignore
+/env/
+/dist/
+/build/
 /output/
 
 # Specific files
