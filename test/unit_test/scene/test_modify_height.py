@@ -19,43 +19,16 @@
 File with the tests related to the modifications of the height to the points inside the polygons.
 """
 import os
-import unittest
-import warnings
 
 import numpy as np
 
 from src.input.NetCDF import read_info
-from src.program.program import Program
+from test.test_case import ProgramTestCase
 
 
-class TestModifyHeight(unittest.TestCase):
-
-    def setUp(self) -> None:
-        """
-        Logic that runs at the beginning o every tests.
-
-        Returns: None
-        """
-        warnings.simplefilter("ignore", ResourceWarning)
-
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
+class TestModifyHeight(ProgramTestCase):
 
     def test_linear_transformation(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
                                            'resources/test_resources/netcdf/test_file_1.nc')
 

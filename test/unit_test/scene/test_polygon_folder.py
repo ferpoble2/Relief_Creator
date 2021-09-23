@@ -18,12 +18,11 @@
 """
 File with tests  related to the folders of polygons showed on the GUI.
 """
-import unittest
 
-from src.program.program import Program
+from test.test_case import ProgramTestCase
 
 
-class TestPolygonFolderCreation(unittest.TestCase):
+class TestPolygonFolderCreation(ProgramTestCase):
 
     def setUp(self) -> None:
         """
@@ -31,17 +30,8 @@ class TestPolygonFolderCreation(unittest.TestCase):
 
         Create the variables necessary to check the logic of the program.
         """
-        self.program = Program()
-        self.engine = self.program.engine
+        super().setUp()
         self.gui_manager = self.engine.gui_manager
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
 
     def test_create_folder(self):
         folder_list = self.gui_manager.get_polygon_folder_id_list()

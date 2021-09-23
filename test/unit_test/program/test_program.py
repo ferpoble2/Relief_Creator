@@ -21,32 +21,13 @@ File with tests related to the Program class of the application.
 import os
 import sys
 import unittest
-import warnings
 
 from src.program.parser import get_command_line_arguments
 from src.program.program import Program
+from test.test_case import ProgramTestCase
 
 
-class TestZoomParameters(unittest.TestCase):
-
-    def setUp(self) -> None:
-        """
-        Code executed before every test. Initializes a program to work with.
-        """
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
+class TestZoomParameters(ProgramTestCase):
 
     def test_zoom(self):
         # Test default values
@@ -78,26 +59,7 @@ class TestZoomParameters(unittest.TestCase):
         self.assertEqual(1, self.program.get_zoom_level())
 
 
-class TestViewModeParameters(unittest.TestCase):
-
-    def setUp(self) -> None:
-        """
-        Code executed before every test. Initializes a program to work with.
-        """
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
+class TestViewModeParameters(ProgramTestCase):
 
     def test_view_mode(self):
         # Default value
@@ -111,26 +73,7 @@ class TestViewModeParameters(unittest.TestCase):
         self.assertEqual('2D', self.program.get_view_mode())
 
 
-class TestMapPositionParameters(unittest.TestCase):
-
-    def setUp(self) -> None:
-        """
-        Code executed before every test. Initializes a program to work with.
-        """
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
+class TestMapPositionParameters(ProgramTestCase):
 
     def test_map_position(self):
         # Default value
@@ -141,26 +84,7 @@ class TestMapPositionParameters(unittest.TestCase):
         self.assertEqual([15, 15], self.program.get_map_position())
 
 
-class TestActiveToolParameters(unittest.TestCase):
-
-    def setUp(self) -> None:
-        """
-        Code executed before every test. Initializes a program to work with.
-        """
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
+class TestActiveToolParameters(ProgramTestCase):
 
     def test_active_tool(self):
         # Default value
@@ -178,26 +102,7 @@ class TestActiveToolParameters(unittest.TestCase):
             self.program.set_active_tool('non_existent_tool')
 
 
-class TestLoadingParameters(unittest.TestCase):
-
-    def setUp(self) -> None:
-        """
-        Code executed before every test. Initializes a program to work with.
-        """
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
+class TestLoadingParameters(ProgramTestCase):
 
     def test_is_loading(self):
         self.assertEqual(False, self.program.is_loading())
@@ -209,26 +114,7 @@ class TestLoadingParameters(unittest.TestCase):
         self.assertEqual(False, self.program.is_loading())
 
 
-class TestCPTFilesParameters(unittest.TestCase):
-
-    def setUp(self) -> None:
-        """
-        Code executed before every test. Initializes a program to work with.
-        """
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
+class TestCPTFilesParameters(ProgramTestCase):
 
     def test_cpt_files(self):
         # Default value
@@ -244,7 +130,6 @@ class TestDebugMode(unittest.TestCase):
 
     def test_debug_mode_default_value(self):
         program = Program()
-        engine = program.engine
 
         self.assertFalse(program.get_debug_mode())
 
@@ -252,22 +137,15 @@ class TestDebugMode(unittest.TestCase):
 
     def test_debug_mode_false(self):
         program = Program(debug_mode=True)
-        engine = program.engine
 
         self.assertTrue(program.get_debug_mode())
 
         program.close()
 
 
-class TestParser(unittest.TestCase):
+class TestParser(ProgramTestCase):
 
     def test_parser_model(self):
-        warnings.simplefilter('ignore', ResourceWarning)
-
-        program = Program()
-        engine = program.engine
-
-        engine.should_use_threads(False)
 
         saved_argv = sys.argv
 
@@ -275,15 +153,13 @@ class TestParser(unittest.TestCase):
             sys.argv = ['./main.py', '-model', 'resources/sample_netcdf/ETOPO_IceSurfacec_6m.nc']
             arguments = get_command_line_arguments()
 
-            self.assertIsNone(program.get_active_model())
+            self.assertIsNone(self.program.get_active_model())
 
-            program.process_arguments(arguments)
-            self.assertIsNotNone(program.get_active_model())
+            self.program.process_arguments(arguments)
+            self.assertIsNotNone(self.program.get_active_model())
 
         finally:
             sys.argv = saved_argv
-
-        program.close()
 
 
 if __name__ == '__main__':

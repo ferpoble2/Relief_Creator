@@ -19,32 +19,24 @@
 Module to tests the creation of models on the scene.
 """
 import os
-import unittest
-import warnings
 
 import numpy as np
 import psutil
 
 from src.input.NetCDF import read_info
-from src.program.program import Program
+from test.test_case import ProgramTestCase
 
 
-class TestCreateModelFromExistent(unittest.TestCase):
+class TestCreateModelFromExistent(ProgramTestCase):
 
     def test_creation_model(self):
-        warnings.simplefilter("ignore", ResourceWarning)
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_model_3.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_model_4.nc')
 
-        program = Program()
-        engine = program.engine
-        engine.should_use_threads(False)
-
-        engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                      'resources/test_resources/netcdf/test_model_3.nc')
-        engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                      'resources/test_resources/netcdf/test_model_4.nc')
-
-        engine.create_model_from_existent('0', '1', 'new_model')
-        engine.export_model_as_netcdf('2', 'resources/test_resources/temp/combined_model_test.nc')
+        self.engine.create_model_from_existent('0', '1', 'new_model')
+        self.engine.export_model_as_netcdf('2', 'resources/test_resources/temp/combined_model_test.nc')
 
         x, y, z = read_info('resources/test_resources/temp/combined_model_test.nc')
         expected_x, expected_y, expected_z = read_info(
@@ -60,11 +52,10 @@ class TestCreateModelFromExistent(unittest.TestCase):
                                       z,
                                       "heights stored are not equal to the expected.")
 
-        program.close()
         os.remove('resources/test_resources/temp/combined_model_test.nc')
 
 
-class Test3DModelCreationMemoryUsageOneModel(unittest.TestCase):
+class Test3DModelCreationMemoryUsageOneModel(ProgramTestCase):
 
     def remove_all_models(self):
         """
@@ -79,18 +70,6 @@ class Test3DModelCreationMemoryUsageOneModel(unittest.TestCase):
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                            'resources/test_resources/netcdf/test_file_1.nc')
         self.engine.run(5, False)
-
-    def setUp(self) -> None:
-        """Initialize the variables for the tests"""
-        warnings.simplefilter("ignore", ResourceWarning)
-
-        self.program = Program()
-        self.engine = self.program.engine
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """Close the program"""
-        self.program.close()
 
     def test_memory_usage_3D_models(self):
         process = psutil.Process(os.getpid())

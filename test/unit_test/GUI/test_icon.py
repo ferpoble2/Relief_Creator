@@ -18,29 +18,10 @@
 import unittest
 
 from src.engine.GUI.icon import Icon
-from src.program.program import Program
+from test.test_case import ProgramTestCase
 
 
-class TestIconCreation(unittest.TestCase):
-
-    def setUp(self) -> None:
-        """
-        Code executed before every test. Initializes a program to work with.
-        """
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
+class TestIconCreation(ProgramTestCase):
 
     def test_RGB_file(self):
         # Test the creation and id of the icon

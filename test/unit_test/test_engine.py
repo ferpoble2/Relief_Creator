@@ -21,76 +21,43 @@ Module with test related to the engine of the program.
 
 import time
 import unittest
-import warnings
 
-from src.engine.engine import Engine
-from src.program.program import Program
 from src.utils import dict_to_serializable_dict, json_to_dict
+from test.test_case import ProgramTestCase
 
 THREAD_ATTEMPT_TIMES = [0.1, 1, 3, 10, 20, 30]
 
 
-class TestViewMode(unittest.TestCase):
+class TestViewMode(ProgramTestCase):
 
     def test_default_view_mode(self):
-        program = Program()
-        engine = program.engine
-
         self.assertEqual('2D',
-                         program.get_view_mode(),
+                         self.program.get_view_mode(),
                          '2D is not the default mode when creating the program.')
 
-        program.close()
-
     def test_view_mode_3D(self):
-        program = Program()
-        engine = program.engine
-
-        engine.set_program_view_mode('3D')
+        self.engine.set_program_view_mode('3D')
         self.assertEqual('3D',
-                         program.get_view_mode(),
+                         self.program.get_view_mode(),
                          'Mode was not changed to 3D after calling set_program_view_mode')
 
-        program.close()
-
     def test_view_mode_2D(self):
-        program = Program()
-        engine = program.engine
-
-        engine.set_program_view_mode('3D')
-        engine.set_program_view_mode('2D')
+        self.engine.set_program_view_mode('3D')
+        self.engine.set_program_view_mode('2D')
         self.assertEqual('2D',
-                         program.get_view_mode(),
+                         self.program.get_view_mode(),
                          'Mode was not changed to 2D after calling set_program_view_mode')
 
-        program.close()
 
+class TestModelInformation(ProgramTestCase):
 
-class TestModelInformation(unittest.TestCase):
-    engine: Engine = None
-    program: Program = None
-
-    @classmethod
-    def setUpClass(cls) -> None:
+    def setUp(self) -> None:
         """
-        Method executed once before the tests begins.
-
-        Create program and load a map into it.
+        Load a model into the program.
         """
-        warnings.simplefilter('ignore', category=ResourceWarning)
-        cls.program = Program()
-        cls.engine = cls.program.engine
-        cls.engine.should_use_threads(False)
-
-        cls.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                          'resources/test_resources/netcdf/test_file_50_50.nc')
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        """
-        Method executed once after all tests.
-        """
-        cls.program.close()
+        super().setUp()
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
 
     def test_information_keys(self):
         model_list = self.engine.get_model_list()
@@ -115,63 +82,51 @@ class TestModelInformation(unittest.TestCase):
                          'Model information generated is not equal to the expected.')
 
 
-class TestSetActiveModel(unittest.TestCase):
+class TestSetActiveModel(ProgramTestCase):
 
     def test_set_active_model(self):
-        program = Program()
-        engine = program.engine
-        engine.should_use_threads(False)
-
-        self.assertIsNone(engine.get_active_model_id(),
+        self.assertIsNone(self.engine.get_active_model_id(),
                           "Active model is not None when there is no model.")
 
-        engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                      'resources/test_resources/netcdf/test_file_50_50.nc')
-        engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                      'resources/test_resources/netcdf/test_file_50_50.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
         self.assertEqual('1',
-                         engine.get_active_model_id(),
+                         self.engine.get_active_model_id(),
                          "Active model id is not 1 after loading 2 models into the engine.")
 
-        engine.set_active_model('0')
+        self.engine.set_active_model('0')
         self.assertEqual('0',
-                         engine.get_active_model_id(),
+                         self.engine.get_active_model_id(),
                          "Active model was not changed to 0")
-        program.close()
 
     def test_set_active_model_to_None(self):
-        program = Program()
-        engine = program.engine
-        engine.should_use_threads(False)
-
-        self.assertIsNone(engine.get_active_model_id(),
+        self.assertIsNone(self.engine.get_active_model_id(),
                           "Active model is not None when there is no model.")
 
-        engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                      'resources/test_resources/netcdf/test_file_50_50.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
         self.assertEqual('0',
-                         engine.get_active_model_id(),
+                         self.engine.get_active_model_id(),
                          "Active model id is not 0 after loading a model into the engine.")
 
-        engine.set_active_model(None)
-        self.assertIsNone(engine.get_active_model_id(),
+        self.engine.set_active_model(None)
+        self.assertIsNone(self.engine.get_active_model_id(),
                           "Model was not changed to None.")
-        program.close()
 
 
-class TestSetThreadTask(unittest.TestCase):
+class TestSetThreadTask(ProgramTestCase):
 
     def test_set_thread_task(self):
-
-        program = Program()
-        engine = program.engine
+        self.engine.should_use_threads(True)
 
         for task_sleep_time in THREAD_ATTEMPT_TIMES:
 
             try:
                 # Check if the task is iin fact executed in a new thread
                 initial_time = time.time()
-                engine.set_thread_task(lambda: time.sleep(task_sleep_time), lambda: None)
+                self.engine.set_thread_task(lambda: time.sleep(task_sleep_time), lambda: None)
                 final_time = time.time()
 
                 # Check that the sleep logic is executing in another thread
@@ -190,12 +145,9 @@ class TestSetThreadTask(unittest.TestCase):
             else:
                 break
 
-        program.close()
-
     def test_set_thread_task_return_value(self):
 
-        program = Program()
-        engine = program.engine
+        self.engine.should_use_threads(True)
 
         def sleep_then_return_50(time_to_sleep):
             """Function that sleep and then return the integer 50."""
@@ -209,8 +161,8 @@ class TestSetThreadTask(unittest.TestCase):
             try:
                 # Check if the task is iin fact executed in a new thread
                 initial_time = time.time()
-                engine.set_thread_task(lambda: sleep_then_return_50(task_sleep_time),
-                                       lambda x: return_value.insert(0, x))
+                self.engine.set_thread_task(lambda: sleep_then_return_50(task_sleep_time),
+                                            lambda x: return_value.insert(0, x))
                 final_time = time.time()
 
                 # Check that the sleep logic is executing in another thread
@@ -218,7 +170,7 @@ class TestSetThreadTask(unittest.TestCase):
 
                 # Wait for the thread to end
                 time.sleep(task_sleep_time)
-                engine.run(1, False)
+                self.engine.run(1, False)
                 self.assertEqual(return_value[0],
                                  50,
                                  "Returned value from the thread was not stored in the list.")
@@ -232,8 +184,6 @@ class TestSetThreadTask(unittest.TestCase):
 
             else:
                 break
-
-        program.close()
 
 
 if __name__ == '__main__':

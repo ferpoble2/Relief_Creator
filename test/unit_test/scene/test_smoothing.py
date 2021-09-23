@@ -25,10 +25,10 @@ import warnings
 import numpy as np
 
 from src.input.NetCDF import read_info
-from src.program.program import Program
+from test.test_case import ProgramTestCase
 
 
-class TestSmoothing(unittest.TestCase):
+class TestSmoothing(ProgramTestCase):
 
     def setUp(self) -> None:
         """
@@ -36,25 +36,12 @@ class TestSmoothing(unittest.TestCase):
 
         Returns: None
         """
-        warnings.simplefilter("ignore", ResourceWarning)
+        super().setUp()
         warnings.simplefilter('ignore', category=DeprecationWarning)
 
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
         # initialize variables
-        self.engine.should_use_threads(False)
         self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
                                            'resources/test_resources/netcdf/test_file_1.nc')
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
 
     def test_smoothing_normal_application(self):
         # load list of polygons

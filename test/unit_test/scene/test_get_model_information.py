@@ -15,41 +15,16 @@
 #
 #  END GPL LICENSE BLOCK
 
-
 import unittest
-import warnings
 
 import numpy as np
 
 from src.error.scene_error import SceneError
 from src.input.NetCDF import read_info
-from src.program.program import Program
+from test.test_case import ProgramTestCase
 
 
-class TestGetModelCoordinates(unittest.TestCase):
-
-    def setUp(self) -> None:
-        """
-        Logic that runs at the beginning o every tests.
-
-        Returns: None
-        """
-        warnings.simplefilter("ignore", ResourceWarning)
-
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
+class TestGetModelCoordinates(ProgramTestCase):
 
     def test_get_model_coordinates_from_window_coordinates(self):
         self.engine.create_model_from_file(self.program.get_cpt_file(),
@@ -124,30 +99,7 @@ class TestGetModelCoordinates(unittest.TestCase):
             np.average([begin_scene_x, end_scene_x]), np.average([begin_scene_y, end_scene_y])))
 
 
-class TestGetModelHeight(unittest.TestCase):
-
-    def setUp(self) -> None:
-        """
-        Logic that runs at the beginning o every tests.
-
-        Returns: None
-        """
-        warnings.simplefilter("ignore", ResourceWarning)
-
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
+class TestGetModelHeight(ProgramTestCase):
 
     def test_get_model_height_from_coordinates(self):
 
@@ -198,30 +150,7 @@ class TestGetModelHeight(unittest.TestCase):
         self.assertEqual(None, self.engine.get_map_height_on_coordinates(0, 0))
 
 
-class TestModelInformationGetters(unittest.TestCase):
-
-    def setUp(self) -> None:
-        """
-        Logic that runs at the beginning o every tests.
-
-        Returns: None
-        """
-        warnings.simplefilter("ignore", ResourceWarning)
-
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
+class TestModelInformationGetters(ProgramTestCase):
 
     def test_get_model_arrays(self):
         self.engine.create_model_from_file(self.program.get_cpt_file(),
@@ -240,17 +169,7 @@ class TestModelInformationGetters(unittest.TestCase):
         self.assertEqual((None, None), self.engine.scene.get_model_coordinates_arrays(self.program.get_active_model()))
 
 
-class TestGetMaxMinHeights(unittest.TestCase):
-
-    def setUp(self) -> None:
-        """Initialize the program and the engine"""
-        self.program = Program()
-        self.engine = self.program.engine
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """Close the program."""
-        self.program.close()
+class TestGetMaxMinHeights(ProgramTestCase):
 
     def test_get_max_min(self):
         scene = self.engine.scene

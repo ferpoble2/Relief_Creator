@@ -18,39 +18,21 @@
 File with tests related to the polygon class.
 """
 import unittest
-import warnings
 
-from src.program.program import Program
+from test.test_case import ProgramTestCase
 
 
-class TestAddPoints(unittest.TestCase):
+class TestAddPoints(ProgramTestCase):
 
     def setUp(self) -> None:
         """
         Method that executes before every test.
         """
-        warnings.simplefilter("ignore", ResourceWarning)
-
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
+        super().setUp()
         self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
                                            'resources/test_resources/netcdf/test_model_2.nc')
 
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
-
     def test_add_points_normal(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         pol_1 = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol_1)
 
@@ -80,8 +62,6 @@ class TestAddPoints(unittest.TestCase):
                           0, 3, 0.5])
 
     def test_repeated_point(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         pol = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol)
         self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 0)
@@ -93,8 +73,6 @@ class TestAddPoints(unittest.TestCase):
                          [0, 0, 0.5])
 
     def test_line_intersection(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         pol = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol)
         self.engine.add_new_vertex_to_active_polygon_using_real_coords(0, 0)
@@ -106,17 +84,9 @@ class TestAddPoints(unittest.TestCase):
                          self.engine.get_points_from_polygon(pol))
 
 
-class TestPlanarity(unittest.TestCase):
+class TestPlanarity(ProgramTestCase):
 
     def test_planarity_polygon(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
         self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
                                            'resources/test_resources/netcdf/test_model_2.nc')
 
@@ -138,40 +108,31 @@ class TestPlanarity(unittest.TestCase):
         self.engine.add_new_vertex_to_active_polygon_using_real_coords(2, -0.5)
         self.assertFalse(self.engine.is_polygon_planar(pol_not_planar))
 
-        self.program.close()
 
-
-class TestUndoAction(unittest.TestCase):
+class TestUndoAction(ProgramTestCase):
 
     def test_undo_point_added(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
-        program = Program()
-        engine = program.engine
-
-        engine.should_use_threads(False)
-        engine.create_model_from_file(
+        self.engine.should_use_threads(False)
+        self.engine.create_model_from_file(
             'resources/test_resources/cpt/colors_0_100_200.cpt',
             'resources/test_resources/netcdf/test_file_1.nc'
         )
 
-        pol_id = engine.create_new_polygon()
+        pol_id = self.engine.create_new_polygon()
 
-        engine.set_active_polygon(pol_id)
-        engine.add_new_vertex_to_active_polygon_using_real_coords(50, 50)
-        engine.add_new_vertex_to_active_polygon_using_real_coords(60, 60)
+        self.engine.set_active_polygon(pol_id)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(50, 50)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(60, 60)
 
         self.assertEqual([50, 50, 0.5, 60, 60, 0.5],
-                         engine.get_points_from_polygon(pol_id),
+                         self.engine.get_points_from_polygon(pol_id),
                          'Polygon does not store points coordinates correctly.')
 
-        program.set_active_tool('create_polygon')
-        engine.undo_action()
+        self.program.set_active_tool('create_polygon')
+        self.engine.undo_action()
         self.assertEqual([50, 50, 0.5],
-                         engine.get_points_from_polygon(pol_id),
+                         self.engine.get_points_from_polygon(pol_id),
                          'Last point of the polygon was not removed correctly.')
-
-        program.close()
 
 
 if __name__ == '__main__':

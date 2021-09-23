@@ -23,35 +23,19 @@ import unittest
 import warnings
 
 from src.input.NetCDF import read_info
-from src.program.program import Program
+from test.test_case import ProgramTestCase
 
 
-class TestContainsFilter(unittest.TestCase):
+class TestContainsFilter(ProgramTestCase):
 
     def setUp(self) -> None:
         """
         Code executed before every test. Initializes a program to work with.
         """
+        super().setUp()
         warnings.simplefilter('ignore', category=DeprecationWarning)
 
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
-
     def test_normal_application_is_not_in(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                            'resources/test_resources/netcdf/test_file_50_50.nc')
 
@@ -81,8 +65,6 @@ class TestContainsFilter(unittest.TestCase):
         os.remove('resources/test_resources/temp/temp_filter_6.nc')
 
     def test_normal_application_is_in(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                            'resources/test_resources/netcdf/test_file_50_50.nc')
 
@@ -113,8 +95,6 @@ class TestContainsFilter(unittest.TestCase):
         os.remove('resources/test_resources/temp/temp_filter_5.nc')
 
     def test_polygon_not_in_map_is_in_filter(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                            'resources/test_resources/netcdf/test_file_50_50.nc')
 
@@ -145,8 +125,6 @@ class TestContainsFilter(unittest.TestCase):
         os.remove('resources/test_resources/temp/temp_is_in_filter_polygon_not_in_map.nc')
 
     def test_polygon_not_in_map_is_not_in_filter(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                            'resources/test_resources/netcdf/test_file_50_50.nc')
 
@@ -178,32 +156,16 @@ class TestContainsFilter(unittest.TestCase):
         os.remove('resources/test_resources/temp/temp_is_in_filter_polygon_not_in_map.nc')
 
 
-class TestHeightGreaterFilter(unittest.TestCase):
+class TestHeightGreaterFilter(ProgramTestCase):
 
     def setUp(self) -> None:
         """
         Code executed before every test. Initializes a program to work with.
         """
+        super().setUp()
         warnings.simplefilter('ignore', category=DeprecationWarning)
 
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
-
     def test_normal_application_less_than(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                            'resources/test_resources/netcdf/test_file_50_50.nc')
 
@@ -233,8 +195,6 @@ class TestHeightGreaterFilter(unittest.TestCase):
         os.remove('resources/test_resources/temp/temp_filter_3.nc')
 
     def test_normal_application_greater_than(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                            'resources/test_resources/netcdf/test_file_50_50.nc')
 
@@ -264,8 +224,6 @@ class TestHeightGreaterFilter(unittest.TestCase):
         os.remove('resources/test_resources/temp/temp_filter_4.nc')
 
     def test_filters_not_in_map(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                            'resources/test_resources/netcdf/test_file_50_50.nc')
 
@@ -297,32 +255,16 @@ class TestHeightGreaterFilter(unittest.TestCase):
         os.remove('resources/test_resources/temp/temp_is_in_filter_polygon_not_in_map.nc')
 
 
-class TestMixedFilters(unittest.TestCase):
+class TestMixedFilters(ProgramTestCase):
 
     def setUp(self) -> None:
         """
         Code executed before every test. Initializes a program to work with.
         """
+        super().setUp()
         warnings.simplefilter('ignore', category=DeprecationWarning)
 
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
-
     def test_non_existent_filter(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
                                            'resources/test_resources/netcdf/test_file_1.nc')
 
@@ -351,8 +293,6 @@ class TestMixedFilters(unittest.TestCase):
                                                   ('is_in', 'Polygon 1')])
 
     def test_height_contain(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
                                            'resources/test_resources/netcdf/test_file_1.nc')
 

@@ -19,6 +19,7 @@
 Module that defines specific TestCases.
 """
 import unittest
+import warnings
 
 from src.program.program import Program
 
@@ -37,6 +38,8 @@ class ProgramTestCase(unittest.TestCase):
 
         Returns: None
         """
+        warnings.simplefilter('ignore', category=ResourceWarning)
+
         self.program = Program()
         self.engine = self.program.engine
         self.engine.should_use_threads(False)

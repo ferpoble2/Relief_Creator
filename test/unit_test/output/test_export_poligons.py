@@ -20,42 +20,24 @@ File with tests related to the export functionality for polygons.
 """
 import os
 import unittest
-import warnings
 
 from src.error.export_error import ExportError
 from src.input.shapefile_importer import ShapefileImporter
 from src.output.shapefile_exporter import ShapefileExporter
-from src.program.program import Program
+from test.test_case import ProgramTestCase
 
 
-class TestExportPolygons(unittest.TestCase):
+class TestExportPolygons(ProgramTestCase):
 
     def setUp(self):
         """
         Method executed before every test.
         """
-        warnings.simplefilter("ignore", ResourceWarning)
-
-        # create program
-        self.program = Program()
-        self.engine = self.program.engine
-
-        # initialize variables
-        self.engine.should_use_threads(False)
+        super().setUp()
         self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
                                            'resources/test_resources/netcdf/test_model_2.nc')
 
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
-
     def test_create_and_export(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         pol = self.engine.create_new_polygon()
         importer = ShapefileImporter()
 
@@ -85,8 +67,6 @@ class TestExportPolygons(unittest.TestCase):
         os.remove('resources/test_resources/temp/test_shapefile_export.shx')
 
     def test_create_and_export_parameters(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         pol = self.engine.create_new_polygon()
 
         self.engine.set_active_polygon(pol)
@@ -125,8 +105,6 @@ class TestExportPolygons(unittest.TestCase):
         os.remove('resources/test_resources/temp/test_shapefile_parameters.shx')
 
     def test_create_and_export_string_parameters(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         pol = self.engine.create_new_polygon()
 
         self.engine.set_active_polygon(pol)
@@ -162,8 +140,6 @@ class TestExportPolygons(unittest.TestCase):
         os.remove('resources/test_resources/temp/test_shapefile_parameters_long_names.shx')
 
     def test_create_and_export_multiple(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         pol_1 = self.engine.create_new_polygon()
         pol_2 = self.engine.create_new_polygon()
         pol_3 = self.engine.create_new_polygon()
