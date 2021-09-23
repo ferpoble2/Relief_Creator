@@ -61,9 +61,11 @@ class TestIsNumeric(unittest.TestCase):
 
 class TestLogger(unittest.TestCase):
 
-    def test_log_only_listed_modules(self):
+    def setUp(self) -> None:
+        """Logic executed before every test."""
         warnings.simplefilter("ignore", ResourceWarning)
 
+    def test_log_only_listed_modules(self):
         log = get_logger(log_level=logging.DEBUG,
                          log_file_level=logging.DEBUG,
                          module='TEST_LOGGER_1',
@@ -127,8 +129,6 @@ class TestLogger(unittest.TestCase):
         os.remove('resources/test_resources/temp/TEST_LOGGER_3.log')
 
     def test_logger_file(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         log = get_logger(log_level=logging.DEBUG,
                          log_file_level=logging.DEBUG,
                          module='TEST_LOGGER',
