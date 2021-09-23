@@ -56,12 +56,12 @@ class TestLoadedModelsList(unittest.TestCase):
         self.assertEqual(['0'], self.engine.get_3d_model_list(), 'First models should be assigned to the ID 0.')
 
         self.engine.create_model_from_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_1)
-        self.engine.run(10, False)
+        self.engine.run(5, False)
         self.engine.create_model_from_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_1)
-        self.engine.run(10, False)
+        self.engine.run(5, False)
         self.engine.create_model_from_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_1)
-        self.engine.run(10, False)
-        self.assertEqual(['0', '1', '2', '3'], self.engine.get_3d_model_list(),
+        self.engine.run(5, False)
+        self.assertEqual(['3'], self.engine.get_3d_model_list(),
                          'The fourth models is not assigned to the ID 3.')
 
     def test_model_list(self):

@@ -664,17 +664,22 @@ class Scene:
         """
         Create a new map3D_model object and add it to the scene.
 
-        Returns: Id of the new map3D_model
+        This method removes all the other 3D models loaded into the scene.
 
         Args:
             model_id: ID of the model to generate the 3D model.
+
+        Returns: Id of the new map3D_model
         """
         if model_id not in self.__3d_model_hash:
             self.reset_camera_values()
             new_model = Map3DModel(self, self.__model_hash[model_id])
             new_model.id = model_id
 
-            # add the model to the hash
+            # Remove all the other models loaded into the scene
+            self.remove_all_3d_models()
+
+            # Add model to the scene
             self.__3d_model_hash[model_id] = new_model
 
     def create_model_from_data_async(self,
