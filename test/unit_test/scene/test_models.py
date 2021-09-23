@@ -16,9 +16,8 @@
 #  END GPL LICENSE BLOCK
 
 import unittest
-import warnings
 
-from src.program.program import Program
+from test.test_case import ProgramTestCase
 
 COLOR_FILE_LOCATION = 'resources/test_resources/cpt/colors_0_100_200.cpt'
 PATH_TO_MODEL_1 = 'resources/test_resources/netcdf/test_file_1.nc'
@@ -27,26 +26,9 @@ PATH_TO_MODEL_3 = 'resources/test_resources/netcdf/test_file_3.nc'
 PATH_TO_MODEL_4 = 'resources/test_resources/netcdf/test_file_4.nc'
 
 
-class TestLoadedModelsList(unittest.TestCase):
-
-    def setUp(self) -> None:
-        """
-        Initialize variables for the testing. Code is executed before every test.
-        """
-        self.program = Program()
-        self.engine = self.program.engine
-        self.engine.should_use_threads(False)
-
-    def tearDown(self) -> None:
-        """
-        Delete all temporary files created by the program on the setup or testing processes.
-
-        Returns: None
-        """
-        self.program.close()
+class TestLoadedModelsList(ProgramTestCase):
 
     def test_3d_model_list(self):
-        warnings.simplefilter("ignore", ResourceWarning)
         self.program.set_view_mode_3D()
 
         self.assertEqual([], self.engine.get_3d_model_list(), 'List of models is not empty.')
@@ -65,8 +47,6 @@ class TestLoadedModelsList(unittest.TestCase):
                          'The fourth models is not assigned to the ID 3.')
 
     def test_model_list(self):
-        warnings.simplefilter("ignore", ResourceWarning)
-
         self.assertEqual([], self.engine.get_model_list(), 'List of models is not empty.')
 
         self.engine.create_model_from_file(COLOR_FILE_LOCATION, PATH_TO_MODEL_3)
