@@ -7,7 +7,7 @@ venv/
 dist/
 build/
 .idea/
-output/
+/output/
 
 # Specific files
 *.log
