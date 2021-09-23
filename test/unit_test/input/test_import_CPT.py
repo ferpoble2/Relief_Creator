@@ -27,9 +27,11 @@ from src.input.CTP import read_file
 
 class TestReadCPTFile(unittest.TestCase):
 
-    def test_reading_normal_files(self):
+    def setUp(self) -> None:
+        """Logic executed before every test."""
         warnings.simplefilter("ignore", ResourceWarning)
 
+    def test_reading_normal_files(self):
         with open('resources/test_resources/expected_data/json_data/test_data_CPT_1.json') as f:
             data_1 = json.load(f)
             data_read = read_file('resources/test_resources/cpt/cpt_1.cpt')
