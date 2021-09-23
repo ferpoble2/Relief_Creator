@@ -208,11 +208,6 @@ class Map3DModel(MapModel):
 
         Returns: None
         """
-
-        # update the variables
-        self.__view = self.scene.get_camera_view_matrix()
-
-        # draw
         super().draw()
 
     def get_normalization_height_factor(self) -> float:
