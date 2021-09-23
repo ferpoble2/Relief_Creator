@@ -9,10 +9,6 @@ build/
 .idea/
 output/
 
-# Exceptions
-!src/output
-!test/output
-
 # Specific files
 *.log
 /src/imgui.ini
