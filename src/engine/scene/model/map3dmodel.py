@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from src.engine.scene.scene import Scene
     from src.engine.scene.model.map2dmodel import Map2DModel
 
-log = get_logger(module='MAP3DMODEL')
+log = get_logger(module='MAP3D_MODEL')
 
 
 class Map3DModel(MapModel):
