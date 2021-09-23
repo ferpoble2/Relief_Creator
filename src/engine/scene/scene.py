@@ -662,9 +662,9 @@ class Scene:
     def create_3D_model_if_not_exists(self,
                                       model_id: str) -> None:
         """
-        Create a new map3Dmodel object and add it to the scene.
+        Create a new map3D_model object and add it to the scene.
 
-        Returns: Id of the new map3Dmodel
+        Returns: Id of the new map3D_model
 
         Args:
             model_id: ID of the model to generate the 3D model.
@@ -1015,11 +1015,11 @@ class Scene:
         model = self.__3d_model_hash[model_3d_id]
         return model.get_normalization_height_factor()
 
-    def get_map2dmodel_vertices_array(self, model_id: str) -> np.ndarray:
+    def get_map2d_model_vertices_array(self, model_id: str) -> np.ndarray:
         """
         Get the array of vertices of the specified model.
 
-        Id model is not map2dmodel then TypeError exception is raised.
+        Id model is not map2d_model then TypeError exception is raised.
 
         Args:
             model_id: ID of the model.

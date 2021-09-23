@@ -708,7 +708,7 @@ class Engine:
                 directory_file += '.nc'
 
             # Ask the scene for information of the model
-            vertices = self.scene.get_map2dmodel_vertices_array(model_id)
+            vertices = self.scene.get_map2d_model_vertices_array(model_id)
 
             # Check if the temporary file exists, if it exists then store the new data on the file,
             # otherwise, show an error message.

@@ -35,7 +35,7 @@
                 + get_camera_view_matrix(): array
                 + get_extra_reload_proportion_setting(): float
                 + get_height_normalization_factor(model_3d_id): float
-                + get_map2dmodel_vertices_array(model_id): array
+                + get_map2d_model_vertices_array(model_id): array
                 + get_model_coordinates_arrays(model_id): (array, array)
                 + get_model_height_on_coordinates(x_coordinate, y_coordinate, model_id): float
                 + get_model_information(): dict
