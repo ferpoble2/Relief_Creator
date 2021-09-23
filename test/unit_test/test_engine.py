@@ -25,7 +25,7 @@ import unittest
 from src.utils import dict_to_serializable_dict, json_to_dict
 from test.test_case import ProgramTestCase
 
-THREAD_ATTEMPT_TIMES = [0.1, 1, 3, 10, 20, 30]
+THREAD_ATTEMPT_TIMES = [0.1, 1, 3, 10, 20, 30, 40, 50, 60]
 
 
 class TestViewMode(ProgramTestCase):
@@ -146,7 +146,6 @@ class TestSetThreadTask(ProgramTestCase):
                 break
 
     def test_set_thread_task_return_value(self):
-
         self.engine.should_use_threads(True)
 
         def sleep_then_return_50(time_to_sleep):
@@ -155,7 +154,6 @@ class TestSetThreadTask(ProgramTestCase):
             return 50
 
         return_value = []
-
         for task_sleep_time in THREAD_ATTEMPT_TIMES:
 
             try:
@@ -176,7 +174,7 @@ class TestSetThreadTask(ProgramTestCase):
                                  "Returned value from the thread was not stored in the list.")
 
             # Continue if there is more values to try, raise the exception if there is no more values.
-            except AssertionError as e:
+            except (AssertionError, IndexError) as e:
                 if task_sleep_time == THREAD_ATTEMPT_TIMES[-1]:
                     raise e
                 else:
