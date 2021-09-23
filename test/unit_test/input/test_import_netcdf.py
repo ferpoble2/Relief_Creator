@@ -97,7 +97,6 @@ class TestImportNetcdfFile(unittest.TestCase):
         np.testing.assert_array_almost_equal(z, z_array, 3)
 
     def test_read_info_errors(self):
-
         # Test files with Y and Z data but not all the X data
         with self.assertRaises(NetCDFImportError):
             read_info('resources/test_resources/netcdf/files_without_data/y_z_data_no_x_range.nc')
