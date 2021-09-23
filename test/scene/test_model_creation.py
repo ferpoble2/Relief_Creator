@@ -32,6 +32,8 @@ from src.program.program import Program
 class TestCreateModelFromExistent(unittest.TestCase):
 
     def test_creation_model(self):
+        warnings.simplefilter("ignore", ResourceWarning)
+
         program = Program()
         engine = program.engine
         engine.should_use_threads(False)
