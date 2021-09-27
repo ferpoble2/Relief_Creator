@@ -65,16 +65,19 @@ class MapTools:
         # Render maps names
         # -----------------
         model_name_dict = self.__gui_manager.get_model_names_dict()
-        active_model = self.__gui_manager.get_active_model_id()
+        active_model_id = self.__gui_manager.get_active_model_id()
 
         for key, value in model_name_dict.items():
 
-            self.__gui_manager.set_bold_font() if key == active_model else None
-            imgui.text(value)
-            self.__gui_manager.set_regular_font() if key == active_model else None
-
+            # Render the checkbox for the model
+            clicked, current_state = imgui.checkbox(value,
+                                                    True if active_model_id == key else False)
             if imgui.is_item_clicked(1):
                 imgui.open_popup(f'popup_model_{key}')
+
+            # Set the model as active if checkbox is clicked
+            if clicked:
+                self.__gui_manager.set_active_model(key)
 
         # Set the logic for the popups
         # ----------------------------
@@ -94,13 +97,6 @@ class MapTools:
         for model_id in model_id_list:
             if imgui.begin_popup(f'popup_model_{model_id}'):
                 imgui.text("Select an action")
-                imgui.separator()
-
-                # Set model as active
-                # -------------------
-                imgui.selectable("Set model as active")
-                if imgui.is_item_clicked():
-                    self.__gui_manager.set_active_model(model_id)
                 imgui.separator()
 
                 # Create a new model
