@@ -11,14 +11,13 @@ package Internal_Package {
 }
 !endsub
 
-!if (%false())
-    !startsub EXTERNAL
-        EXTERNAL_CLASS o--o INTERNAL_CLASS
-    !endsub
-!endif
+!startsub EXTERNAL
+    EXTERNAL_CLASS o--o INTERNAL_CLASS
+!endsub
+
 
 ' Code that will affect only the current diagram
 ' can be messy since it will not be imported
-PACKAGE1.PACKAGE2.EXTERNAL_CLASS o--o INTERNAL_CLASS
+hide members
 
 @enduml
