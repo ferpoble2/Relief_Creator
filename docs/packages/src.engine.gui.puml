@@ -1,41 +1,27 @@
 @startuml
 
 !startsub INTERNAL
-package GUI{
-    class GUIManager
-    class Icon
-    class PolygonFolder
-    class PolygonFolderManager
+package src.engine.gui{
+    class src.engine.gui.GUIManager
+    class src.engine.gui.Icon
+    class src.engine.gui.PolygonFolder
+    class src.engine.gui.PolygonFolderManager
 
     !includesub src.engine.gui.frames.puml!INTERNAL
 }
 
-PolygonFolderManager o-- PolygonFolder
-GUIManager o-- PolygonFolderManager
-GUIManager o-- Icon
-GUIManager o--o Frame
-
+src.engine.gui.PolygonFolderManager o-- src.engine.gui.PolygonFolder
+src.engine.gui.GUIManager o-- src.engine.gui.PolygonFolderManager
+src.engine.gui.GUIManager o-- src.engine.gui.Icon
 !endsub
 
-!if (%false())
-    !startsub EXTERNAL
-        GUIManager o--o Engine
-        PolygonFolderManager .> PolygonFolderNotFoundError
-    !endsub
-!endif
+!startsub EXTERNAL
+    !includesub src.engine.gui.frames.puml!EXTERNAL
 
+    src.engine.gui.GUIManager o--o src.engine.Engine
+    src.engine.gui.PolygonFolderManager .> src.error.PolygonFolderNotFoundError
+!endsub
 
-' Code that will affect only the current diagram
-' can be messy since will not be imported
-left to right direction
 hide members
-hide src.error
-
-GUIManager o--o src.engine.Engine
-PolygonFolderManager .> src.error.PolygonFolderNotFoundError
-
-' hide members to make the diagram more legible
-hide members
-
 
 @enduml

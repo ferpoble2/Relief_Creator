@@ -1,6 +1,6 @@
 @startuml
 !$file = "(F,#ff75ff) File"
-class NetCDF  <<$file>>{
+class src.input.NetCDF  <<$file>>{
     + read_info(filename): array, array, array
     + get_variables_from_grp(grp, key_values): list
     + get_height_list_from_file(root_grp): list

@@ -6,43 +6,41 @@
 
 !startsub INTERNAL
 
-package model {
-        class Model
-        class Points
-        class Map3DModel
-        class Map2DModel
-        class Lines
-        class Polygon
-        class DashedLines
-        class Plane
+package src.engine.scene.model {
+        class src.engine.scene.model.Model
+        class src.engine.scene.model.Points
+        class src.engine.scene.model.Map3DModel
+        class src.engine.scene.model.Map2DModel
+        class src.engine.scene.model.Lines
+        class src.engine.scene.model.Polygon
+        class src.engine.scene.model.DashedLines
+        class src.engine.scene.model.Plane
     }
 
-Map2DModel -u-|> Model
-Map3DModel -u-|> Model
-Polygon -u-|> Model
-Points -u-|> Model
-Lines -u-|> Model
-Plane -u-|> Model
-DashedLines -u-|> Lines
-Points --o Polygon
-Lines --o Polygon
-DashedLines -r--o Polygon
+src.engine.scene.model.Map2DModel -u-|> src.engine.scene.model.Model
+src.engine.scene.model.Map3DModel -u-|> src.engine.scene.model.Model
+src.engine.scene.model.Polygon -u-|> src.engine.scene.model.Model
+src.engine.scene.model.Points -u-|> src.engine.scene.model.Model
+src.engine.scene.model.Lines -u-|> src.engine.scene.model.Model
+src.engine.scene.model.Plane -u-|> src.engine.scene.model.Model
+src.engine.scene.model.DashedLines -u-|> src.engine.scene.model.Lines
+src.engine.scene.model.Points --o src.engine.scene.model.Polygon
+src.engine.scene.model.Lines --o src.engine.scene.model.Polygon
+src.engine.scene.model.DashedLines -r--o src.engine.scene.model.Polygon
 
 !endsub
 
-!if (%false())
-    !startsub EXTERNAL
-        Model o--o Scene
-        Map2DModel .> CTP
-        Map2DModel .> decimation
-    !endsub
-!endif
+
+!startsub EXTERNAL
+    src.engine.scene.model.Model o-u--o src.engine.scene.Scene
+    src.engine.scene.model.Map2DModel -u..> src.input.CTP
+    src.engine.scene.model.Map3DModel -u..> src.engine.scene.UnitConverter
+!endsub
+
 
 ' Code that will affect only the current diagram
 ' can be messy since will not be imported
 hide members
-Model o--o src.engine.scene.Scene
-Map2DModel .> src.input.CTP
 
 
 @enduml

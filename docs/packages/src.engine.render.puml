@@ -6,19 +6,18 @@
 
 !startsub INTERNAL
 
-package render {
-    class Render
+package src.engine.render {
+    class src.engine.render.Render
 }
 !endsub
 
-!if (%false())
-    !startsub EXTERNAL
-        Render o--o Engine
-    !endsub
-!endif
+!startsub EXTERNAL
+    src.engine.render.Render o--o src.engine.Engine
+!endsub
+
 
 ' Code that will affect only the current diagram
 ' can be messy since will not be imported
-Render o--o src.engine.Engine
+hide members
 
 @enduml

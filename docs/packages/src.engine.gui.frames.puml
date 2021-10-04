@@ -1,40 +1,36 @@
 @startuml
 
 !startsub INTERNAL
-package frames {
-    class Frame
+package src.engine.gui.frames {
     !includesub src.engine.gui.frames.tools.puml!INTERNAL
-    class MainMenuBar
-    class Debug
-    class Loading
-    class TestWindow
-    class TextModal
-    class PolygonInformation
-    class ConfirmationModal
-    class Tools_3D
-    class MouseCoordinates
+    class src.engine.gui.frames.Frame
+    class src.engine.gui.frames.MainMenuBar
+    class src.engine.gui.frames.Debug
+    class src.engine.gui.frames.Loading
+    class src.engine.gui.frames.TestWindow
+    class src.engine.gui.frames.TextModal
+    class src.engine.gui.frames.PolygonInformation
+    class src.engine.gui.frames.ConfirmationModal
+    class src.engine.gui.frames.Tools_3D
+    class src.engine.gui.frames.MouseCoordinates
 }
 
-    Tools_3D -u-|> Frame
-    Debug -u-|> Frame
-    Loading -u-|> Frame
-    MainMenuBar -u-|> Frame
-    TestWindow -u-|> Frame
-    TextModal -u-|> Frame
-    PolygonInformation -u-|> Frame
-    Tools -u-|> Frame
-    ConfirmationModal -u-|> Frame
-    MouseCoordinates -u-|> Frame
+src.engine.gui.frames.Tools_3D -u-|> src.engine.gui.frames.Frame
+src.engine.gui.frames.Debug -u-|> src.engine.gui.frames.Frame
+src.engine.gui.frames.Loading -u-|> src.engine.gui.frames.Frame
+src.engine.gui.frames.MainMenuBar -u-|> src.engine.gui.frames.Frame
+src.engine.gui.frames.TestWindow -u-|> src.engine.gui.frames.Frame
+src.engine.gui.frames.TextModal -u-|> src.engine.gui.frames.Frame
+src.engine.gui.frames.PolygonInformation -u-|> src.engine.gui.frames.Frame
+src.engine.gui.frames.Tools -u-|> src.engine.gui.frames.Frame
+src.engine.gui.frames.ConfirmationModal -u-|> src.engine.gui.frames.Frame
+src.engine.gui.frames.MouseCoordinates -u-|> src.engine.gui.frames.Frame
 !endsub
 
-
-
-!if (%false())
-    !startsub EXTERNAL
-
-    !endsub
-!endif
-
+!startsub EXTERNAL
+    !includesub src.engine.gui.frames.tools.puml!EXTERNAL
+    src.engine.gui.GUIManager o--o src.engine.gui.frames.Frame
+!endsub
 
 hide members
 

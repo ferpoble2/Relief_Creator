@@ -5,34 +5,28 @@
 ' a sub part called EXTERNAL with the external parts.
 
 !startsub INTERNAL
-package scene {
-    class Scene
-    class TransformationHelper
-    class UnitConverter
+package src.engine.scene {
+    class src.engine.scene.Scene
+    class src.engine.scene.TransformationHelper
+    class src.engine.scene.UnitConverter
+
     !includesub src.engine.scene.model.puml!INTERNAL
 }
 
-Scene o--o Model
-Scene .> TransformationHelper
-Map3DModel .> UnitConverter
+src.engine.scene.Scene .> src.engine.scene.TransformationHelper
 !endsub
 
-!if (%false())
-    !startsub EXTERNAL
-        Scene o--o Engine
-        Scene .> NonExistentPolygonError
-        Scene .> SceneError
-    !endsub
-!endif
+
+!startsub EXTERNAL
+    !includesub src.engine.scene.model.puml!EXTERNAL
+
+    src.engine.scene.Scene o-u--o src.engine.Engine
+    src.engine.scene.Scene ..> src.error.SceneError
+!endsub
+
 
 ' Code that will affect only the current diagram
 ' can be messy since will not be imported
 hide members
-hide src.error
-src.engine.Engine o--o Scene
-Scene -d.> src.error.NonExistentPolygonError
-Scene -d.> src.error.SceneError
-
-left to right direction
 
 @enduml
