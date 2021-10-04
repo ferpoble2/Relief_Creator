@@ -23,6 +23,7 @@ from typing import TYPE_CHECKING
 
 import imgui
 
+from src.program.tools import Tools
 from src.utils import get_logger
 
 if TYPE_CHECKING:
@@ -186,7 +187,7 @@ class PolygonTools:
         """
         # change the tool to create polygon
         # ---------------------------------
-        self.__GUI_manager.set_active_tool('create_polygon')
+        self.__GUI_manager.set_active_tool(Tools.create_polygon)
 
         # create the polygon and add it to a folder
         # -----------------------------------------
@@ -407,7 +408,7 @@ class PolygonTools:
                             self.__GUI_manager.set_active_tool(None)
                         else:
                             self.__GUI_manager.set_active_polygon(polygon_id)
-                            self.__GUI_manager.set_active_tool('create_polygon')
+                            self.__GUI_manager.set_active_tool(Tools.create_polygon)
 
     def __polygon_action_logic(self, active_polygon, polygon_id, polygon_folder_id) -> None:
         """

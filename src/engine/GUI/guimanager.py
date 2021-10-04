@@ -52,6 +52,7 @@ from src.utils import get_logger
 if TYPE_CHECKING:
     from src.engine.engine import Engine
     from glfw import _GLFWwindow
+    from src.program.tools import Tools
 
 # noinspection SpellCheckingInspection
 log = get_logger(module='GUIMANAGER')
@@ -615,7 +616,7 @@ class GUIManager:
         """
         return self.__engine.get_active_polygon_id()
 
-    def get_active_tool(self) -> str:
+    def get_active_tool(self) -> Union[Tools, None]:
         """
         Get the active tool being used in the program.
 
@@ -1289,7 +1290,7 @@ class GUIManager:
         """
         self.__engine.set_active_polygon(polygon_id)
 
-    def set_active_tool(self, tool: Union[str, None]) -> None:
+    def set_active_tool(self, tool: Union[Tools, None]) -> None:
         """
         Set the active tool on the engine.
 

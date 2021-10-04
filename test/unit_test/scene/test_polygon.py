@@ -19,6 +19,7 @@ File with tests related to the polygon class.
 """
 import unittest
 
+from src.program.tools import Tools
 from test.test_case import ProgramTestCase
 
 
@@ -128,7 +129,7 @@ class TestUndoAction(ProgramTestCase):
                          self.engine.get_points_from_polygon(pol_id),
                          'Polygon does not store points coordinates correctly.')
 
-        self.program.set_active_tool('create_polygon')
+        self.program.set_active_tool(Tools.create_polygon)
         self.engine.undo_action()
         self.assertEqual([50, 50, 0.5],
                          self.engine.get_points_from_polygon(pol_id),

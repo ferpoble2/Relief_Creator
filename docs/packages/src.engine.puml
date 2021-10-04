@@ -19,10 +19,7 @@
         class src.engine.TaskManager
     }
 
-    src.engine.Engine o--o src.engine.scene.Scene
     src.engine.Engine o-- src.engine.controller.Controller
-    src.engine.Engine o-- src.engine.render.Render
-    src.engine.Engine o--o src.engine.gui.GUIManager
     src.engine.Engine -u.> src.engine.Settings
     src.engine.ProcessManager --o src.engine.Engine
     src.engine.ThreadManager --o src.engine.Engine
@@ -41,6 +38,7 @@
     src.engine.Engine ..> src.input.ShapefileImporter
     src.engine.Engine ..> src.input.NetCDF
     src.engine.Engine ..> src.output.NetcdfExporter
+    src.engine.Engine ..> src.program.Tools
 !endsub
 
 ' Code that will affect only the current diagramde

@@ -18,7 +18,6 @@
 """
 Sample frame for the application GUI.
 """
-
 from typing import TYPE_CHECKING
 
 import imgui
@@ -28,6 +27,7 @@ from src.engine.GUI.frames.tools.interpolation_tools import InterpolationTools
 from src.engine.GUI.frames.tools.map_tools import MapTools
 from src.engine.GUI.frames.tools.polygon_tools import PolygonTools
 from src.engine.GUI.frames.tools.relief_tools import ReliefTools
+from src.program.tools import Tools as ProgramTools
 from src.utils import get_logger
 
 if TYPE_CHECKING:
@@ -53,8 +53,8 @@ class Tools(Frame):
         self.__slide_bar_quality = self._GUI_manager.get_quality()
 
         self.__tools_names_dict = {
-            'move_map': 'Move Map',
-            'create_polygon': 'Create Polygon'
+            ProgramTools.move_map: 'Move Map',
+            ProgramTools.create_polygon: 'Create Polygon'
         }
 
         # Generate the objects in charge of rendering the information of the different tools
@@ -97,7 +97,7 @@ class Tools(Frame):
         if imgui.button("Move Map", -1):
             log.debug("Pressed button Move Map")
             log.debug("-----------------------")
-            self._GUI_manager.set_active_tool('move_map')
+            self._GUI_manager.set_active_tool(ProgramTools.move_map)
 
         if imgui.button("Reload Map", -1):
             log.debug("Pressed Reload map with zoom button")

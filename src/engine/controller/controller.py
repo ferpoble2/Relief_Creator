@@ -29,6 +29,7 @@ from typing import Callable, Dict, TYPE_CHECKING
 
 import glfw
 
+from src.program.tools import Tools
 from src.utils import get_logger
 
 if TYPE_CHECKING:
@@ -145,7 +146,7 @@ class Controller:
 
             if engine.get_program_view_mode() == '2D':
 
-                if active_tool == 'move_map' and self.__move_map_tool_activated:
+                if active_tool == Tools.move_map and self.__move_map_tool_activated:
                     if self.__is_left_mouse_being_pressed:
                         engine.move_map_position(x_pos - self.__mouse_old_pos[0],
                                                  self.__mouse_old_pos[1] - y_pos)
@@ -199,10 +200,10 @@ class Controller:
                     if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
                         active_tool = engine.get_active_tool()
 
-                        if active_tool == 'move_map':
+                        if active_tool == Tools.move_map:
                             self.__move_map_tool_activated = True
 
-                        if active_tool == 'create_polygon':
+                        if active_tool == Tools.create_polygon:
                             pos_x, pos_y = glfw.get_cursor_pos(window)
 
                             if self.__is_inside_scene(pos_x, pos_y, engine.get_scene_setting_data(),
@@ -214,7 +215,7 @@ class Controller:
                     if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.RELEASE:
                         active_tool = engine.get_active_tool()
 
-                        if active_tool == 'move_map':
+                        if active_tool == Tools.move_map:
                             self.__move_map_tool_activated = False
 
                 elif engine.get_program_view_mode() == '3D':
@@ -378,7 +379,7 @@ class Controller:
                         # -------------------------
                         if key == glfw.KEY_M:
                             log.debug("Pressed shortcut to move map")
-                            engine.set_active_tool('move_map')
+                            engine.set_active_tool(Tools.move_map)
 
                         if key == glfw.KEY_Z:
                             if self.__is_left_ctrl_pressed:

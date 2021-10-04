@@ -8,7 +8,7 @@ package src.engine.controller {
 
 !startsub EXTERNAL
     src.engine.controller.Controller --> src.utils
-    src.engine.controller.Controller --> src.program.Tools
+    src.engine.controller.Controller .> src.program.Tools
 !endsub
 
 hide members

@@ -16,7 +16,9 @@
 # END GPL LICENSE BLOCK
 
 """
-File that contains the main class of the program.
+Module that contains the main class of the program.
+
+Also contains the Enumeration classes for the Tools accepted by the program and the view modes.
 """
 import os
 import shutil
@@ -26,15 +28,13 @@ from typing import TYPE_CHECKING, Union
 import easygui
 
 from src.engine.engine import Engine
+from src.program.tools import Tools
 from src.utils import get_logger
 
 if TYPE_CHECKING:
     import argparse
 
 log = get_logger(module='PROGRAM')
-
-# List of all possible tools that can be active in the program.
-TOOL_LIST = ['move_map', 'create_polygon']
 
 
 class Program:
@@ -171,7 +171,7 @@ class Program:
         """
         return self.__debug_mode
 
-    def get_active_tool(self) -> str:
+    def get_active_tool(self) -> Union[Tools, None]:
         """
         Return the active tool being used in the program.
 
@@ -390,15 +390,9 @@ class Program:
         """
         self.__active_polygon = polygon_id
 
-    def set_active_tool(self, new_tool: Union[str, None]) -> None:
+    def set_active_tool(self, new_tool: Union[Tools, None]) -> None:
         """
         Set the active tool in the program.
-
-        The tools selected can be the following:
-            - move_map
-            - create_polygon
-
-        Any other tool will raise a KeyError.
 
         To make the program does not use any tool, use None as the new_tool parameter.
 
@@ -407,8 +401,9 @@ class Program:
 
         Returns: None
         """
-        if new_tool is not None and new_tool not in TOOL_LIST:
-            raise KeyError('Tool does not exists.')
+        tools_values = set(item.value for item in Tools)
+        if new_tool is not None and type(new_tool) != Tools:
+            raise KeyError('Tool value not in the Enum of tools accepted by the program.')
 
         self.__active_tool = new_tool
 

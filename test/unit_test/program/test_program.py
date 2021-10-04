@@ -23,7 +23,7 @@ import sys
 import unittest
 
 from src.program.parser import get_command_line_arguments
-from src.program.program import Program
+from src.program.program import Program, Tools
 from test.test_case import ProgramTestCase
 
 
@@ -91,11 +91,11 @@ class TestActiveToolParameters(ProgramTestCase):
         self.assertEqual(None, self.program.get_active_tool())
 
         # Test all the tools in the program
-        self.program.set_active_tool('move_map')
-        self.assertEqual('move_map', self.program.get_active_tool())
+        self.program.set_active_tool(Tools.move_map)
+        self.assertEqual(Tools.move_map, self.program.get_active_tool())
 
-        self.program.set_active_tool('create_polygon')
-        self.assertEqual('create_polygon', self.program.get_active_tool())
+        self.program.set_active_tool(Tools.create_polygon)
+        self.assertEqual(Tools.create_polygon, self.program.get_active_tool())
 
         # Test exception raised
         with self.assertRaises(KeyError):

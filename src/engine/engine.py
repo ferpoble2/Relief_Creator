@@ -43,6 +43,7 @@ from src.input.NetCDF import read_info
 from src.input.shapefile_importer import ShapefileImporter
 from src.output.netcdf_exporter import NetcdfExporter
 from src.output.shapefile_exporter import ShapefileExporter
+from src.program.tools import Tools
 from src.utils import get_logger
 
 if TYPE_CHECKING:
@@ -850,7 +851,7 @@ class Engine:
         """
         return self.program.get_active_polygon_id()
 
-    def get_active_tool(self) -> str:
+    def get_active_tool(self) -> Union['Tools', None]:
         """
         Get the active tool in the program.
 
@@ -1559,7 +1560,7 @@ class Engine:
         """
         self.program.set_active_polygon(polygon_id)
 
-    def set_active_tool(self, tool: Union[str, None]) -> None:
+    def set_active_tool(self, tool: Union['Tools', None]) -> None:
         """
         Set the active tool in the program.
 
@@ -1853,7 +1854,7 @@ class Engine:
         """
         active_tool = self.get_active_tool()
 
-        if active_tool == 'create_polygon':
+        if active_tool == Tools.create_polygon:
             log.debug('Undoing actions for tool create_polygon.')
 
             # Ask for the active polygon and call the scene to remove the last added point
