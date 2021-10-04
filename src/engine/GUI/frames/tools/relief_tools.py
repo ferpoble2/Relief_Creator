@@ -96,19 +96,20 @@ class ReliefTools:
         self.__max_height_value = 0
         self.__min_height_value = 0
 
-        self.__polygon_data = {}
+        self.__polygon_data: Dict[str, Dict[str, Union[str, float]]] = {}
 
         # filter data
         # options available. The filter IDs represent their index on this list.
         self.__filter_name_list: List[str] = ['Height <=', 'Height >= ', 'Is is ', 'Is not in ']
         self.__filters: List[Filter] = []  # filters to apply on the polygon if the interpolation is triggered
 
-        # auxiliary variables
-
-        # Variable that stores the values of the minimum and maximum height inside a polygon.
-        # The values are [None, None] if there is nothing being calculated, ['waiting', 'waiting'] when the values
-        # are being calculated, and [int, int] once the values are calculated.
-        self.__max_min_data = [None, None]
+        # Auxiliary variables
+        # ------------------
+        # Variable used to store the maximum and minimum height values calculated of the points inside the selected
+        # polygon.
+        self.__max_min_data_values: List[float] = [0, 0]
+        # Variable used to store the values returned by the asynchronous method calculate_max_min_height.
+        self.__return_array_values: Union[float, None] = [None, None]
 
     def __get_filters_dictionary_list(self) -> list:
         """
@@ -123,58 +124,6 @@ class ReliefTools:
             filter_dictionary_list.append(filter_obj.get_filter_tuple())
 
         return filter_dictionary_list
-
-    def filter_menu(self):
-        """
-        Method with the logic to render the filter menu.
-
-        Returns: None
-        """
-
-        # variable to store if it is necessary to delete a filter
-        filter_to_remove = None
-
-        self.__gui_manager.set_tool_sub_title_font()
-        imgui.text_wrapped('Filters')
-        self.__gui_manager.set_regular_font()
-
-        # render the filters on the GUI
-        for filter_ind in range(len(self.__filters)):
-            filter_obj = self.__filters[filter_ind]
-
-            # push the ID since the elements of the filter will all have the same ID
-            imgui.push_id(f"relief_tools_filter_{filter_ind}")
-
-            # Selection of the filter
-            _, filter_obj.selected_type = imgui.combo('Filter',
-                                                      filter_obj.selected_type,
-                                                      self.__filter_name_list)
-
-            # Selection of the argument for the filter.
-            # this vary depending on the filter selected
-            # ------------------------------------------
-
-            # height <= or height >=
-            if filter_obj.selected_type == 0 or filter_obj.selected_type == 1:
-                self.__render_input_value_height_filters(filter_obj)
-
-            # is in or is not in
-            elif filter_obj.selected_type == 2 or filter_obj.selected_type == 3:
-                self.__render_input_value_polygon_filters(filter_obj)
-
-            # button to remove the filter
-            if imgui.button('Remove Filter'):
-                filter_to_remove = filter_obj
-
-            imgui.pop_id()
-
-        # remove the filter if the button to remove was pressed
-        if filter_to_remove is not None:
-            self.__filters.remove(filter_to_remove)
-
-        # button to add more filters
-        if imgui.button('Add Filter', -1):
-            self.__filters.append(Filter(0, 0))
 
     def __render_input_value_polygon_filters(self, filter_obj: Filter):
         """
@@ -234,26 +183,108 @@ class ReliefTools:
         active_polygon_id = self.__gui_manager.get_active_polygon_id()
         active_model_id = self.__gui_manager.get_active_model_id()
 
-        if active_polygon_id not in self.__polygon_data:
-            self.__polygon_data[active_polygon_id] = {
-                'max_height': None,
-                'min_height': None
-            }
-
-        # Update the values of the minimum and maximum height if they were calculated.
-        if self.__max_min_data != [None, None] and self.__max_min_data != ['waiting', 'waiting']:
-            self.__polygon_data[active_polygon_id]['max_height'] = max(self.__max_min_data)
-            self.__polygon_data[active_polygon_id]['min_height'] = min(self.__max_min_data)
-            self.__max_min_data = [None, None]
-
         self.__gui_manager.set_tool_title_font()
         imgui.text('Relief Tools')
         self.__gui_manager.set_regular_font()
 
+        # Current Height Information
+        # --------------------------
+        self.current_height_information(active_model_id, active_polygon_id)
+
+        # Filter Logic
+        # ------------
+        self.filter_menu()
+
+        # Transformation Menu
+        # -------------------
+        self.transformation_menu(active_model_id, active_polygon_id)
+
+    def filter_menu(self):
+        """
+        Method with the logic to render the filter menu.
+
+        Returns: None
+        """
+
+        # variable to store if it is necessary to delete a filter
+        filter_to_remove = None
+
+        self.__gui_manager.set_tool_sub_title_font()
+        imgui.text_wrapped('Filters')
+        self.__gui_manager.set_regular_font()
+
+        # render the filters on the GUI
+        for filter_ind in range(len(self.__filters)):
+            filter_obj = self.__filters[filter_ind]
+
+            # push the ID since the elements of the filter will all have the same ID
+            imgui.push_id(f"relief_tools_filter_{filter_ind}")
+
+            # Selection of the filter
+            _, filter_obj.selected_type = imgui.combo('Filter',
+                                                      filter_obj.selected_type,
+                                                      self.__filter_name_list)
+
+            # Selection of the argument for the filter.
+            # this vary depending on the filter selected
+            # ------------------------------------------
+
+            # height <= or height >=
+            if filter_obj.selected_type == 0 or filter_obj.selected_type == 1:
+                self.__render_input_value_height_filters(filter_obj)
+
+            # is in or is not in
+            elif filter_obj.selected_type == 2 or filter_obj.selected_type == 3:
+                self.__render_input_value_polygon_filters(filter_obj)
+
+            # button to remove the filter
+            if imgui.button('Remove Filter'):
+                filter_to_remove = filter_obj
+
+            imgui.pop_id()
+
+        # remove the filter if the button to remove was pressed
+        if filter_to_remove is not None:
+            self.__filters.remove(filter_to_remove)
+
+        # button to add more filters
+        if imgui.button('Add Filter', -1):
+            self.__filters.append(Filter(0, 0))
+
+    def current_height_information(self, active_model_id, active_polygon_id) -> None:
+        """
+        Render the current maximum and minimum height of the points inside the active polygon.
+
+        Args:
+            active_model_id: ID of the active model.
+            active_polygon_id: ID of the active polygon.
+
+        Returns: None
+        """
+
+        # Create the value in the dictionary of values if it does not exists
+        # ------------------------------------------------------------------
+        if active_polygon_id not in self.__polygon_data:
+            self.__polygon_data[active_polygon_id] = {
+                'max_height': 'Not Calculated',
+                'min_height': 'Not Calculated'
+            }
+
+        # Update the values of the minimum and maximum height if they were calculated
+        # ---------------------------------------------------------------------------
+        if self.__return_array_values != [None, None]:
+            self.__max_min_data_values[:] = self.__return_array_values[:]
+
+            self.__polygon_data[active_polygon_id]['max_height'] = max(self.__max_min_data_values)
+            self.__polygon_data[active_polygon_id]['min_height'] = min(self.__max_min_data_values)
+
+            self.__return_array_values = [None, None]
+
+        # Render the menu
+        # ---------------
         self.__gui_manager.set_tool_sub_title_font()
         imgui.text('Polygon Information')
         self.__gui_manager.set_regular_font()
-
         imgui.columns(2, None, False)
         imgui.text(f'Max height:')
         imgui.next_column()
@@ -274,18 +305,9 @@ class ReliefTools:
             else:
                 # Change the values of the max_min_data to waiting and execute the function to calculate the values.
                 # The method to calculate max_min_height is asynchronous, so it returns immediately.
-                self.__max_min_data = ['waiting', 'waiting']
                 self.__gui_manager.calculate_max_min_height(active_model_id,
                                                             active_polygon_id,
-                                                            self.__max_min_data)
-
-        # Filter Logic
-        # ------------
-        self.filter_menu()
-
-        # Transformation Menu
-        # -------------------
-        self.transformation_menu(active_model_id, active_polygon_id)
+                                                            self.__return_array_values)
 
     def transformation_menu(self, active_model_id, active_polygon_id):
         """

@@ -148,7 +148,7 @@ class Tools(Frame):
         self.__show_visualization_tools()
 
         imgui.separator()
-        self.__polygon_tools.render(left_frame_width)
+        self.__polygon_tools.render()
 
         if self._GUI_manager.get_active_polygon_id() is not None:
             imgui.separator()

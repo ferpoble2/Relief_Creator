@@ -176,6 +176,7 @@ def get_latitude_list_from_file(root_grp) -> list:
                                         'file_keys': root_grp.variables.keys()})
 
         y = np.arange(y_range_array[0], y_range_array[1], spacing_array[1]).tolist()
+        y = [y] if type(y) is not list else y
 
         if len(y) + 1 == dimension_array[1]:
             y += [y_range_array[1]]
@@ -221,6 +222,7 @@ def get_longitude_list_from_file(root_grp) -> list:
 
         # Generate the x-values given the ranges and spacing.
         x = np.arange(x_range_array[0], x_range_array[1], spacing_array[0]).tolist()
+        x = [x] if type(x) is not list else x
 
         # Add the last value of the range to the list if the x-value list is one short than the specified in the
         # dimensions

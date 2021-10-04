@@ -8,6 +8,8 @@ class ReliefTools {
     - __polygon_data: dict
     - __filter_name_list: list
     - __filters: list
+    - __max_min_data_values: list[float]
+    - __return_array_values: list[float, None]
 
     - __get_filters_dictionary_list(): list
     + filter_menu()

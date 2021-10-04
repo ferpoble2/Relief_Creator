@@ -35,7 +35,7 @@ class TestExportNetcdfFile(unittest.TestCase):
         exporter = NetcdfExporter()
         exporter.export_model_vertices_to_netcdf_file(np.array([(0, 0, 1), (1, 0, 2), (2, 0, 3),
                                                                 (0, 2, 4), (1, 2, 5), (2, 2, 6),
-                                                                (0, 4, 7), (1, 4, 8), (2, 4, 9)]).reshape(3, 3, 3),
+                                                                (0, 4, 7), (1, 4, 8), (2, 4, 9)]).reshape((3, 3, 3)),
                                                       'resources/test_resources/temp/test_model_temp')
 
         x, y, z = read_info('resources/test_resources/temp/test_model_temp.nc')

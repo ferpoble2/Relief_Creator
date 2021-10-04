@@ -592,7 +592,7 @@ class PolygonTools:
         self.__GUI_manager.change_dot_color_of_polygon(polygon_id, list(self.__dot_color_selected_default))
         self.__GUI_manager.change_color_of_polygon(polygon_id, list(self.__color_selected_default))
 
-    def render(self, frame_width: int) -> None:
+    def render(self) -> None:
         """
         Render the polygon tools to manage the polygons in the program.
         Returns: None

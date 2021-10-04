@@ -1282,7 +1282,7 @@ class GUIManager:
         """
         self.__engine.set_active_model(model_id)
 
-    def set_active_polygon(self, polygon_id: str) -> None:
+    def set_active_polygon(self, polygon_id: Union[str, None]) -> None:
         """
         Set a new active polygon on the program.
 

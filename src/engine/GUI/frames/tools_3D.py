@@ -108,7 +108,9 @@ class Tools3D(Frame):
         imgui.text(f'Current value: {self._GUI_manager.get_height_normalization_factor_of_active_3D_model()}')
         _, self.__normalization_height_value = imgui.input_float('New factor',
                                                                  self.__normalization_height_value,
-                                                                 format='%.0f')
+                                                                 0,
+                                                                 0,
+                                                                 '%.0f')
         self.__normalization_height_value = max(self.__normalization_height_value, 0)
 
         # Disable the keyboard controller if the user is writing something on the GUI
