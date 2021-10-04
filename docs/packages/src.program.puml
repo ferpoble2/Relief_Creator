@@ -9,11 +9,13 @@
 package src.program {
     class src.program.Program
     class src.program.Tools
+    class src.program.ViewMode
     !include ../file_modules/parser.puml
 }
 
 src.program.Program .> src.program.parser
 src.program.Program -u.> src.program.Tools
+src.program.Program -u.> src.program.ViewMode
 !endsub
 
 !if (%false())

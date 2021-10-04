@@ -47,6 +47,7 @@ from src.engine.GUI.frames.tools.tools import Tools
 from src.engine.GUI.frames.tools_3D import Tools3D
 from src.engine.GUI.icon import Icon
 from src.engine.GUI.polygon_folder_manager import PolygonFolderManager
+from src.program.view_mode import ViewMode
 from src.utils import get_logger
 
 if TYPE_CHECKING:
@@ -522,10 +523,12 @@ class GUIManager:
         Returns: None
         """
 
-        if self.__engine.get_program_view_mode() == '2D':
+        if self.__engine.get_program_view_mode() == ViewMode.mode_2d:
             components_to_draw = self.__component_list_2D
-        else:
+        elif self.__engine.get_program_view_mode() == ViewMode.mode_3d:
             components_to_draw = self.__component_list_3D
+        else:
+            raise NotImplementedError('ViewMode not implemented on the GUI.')
 
         imgui.new_frame()
         with imgui.font(self.__font_regular):
@@ -854,7 +857,7 @@ class GUIManager:
         """
         return self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id)
 
-    def get_program_view_mode(self) -> str:
+    def get_program_view_mode(self) -> ViewMode:
         """
         Ask the engine for the view mode being used for the program.
 
@@ -1394,7 +1397,7 @@ class GUIManager:
         """
         self.__engine.set_new_parameter_to_polygon(polygon_id, key, value)
 
-    def set_program_view_mode(self, mode: str = '2D') -> None:
+    def set_program_view_mode(self, mode: 'ViewMode') -> None:
         """
         Ask the engine to change the view mode to the selected mode.
 

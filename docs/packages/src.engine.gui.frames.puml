@@ -29,6 +29,7 @@ src.engine.gui.frames.MouseCoordinates -u-|> src.engine.gui.frames.Frame
 
 !startsub EXTERNAL
     !includesub src.engine.gui.frames.tools.puml!EXTERNAL
+    src.engine.gui.frames.MainMenuBar .> src.program.ViewMode
     src.engine.gui.GUIManager o--o src.engine.gui.frames.Frame
 !endsub
 

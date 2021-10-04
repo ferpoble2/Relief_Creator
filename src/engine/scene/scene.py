@@ -38,6 +38,7 @@ from src.engine.scene.transformation_helper import TransformationHelper
 from src.error.interpolation_error import InterpolationError
 from src.error.model_transformation_error import ModelTransformationError
 from src.error.scene_error import SceneError
+from src.program.view_mode import ViewMode
 from src.utils import get_logger
 
 if TYPE_CHECKING:
@@ -894,7 +895,7 @@ class Scene:
     def draw(self,
              active_model_id: str,
              active_polygon_id: str,
-             program_view_mode: str,
+             program_view_mode: ViewMode,
              ) -> None:
         """
         Draw the models in the hash of models.
@@ -913,7 +914,7 @@ class Scene:
             program_view_mode: String representing if the program is in 2D or 3D mode.
         """
         # check if draw the 2D or the 3D of the models.
-        if program_view_mode == '2D':
+        if program_view_mode == ViewMode.mode_2d:
 
             # Draw all the Map2DModels
             for model_2d in reversed(self.__model_draw_priority):
@@ -930,7 +931,7 @@ class Scene:
                 # Draw the polygons in order
                 self.__polygon_hash[polygon].draw(active_polygon_id == polygon)
 
-        elif program_view_mode == '3D':
+        elif program_view_mode == ViewMode.mode_3d:
             # Draw model if it exists
             if active_model_id in self.__3d_model_hash:
                 self.__3d_model_hash[active_model_id].draw()

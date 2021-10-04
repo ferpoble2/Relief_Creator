@@ -39,6 +39,7 @@
     src.engine.Engine ..> src.input.NetCDF
     src.engine.Engine ..> src.output.NetcdfExporter
     src.engine.Engine ..> src.program.Tools
+    src.engine.Engine ..> src.program.ViewMode
 !endsub
 
 ' Code that will affect only the current diagramde

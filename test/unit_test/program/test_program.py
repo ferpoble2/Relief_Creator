@@ -23,7 +23,9 @@ import sys
 import unittest
 
 from src.program.parser import get_command_line_arguments
-from src.program.program import Program, Tools
+from src.program.program import Program
+from src.program.tools import Tools
+from src.program.view_mode import ViewMode
 from test.test_case import ProgramTestCase
 
 
@@ -63,14 +65,14 @@ class TestViewModeParameters(ProgramTestCase):
 
     def test_view_mode(self):
         # Default value
-        self.assertEqual('2D', self.program.get_view_mode())
+        self.assertEqual(ViewMode.mode_2d, self.program.get_view_mode())
 
         # Change values
         self.program.set_view_mode_3D()
-        self.assertEqual('3D', self.program.get_view_mode())
+        self.assertEqual(ViewMode.mode_3d, self.program.get_view_mode())
 
         self.program.set_view_mode_2D()
-        self.assertEqual('2D', self.program.get_view_mode())
+        self.assertEqual(ViewMode.mode_2d, self.program.get_view_mode())
 
 
 class TestMapPositionParameters(ProgramTestCase):

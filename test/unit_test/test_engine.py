@@ -22,6 +22,7 @@ Module with test related to the engine of the program.
 import time
 import unittest
 
+from src.program.view_mode import ViewMode
 from src.utils import dict_to_serializable_dict, json_to_dict
 from test.test_case import ProgramTestCase
 
@@ -31,20 +32,20 @@ THREAD_ATTEMPT_TIMES = [0.1, 1, 3, 10, 20, 30, 40, 50, 60]
 class TestViewMode(ProgramTestCase):
 
     def test_default_view_mode(self):
-        self.assertEqual('2D',
+        self.assertEqual(ViewMode.mode_2d,
                          self.program.get_view_mode(),
                          '2D is not the default mode when creating the program.')
 
     def test_view_mode_3D(self):
-        self.engine.set_program_view_mode('3D')
-        self.assertEqual('3D',
+        self.engine.set_program_view_mode(ViewMode.mode_3d)
+        self.assertEqual(ViewMode.mode_3d,
                          self.program.get_view_mode(),
                          'Mode was not changed to 3D after calling set_program_view_mode')
 
     def test_view_mode_2D(self):
-        self.engine.set_program_view_mode('3D')
-        self.engine.set_program_view_mode('2D')
-        self.assertEqual('2D',
+        self.engine.set_program_view_mode(ViewMode.mode_3d)
+        self.engine.set_program_view_mode(ViewMode.mode_2d)
+        self.assertEqual(ViewMode.mode_2d,
                          self.program.get_view_mode(),
                          'Mode was not changed to 2D after calling set_program_view_mode')
 

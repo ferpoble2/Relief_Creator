@@ -22,6 +22,7 @@ src.engine.scene.Scene .> src.engine.scene.TransformationHelper
 
     src.engine.scene.Scene o-u--o src.engine.Engine
     src.engine.scene.Scene ..> src.error.SceneError
+    src.engine.scene.Scene ..> src.program.ViewMode
 !endsub
 
 

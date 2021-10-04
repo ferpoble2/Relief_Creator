@@ -30,6 +30,7 @@ from typing import Callable, Dict, TYPE_CHECKING
 import glfw
 
 from src.program.tools import Tools
+from src.program.view_mode import ViewMode
 from src.utils import get_logger
 
 if TYPE_CHECKING:
@@ -144,14 +145,14 @@ class Controller:
             # get the active tool being used in the program
             active_tool = engine.get_active_tool()
 
-            if engine.get_program_view_mode() == '2D':
+            if engine.get_program_view_mode() == ViewMode.mode_2d:
 
                 if active_tool == Tools.move_map and self.__move_map_tool_activated:
                     if self.__is_left_mouse_being_pressed:
                         engine.move_map_position(x_pos - self.__mouse_old_pos[0],
                                                  self.__mouse_old_pos[1] - y_pos)
 
-            if engine.get_program_view_mode() == '3D':
+            if engine.get_program_view_mode() == ViewMode.mode_3d:
 
                 if self.__is_mouse_middle_being_pressed:
                     engine.change_camera_elevation(
@@ -195,7 +196,7 @@ class Controller:
             # logic of the controller.
             if not engine.is_mouse_hovering_frame():
 
-                if engine.get_program_view_mode() == '2D':
+                if engine.get_program_view_mode() == ViewMode.mode_2d:
 
                     if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
                         active_tool = engine.get_active_tool()
@@ -218,7 +219,7 @@ class Controller:
                         if active_tool == Tools.move_map:
                             self.__move_map_tool_activated = False
 
-                elif engine.get_program_view_mode() == '3D':
+                elif engine.get_program_view_mode() == ViewMode.mode_3d:
                     pass
 
         return mouse_button_callback
@@ -239,14 +240,14 @@ class Controller:
             # do something only if not hovering frames
             if not engine.is_mouse_hovering_frame():
 
-                if engine.get_program_view_mode() == '2D':
+                if engine.get_program_view_mode() == ViewMode.mode_2d:
                     if y_offset > 0:
                         engine.add_zoom()
 
                     if y_offset < 0:
                         engine.less_zoom()
 
-                elif engine.get_program_view_mode() == '3D':
+                elif engine.get_program_view_mode() == ViewMode.mode_3d:
                     if y_offset > 0:
                         engine.modify_camera_radius(-1 * self.__radius_movement_velocity)
 
@@ -370,7 +371,7 @@ class Controller:
                         if self.__is_left_ctrl_pressed:
                             engine.load_shapefile_file_with_dialog()
 
-                if engine.get_program_view_mode() == '2D':
+                if engine.get_program_view_mode() == ViewMode.mode_2d:
 
                     # Check what to do if a key is pressed
                     if action == glfw.PRESS:
@@ -399,7 +400,7 @@ class Controller:
                     if self.__is_d_pressed:
                         engine.move_map_position(self.__map_movement_velocity, 0)
 
-                elif engine.get_program_view_mode() == '3D':
+                elif engine.get_program_view_mode() == ViewMode.mode_3d:
                     if self.__is_w_pressed:
                         engine.change_camera_elevation(self.__elevation_movement_velocity)
                     if self.__is_s_pressed:

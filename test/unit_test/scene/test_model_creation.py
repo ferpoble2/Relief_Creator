@@ -24,6 +24,7 @@ import numpy as np
 import psutil
 
 from src.input.NetCDF import read_info
+from src.program.view_mode import ViewMode
 from test.test_case import ProgramTestCase
 
 
@@ -103,7 +104,7 @@ class Test3DModelCreationMemoryUsageOneModel(ProgramTestCase):
         # Configure parameters to test
         # ----------------------------
         process = psutil.Process(os.getpid())
-        self.engine.set_program_view_mode('3D')
+        self.engine.set_program_view_mode(ViewMode.mode_3d)
 
         # First model loaded
         # ------------------

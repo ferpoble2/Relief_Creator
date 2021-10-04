@@ -18,6 +18,7 @@ src.engine.gui.GUIManager o-- src.engine.gui.Icon
 !startsub EXTERNAL
     !includesub src.engine.gui.frames.puml!EXTERNAL
 
+    src.engine.gui.GUIManager .> src.program.ViewMode
     src.engine.gui.GUIManager o--o src.engine.Engine
     src.engine.gui.PolygonFolderManager .> src.error.PolygonFolderNotFoundError
 !endsub

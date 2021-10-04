@@ -44,6 +44,7 @@ from src.input.shapefile_importer import ShapefileImporter
 from src.output.netcdf_exporter import NetcdfExporter
 from src.output.shapefile_exporter import ShapefileExporter
 from src.program.tools import Tools
+from src.program.view_mode import ViewMode
 from src.utils import get_logger
 
 if TYPE_CHECKING:
@@ -519,7 +520,7 @@ class Engine:
             self.program.set_active_model(model_id)
             self.program.set_loading(False)
 
-            if self.program.get_view_mode() == '3D':
+            if self.program.get_view_mode() == ViewMode.mode_3d:
                 self.set_task_with_loading_frame(
                     lambda: self.scene.create_3D_model_if_not_exists(self.program.get_active_model()))
 
@@ -1094,7 +1095,7 @@ class Engine:
         """
         return self.scene.get_polygon_name(polygon_id)
 
-    def get_program_view_mode(self) -> str:
+    def get_program_view_mode(self) -> ViewMode:
         """
         Ask the program for the view mode being used.
 
@@ -1684,7 +1685,7 @@ class Engine:
         """
         self.program.set_loading(new_state)
 
-    def set_program_view_mode(self, mode: str = '2D') -> None:
+    def set_program_view_mode(self, mode: ViewMode = ViewMode.mode_2d) -> None:
         """
         Set the program view mode to the selected mode.
 
@@ -1695,11 +1696,11 @@ class Engine:
 
         Returns: None
         """
-        if mode == '2D':
+        if mode == ViewMode.mode_2d:
             self.program.set_view_mode_2D()
             self.render.enable_depth_buffer(False)
 
-        elif mode == '3D':
+        elif mode == ViewMode.mode_3d:
             self.program.set_view_mode_3D()
             self.render.enable_depth_buffer(True)
 

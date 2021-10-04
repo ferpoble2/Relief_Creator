@@ -29,6 +29,7 @@ import easygui
 
 from src.engine.engine import Engine
 from src.program.tools import Tools
+from src.program.view_mode import ViewMode
 from src.utils import get_logger
 
 if TYPE_CHECKING:
@@ -73,7 +74,7 @@ class Program:
         self.__active_tool: Union[str, None] = None
         self.__active_polygon: Union[str, None] = None
 
-        self.__view_mode: str = '2D'
+        self.__view_mode: ViewMode = ViewMode.mode_2d
 
         self.__loading: bool = False
 
@@ -205,7 +206,7 @@ class Program:
         """
         return self.__temp_model_file
 
-    def get_view_mode(self) -> str:
+    def get_view_mode(self) -> ViewMode:
         """
         Get the view mode used by the program.
 
@@ -449,7 +450,7 @@ class Program:
 
         Returns: None
         """
-        self.__view_mode = '2D'
+        self.__view_mode = ViewMode.mode_2d
 
     def set_view_mode_3D(self) -> None:
         """
@@ -457,4 +458,4 @@ class Program:
 
         Returns: None
         """
-        self.__view_mode = '3D'
+        self.__view_mode = ViewMode.mode_3d
