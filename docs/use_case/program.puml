@@ -1,88 +1,8 @@
 @startuml
 'https://plantuml.com/use-case-diagram
 
-'skinparam actorStyle awesome
-'skinparam actorStyle Hollow
-
 left to right direction
-'skinparam usecaseFontSize 25
-'skinparam rectangleFontSize 25
 
-'rectangle Programa {
-'  usecase "Modificar un mapa" as UC1
-'  usecase "Visualizar un mapa" as UC2
-'  usecase "Generar un polígono" as UC3
-'  usecase "Modificar información de un polígono" as UC4
-'
-'  usecase "Visualizar un polígono" as UC5
-'  usecase "Modificar puntos de un polígono" as ModPuntos
-'  usecase "Modidicar parametros de un polígono" as ModParametros
-'}
-
-'Usuario --> UC1
-'Usuario --> UC2
-'Usuario --> UC3
-'Usuario --> UC4
-'Usuario --> UC5
-
-'ModPuntos -|> UC4
-
-'UC1 .> UC2 : <<incluye>>
-'UC4 .> UC5 : <<incluye>>
-'UC3 .> UC5 : <<incluye>>
-
-
-' ----------------------
-' Casos de uso Version 2
-' ----------------------
-'rectangle Programa {
-'    usecase "Cargar un mapa" as cargar_mapa
-'    usecase "Modificar un mapa" as mod_mapa
-'    usecase "Visualizar un mapa" as viz_mapa
-'    usecase "Cargar un polígono" as cargar_pol
-'    usecase "Crear un polígono" as crear_pol
-'    usecase "Modificar información \nde un polígono" as mod_info_pol
-'    usecase "Modificar puntos de \nun polígono" as mod_puntos_pol
-'    usecase "Modificar parámetros \nde un polígono" as mod_par_pol
-'    usecase "Visualizar un polígono" as viz_pol
-'    usecase "Exportar información \nde un polígono" as export_pol
-'    usecase "Exportar información \nde un mapa" as export_mapa
-'    usecase "Visualizar mapa en \ndos dimensiones" as viz_mapa_2d
-'    usecase "Visualizar mapa en \ntres dimensiones" as viz_mapa_3d
-'    usecase "Filtrar puntos a modificar" as app_filtros
-'}
-
-'Usuario --> cargar_mapa
-'Usuario --> viz_mapa
-'Usuario --> mod_mapa
-'Usuario --> viz_pol
-'Usuario --> mod_info_pol
-'Usuario --> cargar_pol
-'Usuario --> crear_pol
-'Usuario --> export_mapa
-'Usuario --> export_pol
-
-'mod_mapa ..> viz_mapa : <<incluye>>
-'viz_mapa -u.> cargar_mapa : <<incluye>>
-'viz_pol ..> viz_mapa : <<incluye>>
-'mod_info_pol ..> viz_pol : <<incluye>>
-'crear_pol ..> viz_pol : <<incluye>>
-'cargar_pol ..> viz_pol : <<incluye>>
-'export_pol .> viz_pol : <<incluye>>
-'export_mapa ..> viz_mapa : <<incluye>>
-'mod_mapa ..> viz_pol : <<incluye>>
-
-'mod_info_pol <|- mod_puntos_pol
-'mod_par_pol -|> mod_info_pol
-
-'viz_mapa <|- viz_mapa_2d
-'viz_mapa_3d -|> viz_mapa
-
-'mod_mapa <. app_filtros : <<extiende>> \n Si usuario genera filtros
-
-' ----------------------
-' Casos de uso Version 3
-' ----------------------
 rectangle Programa {
     usecase "Modificar un mapa" as mod_mapa
     usecase "Visualizar un mapa" as viz_mapa
