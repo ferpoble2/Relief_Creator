@@ -402,7 +402,6 @@ class Program:
 
         Returns: None
         """
-        tools_values = set(item.value for item in Tools)
         if new_tool is not None and type(new_tool) != Tools:
             raise KeyError('Tool value not in the Enum of tools accepted by the program.')
 

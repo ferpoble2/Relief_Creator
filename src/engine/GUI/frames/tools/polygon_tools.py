@@ -558,12 +558,9 @@ class PolygonTools:
 
         return clicked_selectable
 
-    def __show_polygon_tools(self, left_frame_width: int) -> None:
+    def __show_polygon_tools(self) -> None:
         """
         Show the polygon tools on the frame
-
-        Args:
-            left_frame_width: width of the frame.
         """
         self.__GUI_manager.set_tool_title_font()
         imgui.text("Polygon Tools")
@@ -600,4 +597,4 @@ class PolygonTools:
         Render the polygon tools to manage the polygons in the program.
         Returns: None
         """
-        self.__show_polygon_tools(frame_width)
+        self.__show_polygon_tools()

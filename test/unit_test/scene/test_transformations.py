@@ -15,6 +15,10 @@
 #
 #  END GPL LICENSE BLOCK
 
+"""
+Module that tests the transformation used by the program to modify the height of the loaded maps.
+"""
+
 import unittest
 import warnings
 
@@ -111,11 +115,11 @@ class TestLinearTransformations(unittest.TestCase):
         height[2, 2] = 20
 
         # apply transformation
-        new_height = self.helper.modify_points_inside_polygon_linear(points,
-                                                                     height,
-                                                                     polygon_points,
-                                                                     100,
-                                                                     150)
+        self.helper.modify_points_inside_polygon_linear(points,
+                                                        height,
+                                                        polygon_points,
+                                                        100,
+                                                        150)
 
         expected_points = np.zeros((10, 10, 3))
         for row in range(10):
@@ -565,6 +569,8 @@ class TestMergeMatrices(unittest.TestCase):
         second_matrix = np.array([[np.nan, np.nan, np.nan],
                                   [np.nan, 5, np.nan],
                                   [np.nan, np.nan, np.nan]])
+
+        helper.merge_matrices(first_matrix, second_matrix)
 
         np.testing.assert_array_equal(np.array([[1, 2, 3],
                                                 [4, np.nan, 6],

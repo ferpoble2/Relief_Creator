@@ -39,7 +39,7 @@ class TestIconCreation(ProgramTestCase):
         # Test the creation and id of the icon
         # ------------------------------------
         with self.assertRaises(NotImplementedError):
-            icon = Icon('resources/test_resources/images/grayscale.png')
+            Icon('resources/test_resources/images/grayscale.png')
 
 
 if __name__ == '__main__':

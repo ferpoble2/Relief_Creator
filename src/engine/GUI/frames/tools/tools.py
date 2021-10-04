@@ -72,12 +72,9 @@ class Tools(Frame):
         imgui.text(f"Active tool: {self.__tools_names_dict.get(self._GUI_manager.get_active_tool(), None)}")
         self._GUI_manager.set_regular_font()
 
-    def __show_visualization_tools(self, left_frame_width: int) -> None:
+    def __show_visualization_tools(self) -> None:
         """
         Show the visualization tools on the frame.
-
-        Args:
-            left_frame_width: width of the frame.
         """
         self._GUI_manager.set_tool_title_font()
         imgui.text("Visualization Tools")
@@ -148,7 +145,7 @@ class Tools(Frame):
         left_frame_width = self._GUI_manager.get_left_frame_width()
 
         imgui.separator()
-        self.__show_visualization_tools(left_frame_width)
+        self.__show_visualization_tools()
 
         imgui.separator()
         self.__polygon_tools.render(left_frame_width)

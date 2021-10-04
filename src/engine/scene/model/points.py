@@ -166,7 +166,6 @@ class Points(Model):
         # Update values for the polygon shader
         # ------------------------------------
         projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
-        z_value_location = GL.glGetUniformLocation(self.shader_program, "z_offset")
 
         # Set the color and projection matrix to use
         # ------------------------------------------
