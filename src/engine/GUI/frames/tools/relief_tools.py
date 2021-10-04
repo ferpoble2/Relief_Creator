@@ -125,6 +125,21 @@ class ReliefTools:
 
         return filter_dictionary_list
 
+    def __render_input_value_height_filters(self, filter_obj: Filter):
+        """
+        Render the input value for filters that use a height value as an argument. Filters height_greater_than and
+        height_less_than should use this input value.
+
+        Args:
+            filter_obj: Filter to which the input is rendered for.
+
+        Returns: None
+        """
+
+        if not isinstance(filter_obj.arguments, float):
+            filter_obj.arguments = 0
+        _, filter_obj.arguments = imgui.input_float('Value', filter_obj.arguments)
+
     def __render_input_value_polygon_filters(self, filter_obj: Filter):
         """
         Render the input values for the filters that use a polygon as an argument. Filters is_in and is_not_in
@@ -158,98 +173,6 @@ class ReliefTools:
                                               polygon_list.index(filter_obj.arguments),
                                               polygon_list_names)
             filter_obj.arguments = polygon_list[selected_polygon]
-
-    def __render_input_value_height_filters(self, filter_obj: Filter):
-        """
-        Render the input value for filters that use a height value as an argument. Filters height_greater_than and
-        height_less_than should use this input value.
-
-        Args:
-            filter_obj: Filter to which the input is rendered for.
-
-        Returns: None
-        """
-
-        if not isinstance(filter_obj.arguments, float):
-            filter_obj.arguments = 0
-        _, filter_obj.arguments = imgui.input_float('Value', filter_obj.arguments)
-
-    def render(self) -> None:
-        """
-        Render the relief tools to modify the relief of the model.
-        Returns: None
-        """
-        # get all the data necessary
-        active_polygon_id = self.__gui_manager.get_active_polygon_id()
-        active_model_id = self.__gui_manager.get_active_model_id()
-
-        self.__gui_manager.set_tool_title_font()
-        imgui.text('Relief Tools')
-        self.__gui_manager.set_regular_font()
-
-        # Current Height Information
-        # --------------------------
-        self.current_height_information(active_model_id, active_polygon_id)
-
-        # Filter Logic
-        # ------------
-        self.filter_menu()
-
-        # Transformation Menu
-        # -------------------
-        self.transformation_menu(active_model_id, active_polygon_id)
-
-    def filter_menu(self):
-        """
-        Method with the logic to render the filter menu.
-
-        Returns: None
-        """
-
-        # variable to store if it is necessary to delete a filter
-        filter_to_remove = None
-
-        self.__gui_manager.set_tool_sub_title_font()
-        imgui.text_wrapped('Filters')
-        self.__gui_manager.set_regular_font()
-
-        # render the filters on the GUI
-        for filter_ind in range(len(self.__filters)):
-            filter_obj = self.__filters[filter_ind]
-
-            # push the ID since the elements of the filter will all have the same ID
-            imgui.push_id(f"relief_tools_filter_{filter_ind}")
-
-            # Selection of the filter
-            _, filter_obj.selected_type = imgui.combo('Filter',
-                                                      filter_obj.selected_type,
-                                                      self.__filter_name_list)
-
-            # Selection of the argument for the filter.
-            # this vary depending on the filter selected
-            # ------------------------------------------
-
-            # height <= or height >=
-            if filter_obj.selected_type == 0 or filter_obj.selected_type == 1:
-                self.__render_input_value_height_filters(filter_obj)
-
-            # is in or is not in
-            elif filter_obj.selected_type == 2 or filter_obj.selected_type == 3:
-                self.__render_input_value_polygon_filters(filter_obj)
-
-            # button to remove the filter
-            if imgui.button('Remove Filter'):
-                filter_to_remove = filter_obj
-
-            imgui.pop_id()
-
-        # remove the filter if the button to remove was pressed
-        if filter_to_remove is not None:
-            self.__filters.remove(filter_to_remove)
-
-        # button to add more filters
-        if imgui.button('Add Filter', -1):
-            self.__filters.append(Filter(0, 0))
 
     def current_height_information(self, active_model_id, active_polygon_id) -> None:
         """
@@ -308,6 +231,83 @@ class ReliefTools:
                 self.__gui_manager.calculate_max_min_height(active_model_id,
                                                             active_polygon_id,
                                                             self.__return_array_values)
+
+    def filter_menu(self):
+        """
+        Method with the logic to render the filter menu.
+
+        Returns: None
+        """
+
+        # variable to store if it is necessary to delete a filter
+        filter_to_remove = None
+
+        self.__gui_manager.set_tool_sub_title_font()
+        imgui.text_wrapped('Filters')
+        self.__gui_manager.set_regular_font()
+
+        # render the filters on the GUI
+        for filter_ind in range(len(self.__filters)):
+            filter_obj = self.__filters[filter_ind]
+
+            # push the ID since the elements of the filter will all have the same ID
+            imgui.push_id(f"relief_tools_filter_{filter_ind}")
+
+            # Selection of the filter
+            _, filter_obj.selected_type = imgui.combo('Filter',
+                                                      filter_obj.selected_type,
+                                                      self.__filter_name_list)
+
+            # Selection of the argument for the filter.
+            # this vary depending on the filter selected
+            # ------------------------------------------
+
+            # height <= or height >=
+            if filter_obj.selected_type == 0 or filter_obj.selected_type == 1:
+                self.__render_input_value_height_filters(filter_obj)
+
+            # is in or is not in
+            elif filter_obj.selected_type == 2 or filter_obj.selected_type == 3:
+                self.__render_input_value_polygon_filters(filter_obj)
+
+            # button to remove the filter
+            if imgui.button('Remove Filter'):
+                filter_to_remove = filter_obj
+
+            imgui.pop_id()
+
+        # remove the filter if the button to remove was pressed
+        if filter_to_remove is not None:
+            self.__filters.remove(filter_to_remove)
+
+        # button to add more filters
+        if imgui.button('Add Filter', -1):
+            self.__filters.append(Filter(0, 0))
+
+    def render(self) -> None:
+        """
+        Render the relief tools to modify the relief of the model.
+        Returns: None
+        """
+        # get all the data necessary
+        active_polygon_id = self.__gui_manager.get_active_polygon_id()
+        active_model_id = self.__gui_manager.get_active_model_id()
+
+        self.__gui_manager.set_tool_title_font()
+        imgui.text('Relief Tools')
+        self.__gui_manager.set_regular_font()
+
+        # Current Height Information
+        # --------------------------
+        self.current_height_information(active_model_id, active_polygon_id)
+
+        # Filter Logic
+        # ------------
+        self.filter_menu()
+
+        # Transformation Menu
+        # -------------------
+        self.transformation_menu(active_model_id, active_polygon_id)
 
     def transformation_menu(self, active_model_id, active_polygon_id):
         """
