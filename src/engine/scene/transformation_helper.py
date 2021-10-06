@@ -27,7 +27,7 @@ from shapely.ops import triangulate
 from shapely.vectorized import contains
 from skimage.filters import gaussian as gaussian_filter
 
-from src.utils import get_logger, interpolate, is_clockwise
+from src.utils import get_logger, is_clockwise
 
 log = get_logger(module='TRANSFORMATION_HELPER')
 

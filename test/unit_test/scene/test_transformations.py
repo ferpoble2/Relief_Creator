@@ -20,7 +20,6 @@ Module that tests the transformation used by the program to modify the height of
 """
 
 import unittest
-import warnings
 
 import numpy as np
 

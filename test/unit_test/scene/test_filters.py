@@ -22,6 +22,11 @@ import os
 import unittest
 import warnings
 
+from src.engine.scene.filter.height_greater_than import HeightGreaterThan
+from src.engine.scene.filter.height_less_than import HeightLessThan
+from src.engine.scene.filter.is_in import IsIn
+from src.engine.scene.filter.is_not_in import IsNotIn
+from src.engine.scene.transformation.linear_transformation import LinearTransformation
 from src.input.NetCDF import read_info
 from test.test_case import ProgramTestCase
 
