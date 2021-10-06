@@ -149,24 +149,6 @@ class TransformationHelper:
             if point_ind % 3 == 0:
                 points_xy.append((polygon_points[point_ind], polygon_points[point_ind + 1]))
 
-        # Deprecated code
-        # ---------------
-        # The code from bellow is deprecated since it does not use vectorized logic to get the masks of the elements.
-        # It uses the contains_points method from the mathplotlib.path module, implementation optimized of the
-        # algorithms presented in Computer Graphic Gems IV to calculate if a point is inside of a polygon.
-        #
-        # # get a mask for the points inside
-        # xv = points_array[:, :, 0]
-        # yv = points_array[:, :, 1]
-        # # noinspection PyTypeChecker
-        # p = path.Path(points_xy)
-        #
-        # print(time.time())
-        # points_map = np.hstack((xv.flatten()[:, np.newaxis], yv.flatten()[:, np.newaxis]))
-        # # noinspection PyTypeChecker
-        # flags = p.contains_points(points_map)
-        # flags = flags.reshape(xv.shape)
-
         flags = contains(Polygon(points_xy), points_array[:, :, 0], points_array[:, :, 1])
         return flags
 
