@@ -54,6 +54,7 @@ if TYPE_CHECKING:
     from src.engine.engine import Engine
     from glfw import _GLFWwindow
     from src.program.tools import Tools
+    from src.engine.scene.transformation.transformation import Transformation
 
 # noinspection SpellCheckingInspection
 log = get_logger(module='GUIMANAGER')
@@ -446,39 +447,16 @@ class GUIManager:
         """
         self.__engine.change_quality(quality)
 
-    def change_points_height(self, polygon_id: str,
-                             model_id: str,
-                             min_height: float,
-                             max_height: float,
-                             transformation_type: str = 'linear',
-                             filters=None) -> None:
+    def change_points_height(self, transformation: 'Transformation') -> None:
         """
         Call the engine to change the height of the points inside the specified polygon.
 
-        Call a different function depending on the type of interpolation.
-        Types can have the following values:
-            - linear
-
-
         Args:
-            filters: List with the filters to use in the modification of the points. List must be in the
-                format [(filter_id, args),...]
-            model_id: ID of the model to use for the interpolation.
-            polygon_id: ID of the polygon to use for interpolation.
-            min_height: Min height of the points after the interpolation.
-            max_height: Max height of the points after the interpolation.
-            transformation_type: Type of interpolation to use.
+            transformation: Transformation to apply.
 
         Returns: None
         """
-        if filters is None:
-            filters = []
-        self.__engine.transform_points(polygon_id,
-                                       model_id,
-                                       min_height,
-                                       max_height,
-                                       transformation_type,
-                                       filters)
+        self.__engine.transform_points(transformation)
 
     def create_model_from_existent(self, base_model_id: str, second_model_id: str, model_name: str) -> None:
         """

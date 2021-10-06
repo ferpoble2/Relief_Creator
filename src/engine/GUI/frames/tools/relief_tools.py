@@ -19,63 +19,22 @@
 File with the class ReliefTools. Class in charge of render the Relief tools inside another frame.
 """
 
-from dataclasses import dataclass
-from typing import List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Union
 
 import imgui
 
+from src.engine.scene.filter.filter import Filter
+from src.engine.scene.filter.height_greater_than import HeightGreaterThan
+from src.engine.scene.filter.height_less_than import HeightLessThan
+from src.engine.scene.filter.is_in import IsIn
+from src.engine.scene.filter.is_not_in import IsNotIn
+from src.engine.scene.transformation.linear_transformation import LinearTransformation
 from src.utils import get_logger
 
 if TYPE_CHECKING:
     from engine.GUI.guimanager import GUIManager
 
 log = get_logger(module="RELIEF_TOOLS")
-
-
-@dataclass
-class Filter:
-    """
-    Data class to represent the filters on the GUI.
-
-    The type and the corresponding filters are as follows:
-        0: height_less_than
-        1: height_greater_than
-        2: is_in
-        3: is_not_in
-
-    The arguments that each filter must have are as follows:
-        0: int/float
-        1: int/float
-        2: String (polygon id)
-        3: String (polygon id)
-    """
-    selected_type: int  # int representing the filter to use. The description for the filter is in the list of options.
-    arguments: any  # arguments to apply the filter, can be a number, a polygon, or anything.
-
-    def get_filter_tuple(self):
-        """
-        Get a tuple with the filter ID and the argument to use in the filter. The ID returned is the one used by the
-        scene of the program.
-
-        Example:
-            ('height_less_than', 80)
-            ('is_not_in', 'some_polygon')
-
-        Returns: Tuple with the filter ID and the argument to use to apply the filter.
-        """
-        if self.selected_type == 0:
-            return 'height_less_than', self.arguments
-
-        elif self.selected_type == 1:
-            return 'height_greater_than', self.arguments
-
-        elif self.selected_type == 2:
-            return 'is_in', self.arguments
-
-        elif self.selected_type == 3:
-            return 'is_not_in', self.arguments
-        else:
-            raise NotImplementedError(f'Conversion of filter with id {self.selected_type} not implemented.')
 
 
 class ReliefTools:
@@ -90,17 +49,17 @@ class ReliefTools:
         """
         self.__gui_manager: 'GUIManager' = gui_manager
 
-        self.__combo_options = ["Linear"]
-        self.__current_combo_option = 0
+        self.__transformation_options = ["Linear"]
+        self.__selected_transformation_option = 0
 
         self.__max_height_value = 0
         self.__min_height_value = 0
 
         self.__polygon_data: Dict[str, Dict[str, Union[str, float]]] = {}
 
-        # filter data
-        # options available. The filter IDs represent their index on this list.
-        self.__filter_name_list: List[str] = ['Height <=', 'Height >= ', 'Is is ', 'Is not in ']
+        # Filter data
+        # -----------
+        self.__filter_options: List[any] = [HeightLessThan, HeightGreaterThan, IsIn, IsNotIn]
         self.__filters: List[Filter] = []  # filters to apply on the polygon if the interpolation is triggered
 
         # Auxiliary variables
@@ -109,23 +68,9 @@ class ReliefTools:
         # polygon.
         self.__max_min_data_values: List[float] = [0, 0]
         # Variable used to store the values returned by the asynchronous method calculate_max_min_height.
-        self.__return_array_values: Union[float, None] = [None, None]
+        self.__return_array_values: List[Union[float, None]] = [None, None]
 
-    def __get_filters_dictionary_list(self) -> list:
-        """
-        Covert the filters to a list of tuples with the ID of the filter and the argument used to apply the filter.
-
-        Tuples generated are as follows (filter_id, arguments).
-
-        Returns: List with the information of the filters.
-        """
-        filter_dictionary_list = []
-        for filter_obj in self.__filters:
-            filter_dictionary_list.append(filter_obj.get_filter_tuple())
-
-        return filter_dictionary_list
-
-    def __render_input_value_height_filters(self, filter_obj: Filter):
+    def __render_input_value_height_filters(self, filter_obj: Union[HeightLessThan, HeightGreaterThan]):
         """
         Render the input value for filters that use a height value as an argument. Filters height_greater_than and
         height_less_than should use this input value.
@@ -135,12 +80,9 @@ class ReliefTools:
 
         Returns: None
         """
+        _, filter_obj.height_limit = imgui.input_float('Value', filter_obj.height_limit)
 
-        if not isinstance(filter_obj.arguments, float):
-            filter_obj.arguments = 0
-        _, filter_obj.arguments = imgui.input_float('Value', filter_obj.arguments)
-
-    def __render_input_value_polygon_filters(self, filter_obj: Filter):
+    def __render_input_value_polygon_filters(self, filter_obj: Union[IsIn, IsNotIn]):
         """
         Render the input values for the filters that use a polygon as an argument. Filters is_in and is_not_in
         should use this input value.
@@ -150,29 +92,29 @@ class ReliefTools:
 
         Returns: None
         """
-
-        # get list with the polygons on the program and remove the active one
+        # Get list with the polygons on the program and remove the active one
+        # -------------------------------------------------------------------
         polygon_list = self.__gui_manager.get_polygon_id_list()
+
+        # Remove the active polygon and add the None option
+        # -------------------------------------------------
         polygon_list.remove(self.__gui_manager.get_active_polygon_id())
         polygon_list_names = list(map(lambda x: self.__gui_manager.get_polygon_name(x), polygon_list))
 
-        # empty list case
-        if len(polygon_list) == 0:
-            filter_obj.arguments = 0
-            _, filter_obj.arguments = imgui.combo('Value',
-                                                  filter_obj.arguments,
-                                                  polygon_list_names)
+        polygon_list.insert(0, None)
+        polygon_list_names.insert(0, 'None')
 
-        else:
-            # change the current polygon to the first on the list if it is not selected
-            if filter_obj.arguments not in polygon_list:
-                filter_obj.arguments = polygon_list[0]
+        # If polygon for filter no longer in the list, replace the values as None
+        # -----------------------------------------------------------------------
+        if filter_obj.polygon_id not in polygon_list:
+            filter_obj.polygon_id = None
 
-            # show the combo options for the rendering. Must be at least one polygon for the filter to work.
-            _, selected_polygon = imgui.combo('Value',
-                                              polygon_list.index(filter_obj.arguments),
-                                              polygon_list_names)
-            filter_obj.arguments = polygon_list[selected_polygon]
+        # Show the combo options for the rendering
+        # ----------------------------------------
+        _, selected_polygon = imgui.combo('Value',
+                                          polygon_list.index(filter_obj.polygon_id),
+                                          polygon_list_names)
+        filter_obj.polygon_id = polygon_list[selected_polygon]
 
     def current_height_information(self, active_model_id, active_polygon_id) -> None:
         """
@@ -239,50 +181,108 @@ class ReliefTools:
         Returns: None
         """
 
-        # variable to store if it is necessary to delete a filter
+        # Variable to store if it is necessary to delete a filter
+        # -------------------------------------------------------
         filter_to_remove = None
 
+        # Title of the section
+        # --------------------
         self.__gui_manager.set_tool_sub_title_font()
         imgui.text_wrapped('Filters')
         self.__gui_manager.set_regular_font()
 
-        # render the filters on the GUI
-        for filter_ind in range(len(self.__filters)):
-            filter_obj = self.__filters[filter_ind]
-
-            # push the ID since the elements of the filter will all have the same ID
-            imgui.push_id(f"relief_tools_filter_{filter_ind}")
+        # Render the filters on the GUI
+        # -----------------------------
+        for ind, filter_obj in enumerate(self.__filters):
+            # Push the ID since the elements of the filter will all have the same ID
+            # ----------------------------------------------------------------------
+            imgui.push_id(f"relief_tools_filter_{ind}")
 
             # Selection of the filter
-            _, filter_obj.selected_type = imgui.combo('Filter',
-                                                      filter_obj.selected_type,
-                                                      self.__filter_name_list)
+            # -----------------------
+            filter_selected = -1
+            for option_index, filter_option in enumerate(self.__filter_options):
+                filter_selected = option_index if isinstance(filter_obj, filter_option) else filter_selected
+
+            changed, selected_index = imgui.combo('Filter',
+                                                  filter_selected,
+                                                  [filter_class.name for filter_class in self.__filter_options])
+            if changed:
+                if self.__filter_options[selected_index] == HeightGreaterThan:
+                    self.__filters[ind] = HeightGreaterThan(0)
+                elif self.__filter_options[selected_index] == HeightLessThan:
+                    self.__filters[ind] = HeightLessThan(0)
+                elif self.__filter_options[selected_index] == IsIn:
+                    self.__filters[ind] = IsIn(None)
+                elif self.__filter_options[selected_index] == IsNotIn:
+                    self.__filters[ind] = IsNotIn(None)
+                else:
+                    raise NotImplementedError(f'Creation of filter of class {self.__filter_options[selected_index]}'
+                                              f' not implemented on the frame.')
 
             # Selection of the argument for the filter.
             # this vary depending on the filter selected
             # ------------------------------------------
-
-            # height <= or height >=
-            if filter_obj.selected_type == 0 or filter_obj.selected_type == 1:
+            if isinstance(filter_obj, (HeightLessThan, HeightGreaterThan)):
                 self.__render_input_value_height_filters(filter_obj)
-
-            # is in or is not in
-            elif filter_obj.selected_type == 2 or filter_obj.selected_type == 3:
+            elif isinstance(filter_obj, (IsNotIn, IsIn)):
                 self.__render_input_value_polygon_filters(filter_obj)
 
-            # button to remove the filter
+            # Button to remove the filter
+            # ---------------------------
             if imgui.button('Remove Filter'):
                 filter_to_remove = filter_obj
 
             imgui.pop_id()
 
-        # remove the filter if the button to remove was pressed
+        # Remove the filter if the button to remove was pressed
+        # -----------------------------------------------------
         if filter_to_remove is not None:
             self.__filters.remove(filter_to_remove)
 
-        # button to add more filters
+        # Button to add more filters
+        # --------------------------
         if imgui.button('Add Filter', -1):
-            self.__filters.append(Filter(0, 0))
+            self.__filters.append(HeightLessThan(0))
+
+    def transformation_menu(self, active_model_id, active_polygon_id):
+        """
+        Method with the logic to render the menu that applies the interpolation on the maps.
+
+        Args:
+            active_model_id: Model id to use.
+            active_polygon_id: Active polygon ID.
+
+        Returns: None
+        """
+
+        # Title of the section
+        # --------------------
+        self.__gui_manager.set_tool_sub_title_font()
+        imgui.text('Transformation')
+        self.__gui_manager.set_regular_font()
+
+        # Type  of transformation
+        # -----------------------
+        clicked, self.__selected_transformation_option = imgui.combo(
+            "Transformation", self.__selected_transformation_option, self.__transformation_options
+        )
+
+        # Parameters for the transformation
+        # ---------------------------------
+        _, self.__min_height_value = imgui.input_float('Min Height', self.__min_height_value)
+        _, self.__max_height_value = imgui.input_float('Max Height', self.__max_height_value)
+
+        # Apply transformation button
+        # ---------------------------
+        if imgui.button('Change Height', -1):
+            if self.__selected_transformation_option == 0:
+                transformation = LinearTransformation(active_model_id,
+                                                      active_polygon_id,
+                                                      self.__min_height_value,
+                                                      self.__max_height_value,
+                                                      self.__filters)
+                self.__gui_manager.change_points_height(transformation)
 
     def render(self) -> None:
         """
@@ -308,39 +308,3 @@ class ReliefTools:
         # Transformation Menu
         # -------------------
         self.transformation_menu(active_model_id, active_polygon_id)
-
-    def transformation_menu(self, active_model_id, active_polygon_id):
-        """
-        Method with the logic to render the menu that applies the interpolation on the maps.
-
-        Args:
-            active_model_id: Model id to use.
-            active_polygon_id: Active polygon ID.
-
-        Returns: None
-        """
-        self.__gui_manager.set_tool_sub_title_font()
-        imgui.text('Transformation')
-        self.__gui_manager.set_regular_font()
-
-        clicked, self.__current_combo_option = imgui.combo(
-            "Transformation", self.__current_combo_option, self.__combo_options
-        )
-        _, self.__min_height_value = imgui.input_float('Min Height', self.__min_height_value)
-        _, self.__max_height_value = imgui.input_float('Max Height', self.__max_height_value)
-        if imgui.button('Change Height', -1):
-            if self.__min_height_value >= self.__max_height_value:
-                self.__gui_manager.open_text_modal('Error', 'The new minimum value is higher or equal to'
-                                                            ' the maximum value.')
-            elif active_model_id is None:
-                self.__gui_manager.open_text_modal('Error', 'You must load a model to try to calculate the '
-                                                            'height of the '
-                                                            'points inside it.')
-            else:
-                if self.__current_combo_option == 0:
-                    self.__gui_manager.change_points_height(active_polygon_id,
-                                                            active_model_id,
-                                                            min_height=self.__min_height_value,
-                                                            max_height=self.__max_height_value,
-                                                            transformation_type='linear',
-                                                            filters=self.__get_filters_dictionary_list())

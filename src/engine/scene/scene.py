@@ -34,6 +34,7 @@ from src.engine.scene.model.map3dmodel import Map3DModel
 from src.engine.scene.model.model import Model
 from src.engine.scene.model.polygon import Polygon
 from src.engine.scene.model.tranformations.transformations import ortho, perspective
+from src.engine.scene.transformation.transformation import Transformation
 from src.engine.scene.transformation_helper import TransformationHelper
 from src.error.interpolation_error import InterpolationError
 from src.error.model_transformation_error import ModelTransformationError
@@ -193,92 +194,6 @@ class Scene:
                 raise NotImplementedError(f'Processing process for filter {id_filter} not implemented on the Scene.')
 
         return filter_data
-
-    def __transform_points_using_linear_transformation(self,
-                                                       polygon_id: str,
-                                                       model_id: str,
-                                                       min_height: float,
-                                                       max_height: float,
-                                                       filters: list = None) -> None:
-        """
-        Method that transform the points of the model using the linear transformation and applies all the
-        filter that were passed to it.
-
-        The process is done in a thread different from the main. While the process is done, a loading frame is rendered
-        in the program.
-
-        Args:
-            polygon_id: ID of the polygon to use for the transformation.
-            model_id: ID of the model to use.
-            min_height: min height to use for the interpolation.
-            max_height: max height to use for the interpolation.
-            filters: List with the filters to use in the modification of the points. List must be in the
-                format [(filter_id, args),...]
-
-        Returns: None
-        """
-
-        if filters is None:
-            filters = []
-
-        # GET THE DATA FOR THE TRANSFORMATION AND CHECK VALIDITY
-        # ------------------------------------------------------
-        # Get the model to use and the polygon to use for the transformation.
-        model = self.__model_hash[model_id]
-        polygon = self.__polygon_hash[polygon_id]
-
-        # Ask the model and polygon for the parameters to calculate the new height
-        vertices_shape = model.get_vertices_shape()
-        vertex_array = model.get_vertices_array().reshape(vertices_shape)
-        height_array = model.get_height_array().reshape((vertices_shape[0], vertices_shape[1]))
-        polygon_points = polygon.get_point_list()
-
-        if len(polygon_points) < 9:
-            raise ModelTransformationError(2)
-
-        if not polygon.is_planar():
-            raise ModelTransformationError(3)
-
-        # Process the filters to format them in a format suitable the TransformationHelper class.
-        # ---------------------------------------------------------------------------------------
-        filter_data = self.__process_filters(filters)
-
-        # CALL THE THREAD TASK
-        # --------------------
-        # Define mutable object to store results to use from the parallel task to the then task
-        new_height = [None]
-
-        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
-        def parallel_task(new_height: list, vertex_array: 'numpy.array', height_array: 'numpy.array',
-                          polygon_points: list, max_height: float, min_height: float, filter_data: list):
-            # Calculate the new height of the points
-            new_height[0] = TransformationHelper().modify_points_inside_polygon_linear(vertex_array,
-                                                                                       height_array,
-                                                                                       polygon_points,
-                                                                                       max_height,
-                                                                                       min_height,
-                                                                                       filter_data)
-
-        # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
-        def then(new_height: list, engine: 'Engine', model: Map2DModel):
-            # Tell the polygon the new height of the vertices
-            model.update_heights(new_height[0])
-            engine.set_program_loading(False)
-
-        # Define the parallel functions to use
-        self.__engine.set_loading_message('Changing height...')
-        self.__engine.set_program_loading(True)
-        self.__engine.set_thread_task(parallel_task, then,
-                                      parallel_task_args=[new_height,
-                                                          vertex_array,
-                                                          height_array,
-                                                          polygon_points,
-                                                          max_height,
-                                                          min_height,
-                                                          filter_data],
-                                      then_task_args=[new_height,
-                                                      self.__engine,
-                                                      model])
 
     def add_model(self, model: Map2DModel) -> None:
         """
@@ -1620,38 +1535,20 @@ class Scene:
         """
         self.__engine.set_thread_task(parallel_task, then)
 
-    def transform_points(self, polygon_id: str, model_id: str, min_height: float,
-                         max_height: float, transformation_type: str, filters=None) -> None:
+    def transform_points(self, transformation: 'Transformation') -> None:
         """
         Modify the points inside the polygon from the specified model using a linear transformation.
 
-        Transformation types available:
-            - linear
-
         Args:
-            filters: List with the filters to use in the modification of the points. List must be in the
-                format [(filter_id, args),...]
-            transformation_type: type of transformation to use.
-            polygon_id: ID of the polygon to use.
-            model_id: Model to modify.
-            min_height: Min target height.
-            max_height: Max target height.
+            transformation: transformation to apply.
 
         Returns: None
         """
-        if filters is None:
-            filters = []
+        # Apply th transformation
+        new_vertices = transformation.apply()
 
-        # depending on the type of transformation, calls the respective function to do the transformation.
-        if transformation_type == 'linear':
-            self.__transform_points_using_linear_transformation(polygon_id,
-                                                                model_id,
-                                                                min_height,
-                                                                max_height,
-                                                                filters)
-
-        else:
-            raise ModelTransformationError(1)
+        # Modify the height of the modified model
+        self.__model_hash[transformation.model_id].update_heights(new_vertices[:, :, 2])
 
     def update_3D_model(self, model_id: str) -> None:
         """

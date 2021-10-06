@@ -36,12 +36,11 @@ class TestModifyHeight(ProgramTestCase):
         self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_south_america.shp')
 
         # apply transformation with filters
-        self.engine.transform_points(polygon_id=self.engine.get_active_polygon_id(),
-                                     model_id=self.engine.get_active_model_id(),
-                                     min_height=2000,
-                                     max_height=3000,
-                                     transformation_type='linear',
-                                     filters=[])
+        transformation = LinearTransformation(self.engine.get_active_model_id(),
+                                              self.engine.get_active_polygon_id(),
+                                              2000,
+                                              3000)
+        self.engine.transform_points(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
