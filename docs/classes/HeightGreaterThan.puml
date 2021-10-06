@@ -1,0 +1,6 @@
+@startuml
+class HeightGreaterThan {
+    + height_limit: float
+}
+
+@enduml

@@ -17,6 +17,7 @@ package src.error {
     class src.error.RepeatedPointError
     class src.error.SceneError
     class src.error.WrongInterpolationTypeError
+    class src.error.FilterError
 }
 
 src.error.BaseError <|-- src.error.SceneError
@@ -24,6 +25,7 @@ src.error.BaseError <|-- src.error.PolygonError
 src.error.BaseError <|-- src.error.ExportError
 src.error.BaseError <|-- src.error.GUIError
 src.error.BaseError <|-- src.error.NetcdfImportError
+src.error.BaseError <|-- src.error.FilterError
 
 src.error.PolygonError <|-- src.error.RepeatedPointError
 src.error.PolygonError <|-- src.error.LineIntersectionError

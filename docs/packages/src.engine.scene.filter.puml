@@ -1,0 +1,38 @@
+@startuml
+
+' Template file to use to create the diagrams od the packages.
+' Every file must have a sub part called INTERNAL with the internal connections of the package and
+' a sub part called EXTERNAL with the external parts.
+
+!startsub INTERNAL
+
+package src.engine.scene.filter {
+    class src.engine.scene.filter.Filter
+    class src.engine.scene.filter.IsIn
+    class src.engine.scene.filter.IsNotIn
+    class src.engine.scene.filter.HeightLessThan
+    class src.engine.scene.filter.HeightGreaterThan
+}
+
+src.engine.scene.filter.IsIn -u-|> src.engine.scene.filter.Filter
+src.engine.scene.filter.IsNotIn -u-|> src.engine.scene.filter.Filter
+src.engine.scene.filter.HeightLessThan -u-|> src.engine.scene.filter.Filter
+src.engine.scene.filter.HeightGreaterThan -u-|> src.engine.scene.filter.Filter
+
+!endsub
+
+
+!startsub EXTERNAL
+    src.engine.scene.filter.IsIn ..> src.error.FilterError
+    src.engine.scene.filter.IsNotIn ..> src.error.FilterError
+
+    src.engine.scene.filter.IsIn ..> src.engine.scene.geometrical_operations
+    src.engine.scene.filter.IsNotIn ..> src.engine.scene.geometrical_operations
+!endsub
+
+
+' Code that will affect only the current diagram
+' can be messy since it will not be imported
+hide members
+
+@enduml
