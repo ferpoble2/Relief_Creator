@@ -1025,7 +1025,10 @@ class Scene:
         """
         Get the array of vertices of the specified model.
 
-        Id model is not map2d_model then TypeError exception is raised.
+        The array returned have shape (x, y, 3), with each vertex containing the x-coordinate, y-coordinate and the
+        height of the vertex.
+
+        If model is not map2d_model then TypeError exception is raised.
 
         Args:
             model_id: ID of the model.
