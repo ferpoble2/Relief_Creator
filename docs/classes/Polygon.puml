@@ -15,6 +15,7 @@
                     - __str__()
                     - __update_planar_state()
                     + add_point(x, y, z)
+                    + draw(active_polygon)
                     + delete_parameter(key)
                     + get_id(): str
                     + get_name(): str
@@ -26,7 +27,6 @@
                     + is_planar()
                     + remove_last_added_point()
                     + set_dot_color(color)
-                    + set_z_offset(new_value)
                     + set_id(new_id)
                     + set_line_color(color)
                     + set_name(new_name)

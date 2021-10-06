@@ -20,7 +20,7 @@ File that contain the Scene class. This class is in charge of the management of 
 
 Class is in charge of the drawing of the models2D, models3D and polygons.
 """
-from typing import Dict, List, TYPE_CHECKING, Union
+from typing import Callable, Dict, List, TYPE_CHECKING, Union
 
 import OpenGL.GL as GL
 # noinspection PyPep8Naming
@@ -33,10 +33,12 @@ from src.engine.scene.model.map2dmodel import Map2DModel
 from src.engine.scene.model.map3dmodel import Map3DModel
 from src.engine.scene.model.model import Model
 from src.engine.scene.model.polygon import Polygon
+from src.engine.scene.model.tranformations.transformations import ortho, perspective
 from src.engine.scene.transformation_helper import TransformationHelper
 from src.error.interpolation_error import InterpolationError
 from src.error.model_transformation_error import ModelTransformationError
 from src.error.scene_error import SceneError
+from src.program.view_mode import ViewMode
 from src.utils import get_logger
 
 if TYPE_CHECKING:
@@ -48,7 +50,6 @@ log = get_logger(module="SCENE")
 FILTER_LIST = ['is_in', 'is_not_in', 'height_less_than', 'height_greater_than']
 
 
-# TODO: Scene does too much logic. PolygonManager and ModelManager class are necessary to make class smaller.
 class Scene:
     """
     Class in charge of all the elements that are rendered using Opengl.
@@ -68,7 +69,7 @@ class Scene:
         camera.
 
         Args:
-            engine: Engine of the program.
+            engine: Engine to use for the execution of the logic.
         """
 
         # Dictionaries storing the id representing each model and the model itself
@@ -78,9 +79,15 @@ class Scene:
         self.__polygon_hash: Dict[str, 'Polygon'] = {}
         self.__interpolation_area_hash: Dict[str, List['Model']] = {}
 
-        # Polygons can be draw in different orders, this list store the order in which they must be draw
-        # Polygons that are not in the list will not be draw
-        self.__polygon_draw_order: List[str] = []
+        # Polygons can be draw in different orders, this list store the priority of each polygon so the polygon with
+        # high priority can be draw over the polygons with less priority. Polygons that are not in the list will not
+        # be draw.
+        self.__polygon_draw_priority: List[str] = []
+
+        # Polygons can be draw in different orders, this list store the priority of each model so the models with
+        # high priority can be draw over the models with less priority. Models that are not in the list will not
+        # be draw.
+        self.__model_draw_priority: List[str] = []
 
         # Variables used by the scene to execute the main logic
         # -----------------------------------------------------
@@ -89,10 +96,24 @@ class Scene:
         self.__width_viewport: int = 0
         self.__height_viewport: int = 0
 
-        # auxiliary variables
+        # Variables used to calculate the projection matrix used on the scene
+        # -------------------------------------------------------------------
+        self.__projection_matrix_2D = None
+        self.__x = [-180, 180]  # Range of values to show on the scene by default
+        self.__y = [-90, 90]  # Range of values to show on the scene by default
+        self.__left_coordinate = None  # Left coordinate showed on the scene
+        self.__right_coordinate = None  # Right coordinate showed on the scene
+        self.__bottom_coordinate = None  # Bottom coordinate showed on the scene
+        self.__top_coordinate = None  # Top coordinate showed on the scene
+        self.__projection_z_axis_min_value = -99999
+        self.__projection_z_axis_max_value = 99999
+
+        self.__projection_matrix_3D = None
+
+        # Auxiliary variables
         # -------------------
 
-        # variable that indicated witch function then to use when there is
+        # Variable that indicate which function to use when there is
         # more than one model on the scene.
         self.__should_execute_then_reload: int = 0
         self.__should_execute_then_optimize_gpu_memory: int = 0
@@ -112,7 +133,7 @@ class Scene:
             is_in: str (polygon id)
             is_not_in: str (polygon id)
 
-        Use of filters not listed here will raise or in the FILTER_LIST variable of the module will raise a
+        Use of filters not listed here or in the FILTER_LIST variable of the module will raise a
         NotImplemented error.
 
         Args:
@@ -241,7 +262,7 @@ class Scene:
         # noinspection PyMissingOrEmptyDocstring,PyShadowingNames,PyUnresolvedReferences
         def then(new_height: list, engine: 'Engine', model: Map2DModel):
             # Tell the polygon the new height of the vertices
-            model.set_height_buffer(new_height[0])
+            model.update_heights(new_height[0])
             engine.set_program_loading(False)
 
         # Define the parallel functions to use
@@ -273,7 +294,10 @@ class Scene:
         """
         self.__model_hash[model.id] = model
 
-    def add_new_vertex_to_active_polygon_using_map_coords(self, x_coord: float, y_coord: float) -> None:
+    def add_new_vertex_to_polygon_using_map_coords(self,
+                                                   x_coord: float,
+                                                   y_coord: float,
+                                                   polygon_id: str) -> None:
         """
         Add a new point to the active polygon using the coordinates of the map.
 
@@ -281,45 +305,57 @@ class Scene:
         same coordinates specified on the arguments.
 
         Args:
+            polygon_id: ID of the polygon to add the point.
             x_coord: x coordinate of the new point
             y_coord: y coordinate of the new point
 
         Returns: None
         """
-        active_polygon = self.__engine.get_active_polygon_id()
-        if active_polygon in self.__polygon_hash:
-            self.__polygon_hash[active_polygon].add_point(x_coord, y_coord)
+        if polygon_id in self.__polygon_hash:
+            self.__polygon_hash[polygon_id].add_point(x_coord, y_coord)
 
-    def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
+    def add_new_vertex_to_polygon_using_window_coords(self,
+                                                      position_x: int,
+                                                      position_y: int,
+                                                      polygon_id: str,
+                                                      model_id: str,
+                                                      scene_settings_data: Dict[str, int],
+                                                      window_settings_data: Dict[str, int]) -> None:
         """
         Add a new vertex to the active polygon on the screen.
 
         The coordinates expected as arguments are screen coordinates, these coordinates have the
         origin at the top-left of the screen with the x-axis positive to the right and the y-axis positive to the
         bottom. The coordinates given as parameters will be processed and transformed to the coordinates used in the
-        map being showed on the scene.
+        specified map.
 
         The new vertex will not be added if it falls outside of the space considered for the scene on the program, but
         will be added if it falls outside of the map (but still inside of the scene).
 
         Args:
+            window_settings_data: Dictionary with the settings values of the window.
+            scene_settings_data: Dictionary with the settings values of the scene.
+            model_id: ID of the model to use to get the coordinates of the point.
+            polygon_id: ID of the polygon to add the point.
             position_x: Position x of the point in window coordinates
             position_y: Position y of the point in window coordinates (from top to bottom)
 
         Returns: None
         """
-        active_polygon = self.__engine.get_active_polygon_id()
 
         # Raise exception when there is no active polygon.
-        if active_polygon is None:
-            raise AssertionError('There is no active polygon.')
+        if polygon_id is None:
+            raise AssertionError('Polygon does not exists.')
 
-        if active_polygon in self.__polygon_hash:
+        if polygon_id in self.__polygon_hash:
             new_x, new_y = self.calculate_map_position_from_window(position_x,
                                                                    position_y,
+                                                                   model_id,
+                                                                   scene_settings_data,
+                                                                   window_settings_data,
                                                                    allow_outside_map=True,
                                                                    allow_outside_scene=False)
-            self.__polygon_hash[active_polygon].add_point(new_x, new_y)
+            self.__polygon_hash[polygon_id].add_point(new_x, new_y)
 
     def add_polygon(self, polygon: 'Polygon') -> None:
         """
@@ -368,17 +404,26 @@ class Scene:
                                                                        vertices_model,
                                                                        heights_model)
 
-        model.set_height_buffer(new_heights)
+        model.update_heights(new_heights)
 
-    def calculate_map_position_from_window(self, position_x: int, position_y: int, allow_outside_map=False,
+    def calculate_map_position_from_window(self,
+                                           position_x: int,
+                                           position_y: int,
+                                           model_id: str,
+                                           scene_settings_data: Dict[str, int],
+                                           window_settings_data: Dict[str, int],
+                                           allow_outside_map=False,
                                            allow_outside_scene=False) -> (float, float):
         """
-        Calculate the position of a point on the map currently being showed on the screen.
+        Calculate the position of a point on the specified map.
 
         Returns (None, None) if there is no active model on the program or if the position of the mouse is outside of
         the map.
 
         Args:
+            window_settings_data: Dictionary with the settings of the window of the program.
+            scene_settings_data: Dictionary with the settings of the scene of the program.
+            model_id: ID of the model to use for the calculus of the position.
             allow_outside_map: If to enable to calculate the map position even when the positions given fall outside of
                                the rendered map. When disabled, (None, None) is returned if points are outside of map.
             allow_outside_scene: If to enable to calculate the map position when the position given fall outside of
@@ -392,19 +437,19 @@ class Scene:
         # ----------------------
 
         # Model has to exist on the program
-        if self.__engine.get_active_model_id() is None:
+        if model_id is None:
             return None, None
 
         # Model must be initialized to obtain the data
-        x_array, y_array = self.get_active_model_coordinates_arrays()
+        x_array, y_array = self.get_model_coordinates_arrays(model_id)
         if x_array is None and y_array is None:
             return None, None
 
         # Calculate the position of the mouse on the map
         # ----------------------------------------------
-        scene_settings = self.__engine.get_scene_setting_data()
-        map_positions = self.get_active_model_showed_limits()
-        window_settings = self.__engine.get_window_setting_data()
+        scene_settings = scene_settings_data
+        map_positions = self.get_2D_showed_limits()
+        window_settings = window_settings_data
 
         x_dist_pixel = position_x - scene_settings['SCENE_BEGIN_X']
         y_dist_pixel = (window_settings['HEIGHT'] - position_y) - scene_settings['SCENE_BEGIN_Y']
@@ -417,6 +462,7 @@ class Scene:
 
         # Return None, None if mouse is outside the map.
         # ----------------------------------------------
+        # noinspection PyTypeChecker
         outside_map = x_pos < np.min(x_array) or \
                       x_pos > np.max(x_array) or \
                       y_pos < np.min(y_array) or \
@@ -451,9 +497,6 @@ class Scene:
 
         # get the important information.
         model = self.__model_hash[model_id]
-        if not isinstance(model, Map2DModel):
-            raise SceneError(3)
-
         polygon = self.__polygon_hash[polygon_id]
 
         # ask the model and polygon for the parameters to calculate the new height
@@ -491,29 +534,6 @@ class Scene:
         Returns: None
         """
         self.__camera.modify_elevation(angle)
-
-    def change_polygon_draw_order(self, polygon_id: str, new_position: int) -> None:
-        """
-        Change the order on which the polygons are draw on the scene.
-
-        Args:
-            polygon_id: ID of the polygon to modify the draw order.
-            new_position: New position in the list that store the drawing order of the polygons.
-
-        Returns: None
-        """
-        # Check that polygon exists in the scene
-        if polygon_id not in self.__polygon_hash.keys():
-            raise SceneError(5)
-
-        # Remove the polygon from the drawing list, raise exception if it is not in the list
-        try:
-            self.__polygon_draw_order.remove(polygon_id)
-        except ValueError:
-            raise SceneError(6)
-
-        # Insert element in the new position
-        self.__polygon_draw_order.insert(new_position, polygon_id)
 
     def change_color_of_polygon(self, polygon_id: str, color: list) -> None:
         """
@@ -575,6 +595,32 @@ class Scene:
         """
         self.__3d_model_hash[model_id].change_vertices_measure_unit(measure_unit)
 
+    def change_model_draw_priority(self, model_id: str, new_priority: int) -> None:
+        """
+        Change the order on which the models are draw on the scene.
+
+        The closer the priority is to 0, the higher the priority. Models with high priority will be draw over
+        models with less priority.
+
+        Args:
+            model_id: ID of the model to modify.
+            new_priority: New priority for the model to be draw.
+
+        Returns: None
+        """
+        # Check that polygon exists in the scene
+        if model_id not in self.__model_hash.keys():
+            raise SceneError(7)
+
+        # Remove the polygon from the drawing list, raise exception if it is not in the list
+        try:
+            self.__model_draw_priority.remove(model_id)
+        except ValueError:
+            raise SceneError(8)
+
+        # Insert element in the new position
+        self.__model_draw_priority.insert(new_priority, model_id)
+
     def change_normalization_height_factor(self, active_model: str, new_factor: float) -> None:
         """
         Change the height normalization factor of the specified model.
@@ -588,30 +634,194 @@ class Scene:
         self.__3d_model_hash[active_model].change_height_normalization_factor(new_factor)
 
     # noinspection SpellCheckingInspection
-    def create_and_add_map3Dmodel(self, model_id: str, model_2d: Map2DModel) -> None:
+    def change_polygon_draw_priority(self, polygon_id: str, new_priority: int) -> None:
         """
-        Create a new map3Dmodel object and add it to the scene.
+        Change the order on which the polygons are draw on the scene.
 
-        Returns: Id of the new map3Dmodel
+        The closer the priority is to 0, the higher the priority. Polygons with high priority will be draw over
+        polygons with less priority.
 
         Args:
-            model_id: Id of the model.
-            model_2d: Model 2D from wich extract the data to use to see the model in 3D.
-        """
+            polygon_id: ID of the polygon to modify the draw order.
+            new_priority: New priority to be assigned to the polygon.
 
-        # noinspection PyMissingOrEmptyDocstring
-        def task_loading():
+        Returns: None
+        """
+        # Check that polygon exists in the scene
+        if polygon_id not in self.__polygon_hash.keys():
+            raise SceneError(5)
+
+        # Remove the polygon from the drawing list, raise exception if it is not in the list
+        try:
+            self.__polygon_draw_priority.remove(polygon_id)
+        except ValueError:
+            raise SceneError(6)
+
+        # Insert element in the new position
+        self.__polygon_draw_priority.insert(new_priority, polygon_id)
+
+    def create_3D_model_if_not_exists(self,
+                                      model_id: str) -> None:
+        """
+        Create a new map3D_model object and add it to the scene.
+
+        This method removes all the other 3D models loaded into the scene.
+
+        Args:
+            model_id: ID of the model to generate the 3D model.
+
+        Returns: Id of the new map3D_model
+        """
+        if model_id not in self.__3d_model_hash:
             self.reset_camera_values()
-            new_model = Map3DModel(self, model_2d)
+            new_model = Map3DModel(self, self.__model_hash[model_id])
             new_model.id = model_id
 
-            # add the model to the hash
+            # Remove all the other models loaded into the scene
+            self.remove_all_3d_models()
+
+            # Add model to the scene
             self.__3d_model_hash[model_id] = new_model
 
-        self.__engine.set_loading_message('Generating 3D model...')
-        self.__engine.set_task_with_loading_frame(task_loading)
+    def create_model_from_data_async(self,
+                                     path_color_file: str,
+                                     X_values: np.array,
+                                     Y_values: np.array,
+                                     Z_values: np.array,
+                                     model_name: str,
+                                     active_model_id: Union[str, None],
+                                     quality_maps: int = 3,
+                                     then=lambda x: None) -> None:
+        """
+        Refresh the scene, adding the new model to the hash of models and rendering it.
 
-    def create_new_polygon(self, point_list: list = None, parameters: dict = None, draw_position: int = None) -> str:
+        The color file must be in CPT format to create the model correctly.
+
+        The 'then' parameter is the logic that will be executed after the process finish loading the model into memory.
+        This parameter is a function that must receive one parameter and will be called with the model id as the
+        value for that parameter.
+
+        IMPORTANT:
+            This method is asynchronous, this is, the logic defined in this method (the load of the model into the
+            program) is executed in a different thread from the main one, and thus, this method returns immediately
+            after being called.
+
+            To execute logic after the load of the model into the program, use the 'then' parameter.
+
+        Args:
+            quality_maps: Quality to use to generate the vertices of the map.
+            model_name: Name to put on the model.
+            Z_values: Height values of the new model. (bi-dimensional matrix)
+            Y_values: Y-axis values to use in the new model. (unidimensional array)
+            X_values: X-axis values to use in the new model. (unidimensional array)
+            active_model_id: ID of the active model on the program. Can be None.
+            then: Function to be executed at the end of the async routine. Must receive one parameter (the model id).
+            path_color_file: Path to the CTP file with the colors
+
+        Returns: None
+        """
+        X = X_values
+        Y = Y_values
+        Z = Z_values
+
+        # Check if the new model is compatible with the new model used as base
+        # --------------------------------------------------------------------
+        if active_model_id is not None:
+
+            active_model_information = self.get_model_information(active_model_id)
+            x_array, y_array = active_model_information['coordinates_array']
+            shape = active_model_information['height_array'].shape
+
+            if x_array.shape != X.shape or not np.isclose(x_array, X).all():
+                log.debug(f"Current model X axis: {x_array}")
+                log.debug(f"New model X axis: {X}")
+                raise SceneError(9, {'expected': x_array, 'actual': X})
+
+            if y_array.shape != Y.shape or not np.isclose(y_array, Y).all():
+                log.debug(f"Current model Y axis: {y_array}")
+                log.debug(f"New model Y axis: {Y}")
+                raise SceneError(10, {'expected': y_array, 'actual': Y})
+
+            if shape != Z.shape:
+                log.debug(f"Model current shape: {shape}")
+                log.debug(f"New model shape: {Z.shape}")
+                raise SceneError(11, {'expected': shape, 'actual': Z.shape})
+
+        # Generate the model and add it to the scene
+        # ------------------------------------------
+        log.debug("Generating model")
+        model = Map2DModel(self, name=model_name)
+
+        # noinspection PyMissingOrEmptyDocstring
+        def then_routine():
+            log.debug("Initializing models and adding to the scene.")
+
+            # Initialize model information
+            # -----------------------------
+            model.set_color_file(path_color_file)
+            model.id = str(self.__model_id_count)
+            self.__model_id_count += 1
+
+            # Update scene model information
+            # ------------------------------
+            self.update_projection_matrix_2D()
+            self.__model_draw_priority.append(model.id)
+            self.add_model(model)
+
+            # Reset the zoom level, position and projection if there was no active model before.
+            # ----------------------------------------------------------------------------------
+            if active_model_id is None:
+                self.__projection_matrix_2D = None
+
+            # call the then routine
+            then(model.id)
+
+        log.debug("Setting vertices from grid.")
+        model.set_vertices_from_grid_async(X, Y, Z, quality_maps, then_routine)
+
+    def create_model_from_existent(self,
+                                   base_model_id: str,
+                                   second_model_id: str,
+                                   new_model_name: str,
+                                   path_color_file: str,
+                                   active_model_id: str,
+                                   then: Callable = lambda x: None) -> None:
+        """
+        Generate a new 2D model on the scene merging already existent models.
+
+        IMPORTANT:
+            This method is asynchronous, this is, the logic defined in this method (the load of the model into the
+            program) is executed in a different thread from the main one, and thus, this method returns immediately
+            after being called.
+
+            To execute logic after the load of the model into the program, use the 'then' parameter.
+
+        Args:
+            then: Routine to execute after the creation of the model. Receives the ID of the generated model as
+                  only parameter.
+            active_model_id: ID of the active model on the program.
+            path_color_file: Path to the color file to use for the coloring of the model.
+            base_model_id: ID of the model to use as base.
+            second_model_id: ID of the second model to use.
+            new_model_name: Name of the new model.
+        """
+        base_model_info = self.get_model_information(base_model_id)
+        second_model_info = self.get_model_information(second_model_id)
+
+        new_heights = TransformationHelper().merge_matrices(base_model_info["height_array"],
+                                                            second_model_info["height_array"])
+
+        self.create_model_from_data_async(path_color_file,
+                                          base_model_info['coordinates_array'][0],
+                                          base_model_info['coordinates_array'][1],
+                                          new_heights,
+                                          new_model_name,
+                                          active_model_id,
+                                          1,
+                                          then)
+
+    def create_new_polygon(self, point_list: list = None, parameters: dict = None,
+                           priority_position: int = None) -> str:
         """
         Create a new polygon and adds it to the list of polygons of the scene.
 
@@ -620,8 +830,8 @@ class Scene:
         RepeatedPointError will be raised.
 
         Args:
-            draw_position: Where, in the draw order, set the polygon. Negative values will place the polygon at the end
-                           of the list (will be draw the last).
+            priority_position: Where, in the draw order, set the polygon. Negative values will place the polygon at the
+                               end of the list (will be draw the last).
             point_list: List with the points to add to the polygon. [[x,y],[x,y],...]
             parameters: Parameters to set in the polygon. {parameter_name:value,...}
 
@@ -634,10 +844,10 @@ class Scene:
 
         # Add the id to the list of drawing polygons
         # ------------------------------------------
-        if draw_position is None:
-            self.__polygon_draw_order.append(new_polygon_id)
+        if priority_position is None:
+            self.__polygon_draw_priority.append(new_polygon_id)
         else:
-            self.__polygon_draw_order.insert(draw_position, new_polygon_id)
+            self.__polygon_draw_priority.insert(priority_position, new_polygon_id)
 
         # Create the polygon and return its id
         # ------------------------------------
@@ -658,13 +868,13 @@ class Scene:
         if polygon_id in self.__polygon_hash:
             self.__polygon_hash.pop(polygon_id)
 
-            # delete the interpolation area if they have
-            if polygon_id in self.__interpolation_area_hash:
-                self.__interpolation_area_hash.pop(polygon_id)
+        # delete the interpolation area if they have
+        if polygon_id in self.__interpolation_area_hash:
+            self.__interpolation_area_hash.pop(polygon_id)
 
-            # remove it from the draw list
-            if polygon_id in self.__polygon_draw_order:
-                self.__polygon_draw_order.remove(polygon_id)
+        # remove it from the draw list
+        if polygon_id in self.__polygon_draw_priority:
+            self.__polygon_draw_priority.remove(polygon_id)
 
     def delete_polygon_param(self, polygon_id: str, key: str) -> None:
         """
@@ -682,7 +892,11 @@ class Scene:
             # noinspection PyTypeChecker
             raise SceneError(5)
 
-    def draw(self) -> None:
+    def draw(self,
+             active_model_id: str,
+             active_polygon_id: str,
+             program_view_mode: ViewMode,
+             ) -> None:
         """
         Draw the models in the hash of models.
 
@@ -693,17 +907,19 @@ class Scene:
         in place.
 
         Returns: None
+
+        Args:
+            active_model_id: ID of the active model on the program.
+            active_polygon_id: ID of the active polygon on the program.
+            program_view_mode: String representing if the program is in 2D or 3D mode.
         """
-
-        # get the active model
-        active_model = self.__engine.get_active_model_id()
-
         # check if draw the 2D or the 3D of the models.
-        if self.__engine.get_program_view_mode() == '2D':
+        if program_view_mode == ViewMode.mode_2d:
 
-            # Draw map2DModel
-            if active_model is not None:
-                self.__model_hash[active_model].draw()
+            # Draw all the Map2DModels
+            for model_2d in reversed(self.__model_draw_priority):
+                # Change the height of the maps and draw them
+                self.__model_hash[model_2d].draw()
 
             # Draw all the interpolation areas
             for area_models in self.__interpolation_area_hash.values():
@@ -711,108 +927,46 @@ class Scene:
                     model.draw()
 
             # Draw all the polygons
-            for polygon, draw_order in zip(self.__polygon_draw_order, range(len(self.__polygon_draw_order))):
-                # Change the height of the polygon depending on the draw order
-                self.__polygon_hash[polygon].set_z_offset(len(self.__polygon_draw_order) - draw_order + 1)
+            for polygon in reversed(self.__polygon_draw_priority):
+                # Draw the polygons in order
+                self.__polygon_hash[polygon].draw(active_polygon_id == polygon)
 
-                # Draw the polygons on the scene
-                self.__polygon_hash[polygon].draw()
-
-        elif self.__engine.get_program_view_mode() == '3D':
-
+        elif program_view_mode == ViewMode.mode_3d:
             # Draw model if it exists
-            if active_model in self.__3d_model_hash:
-                self.__3d_model_hash[active_model].draw()
-
-            # Create the model if it does not exists
-            else:
-                self.create_and_add_map3Dmodel(active_model,
-                                               self.__model_hash[active_model])
+            if active_model_id in self.__3d_model_hash:
+                self.__3d_model_hash[active_model_id].draw()
 
     # noinspection PyUnresolvedReferences
-    def get_active_2d_model_projection_matrix(self) -> np.array:
+    def get_2D_showed_limits(self) -> dict:
         """
-        Get the projection matrix from the active 2D model being showed on the screen.
+        Get a dictionary with the limits of the model being showed on the screen.
 
-        The projection matrix of the 2D models limit the coordinates showed on the screen depending on the position
-        of the map and the level of zoom. This method is useful when rendering objects that need to be over the 2D
-        map.
-
-        The projection matrix used in 2D mode are orthogonal, and the camera is always on the z-axis coordinate, so the
-        value for near/far in the matrix does not affect the way that the models are viewed on the scene. Even with
-        this, models draw in the 2D mode that have a z-coordinate value that is outside the near/far range will not be
-        rendered (since they are out of the projection matrix).
-
-        The near/far range is the one used by the Map2DModel class for their projection matrix. That should
-        be [-99999, 99999]. Points that use this matrix and have points with z-axis coordinate outside this range
-        will not be rendered.
-
-        Returns: array with the projection matrix of the active model.
+        Returns: Dictionary with the limits showing on the scene
         """
-        active_model_id = self.__engine.get_active_model_id()
+        if self.__left_coordinate is None or \
+                self.__right_coordinate is None or \
+                self.__top_coordinate is None or \
+                self.__bottom_coordinate is None:
+            self.update_projection_matrix_2D()
 
-        # Return active model projection matrix if the model exists
-        if active_model_id in self.__model_hash:
-            return self.__model_hash[active_model_id].get_projection_matrix()
-        else:
-            raise SceneError(7)
+        return {
+            'left': self.__left_coordinate,
+            'right': self.__right_coordinate,
+            'top': self.__top_coordinate,
+            'bottom': self.__bottom_coordinate
+        }
 
-    def get_active_model_coordinates_arrays(self) -> (np.ndarray, np.ndarray):
+    # noinspection SpellCheckingInspection
+    def get_3d_model_list(self) -> List[str]:
         """
-        Get two arrays, the first containing the coordinates used in the active model for the x-axis and the second
-        containing the coordinates used in the active model for the y-axis.
+        Get a list with the ID of the 3D models generated on the program.
 
-        The lists can be sorted ascended or descended. (must be verified, can vary)
+        The ID used by the 3D models is the same as the ID used by the 2D model from which they were generated. All 3D
+        models have a 2D model associated, but not all 2D models have a 3D model.
 
-        If there is no active model or if there is a problem retrieving the model, then (None, None) is returned.
-
-        Returns: (x-axis array, y-axis array) coordinates used in the active model.
+        Returns: List with the ID of the 3D models generated on the program.
         """
-        active_model_id = self.__engine.get_active_model_id()
-        if active_model_id in self.__model_hash:
-            model = self.__model_hash[active_model_id]
-            return model.get_model_coordinate_array()
-        else:
-            return None, None
-
-    def get_active_model_height_on_coordinates(self, x_coordinate: float, y_coordinate: float) -> Union[float, None]:
-        """
-        Get the height of the active model in the specified coordinates.
-
-        If coordinates are outside the model or there is no active model, then None is returned.
-
-        Args:
-            x_coordinate: x-axis coordinate.
-            y_coordinate: y-axis coordinate.
-
-        Returns: Height of the model in the coordinates.
-        """
-        active_model_id = self.__engine.get_active_model_id()
-        if active_model_id in self.__model_hash:
-            return self.__model_hash[active_model_id].get_height_on_coordinates(x_coordinate, y_coordinate)
-        else:
-            return None
-
-    def get_active_model_showed_limits(self) -> dict:
-        """
-        Get a dictionary with the limits of the coordinates being showed by the current model on the scene.
-
-        Returns: Dictionary with the limits
-        """
-        active_model_id = self.__engine.get_active_model_id()
-        if active_model_id is None:
-            raise AssertionError("There is no active model.")
-
-        if active_model_id in self.__model_hash:
-            return self.__model_hash[active_model_id].get_showed_limits()
-
-    def get_active_polygon_id(self) -> str:
-        """
-                Get the id of the active polygon on the program.
-
-                Returns: the id of the active polygon.
-                """
-        return self.__engine.get_active_polygon_id()
+        return list(self.__3d_model_hash.keys())
 
     def get_camera_data(self) -> dict:
         """
@@ -827,14 +981,6 @@ class Scene:
             'elevation': self.__camera.get_elevation_grades(),
             'radius': self.__camera.get_radius()
         }
-
-    def get_camera_settings(self) -> dict:
-        """
-        Ask the engine for the settings related to the camera.
-
-        Returns: Dictionary with the settings related to the camera.
-        """
-        return self.__engine.get_camera_settings()
 
     def get_camera_view_matrix(self) -> np.ndarray:
         """
@@ -875,12 +1021,11 @@ class Scene:
         model = self.__3d_model_hash[model_3d_id]
         return model.get_normalization_height_factor()
 
-    # noinspection SpellCheckingInspection
-    def get_map2dmodel_vertices_array(self, model_id: str) -> np.ndarray:
+    def get_map2d_model_vertices_array(self, model_id: str) -> np.ndarray:
         """
         Get the array of vertices of the specified model.
 
-        Id model is not map2dmodel then TypeError exception is raised.
+        Id model is not map2d_model then TypeError exception is raised.
 
         Args:
             model_id: ID of the model.
@@ -897,6 +1042,76 @@ class Scene:
         vertices_array[:, :, 2] = heights
         return vertices_array
 
+    def get_model_coordinates_arrays(self, model_id: str) -> (Union[np.ndarray, None], Union[np.ndarray, None]):
+        """
+        Get two arrays, the first containing the coordinates used in the model for the x-axis and the second
+        containing the coordinates used in the model for the y-axis.
+
+        Returns: (x-axis array, y-axis array) coordinates used in the active model.
+
+        Args:
+            model_id: Model to use to get the coordinate arrays.
+        """
+        if model_id in self.__model_hash:
+            model = self.__model_hash[model_id]
+            return model.get_model_coordinate_array()
+        else:
+            return None, None
+
+    def get_model_height_on_coordinates(self,
+                                        x_coordinate: float,
+                                        y_coordinate: float,
+                                        model_id: str) -> Union[float, None]:
+        """
+        Get the height of the active model in the specified coordinates.
+
+        If coordinates are outside the model or there is no active model, then None is returned.
+
+        Args:
+            x_coordinate: x-axis coordinate.
+            y_coordinate: y-axis coordinate.
+            model_id: ID of the model to check for the coordinates.
+
+        Returns: Height of the model in the coordinates.
+        """
+        if model_id in self.__model_hash:
+            return self.__model_hash[model_id].get_height_on_coordinates(x_coordinate, y_coordinate)
+        else:
+            return None
+
+    def get_model_information(self, model_id: str) -> dict:
+        """
+        Get the information related to a model on the program.
+
+        The dictionary generated has the following shape:
+        {
+            'height_array': Numpy array
+            'coordinates_array': (Numpy array, Numpy array),
+            'projection_matrix': Numpy array,
+            'showed_limits': {
+                'left': Number,
+                'right': Number,
+                'top': Number,
+                'bottom': Number
+            },
+            'shape': (Int, Int, Int),
+            'name': string
+        }
+
+        Any parameter can be None if the model has not been initialized yet.
+
+        Returns: Dictionary with the information of the model.
+        """
+        model = self.__model_hash[model_id]
+        return {
+            'height_array': model.get_height_array(),
+            'coordinates_array': model.get_model_coordinate_array(),
+            'projection_matrix': self.get_projection_matrix_2D(),
+            'showed_limits': self.get_2D_showed_limits(),
+            'shape': model.get_vertices_shape(),
+            'name': model.get_name()
+        }
+
     def get_model_list(self) -> List[str]:
         """
         Get a list with the ID of all the 2D models loaded into the program.
@@ -904,17 +1119,6 @@ class Scene:
         Returns: List with the ID of the models.
         """
         return list(self.__model_hash.keys())
-
-    def get_3d_model_list(self) -> List[str]:
-        """
-        Get a list with the ID of the 3D models generated on the program.
-
-        The ID used by the 3D models is the same as the ID used by the 2D model from which they were generated. All 3D
-        models have a 2D model associated, but not all 2D models have a 3D model.
-
-        Returns: List with the ID of the 3D models generated on the program.
-        """
-        return list(self.__3d_model_hash.keys())
 
     def get_point_list_from_polygon(self, polygon_id: str) -> list:
         """
@@ -982,6 +1186,41 @@ class Scene:
         except KeyError:
             raise SceneError(5)
 
+    def get_projection_matrix_2D(self) -> np.array:
+        """
+        Get the projection matrix from the active 2D model being showed on the screen.
+
+        The projection matrix of the 2D models limit the coordinates showed on the screen depending on the position
+        of the map and the level of zoom. This method is useful when rendering objects that need to be over the 2D
+        map.
+
+        The projection matrix used in 2D mode are orthogonal, and the camera is always on the z-axis coordinate, so the
+        value for near/far in the matrix does not affect the way that the models are viewed on the scene. Even with
+        this, models draw in the 2D mode that have a z-coordinate value that is outside the near/far range will not be
+        rendered (since they are out of the projection matrix).
+
+        The near/far range is the one used by the Map2DModel class for their projection matrix. That should
+        be [-99999, 99999]. Points that use this matrix and have points with z-axis coordinate outside this range
+        will not be rendered.
+
+        Returns: array with the projection matrix of the active model.
+        """
+        if self.__projection_matrix_2D is None:
+            self.update_projection_matrix_2D()
+
+        return self.__projection_matrix_2D
+
+    def get_projection_matrix_3D(self) -> np.array:
+        """
+        Return the projection matrix to use when rendering 3D models.
+
+        Returns: Projection matrix to use when rendering 3D models.
+        """
+        if self.__projection_matrix_3D is None:
+            self.update_projection_matrix_3D()
+
+        return self.__projection_matrix_3D
+
     def get_render_settings(self) -> dict:
         """
         Return a dictionary with the settings related to the polygons.
@@ -997,14 +1236,6 @@ class Scene:
         Returns: None
         """
         return self.__engine.get_scene_setting_data()
-
-    def get_zoom_level(self) -> float:
-        """
-        Get the zoom level used by the program.
-
-        Returns:  Zoom level
-        """
-        return self.__engine.get_zoom_level()
 
     def interpolate_points(self, polygon_id: str, model_id: str, distance: float, type_interpolation: str) -> None:
         """
@@ -1077,7 +1308,7 @@ class Scene:
                 engine: Engine used in the program.
             """
             # save the changes to the model
-            map2d_model.set_height_buffer(new_height)
+            map2d_model.update_heights(new_height)
             engine.set_program_loading(False)
 
         self.__engine.set_loading_message('Interpolating points, this may take a while.')
@@ -1100,7 +1331,9 @@ class Scene:
         if polygon_id in self.__polygon_hash:
             return self.__polygon_hash[polygon_id].is_planar()
 
-    def load_preview_interpolation_area(self, distance: float, polygon_id: str) -> None:
+    def load_preview_interpolation_area(self,
+                                        distance: float,
+                                        polygon_id: str) -> None:
         """
         Calculate the interpolation area for the active polygon and draw it on the scene.
 
@@ -1126,27 +1359,8 @@ class Scene:
         lines_external = Lines(self, point_list=np.array(polygon_external_points).reshape((-1, 3)))
         lines_external.set_line_color([1, 0, 0, 0.5])
 
-        # Deprecated Code
-        # ---------------
-        # # Add the lines of the external polygon to the lines model
-        # for ind in range(int(len(polygon_external_points) / 3)):
-        #
-        #     point_1 = (polygon_external_points[ind * 3],
-        #                polygon_external_points[ind * 3 + 1],
-        #                polygon_external_points[ind * 3 + 2])
-        #
-        #     if ind == len(polygon_external_points) / 3 - 1:
-        #         point_2 = (polygon_external_points[0],
-        #                    polygon_external_points[1],
-        #                    polygon_external_points[2])
-        #     else:
-        #         point_2 = (polygon_external_points[ind * 3 + 3],
-        #                    polygon_external_points[ind * 3 + 4],
-        #                    polygon_external_points[ind * 3 + 5])
-        #   lines_external.add_line(point_1, point_2)
-
         # Add the model to the hash of interpolation areas
-        self.__interpolation_area_hash[self.__engine.get_active_polygon_id()] = [lines_external]
+        self.__interpolation_area_hash[polygon_id] = [lines_external]
 
     def modify_camera_radius(self, distance: float) -> None:
         """
@@ -1171,20 +1385,6 @@ class Scene:
         Returns: None
         """
         self.__camera.modify_camera_offset(movement)
-
-    def move_models(self, x_movement: int, y_movement: int) -> None:
-        """
-        Move the models on the scene.
-
-        Args:
-            x_movement: Movement in the x-axis
-            y_movement: Movement in the y-axis
-
-        Returns: None
-        """
-        log.debug("Moving models")
-        for model in self.__model_hash.values():
-            model.move(x_movement, y_movement)
 
     def optimize_gpu_memory_async(self, then: callable) -> None:
         """
@@ -1214,67 +1414,14 @@ class Scene:
         if len(self.__model_hash) == 0:
             then()
 
-    def refresh_with_model_2d_async(self, path_color_file: str, path_model: str, then=lambda x: None) -> None:
-        """
-        Refresh the scene, removing all the models, and adding the new model specified
-        in the input.
-
-        The model added will be added as a 2d model to the program with the id 'main'.
-
-        The model must  be in netCDF format.
-
-        The color file must be in CTP format.
-
-        The 'then' parameter is the logic that will be executed after the process finish loading the model into memory.
-        This parameter is a function that must receive one parameter and will be called with the model id as the
-        value for that parameter.
-
-        Args:
-            then: Function to be executed at the end of the async routine. Must receive one parameter (the model id).
-            path_color_file: Path to the CTP file with the colors
-            path_model: Path to the model to use in the application
-
-        Returns: None
-
-        """
-
-        log.debug("Reading information from file.")
-        X, Y, Z = self.__engine.read_netcdf_info(path_model)
-
-        log.debug("Generating model")
-        model = Map2DModel(self)
-
-        # noinspection PyMissingOrEmptyDocstring
-        def then_routine():
-            log.debug("Settings colors from file.")
-            model.set_color_file(path_color_file)
-            model.calculate_projection_matrix(self.__engine.get_scene_setting_data())
-            model.wireframes = False
-
-            # even if the model is not in the program anymore, we do not want repeated ids.
-            model.id = self.__model_id_count
-            self.__model_id_count += 1
-
-            # this line have to be removed for the program to accept more than one model at the same time
-            self.remove_all_models()
-            self.remove_all_3d_models()
-            self.add_model(model)
-
-            self.__engine.reset_zoom_level()
-
-            # call the then routine
-            then(model.id)
-
-        log.debug("Setting vertices from grid.")
-        model.set_vertices_from_grid_async(X, Y, Z, self.__engine.get_quality(), then_routine)
-
-    def reload_models_async(self, then):
+    def reload_models_async(self, quality: int, then: Callable):
         """
         Ask the 2D models to reload with the new resolution of the screen.
 
         Returns: None
 
         Args:
+            quality: Quality to use for the reload of the models. The closer to 1 the better the resolution.
             then: Function to be called after all the async routine.
         """
 
@@ -1300,18 +1447,11 @@ class Scene:
                 then()
 
         for model in self.__model_hash.values():
-            model.recalculate_vertices_from_grid_async(quality=self.__engine.get_quality(), then=then_routine)
+            model.recalculate_vertices_from_grid_async(quality=quality, then=then_routine)
 
         # if there is no models, call the then routine doing nothing
         if len(self.__model_hash) == 0:
             then()
-
-    def remove_all_models(self) -> None:
-        """
-        Remove all models from the hash of models.
-        Returns: None
-        """
-        self.__model_hash = {}
 
     def remove_all_3d_models(self) -> None:
         """
@@ -1320,6 +1460,16 @@ class Scene:
         Returns: None
         """
         self.__3d_model_hash = {}
+
+    def remove_all_models(self) -> None:
+        """
+        Remove all models from the hash of models.
+
+        Only removes the 2D models.
+
+        Returns: None
+        """
+        self.__model_hash = {}
 
     def remove_interpolation_preview(self, polygon_id: str) -> None:
         """
@@ -1364,9 +1514,24 @@ class Scene:
 
         Returns: None
         """
-
         if id_model in self.__model_hash:
             self.__model_hash.pop(id_model)
+        if id_model in self.__model_draw_priority:
+            self.__model_draw_priority.remove(id_model)
+
+    def remove_model_3d(self, id_model: str) -> None:
+        """
+        Delete the 3D model with the specified id.
+
+        Do nothing if the model does not exists.
+
+        Args:
+            id_model: ID of the model to remove.
+
+        Returns: None
+        """
+        if id_model in self.__3d_model_hash:
+            self.__3d_model_hash.pop(id_model)
 
     def reset_camera_values(self) -> None:
         """
@@ -1380,31 +1545,14 @@ class Scene:
         """
         Change the loading message shown in the loading frame.
 
+        This method ask the engine to change the message showed on the loading frame.
+
         Args:
-            new_msg: New message to show
+            new_msg: New message to show on the loading frame.
 
         Returns: None
         """
         self.__engine.set_loading_message(new_msg)
-
-    def set_map_position(self, new_position: list) -> None:
-        """
-        Tell the engine the new position of the map.
-
-        Args:
-            new_position: New position to use.
-
-        Returns: None
-        """
-        self.__engine.set_map_position(new_position)
-
-    def set_modal_text(self, title_modal: str, msg: str) -> None:
-        """
-        Calls the engine to set a modal text on the screen.
-
-        Returns: None
-        """
-        self.__engine.set_modal_text(title_modal, msg)
 
     def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
@@ -1421,6 +1569,9 @@ class Scene:
         Returns: None
         """
         for model in self.__model_hash.values():
+            model.polygon_mode = polygon_mode
+
+        for model in self.__3d_model_hash.values():
             model.polygon_mode = polygon_mode
 
     def set_polygon_name(self, polygon_id: str, new_name: str) -> None:
@@ -1520,40 +1671,135 @@ class Scene:
         for model in self.__model_hash.values():
             model.set_color_file(color_file)
 
-    def update_models_projection_matrix(self) -> None:
+    def update_projection_matrix_2D(self) -> None:
         """
-        Update the projection matrix of the models with the current zoom level and map position of the application.
+        Generate the projection matrix on the model. Method must be called before drawing.
+
+        The projection matrix is the one in charge of converting the coordinates from the view space (camera point of
+        view) into the range (-1, 1), when the points are converted to this range of coordinates it is
+        called that they are in the clip space.
+
+        OpenGL is the one in charge of converting the coordinates from the clipping space into the screen space. showing
+        the points on the screen.
+
+        Since the projection matrix is the one who converts the coordinates of the model into the space accepted by
+        OpenGL (-1, 1), the matrix is also the one in charge of keeping the aspect ratio of the models
+        showed on the screen.
+
+        More information in: https://learnopengl.com/Getting-started/Coordinate-Systems
 
         Returns: None
         """
-        log.debug("Updating projection matrix of models.")
+
+        # Get the data and the proportions to generate the projection matrix
+        # ------------------------------------------------------------------
+        map_position = self.__engine.get_map_position()
         scene_data = self.__engine.get_scene_setting_data()
+        zoom_level = self.__engine.get_zoom_level()
 
-        for model in self.__model_hash.values():
-            model.calculate_projection_matrix(scene_data, self.get_zoom_level())
+        width_scene = scene_data['SCENE_WIDTH_X']
+        height_scene = scene_data['SCENE_HEIGHT_Y']
+        proportion_panoramic = width_scene / float(height_scene)
+        proportion_portrait = height_scene / float(width_scene)
 
-        for model in self.__3d_model_hash.values():
-            model.calculate_projection_matrix()
+        # maximum and minimum values of the map coordinates.
+        min_x = min(self.__x)
+        max_x = max(self.__x)
+        min_y = min(self.__y)
+        max_y = max(self.__y)
 
-    def update_viewport(self) -> None:
+        # width and height of the loaded maps.
+        width_map = max_x - min_x
+        height_map = max_y - min_y
+
+        # CASE PANORAMIC DATA
+        # -------------------
+        if width_map > height_map:
+            # calculate the height of the viewport on map coordinates
+            # the width of the viewport in map coordinates is the same as x_width
+            calculated_height_viewport = width_map / proportion_panoramic
+
+            # calculates the coordinates to use to clip the map on the scene to keep the aspect ratio.
+            projection_min_y = (max_y + min_y) / 2 - calculated_height_viewport / 2
+            projection_max_y = (max_y + min_y) / 2 + calculated_height_viewport / 2
+
+            # Calculate the distance to use as offset when applying zoom on the maps.
+            zoom_difference_x = (width_map - (width_map / zoom_level)) / 2
+            zoom_difference_y = (calculated_height_viewport - (calculated_height_viewport / zoom_level)) / 2
+
+            # calculate the coordinates to show on the viewport.
+            # NOTE: The coordinates can be values outside of the map.
+            self.__left_coordinate = min_x + zoom_difference_x
+            self.__right_coordinate = max_x - zoom_difference_x
+            self.__bottom_coordinate = projection_min_y + zoom_difference_y
+            self.__top_coordinate = projection_max_y - zoom_difference_y
+
+        # CASE PORTRAIT DATA
+        # -------------------
+        else:
+            # calculate the width of the viewport on map coordinates
+            # the width of the viewport in map coordinates is the same as x_width
+            calculated_width_viewport = height_map / proportion_portrait
+
+            # calculates the coordinates to use to clip the map on the scene to keep the aspect ratio.
+            projection_min_x = (max_x + min_x) / 2 - calculated_width_viewport / 2
+            projection_max_x = (max_x + min_x) / 2 + calculated_width_viewport / 2
+
+            # Calculate the distance to use as offset when applying zoom on the maps.
+            zoom_difference_y = (height_map - (height_map / zoom_level)) / 2
+            zoom_difference_x = (calculated_width_viewport - (calculated_width_viewport / zoom_level)) / 2
+
+            # calculate the coordinates to show on the viewport.
+            # NOTE: The coordinates can be values outside of the map.
+            self.__left_coordinate = projection_min_x + zoom_difference_x
+            self.__right_coordinate = projection_max_x - zoom_difference_x
+            self.__bottom_coordinate = min_y + zoom_difference_y
+            self.__top_coordinate = max_y - zoom_difference_y
+
+        # Move the coordinates to show on the model depending on the position that the model is located.
+        self.__left_coordinate -= map_position[0]
+        self.__right_coordinate -= map_position[0]
+        self.__top_coordinate -= map_position[1]
+        self.__bottom_coordinate -= map_position[1]
+
+        # Calculate the projection matrix given the calculated coordinates to show on the model.
+        self.__projection_matrix_2D = ortho(self.__left_coordinate,
+                                            self.__right_coordinate,
+                                            self.__bottom_coordinate,
+                                            self.__top_coordinate,
+                                            self.__projection_z_axis_min_value,
+                                            self.__projection_z_axis_max_value)
+
+    def update_projection_matrix_3D(self) -> None:
+        """
+        Recalculate the projection matrix to use when rendering 3D models.
+
+        Returns: None
+        """
+        log.debug('Recalculated projection.')
+        scene_settings_data = self.__engine.get_scene_setting_data()
+        camera_settings_data = self.__engine.get_camera_settings()
+        self.__projection_matrix_3D = perspective(camera_settings_data['FIELD_OF_VIEW'],
+                                                  scene_settings_data['SCENE_WIDTH_X'] / scene_settings_data[
+                                                      'SCENE_HEIGHT_Y'],
+                                                  camera_settings_data['PROJECTION_NEAR'],
+                                                  camera_settings_data['PROJECTION_FAR'])
+
+    def update_viewport(self, scene_data: Dict[str, int]) -> None:
         """
         Update the viewport with the new values that exist in the Settings.
+
+        Args:
+            scene_data: Dictionary with the data of the scene.
         """
         log.debug("Updating viewport")
-        self.update_viewport_variables()
+        self.__width_viewport = scene_data['SCENE_WIDTH_X']
+        self.__height_viewport = scene_data['SCENE_HEIGHT_Y']
 
-        scene_data = self.__engine.get_scene_setting_data()
-        GL.glViewport(scene_data['SCENE_BEGIN_X'], scene_data['SCENE_BEGIN_Y'], scene_data['SCENE_WIDTH_X'],
+        GL.glViewport(scene_data['SCENE_BEGIN_X'],
+                      scene_data['SCENE_BEGIN_Y'],
+                      scene_data['SCENE_WIDTH_X'],
                       scene_data['SCENE_HEIGHT_Y'])
 
-        self.update_models_projection_matrix()
-
-    def update_viewport_variables(self):
-        """
-        Update the viewport variables.
-
-        Returns: None
-        """
-        viewport_data = self.__engine.get_scene_setting_data()
-        self.__width_viewport = viewport_data['SCENE_WIDTH_X']
-        self.__height_viewport = viewport_data['SCENE_HEIGHT_Y']
+        self.update_projection_matrix_2D()
+        self.update_projection_matrix_3D()

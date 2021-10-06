@@ -127,7 +127,8 @@ All the dependencies of the project must be installed for the tests to run corre
 
 # Tools
 
-There is a number of tools that form part of the engine, they are stored as strings by the program class. Here is the list of all tools of the program:
+There is a number of tools that form part of the engine, they are stored as Enum by the program module. Here is the list
+of all tools of the program:
 
 |       ID       |                        Description                        |
 | :------------: | :-------------------------------------------------------: |

@@ -18,14 +18,12 @@
 """
 Class in charge of managing the models of the maps in 2 dimensions.
 """
-import ctypes as ctypes
 from typing import List, Union
 
 import OpenGL.GL as GL
 import numpy as np
 
 from src.engine.scene.model.mapmodel import MapModel
-from src.engine.scene.model.tranformations.transformations import ortho
 from src.input.CTP import read_file
 from src.utils import get_logger
 
@@ -37,15 +35,6 @@ class Map2DModel(MapModel):
     """
     Class that manage all things related to the 2D representation of the maps.
 
-    Models only use an orthogonal projection matrix to be rendered on the screen, with a fixed camera that is on the
-    z-axis.
-
-    The movement on the map in the scene is done modifying the values used in the projection matrix, giving the illusion
-    that the map is being moved on the scene. (The values of the near/far values for the projection matrix used are
-    fixed in the values -1/1.
-
-    The points of the map use 0 as the value of their z-axis coordinate, being the model rendered a plane on the screen.
-
     The height of the points of the model are passed as a vertex array to the shaders and the data from the color files
     is passed as an uniform. The coloration of the models is done inside the shaders.
 
@@ -54,7 +43,7 @@ class Map2DModel(MapModel):
 
     """
 
-    def __init__(self, scene=None):
+    def __init__(self, scene=None, name: Union[str, None] = None):
         """
         Constructor of the model class.
         """
@@ -71,31 +60,15 @@ class Map2DModel(MapModel):
         self.__z = None
 
         # vertices values (used in the buffer)
-        self.__vertices = []
+        self.__vertices: np.ndarray = np.array([])
 
         # indices of the model (used in the buffer)
-        self.__indices = []
-
-        # height values
-        self.__height_array = np.array([])
-        self.__max_height = None
-        self.__min_height = None
-
-        # height buffer object
-        self.hbo = GL.glGenBuffers(1)
-
-        # projection matrix
-        self.__projection = None
-        self.__left_coordinate = None
-        self.__right_coordinate = None
-        self.__top_coordinate = None
-        self.__bottom_coordinate = None
-        self.__projection_z_axis_min_value = -99999
-        self.__projection_z_axis_max_value = 99999
+        self.__indices: np.ndarray = np.array([])
 
         # utilities variables
         self.__triangles_to_delete = np.array([])  # triangles overlapped to delete when optimizing memory
         self.__new_indices = None  # new indices of triangles calculated using parallelism
+        self.__name = name  # name of the model. Can be None
 
     def __add_triangles_inside_zone_to_delete_list(self,
                                                    left_coordinate: float,
@@ -270,7 +243,7 @@ class Map2DModel(MapModel):
                                          top_coordinate,
                                          bottom_coordinate)
 
-    def __generate_vertices_list(self, x: np.ndarray, y: np.ndarray, z: np.ndarray, z_value: int = 0) -> np.ndarray:
+    def __generate_vertices_list(self, x: np.ndarray, y: np.ndarray, z: np.ndarray) -> np.ndarray:
         """
         Generate a list of vertices given the data of a 3D grid.
         The z value of the vertices is set to 0.
@@ -300,7 +273,7 @@ class Map2DModel(MapModel):
         vertices = np.zeros((z.shape[0], z.shape[1], 3))
         vertices[:, :, 0] = x
         vertices[:, :, 1] = y
-        vertices[:, :, 2] = z_value
+        vertices[:, :, 2] = z
         vertices = vertices.reshape(-1)
         log.debug('End of creation array of vertices')
         return vertices
@@ -384,32 +357,6 @@ class Map2DModel(MapModel):
         for i in range(int(len(self.__vertices) / 3)):
             print(f"P{i}: " + "".join(str(self.__vertices[i * 3:(i + 1) * 3])))
 
-    def __set_height_buffer(self) -> None:
-        """
-        Set the buffer object for the heights to be used in the shaders.
-
-        IMPORTANT:
-            Uses the index 1 of the attributes pointers.
-
-        Returns: None
-
-        """
-        height = np.array(self.__height_array, dtype=np.float32)
-
-        # Set the buffer data in the buffer
-        GL.glBindVertexArray(self.vao)
-        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.hbo)
-        GL.glBufferData(GL.GL_ARRAY_BUFFER,
-                        len(height) * self.scene.get_float_bytes(),
-                        height,
-                        GL.GL_STATIC_DRAW)
-
-        # Enable the data to the shaders
-        GL.glVertexAttribPointer(1, 1, GL.GL_FLOAT, GL.GL_FALSE, 0, ctypes.c_void_p(0))
-        GL.glEnableVertexAttribArray(1)
-
-        return
-
     def _update_uniforms(self) -> None:
         """
         Update the uniforms in the model.
@@ -418,14 +365,10 @@ class Map2DModel(MapModel):
         Returns: None
         """
         # get the location
-        max_height_location = GL.glGetUniformLocation(self.shader_program, "max_height")
-        min_height_location = GL.glGetUniformLocation(self.shader_program, "min_height")
         projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
 
         # set the value
-        GL.glUniform1f(max_height_location, float(self.__max_height))
-        GL.glUniform1f(min_height_location, float(self.__min_height))
-        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.__projection)
+        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_projection_matrix_2D())
 
         # set colors if using
         if self.__color_file is not None:
@@ -445,123 +388,16 @@ class Map2DModel(MapModel):
         """
         return self.__color_file
 
-    def calculate_projection_matrix(self, scene_data: dict, zoom_level: float = 1) -> None:
-        """
-        Generate the projection matrix on the model. Method must be called before drawing.
-
-        The projection matrix is the one in charge of converting the coordinates from the view space (camera point of
-        view) into the range (-1, 1), when the points are converted to this range of coordinates it is
-        called that they are in the clip space.
-
-        OpenGL is the one in charge of converting the coordinates from the clipping space into the screen space. showing
-        the points on the screen.
-
-        Since the projection matrix is the one who converts the coordinates of the model into the space accepted by
-        OpenGL (-1, 1), the matrix is also the one in charge of keeping the aspect ratio of the models
-        showed on the screen.
-
-        More information in: https://learnopengl.com/Getting-started/Coordinate-Systems
-
-        Args:
-            scene_data: Height and width of the scene.
-            zoom_level: level of zoom in the scene.
-
-        Returns: None
-        """
-
-        # Get the data and the proportions to generate the projection matrix
-        # ------------------------------------------------------------------
-        width_scene = scene_data['SCENE_WIDTH_X']
-        height_scene = scene_data['SCENE_HEIGHT_Y']
-        proportion_panoramic = width_scene / float(height_scene)
-        proportion_portrait = height_scene / float(width_scene)
-
-        # maximum and minimum values of the map coordinates.
-        min_x = min(self.__x)
-        max_x = max(self.__x)
-        min_y = min(self.__y)
-        max_y = max(self.__y)
-
-        # width and height of the loaded maps.
-        width_map = max_x - min_x
-        height_map = max_y - min_y
-
-        # CASE PANORAMIC DATA
-        # -------------------
-        if width_map > height_map:
-            # calculate the height of the viewport on map coordinates
-            # the width of the viewport in map coordinates is the same as x_width
-            calculated_height_viewport = width_map / proportion_panoramic
-
-            # calculates the coordinates to use to clip the map on the scene to keep the aspect ratio.
-            projection_min_y = (max_y + min_y) / 2 - calculated_height_viewport / 2
-            projection_max_y = (max_y + min_y) / 2 + calculated_height_viewport / 2
-
-            # Calculate the distance to use as offset when applying zoom on the maps.
-            zoom_difference_x = (width_map - (width_map / zoom_level)) / 2
-            zoom_difference_y = (calculated_height_viewport - (calculated_height_viewport / zoom_level)) / 2
-
-            # calculate the coordinates to show on the viewport.
-            # NOTE: The coordinates can be values outside of the map.
-            self.__left_coordinate = min_x + zoom_difference_x
-            self.__right_coordinate = max_x - zoom_difference_x
-            self.__bottom_coordinate = projection_min_y + zoom_difference_y
-            self.__top_coordinate = projection_max_y - zoom_difference_y
-
-        # CASE PORTRAIT DATA
-        # -------------------
-        else:
-            # calculate the width of the viewport on map coordinates
-            # the width of the viewport in map coordinates is the same as x_width
-            calculated_width_viewport = height_map / proportion_portrait
-
-            # calculates the coordinates to use to clip the map on the scene to keep the aspect ratio.
-            projection_min_x = (max_x + min_x) / 2 - calculated_width_viewport / 2
-            projection_max_x = (max_x + min_x) / 2 + calculated_width_viewport / 2
-
-            # Calculate the distance to use as offset when applying zoom on the maps.
-            zoom_difference_y = (height_map - (height_map / zoom_level)) / 2
-            zoom_difference_x = (calculated_width_viewport - (calculated_width_viewport / zoom_level)) / 2
-
-            # calculate the coordinates to show on the viewport.
-            # NOTE: The coordinates can be values outside of the map.
-            self.__left_coordinate = projection_min_x + zoom_difference_x
-            self.__right_coordinate = projection_max_x - zoom_difference_x
-            self.__bottom_coordinate = min_y + zoom_difference_y
-            self.__top_coordinate = max_y - zoom_difference_y
-
-        # Move the coordinates to show on the model depending on the position that the model is located.
-        self.__left_coordinate -= self.position[0]
-        self.__right_coordinate -= self.position[0]
-        self.__top_coordinate -= self.position[1]
-        self.__bottom_coordinate -= self.position[1]
-
-        # Calculate the projection matrix given the calculated coordinates to show on the model.
-        self.__projection = ortho(self.__left_coordinate,
-                                  self.__right_coordinate,
-                                  self.__bottom_coordinate,
-                                  self.__top_coordinate,
-                                  self.__projection_z_axis_min_value,
-                                  self.__projection_z_axis_max_value)
-
     def get_height_array(self) -> np.ndarray:
         """
-        Get the array used to set the height buffer in the object.
+        Get a numpy array with the heights used in the model.
+
+        The numpy array has shape (rows, cols). Where rows and cols is the number of rows and cols of the grid that
+        stores the vertices of the model.
 
         Returns: numpy array with the values of the buffer.
         """
-        return self.__height_array
-
-    def get_model_coordinate_array(self) -> (np.ndarray, np.ndarray):
-        """
-        Return the arrays containing the information used to generate the models in the format
-        (x-axis array, y-axis array).
-
-        The returned arrays can be empty if the model is not initialized with data yet.
-
-        Returns: (x-axis, y-axis) tuple with the data of the coordinates of the model.
-        """
-        return np.array(self.__x), np.array(self.__y)
+        return self.__z
 
     def get_height_on_coordinates(self, x_coordinate: float, y_coordinate: float) -> Union[float, None]:
         """
@@ -584,13 +420,14 @@ class Map2DModel(MapModel):
         if self.__x is None or self.__y is None or self.__z is None:
             return None
 
+        # Change the order of the arrays if they are not sorted with ascending values
         x_values = self.__x
         y_values = self.__y
         z_values = self.__z
 
         # Return None if the coordinate asked is outside of the model.
-        if x_coordinate < np.min(x_values) or x_coordinate > np.max(x_values) or y_coordinate < np.min(y_values) \
-                or y_coordinate > np.max(y_values):
+        if x_coordinate <= np.min(x_values) or x_coordinate >= np.max(x_values) or y_coordinate <= np.min(y_values) \
+                or y_coordinate >= np.max(y_values):
             return None
 
         x_ind_1 = np.abs(x_values - x_coordinate).argmin()
@@ -610,26 +447,24 @@ class Map2DModel(MapModel):
                                                  (x_values[x_ind_2], y_values[y_ind_2], z_values[y_ind_2, x_ind_2])
                                              ])
 
-    def get_projection_matrix(self) -> 'np.array':
+    def get_model_coordinate_array(self) -> (np.ndarray, np.ndarray):
         """
-        Get the projection matrix being used by the model.
+        Return the arrays containing the information used to generate the models in the format
+        (x-axis array, y-axis array).
 
-        Returns: Projection matrix being used by the model
-        """
-        return self.__projection.copy()
+        The returned arrays can be empty if the model is not initialized with data yet.
 
-    def get_showed_limits(self) -> dict:
+        Returns: (x-axis, y-axis) tuple with the data of the coordinates of the model.
         """
-        Get a dictionary with the limits of the model being showed on the screen.
+        return np.array(self.__x), np.array(self.__y)
 
-        Returns: Dictionary with the limits showing on the scene
+    def get_name(self) -> Union[str, None]:
         """
-        return {
-            'left': self.__left_coordinate,
-            'right': self.__right_coordinate,
-            'top': self.__top_coordinate,
-            'bottom': self.__bottom_coordinate
-        }
+        Return the name of the model. None if there is no name associated with the model.
+
+        Returns: Name of the model.
+        """
+        return self.__name
 
     def get_vertices_shape(self) -> tuple:
         """
@@ -638,31 +473,6 @@ class Map2DModel(MapModel):
         Returns: Tuple with the shape of the vertices.
         """
         return len(self.__y), len(self.__x), 3
-
-    def move(self, x_movement: int, y_movement: int) -> None:
-        """
-        Move the model view on the scene changing the projection matrix used.
-
-        Args:
-            x_movement: Movement in the x-axis
-            y_movement: Movement in the y-axis
-
-        Returns: None
-        """
-
-        width_scene = self.scene.get_scene_setting_data()['SCENE_WIDTH_X']
-        height_scene = self.scene.get_scene_setting_data()['SCENE_HEIGHT_Y']
-
-        # Calculate the amount to move the scene depending on the coordinates showed on the screen
-        # The more coordinates are showing on the scene, the bigger the movement.
-        self.position[0] += (x_movement * (self.__right_coordinate - self.__left_coordinate)) / width_scene
-        self.position[1] += (y_movement * (self.__top_coordinate - self.__bottom_coordinate)) / height_scene
-
-        # tell the program our new position
-        self.scene.set_map_position(self.position)
-
-        # recalculate projection matrix
-        self.calculate_projection_matrix(self.scene.get_scene_setting_data(), self.scene.get_zoom_level())
 
     def optimize_gpu_memory_async(self, then: callable) -> None:
         """
@@ -744,18 +554,24 @@ class Map2DModel(MapModel):
 
         # noinspection PyMissingOrEmptyDocstring
         def parallel_tasks():
+            showed_limits = self.scene.get_2D_showed_limits()
+            right_coordinate = showed_limits['right']
+            left_coordinate = showed_limits['left']
+            top_coordinate = showed_limits['top']
+            bottom_coordinate = showed_limits['bottom']
+
             log.debug("Coordinates actually showing on the screen:")
-            log.debug(f"left: {self.__left_coordinate}")
-            log.debug(f"right: {self.__right_coordinate}")
-            log.debug(f"top:{self.__top_coordinate} ")
-            log.debug(f"bottom: {self.__bottom_coordinate}")
+            log.debug(f"left: {left_coordinate}")
+            log.debug(f"right: {right_coordinate}")
+            log.debug(f"top:{top_coordinate} ")
+            log.debug(f"bottom: {bottom_coordinate}")
 
             # Calculate the definition to use in the reload
             # ---------------------------------------------
-            elements_on_screen_x = abs(self.__get_index_closest_value(self.__x, self.__right_coordinate) -
-                                       self.__get_index_closest_value(self.__x, self.__left_coordinate))
-            elements_on_screen_y = abs(self.__get_index_closest_value(self.__y, self.__top_coordinate) -
-                                       self.__get_index_closest_value(self.__y, self.__bottom_coordinate))
+            elements_on_screen_x = abs(self.__get_index_closest_value(self.__x, right_coordinate) -
+                                       self.__get_index_closest_value(self.__x, left_coordinate))
+            elements_on_screen_y = abs(self.__get_index_closest_value(self.__y, top_coordinate) -
+                                       self.__get_index_closest_value(self.__y, bottom_coordinate))
 
             log.debug(f"Number of vertices on screen axis X: {elements_on_screen_x}")
             log.debug(f"Number of vertices on screen axis Y: {elements_on_screen_y}")
@@ -773,24 +589,24 @@ class Map2DModel(MapModel):
 
             # check for the extra proportion to reload.
             extra_proportion = self.scene.get_extra_reload_proportion_setting()
-            extra_x = (self.__right_coordinate - self.__left_coordinate) * (extra_proportion - 1)
-            extra_y = (self.__top_coordinate - self.__bottom_coordinate) * (extra_proportion - 1)
+            extra_x = (right_coordinate - left_coordinate) * (extra_proportion - 1)
+            extra_y = (top_coordinate - bottom_coordinate) * (extra_proportion - 1)
 
             self.__new_indices = self.__generate_index_list(step_x + quality,
                                                             step_y + quality,
-                                                            self.__left_coordinate - extra_x,
-                                                            self.__right_coordinate + extra_x,
-                                                            self.__top_coordinate + extra_y,
-                                                            self.__bottom_coordinate - extra_y)
+                                                            left_coordinate - extra_x,
+                                                            right_coordinate + extra_x,
+                                                            top_coordinate + extra_y,
+                                                            bottom_coordinate - extra_y)
 
             # Delete old triangles that are in the same place as the new ones
             # ---------------------------------------------------------------
             self.scene.set_loading_message("Recalculating triangles...")
             self.__add_triangles_inside_zone_to_delete_list(
-                self.__x[self.__get_index_closest_value(self.__x, self.__left_coordinate)],
-                self.__x[self.__get_index_closest_value(self.__x, self.__right_coordinate)],
-                self.__top_coordinate,
-                self.__bottom_coordinate)
+                self.__x[self.__get_index_closest_value(self.__x, left_coordinate)],
+                self.__x[self.__get_index_closest_value(self.__x, right_coordinate)],
+                top_coordinate,
+                bottom_coordinate)
 
         # noinspection PyMissingOrEmptyDocstring
         def then_routine():
@@ -837,21 +653,6 @@ class Map2DModel(MapModel):
         self.__colors = np.array(colors, dtype=np.float32)
         self.__height_limit = np.array(height_limit, dtype=np.float32)
 
-    def set_height_buffer(self, new_height: np.ndarray) -> None:
-        """
-        Change the values of the height buffer.
-
-        Args:
-            new_height: Numpy array with the new height values.
-
-        Returns: None
-        """
-
-        self.__height_array = new_height.reshape(-1)
-        self.__max_height = np.nanmax(self.__height_array)
-        self.__min_height = np.nanmin(self.__height_array)
-        self.__set_height_buffer()
-
     def set_vertices_from_grid_async(self, x, y, z, quality=1, then=lambda: None) -> None:
         """
         Set the vertices of the model from a grid.
@@ -874,9 +675,9 @@ class Map2DModel(MapModel):
         """
 
         # store the data for future operations.
-        self.__x = x
-        self.__y = y
-        self.__z = z
+        self.__x = np.array(x)
+        self.__y = np.array(y)
+        self.__z = np.array(z)
 
         def parallel_routine():
             """
@@ -914,10 +715,32 @@ class Map2DModel(MapModel):
                     "./src/engine/shaders/model_2d_vertex.glsl", "./src/engine/shaders/model_2d_fragment.glsl"
                 )
 
-            # set the height buffer for rendering and store height values
-            self.set_height_buffer(np.array(z))
-
             # call the then routine
             then()
 
         self.scene.set_thread_task(parallel_routine, then_routine)
+
+    def update_heights(self, new_height: np.ndarray) -> None:
+        """
+        Change the values of the heights of the model.
+
+        Array of new heights must have the same shape that the array of vertices but with only one element per
+        vertex. For example, if the vertices have shape (row, cols, 3), the new_height variable must have shape
+        (row, cols).
+
+        Args:
+            new_height: Numpy array with the new height values.
+
+        Returns: None
+        """
+
+        # Update vertices of the model
+        vertices = self.__vertices.reshape(self.get_vertices_shape())
+        vertices[:, :, 2] = new_height
+
+        # Update utility variables
+        self.__z = vertices[:, :, 2]
+
+        # Set the vertices in the buffer
+        vertices = vertices.reshape(-1)
+        self.set_vertices(vertices)

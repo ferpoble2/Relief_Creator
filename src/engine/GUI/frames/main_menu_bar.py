@@ -24,6 +24,7 @@ import OpenGL.GL as GL
 import imgui
 
 from src.engine.GUI.frames.frame import Frame
+from src.program.view_mode import ViewMode
 from src.utils import get_logger
 
 if TYPE_CHECKING:
@@ -112,7 +113,7 @@ class MainMenuBar(Frame):
         if imgui.begin_menu('View'):
 
             # Option to fix/unfix the frames of the application
-            if self._GUI_manager.are_frame_fixed():
+            if self._GUI_manager.get_frame_fixed_state():
                 imgui.menu_item('Unfix windows positions')
                 if imgui.is_item_clicked():
                     self._GUI_manager.fix_frames_position(False)
@@ -142,15 +143,15 @@ class MainMenuBar(Frame):
             # Option to change to 2D/3D mode. Raise error if the program is in another mode other than 3D or 2D.
             imgui.separator()
             program_view_mode = self._GUI_manager.get_program_view_mode()
-            if program_view_mode == '3D':
+            if program_view_mode == ViewMode.mode_3d:
                 imgui.menu_item('Change to 2D view', enabled=model_loaded)
                 if imgui.is_item_clicked() and model_loaded:
-                    self._GUI_manager.set_program_view_mode('2D')
+                    self._GUI_manager.set_program_view_mode(ViewMode.mode_2d)
 
-            elif program_view_mode == '2D':
+            elif program_view_mode == ViewMode.mode_2d:
                 imgui.menu_item('Change to 3D view', enabled=model_loaded)
                 if imgui.is_item_clicked() and model_loaded:
-                    self._GUI_manager.set_program_view_mode('3D')
+                    self._GUI_manager.set_program_view_mode(ViewMode.mode_3d)
 
             else:
                 raise ValueError('That mode is not configured yet.')

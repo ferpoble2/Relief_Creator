@@ -81,7 +81,6 @@ class Polygon(Model):
         # -----------------------
         self.__is_planar = True
         self.__default_height_value = 0.5
-        self.__z_offset = 0  # Value to add to the z-axis of the points that generate the model.
 
         # Initialize polygon if data is given
         # -----------------------------------
@@ -277,13 +276,13 @@ class Polygon(Model):
         """
         self.__parameters.pop(key)
 
-    def draw(self) -> None:
+    def draw(self, active_polygon=False) -> None:
         """
         Set how and when to draw the polygons.
         """
 
         # draw the components on the screen
-        if self.scene.get_active_polygon_id() == self.id:
+        if active_polygon:
             self.__lines_model.set_use_borders(True)
             self.__last_line_model.set_use_borders(True)
         else:
@@ -426,26 +425,6 @@ class Polygon(Model):
         Returns: None
         """
         self.__name = new_name
-
-    def set_z_offset(self, new_value: float) -> None:
-        """
-        Set the variable z_offset.
-
-        The z_offset is a variable that will be added in the shader to the z-coordinate position of the models.
-
-        This variable is useful to modify the z-position of the polygons without having to modify the vertex and indices
-        arrays that are stored in the GPU.
-
-        Args:
-            new_value: New value to use as offset on the z-axis coordinate.
-
-        Returns: None
-        """
-        self.__z_offset = new_value
-
-        self.__point_model.set_z_offset(new_value)
-        self.__lines_model.set_z_offset(new_value)
-        self.__last_line_model.set_z_offset(new_value)
 
     def set_new_parameter(self, key: str, value: str) -> None:
         """

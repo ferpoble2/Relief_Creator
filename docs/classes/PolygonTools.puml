@@ -31,6 +31,6 @@ class PolygonTools{
     - __rename_polygon_selectable(polygon_id): boolean
     - __show_polygon_tools(left_frame_width)
     + add_new_polygon(polygon_id)
-    + render(frame_width)
+    + render()
 }
 @enduml

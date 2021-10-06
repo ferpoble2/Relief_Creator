@@ -18,6 +18,7 @@
 """
 File with the definition of a base error, class to use as parent to all the new generated errors of the program.
 """
+from typing import Dict
 
 
 class BaseError(Exception):
@@ -25,15 +26,21 @@ class BaseError(Exception):
     Class to use as parent to all the new exceptions.
     """
 
-    def __init__(self, code: int = 0):
+    def __init__(self, code: int = 0, data: Dict[str, any] = None):
         """
-        Constructor of the class
+        Constructor of the class.
 
         Args:
             code: Code of the error.
         """
-        self.code = code
-        self.codes = {
+        # Data associated with the error.
+        self.data: Dict[str, any] = data if data is not None else {}
+
+        # Code of the error
+        self.code: int = code
+
+        # List of all codes that the error can have and its description.
+        self.codes: Dict[int, str] = {
             0: 'Default Error.'
         }
 

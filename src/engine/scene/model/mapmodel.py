@@ -42,7 +42,7 @@ class MapModel(Model):
 
         Returns: Index of the closest value in the array.
         """
-        return np.argmin(np.abs(np.array(list_to_evaluate) - value))
+        return int(np.argmin(np.abs(np.array(list_to_evaluate) - value)))
 
     def _get_vertex_index(self, x_pos: int, y_pos: int, x_value_array: np.ndarray) -> int:
         """

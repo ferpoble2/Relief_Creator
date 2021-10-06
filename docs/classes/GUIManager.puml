@@ -1,25 +1,42 @@
 @startuml
 'https://plantuml.com/class-diagram
 class GUIManager{
-    - __component_list_2D: list
-    - __component_list_3D: list
     - __engine: Engine
-    - __font_bold: IMGUI.font
-    - __font_regular: IMGUI.font
-    - __font_tool_title: IMGUI.font
     - __glfw_window: GLFWWindow
     - __icons_dict: dict
     - __implementation: GlfwRenderer
     - __io: IMGUI.io
+    - __model_id_list: list
     - __is_mouse_inside_frame: boolean
     - __polygon_folder_manager: PolygonFolderManager
     - __scene: Scene
 
+    FONTS
+    - __font_bold: IMGUI.font
+    - __font_regular: IMGUI.font
+    - __font_tool_title: IMGUI.font
+    - __font_tool_sub_title: IMGUI.font
+
+    FRAMES
+    - __component_list_2D: List[Frame]
+    - __component_list_3D: List[Frame]
+    - __main_menu_bar: Frame
+    - __text_modal: Frame
+    - __tools: Frame
+    - __loading: Frame
+    - __polygon_information: Frame
+    - __confirmation_modal : Frame
+    - __tools_3d: Frame
+    - __mouse_coordinates: Frame
+    - __combine_map_modal: Frame
+
     - __load_icons()
     - __update_frames_with_new_polygon(polygon_id)
+    - __initialize_variables(window, regular_font_size, tool_title_font_size, tool_sub_title_font_size, debug_mode)
     + add_imported_polygon(polygon_id)
     + add_polygon_to_gui(polygon_id)
     + add_polygon_to_polygon_folder(folder_id, polygon_id)
+    + add_model_to_gui(model_id)
     + add_zoom()
     + apply_smoothing(polygon_id, model_id, distance_to_polygon)
     + are_frame_fixed()
@@ -35,14 +52,12 @@ class GUIManager{
     + change_quality(quality)
     + create_new_polygon(): str
     + create_polygon_folder(name): PolygonFolder
-    + delete_all_polygons_inside_folder(polygon_folder_id)
-    + delete_polygon_by_id(polygon_id)
-    + delete_polygon_parameter(polygon_id, key)
-    + disable_glfw_keyboard_callback()
+    + remove_all_polygons_inside_folder(polygon_folder_id)
+    + remove_polygon_by_id(polygon_id)
+    + remove_polygon_parameter(polygon_id, key)
     + draw_frames()
     + move_folder_position(polygon_folder_id, movement_offset)
     + move_polygon_position(polygon_id, polygon_folder_id, movement_offset)
-    + enable_glfw_keyboard_callback()
     + export_model_as_netcdf(model_id)
     + export_polygon_with_id(polygon_id)
     + export_polygons_inside_folder(polygon_folder_id)
@@ -58,10 +73,13 @@ class GUIManager{
     + get_height_normalization_factor_of_active_3D_model(): float
     + get_icon(icon_name): Icon
     + get_left_frame_width(): int
+    + change_model_priority(model_id, offset)
     + get_main_menu_bar_height(): int
+    + get_controller_keyboard_callback_state(): boolean
     + get_map_coordinates_from_window_coordinates(x_coordinate, y_coordinate): (float, float)
     + get_map_height_on_coordinates(x_coordinate, y_coordinate): float
     + get_map_position(): list
+    + get_model_names_dict(): dict
     + get_polygon_folder_id_list(): list
     + get_polygon_folder_name(polygon_folder_id): str
     + get_polygon_id_list(): list
@@ -82,22 +100,27 @@ class GUIManager{
     + load_netcdf_file_with_dialog()
     + load_preview_interpolation_area(distance)
     + load_shapefile_file_with_dialog()
+    + create_model_from_existent(base_model_id, second_model_id, model_name)
     + move_polygon_to_polygon_folder(polygon_id, folder_id)
     + optimize_gpu_memory()
     + process_input()
     + reload_models()
     + remove_interpolation_preview(polygon_id)
+    + remove_model(model_id)
     + render()
     + reset_camera_values()
     + set_active_polygon(polygon_id)
     + set_active_tool(tool)
     + set_bold_font()
-    + set_confirmation_modal(modal_title, msg, yes_function, no_function)
+    + open_confirmation_modal(modal_title, msg, yes_function, no_function)
+    + open_combine_map_modal()
     + set_loading_message(new_msg)
-    + set_modal_text(modal_title, msg)
+    + open_text_modal(modal_title, msg)
     + set_models_polygon_mode(polygon_mode)
+    + set_controller_key_callback(new_state)
     + set_polygon_folder_name(polygon_folder_id, new_name)
     + set_polygon_name(polygon_id, new_name)
+    + set_tool_sub_title_font()
     + set_polygon_parameter(polygon_id, key, value)
     + set_program_view_mode(mode)
     + set_regular_font()

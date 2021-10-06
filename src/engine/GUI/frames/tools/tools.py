@@ -18,15 +18,16 @@
 """
 Sample frame for the application GUI.
 """
-
 from typing import TYPE_CHECKING
 
 import imgui
 
 from src.engine.GUI.frames.frame import Frame
 from src.engine.GUI.frames.tools.interpolation_tools import InterpolationTools
+from src.engine.GUI.frames.tools.map_tools import MapTools
 from src.engine.GUI.frames.tools.polygon_tools import PolygonTools
 from src.engine.GUI.frames.tools.relief_tools import ReliefTools
+from src.program.tools import Tools as ProgramTools
 from src.utils import get_logger
 
 if TYPE_CHECKING:
@@ -52,14 +53,16 @@ class Tools(Frame):
         self.__slide_bar_quality = self._GUI_manager.get_quality()
 
         self.__tools_names_dict = {
-            'move_map': 'Move Map',
-            'create_polygon': 'Create Polygon'
+            ProgramTools.move_map: 'Move Map',
+            ProgramTools.create_polygon: 'Create Polygon'
         }
 
-        # object in charge of render the relief tools
+        # Generate the objects in charge of rendering the information of the different tools
+        # ----------------------------------------------------------------------------------
         self.__relief_tools = ReliefTools(gui_manager)
         self.__polygon_tools = PolygonTools(gui_manager, self.__button_margin_width)
         self.__interpolation_tools = InterpolationTools(gui_manager)
+        self.__map_tools = MapTools(gui_manager)
 
     def __show_active_tool(self):
         """
@@ -69,12 +72,9 @@ class Tools(Frame):
         imgui.text(f"Active tool: {self.__tools_names_dict.get(self._GUI_manager.get_active_tool(), None)}")
         self._GUI_manager.set_regular_font()
 
-    def __show_visualization_tools(self, left_frame_width: int) -> None:
+    def __show_visualization_tools(self) -> None:
         """
         Show the visualization tools on the frame.
-
-        Args:
-            left_frame_width: width of the frame.
         """
         self._GUI_manager.set_tool_title_font()
         imgui.text("Visualization Tools")
@@ -94,7 +94,7 @@ class Tools(Frame):
         if imgui.button("Move Map", -1):
             log.debug("Pressed button Move Map")
             log.debug("-----------------------")
-            self._GUI_manager.set_active_tool('move_map')
+            self._GUI_manager.set_active_tool(ProgramTools.move_map)
 
         if imgui.button("Reload Map", -1):
             log.debug("Pressed Reload map with zoom button")
@@ -111,7 +111,7 @@ class Tools(Frame):
             log.debug("------------------------")
             log.debug(f"Changed to value {values}")
             self.__slide_bar_quality = values
-            self._GUI_manager.change_quality(values)
+            self._GUI_manager.change_map_quality(values)
 
     def add_new_polygon(self, polygon_id: str) -> None:
         """
@@ -131,7 +131,7 @@ class Tools(Frame):
         Returns: None
         """
 
-        if self._GUI_manager.are_frame_fixed():
+        if self._GUI_manager.get_frame_fixed_state():
             imgui.begin('Tools', False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE)
             imgui.set_window_position(self.get_position()[0], self.get_position()[1])
             imgui.set_window_size(self._GUI_manager.get_left_frame_width(),
@@ -145,10 +145,10 @@ class Tools(Frame):
         left_frame_width = self._GUI_manager.get_left_frame_width()
 
         imgui.separator()
-        self.__show_visualization_tools(left_frame_width)
+        self.__show_visualization_tools()
 
         imgui.separator()
-        self.__polygon_tools.render(left_frame_width)
+        self.__polygon_tools.render()
 
         if self._GUI_manager.get_active_polygon_id() is not None:
             imgui.separator()
@@ -156,5 +156,8 @@ class Tools(Frame):
 
             imgui.separator()
             self.__interpolation_tools.render()
+
+        imgui.separator()
+        self.__map_tools.render()
 
         imgui.end()

@@ -6,20 +6,19 @@
 
 !startsub INTERNAL
 
-package output {
-    class ShapefileExporter
-    class NetcdfExporter
+package src.output {
+    class src.output.ShapefileExporter
+    class src.output.NetcdfExporter
 }
 !endsub
 
-!if (%false())
-    !startsub EXTERNAL
-        ShapefileExporter .> src.utils
-    !endsub
-!endif
+!startsub EXTERNAL
+    src.output.ShapefileExporter .> src.utils
+!endsub
+
 
 ' Code that will affect only the current diagram
 ' can be messy since will not be imported
-ShapefileExporter .> src.utils
+hide members
 
 @enduml

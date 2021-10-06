@@ -25,7 +25,7 @@ import OpenGL.GL as GL
 import numpy as np
 
 from src.engine.scene.model.mapmodel import MapModel
-from src.engine.scene.model.tranformations.transformations import identity, perspective
+from src.engine.scene.model.tranformations.transformations import identity
 from src.engine.scene.unit_converter import UnitConverter
 from src.input.CTP import read_file
 from src.utils import get_logger
@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from src.engine.scene.scene import Scene
     from src.engine.scene.model.map2dmodel import Map2DModel
 
-log = get_logger(module='MAP3DMODEL')
+log = get_logger(module='MAP3D_MODEL')
 
 
 class Map3DModel(MapModel):
@@ -49,56 +49,40 @@ class Map3DModel(MapModel):
         """
         super().__init__(scene)
 
+        # Utilities variables
         self.set_shaders("./src/engine/shaders/model_3d_vertex.glsl",
                          "./src/engine/shaders/model_3d_fragment.glsl")
-
-        # variables used for the coloration of the model
-        self.__color_file = ''
-        self.__colors = []
-        self.__height_limit = []
-
-        # measure unit used in the model.
-        self.__height_measure_unit = height_measure_unit
-        self.__vertices_measure_unit = vertices_measure_unit
-
-        # 2D model to use for the reload process
         self.__model_2D_used = model_2d
 
-        # factor for the user to view
-        self.__height_exaggeration_factor = 1
+        # Color variables
+        self.__color_file = ''
+        self.__colors = []
+        self.__height_color_limits = []
 
-        # internal factor to convert different measure units
-        self.__height_conversion_factor = self.__get_conversion_factor()
-
-        # quality of the 3D model (0 is maximum)
-        self.__quality = 0
-
-        # matrices used for the rendering
-        self.__model = identity()
-        self.__view = self.scene.get_camera_view_matrix()
-
-        # arrays to use to store the heights of the model on gpu
-        self.hbo = GL.glGenBuffers(1)
-        self.__height_array = model_2d.get_height_array().copy()
-        self.__max_height = 0
-        self.__min_height = 0
-
-        # shape of the map
+        # Vertices variables
+        # ------------------
+        self.__vertices_measure_unit = vertices_measure_unit
         self.__vertices_shape = model_2d.get_vertices_shape()
 
-        # projection matrix to use for the rendering
-        scene_settings_data = self.scene.get_scene_setting_data()
-        camera_settings_data = self.scene.get_camera_settings()
-        self.__projection = perspective(camera_settings_data['FIELD_OF_VIEW'],
-                                        scene_settings_data['SCENE_WIDTH_X'] / scene_settings_data['SCENE_HEIGHT_Y'],
-                                        camera_settings_data['PROJECTION_NEAR'],
-                                        camera_settings_data['PROJECTION_FAR'])
+        # Height variables
+        # ----------------
+        self.hbo = GL.glGenBuffers(1)
+        self.__height_array = np.array([])  # Unidimensional array
 
-        # set the data for the model
+        self.__height_exaggeration_factor = 1
+
+        self.__height_measure_unit = height_measure_unit
+
+        # Rendering variables
+        # -------------------
+        self.__model = identity()
+        self.__quality = 0  # Quality of the 3D model (0 is maximum)
+
+        # Set the data for the model
         # --------------------------
         self.update_values_from_2D_model()
 
-    def __set_height_buffer(self) -> None:
+    def __set_height_buffer(self, new_height: np.ndarray) -> None:
         """
         Set the buffer object for the heights to be used in the shaders.
 
@@ -108,21 +92,19 @@ class Map3DModel(MapModel):
         Returns: None
 
         """
-        height = np.array(self.__height_array, dtype=np.float32)
+        self.__height_array = np.array(new_height, dtype=np.float32).reshape(-1)
 
         # Set the buffer data in the buffer
         GL.glBindVertexArray(self.vao)
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.hbo)
         GL.glBufferData(GL.GL_ARRAY_BUFFER,
-                        len(height) * self.scene.get_float_bytes(),
-                        height,
+                        len(self.__height_array) * self.scene.get_float_bytes(),
+                        self.__height_array,
                         GL.GL_STATIC_DRAW)
 
         # Enable the data to the shaders
         GL.glVertexAttribPointer(1, 1, GL.GL_FLOAT, GL.GL_FALSE, 0, ctypes.c_void_p(0))
         GL.glEnableVertexAttribArray(1)
-
-        return
 
     def __get_conversion_factor(self) -> float:
         """
@@ -155,15 +137,11 @@ class Map3DModel(MapModel):
         model_location = GL.glGetUniformLocation(self.shader_program, "model")
         view_location = GL.glGetUniformLocation(self.shader_program, "view")
         projection_location = GL.glGetUniformLocation(self.shader_program, "projection")
-        max_height_location = GL.glGetUniformLocation(self.shader_program, "max_height")
-        min_height_location = GL.glGetUniformLocation(self.shader_program, "min_height")
 
         # set the value
         GL.glUniformMatrix4fv(model_location, 1, GL.GL_TRUE, self.__model)
-        GL.glUniformMatrix4fv(view_location, 1, GL.GL_TRUE, self.__view)
-        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.__projection)
-        GL.glUniform1f(max_height_location, float(self.__max_height))
-        GL.glUniform1f(min_height_location, float(self.__min_height))
+        GL.glUniformMatrix4fv(view_location, 1, GL.GL_TRUE, self.scene.get_camera_view_matrix())
+        GL.glUniformMatrix4fv(projection_location, 1, GL.GL_TRUE, self.scene.get_projection_matrix_3D())
 
         # set colors if using
         if self.__color_file is not None:
@@ -172,22 +150,8 @@ class Map3DModel(MapModel):
             length_location = GL.glGetUniformLocation(self.shader_program, "length")
 
             GL.glUniform3fv(colors_location, len(self.__colors), self.__colors)
-            GL.glUniform1fv(height_color_location, len(self.__height_limit), self.__height_limit)
+            GL.glUniform1fv(height_color_location, len(self.__height_color_limits), self.__height_color_limits)
             GL.glUniform1i(length_location, len(self.__colors))
-
-    def calculate_projection_matrix(self) -> None:
-        """
-        Recalculate the projection matrix to use to draw the model.
-
-        Returns: None
-        """
-        log.debug('Recalculated projection.')
-        scene_settings_data = self.scene.get_scene_setting_data()
-        camera_settings_data = self.scene.get_camera_settings()
-        self.__projection = perspective(camera_settings_data['FIELD_OF_VIEW'],
-                                        scene_settings_data['SCENE_WIDTH_X'] / scene_settings_data['SCENE_HEIGHT_Y'],
-                                        camera_settings_data['PROJECTION_NEAR'],
-                                        camera_settings_data['PROJECTION_FAR'])
 
     def change_height_measure_unit(self, new_measure_unit: str) -> None:
         """
@@ -220,7 +184,7 @@ class Map3DModel(MapModel):
         self.__height_exaggeration_factor = new_value
 
         # modify the vertices array to fit the new heights
-        height_array = self.__height_array * self.__height_exaggeration_factor * self.__height_conversion_factor
+        height_array = self.__height_array * self.__height_exaggeration_factor * self.__get_conversion_factor()
         height_array = height_array.reshape(self.__vertices_shape[:2])
 
         vertices_array = self.get_vertices_array().reshape(self.__vertices_shape)
@@ -244,11 +208,6 @@ class Map3DModel(MapModel):
 
         Returns: None
         """
-
-        # update the variables
-        self.__view = self.scene.get_camera_view_matrix()
-
-        # draw
         super().draw()
 
     def get_normalization_height_factor(self) -> float:
@@ -287,7 +246,7 @@ class Map3DModel(MapModel):
             raise BufferError('Shader used does not support more than 500 colors in the file.')
 
         self.__colors = np.array(colors, dtype=np.float32)
-        self.__height_limit = np.array(height_limit, dtype=np.float32)
+        self.__height_color_limits = np.array(height_limit, dtype=np.float32)
 
     def update_values_from_2D_model(self) -> None:
         """
@@ -297,37 +256,31 @@ class Map3DModel(MapModel):
         """
         log.debug('Updating GPU arrays...')
 
-        # get the shape of the model
+        # Get and set the vertices on the model
+        # -------------------------------------
         self.__vertices_shape = self.__model_2D_used.get_vertices_shape()
 
-        # get a copy of the arrays to not modify the originals
-        vertices_array = self.__model_2D_used.get_vertices_array().copy()
+        # Get a copy of the arrays and transform the height of the points to the same unit as the other coordinates.
+        self.__vertices_array = self.__model_2D_used.get_vertices_array().copy()
+        self.__vertices_array = self.__vertices_array.reshape(self.__model_2D_used.get_vertices_shape())
+        self.__vertices_array[:, :, 2] = self.__vertices_array[:, :, 2] * self.__height_exaggeration_factor * \
+                                         self.__get_conversion_factor()
+        self.set_vertices(self.__vertices_array.reshape(-1))
 
-        # get the information about the height
-        self.__height_array = self.__model_2D_used.get_height_array().copy()
-        self.__max_height = max(self.__height_array)
-        self.__min_height = min(self.__height_array)
-        self.__set_height_buffer()
-
-        # Convert the height of the points to the corresponding unit and assign it to the vertices.
-        # note: self.__height_array must not change since the coloration used depends on the real height assigned to
-        #       the points on the netcdf file. only the vertices array must be modified.
-        self.__height_conversion_factor = self.__get_conversion_factor()
-        height_array_converted = self.__height_array * self.__height_exaggeration_factor * self.__height_conversion_factor
-        height_array_converted_squared = height_array_converted.reshape(self.__vertices_shape[:2])
-
-        vertices_array_reshaped = vertices_array.reshape(self.__vertices_shape)
-        vertices_array_reshaped[:, :, 2] = height_array_converted_squared
-        self.set_vertices(vertices_array_reshaped.reshape(-1))
+        # Get the information about the height
+        # ------------------------------------
+        self.__set_height_buffer(self.__model_2D_used.get_height_array())
 
         # Update the array of indices used in the model
-        x_values = vertices_array_reshaped[0, :, 0].reshape(-1)
-        y_values = vertices_array_reshaped[:, 0, 1].reshape(-1)
+        # ---------------------------------------------
+        x_values = self.__vertices_array[0, :, 0].reshape(-1)
+        y_values = self.__vertices_array[:, 0, 1].reshape(-1)
         index_array = self._generate_index_list(self.__quality,
                                                 self.__quality,
                                                 x_values,
                                                 y_values)
         self.set_indices(index_array)
 
-        # set the color file
+        # Set the color file
+        # ------------------
         self.set_color_file(self.__model_2D_used.get_color_file())

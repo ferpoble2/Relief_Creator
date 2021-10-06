@@ -21,10 +21,10 @@ File with the class TransformationHelper, class in charge of making transformati
 from typing import List
 
 import numpy as np
-import shapely.vectorized
 from scipy import interpolate as interpolate_scipy
 from shapely.geometry.polygon import LineString, LinearRing as LinearRing, Polygon
 from shapely.ops import triangulate
+from shapely.vectorized import contains
 from skimage.filters import gaussian as gaussian_filter
 
 from src.utils import get_logger, interpolate, is_clockwise
@@ -167,7 +167,7 @@ class TransformationHelper:
         # flags = p.contains_points(points_map)
         # flags = flags.reshape(xv.shape)
 
-        flags = shapely.vectorized.contains(Polygon(points_xy), points_array[:, :, 0], points_array[:, :, 1])
+        flags = contains(Polygon(points_xy), points_array[:, :, 0], points_array[:, :, 1])
         return flags
 
     # noinspection PyShadowingNames,PyUnresolvedReferences
@@ -504,7 +504,7 @@ class TransformationHelper:
             current_min_height = np.nanmin(height_cut[filtered_flags])
             current_max_height = np.nanmax(height_cut[filtered_flags])
 
-            new_height = interpolate(height_cut[filtered_flags], current_min_height, current_max_height,
+            new_height = interpolate(height_cut[filtered_flags], float(current_min_height), float(current_max_height),
                                      new_min_height,
                                      new_max_height,
                                      False)
@@ -513,3 +513,26 @@ class TransformationHelper:
             height[min_y_index:max_y_index, min_x_index:max_x_index] = height_cut
 
         return height
+
+    def merge_matrices(self, first_matrix: np.ndarray, second_matrix: np.ndarray) -> np.ndarray:
+        """
+        Merge the values of the matrices.
+
+        Set the values of the second matrix on the cells where the first matrix has nan values. Both matrices must
+        be of the same shape.
+
+        The values of the proportioned matrices does not change. A new matrix is generated as result of this method.
+
+        Args:
+            first_matrix: Main matrix to use for the merge.
+            second_matrix: Second matrix to use for the merge.
+
+        Returns: Matrix that use the values of the first matrix and the second matrix.
+        """
+        assert first_matrix.shape == second_matrix.shape, "Matrices are not of the same shape."
+
+        new_matrix = np.zeros(first_matrix.shape)
+        new_matrix[:] = first_matrix[:]
+        new_matrix[np.isnan(first_matrix)] = second_matrix[np.isnan(first_matrix)]
+
+        return new_matrix

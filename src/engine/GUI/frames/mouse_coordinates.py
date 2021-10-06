@@ -70,7 +70,7 @@ class MouseCoordinates(Frame):
 
             # Set the transparency and configure the frame before rendering it
             imgui.set_next_window_bg_alpha(self.__alpha_value)
-            if self._GUI_manager.are_frame_fixed():
+            if self._GUI_manager.get_frame_fixed_state():
                 imgui.begin(self.__frame_name, False, self.__frame_fixed_flags)
                 imgui.set_window_position(self._GUI_manager.get_left_frame_width(),
                                           self._GUI_manager.get_window_height() - self.__height)

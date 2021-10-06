@@ -1,6 +1,6 @@
 @startuml
 !$file = "(F,#ff75ff) File"
-class parser <<$file>>{
+class src.program.parser <<$file>>{
     get_command_line_arguments(): Namespace
 }
 

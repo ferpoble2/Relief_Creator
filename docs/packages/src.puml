@@ -16,11 +16,13 @@ package src {
 }
 !endsub
 
-!if (%false())
-    !startsub EXTERNAL
-
-    !endsub
-!endif
+!startsub EXTERNAL
+    !includesub src.engine.puml!EXTERNAL
+    !includesub src.error.puml!EXTERNAL
+    !includesub src.input.puml!EXTERNAL
+    !includesub src.output.puml!EXTERNAL
+    !includesub src.program.puml!EXTERNAL
+!endsub
 
 ' Code that will affect only the current diagram
 ' can be messy since will not be imported

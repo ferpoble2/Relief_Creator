@@ -3,64 +3,40 @@
 left to right direction
 
 !startsub INTERNAL
-package error {
-    class BaseError
-    class ExportError
-    class FolderError
-    class GUIError
-    class InterpolationError
-    class LineIntersectionError
-    class ModelTransformationError
-    class NetcdfImportError
-    class PolygonError
-    class PolygonFolderNotFoundError
-    class RepeatedPointError
-    class SceneError
-    class WrongInterpolationTypeError
+package src.error {
+    class src.error.BaseError
+    class src.error.ExportError
+    class src.error.FolderError
+    class src.error.GUIError
+    class src.error.InterpolationError
+    class src.error.LineIntersectionError
+    class src.error.ModelTransformationError
+    class src.error.NetcdfImportError
+    class src.error.PolygonError
+    class src.error.PolygonFolderNotFoundError
+    class src.error.RepeatedPointError
+    class src.error.SceneError
+    class src.error.WrongInterpolationTypeError
 }
 
-BaseError <|-- SceneError
-BaseError <|-- PolygonError
-BaseError <|-- ExportError
-BaseError <|-- GUIError
-BaseError <|-- NetcdfImportError
+src.error.BaseError <|-- src.error.SceneError
+src.error.BaseError <|-- src.error.PolygonError
+src.error.BaseError <|-- src.error.ExportError
+src.error.BaseError <|-- src.error.GUIError
+src.error.BaseError <|-- src.error.NetcdfImportError
 
-PolygonError <|-- RepeatedPointError
-PolygonError <|-- LineIntersectionError
-GUIError <|-- WrongInterpolationTypeError
-GUIError <|-- FolderError
-FolderError <|-- PolygonFolderNotFoundError
-SceneError <|-- ModelTransformationError
-SceneError <|-- InterpolationError
+src.error.PolygonError <|-- src.error.RepeatedPointError
+src.error.PolygonError <|-- src.error.LineIntersectionError
+src.error.GUIError <|-- src.error.WrongInterpolationTypeError
+src.error.GUIError <|-- src.error.FolderError
+src.error.FolderError <|-- src.error.PolygonFolderNotFoundError
+src.error.SceneError <|-- src.error.ModelTransformationError
+src.error.SceneError <|-- src.error.InterpolationError
+!endsub
+
+!startsub EXTERNAL
+
 !endsub
 hide members
 
-!if (%false())
-    !startsub EXTERNAL
-'        Engine .> RepeatedPointError
-'        Controller .> LineIntersectionError
-'        Controller .> RepeatedPointError
-'        model.Polygon .> LineIntersectionError
-'        Polygon .> RepeatedPointError
-'        ShapefileExporter -u.> NotEnoughPointsError
-'        ShapefileExporter -u.> UnknownDataTypeError
-'        Tools .> NotEnoughPointsError
-'        GUIManager .> WrongInterpolationTypeError
-'        PolygonFolderManager .> PolygonFolderNotFoundError
-'        Scene -u.> NonExistentPolygonError
-    !endsub
-!endif
-
-'src.engine.Engine .> LineIntersectionError
-'src.engine.Engine .> RepeatedPointError
-'src.controller.Controller .> LineIntersectionError
-'src.controller.Controller .> RepeatedPointError
-'src.engine.scene.model.Polygon .> LineIntersectionError
-'src.engine.scene.model.Polygon .> RepeatedPointError
-'src.output.ShapefileExporter -u.> NotEnoughPointsError
-'src.output.ShapefileExporter -u.> UnknownDataTypeError
-'src.engine.GUI.frames.Tools .> NotEnoughPointsError
-'src.engine.GUI.GUIManager .> WrongInterpolationTypeError
-'src.engine.GUI.PolygonFolderManager .> PolygonFolderNotFoundError
-'src.engine.scene.Scene -u.> NonExistentPolygonError
 @enduml

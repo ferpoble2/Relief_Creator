@@ -16,7 +16,9 @@
 # END GPL LICENSE BLOCK
 
 """
-File that contains the main class of the program.
+Module that contains the main class of the program.
+
+Also contains the Enumeration classes for the Tools accepted by the program and the view modes.
 """
 import os
 import shutil
@@ -25,15 +27,15 @@ from typing import TYPE_CHECKING, Union
 
 import easygui
 
+from src.engine.engine import Engine
+from src.program.tools import Tools
+from src.program.view_mode import ViewMode
 from src.utils import get_logger
 
 if TYPE_CHECKING:
-    from engine.engine import Engine
+    import argparse
 
 log = get_logger(module='PROGRAM')
-
-# List of all possible tools that can be active in the program.
-TOOL_LIST = ['move_map', 'create_polygon']
 
 
 class Program:
@@ -42,19 +44,17 @@ class Program:
     """
 
     # noinspection PyUnresolvedReferences
-    def __init__(self,
-                 engine: 'Engine',
-                 debug_mode: bool = False,
-                 initialize_engine: bool = True):
+    def __init__(self, debug_mode: bool = False):
         """
         Constructor of the class.
 
         Args:
-            engine: Engine to use in the program.
+            debug_mode: Boolean indicating if the program should begin in debug mode.
         """
         # PROGRAM VARIABLES
         # -----------------
-        self.__engine: Engine = engine
+        self.__engine: Engine = Engine(self,
+                                       debug_mode)
 
         # Default color file to use when loading maps on the application.
         self.__CPT_file: str = os.path.join(os.getcwd(), 'resources', 'colors', 'default.cpt')
@@ -70,22 +70,24 @@ class Program:
 
         # State variables
         # -----------------------
-        self.__active_model: str | None = None
-        self.__active_tool: str | None = None
-        self.__active_polygon: str | None = None
+        self.__active_model: Union[str, None] = None
+        self.__active_tool: Union[str, None] = None
+        self.__active_polygon: Union[str, None] = None
 
-        self.__view_mode: str = '2D'
+        self.__view_mode: ViewMode = ViewMode.mode_2d
 
         self.__loading: bool = False
 
         self.__debug_mode: bool = debug_mode
 
-        # Do the logic of the initialization
-        # ----------------------------------
-        self.__engine.program = self
+    @property
+    def engine(self) -> 'Engine':
+        """
+        Return the engine used by the program to render and control the actions of the user.
 
-        if initialize_engine:
-            self.__engine.initialize(self.__engine, self)
+        Returns: Engine used by the program.
+        """
+        return self.__engine
 
     def add_zoom(self) -> None:
         """
@@ -127,14 +129,15 @@ class Program:
         """
         shutil.copy(self.get_model_temp_file(), target_directory)
 
-    def create_model_temp_file(self, reference_file: str) -> None:
+    def update_model_temp_file(self, reference_file: str) -> None:
         """
-        Creates a temporary file to store the model data inside.
+        Creates or updates the temporary file used to store the model data.
 
-        The reference file must be a netcdf file with the same information than the model that is being showed in
-        the program.
+        The reference file must be a netcdf file with the information of the model that will be used as a temporary
+        file.
 
-        This temporary file will be used in the export process of the models.
+        This temporary file will be used in the export process of the models, only replacing the height values of the
+        file.
 
         It can be only one temporary file on the program.
 
@@ -169,7 +172,7 @@ class Program:
         """
         return self.__debug_mode
 
-    def get_active_tool(self) -> str:
+    def get_active_tool(self) -> Union[Tools, None]:
         """
         Return the active tool being used in the program.
 
@@ -203,7 +206,7 @@ class Program:
         """
         return self.__temp_model_file
 
-    def get_view_mode(self) -> str:
+    def get_view_mode(self) -> ViewMode:
         """
         Get the view mode used by the program.
 
@@ -268,7 +271,7 @@ class Program:
         log.debug(f"path_color_File: {path_color_file}")
 
         if path_model is not None and path_color_file is not None:
-            self.__engine.load_netcdf_file(path_color_file, path_model)
+            self.__engine.create_model_from_file(path_color_file, path_model)
 
     def load_shapefile_file_with_dialog(self) -> None:
         """
@@ -280,7 +283,7 @@ class Program:
 
         # noinspection PyMissingOrEmptyDocstring
         def task_in_loading():
-            self.__engine.load_shapefile_file(path_to_shapefile)
+            self.__engine.create_polygon_from_file(path_to_shapefile)
 
         self.__engine.set_loading_message('Loading polygon...')
         self.__engine.set_task_with_loading_frame(task_in_loading)
@@ -336,7 +339,7 @@ class Program:
         """
         if 'model' in arguments and arguments.model is not None:
             log.debug('Loading model from command line  using default color file...')
-            self.__engine.load_netcdf_file(self.get_cpt_file(), arguments.model)
+            self.__engine.create_model_from_file(self.get_cpt_file(), arguments.model)
 
     def remove_temp_files(self) -> None:
         """
@@ -367,7 +370,7 @@ class Program:
         log.debug('Running program...')
         self.__engine.run()
 
-    def set_active_model(self, new_model_id: str) -> None:
+    def set_active_model(self, new_model_id: Union[str, None]) -> None:
         """
         Set the id of the model used in the application.
         Args:
@@ -388,15 +391,9 @@ class Program:
         """
         self.__active_polygon = polygon_id
 
-    def set_active_tool(self, new_tool: Union[str, None]) -> None:
+    def set_active_tool(self, new_tool: Union[Tools, None]) -> None:
         """
         Set the active tool in the program.
-
-        The tools selected can be the following:
-            - move_map
-            - create_polygon
-
-        Any other tool will raise a KeyError.
 
         To make the program does not use any tool, use None as the new_tool parameter.
 
@@ -405,8 +402,8 @@ class Program:
 
         Returns: None
         """
-        if new_tool is not None and new_tool not in TOOL_LIST:
-            raise KeyError('Tool does not exists.')
+        if new_tool is not None and type(new_tool) != Tools:
+            raise KeyError('Tool value not in the Enum of tools accepted by the program.')
 
         self.__active_tool = new_tool
 
@@ -452,7 +449,7 @@ class Program:
 
         Returns: None
         """
-        self.__view_mode = '2D'
+        self.__view_mode = ViewMode.mode_2d
 
     def set_view_mode_3D(self) -> None:
         """
@@ -460,4 +457,4 @@ class Program:
 
         Returns: None
         """
-        self.__view_mode = '3D'
+        self.__view_mode = ViewMode.mode_3d

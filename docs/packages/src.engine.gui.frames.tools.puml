@@ -6,34 +6,29 @@
 
 !startsub INTERNAL
 
-package tools {
-    class Tools
-    class ReliefTools
-    class PolygonTools
-    class InterpolationTools
+package src.engine.gui.frames.tools {
+    class src.engine.gui.frames.tools.Tools
+    class src.engine.gui.frames.tools.ReliefTools
+    class src.engine.gui.frames.tools.PolygonTools
+    class src.engine.gui.frames.tools.InterpolationTools
 }
 
-Tools *-- ReliefTools
-Tools *-- PolygonTools
-Tools *-- InterpolationTools
+src.engine.gui.frames.tools.Tools *-- src.engine.gui.frames.tools.ReliefTools
+src.engine.gui.frames.tools.Tools *-- src.engine.gui.frames.tools.PolygonTools
+src.engine.gui.frames.tools.Tools *-- src.engine.gui.frames.tools.InterpolationTools
 !endsub
 
 
-!if (%false())
-    !startsub EXTERNAL
-       Tools -u-|> Frame
-       PolygonTools .> NotEnoughPointsError
-       ReliefTools .> SceneError
-       ReliefTools .> ModelTransformationError
-       InterpolationTools .> InterpolationError
-    !endsub
-!endif
 
-ReliefTools .> src.error.SceneError
-ReliefTools .> src.error.ModelTransformationError
-Tools -u-|> src.engine.gui.frames.Frame
-PolygonTools .> src.error.NotEnoughPointsError
-InterpolationTools .> src.error.InterpolationError
+!startsub EXTERNAL
+    src.engine.gui.frames.tools.Tools -u--|> src.engine.gui.frames.Frame
+    src.engine.gui.frames.tools.ReliefTools ..> src.error.SceneError
+    src.engine.gui.frames.tools.ReliefTools ..> src.error.ModelTransformationError
+    src.engine.gui.frames.tools.InterpolationTools ..> src.error.InterpolationError
+    src.engine.gui.frames.tools.PolygonTools ..> src.program.Tools
+    src.engine.gui.frames.tools.Tools ..> src.program.Tools
+!endsub
+
 hide members
 
 @enduml

@@ -21,9 +21,13 @@ and the OpenGL rendering process.
 """
 import logging as log
 import sys
+from typing import Dict, TYPE_CHECKING
 
 import OpenGL.GL as GL
 import glfw
+
+if TYPE_CHECKING:
+    from glfw import _GLFWwindow
 
 
 class Render:
@@ -31,44 +35,66 @@ class Render:
     Class in charge of executing the render process on the application.
 
     The render process is the one in charge of generating a 2D image using OpenGL to be showed on the program.
-
-    Note:
-        It is very important to call the method <instance>.init(...) before executing the method <instance>.on_loop(...)
-        since the first method initialize all the components related to the engine that are necessary to render the
-        scene and the GUI.
     """
 
-    def __init__(self):
+    def __init__(self,
+                 window_settings: Dict[str, int],
+                 scene_settings_data: Dict[str, int],
+                 clear_color: list,
+                 window_name: str = "Relieve Creator"):
         """
-        Constructor of the render.
+        Constructor of the class.
+
+        The window_settings variable must have the keys: WIDTH, HEIGHT, MIN_HEIGHT, MAX_HEIGHT, MIN_WIDTH and
+        MAX_WIDTH.
+
+        The scene_settings_data variable must have the keys: SCENE_BEGIN_X, SCENE_BEGIN_Y, SCENE_WIDTH_X and
+        SCENE_HEIGHT_Y .
+
+        Args:
+            window_settings: Dictionary with the settings of the window to use by the render.
+            scene_settings_data: Dictionary with the settings of the scene to use by the render.
+            clear_color: Clear color to use for the clear of the models.
+            window_name (str, optional): Name of the window created.
+                                         Defaults to "Relieve Creator".
         """
         self.__window = None
-        self.__GUI = None
-        self.__engine = None
 
         self.__show_framerate = False
         self.__previous_time = 0
         self.__frame_count = 0
         self.__current_time = None
 
-    def init(self, window_name: str = "Relieve Creator", engine: 'Engine' = None) -> 'GLFWWindow':
-        """Initialize OpenGL and glfw for the application.
+        self.__init_variables(window_settings,
+                              scene_settings_data,
+                              clear_color,
+                              window_name)
+
+    def __init_variables(self,
+                         window_settings: Dict[str, int],
+                         scene_settings_data: Dict[str, int],
+                         clear_color: list,
+                         window_name: str = "Relieve Creator"):
+        """Initialize the variables of the render.
+
+        The window_settings variable must have the keys: WIDTH, HEIGHT, MIN_HEIGHT, MAX_HEIGHT, MIN_WIDTH and
+        MAX_WIDTH.
+
+        The scene_settings_data variable must have the keys: SCENE_BEGIN_X, SCENE_BEGIN_Y, SCENE_WIDTH_X and
+        SCENE_HEIGHT_Y .
 
         Args:
-            engine: Engine to be used in the application.
+            window_settings: Dictionary with the settings of the window to use by the render.
+            scene_settings_data: Dictionary with the settings of the scene to use by the render.
+            clear_color: Clear color to use for the clear of the models.
             window_name (str, optional): Name of the window created.
                                          Defaults to "Relieve Creator".
-
-        Returns:
-            GLFWWindow: Window to use for the rendering process.
         """
         if not glfw.init():
             sys.exit()
 
         # set the gui for the app
-        self.__GUI = engine.gui_manager
-        self.__engine = engine
-        window_data = engine.get_window_setting_data()
+        window_data = window_settings
 
         log.info(f"Creating windows of size {window_data['WIDTH']} x {window_data['HEIGHT']}.")
         self.__window = glfw.create_window(
@@ -84,15 +110,13 @@ class Render:
             sys.exit()
 
         glfw.make_context_current(self.__window)
-
-        window_settings = self.__engine.get_window_setting_data()
         glfw.set_window_size_limits(self.__window,
                                     window_settings['MIN_WIDTH'],
                                     window_settings['MIN_HEIGHT'],
                                     window_settings['MAX_WIDTH'],
                                     window_settings['MAX_WIDTH'])
 
-        clear_color = engine.get_clear_color()
+        clear_color = clear_color
         GL.glClearColor(
             clear_color[0],
             clear_color[1],
@@ -101,14 +125,42 @@ class Render:
         )
         GL.glEnable(GL.GL_BLEND)
         GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
-        GL.glEnable(GL.GL_DEPTH_TEST)
 
         # Indicate to openGL about the screen used in glfw to render.
-        scene_data = engine.get_scene_setting_data()
-        GL.glViewport(scene_data['SCENE_BEGIN_X'], scene_data['SCENE_BEGIN_Y'], scene_data['SCENE_WIDTH_X'],
+        scene_data = scene_settings_data
+        GL.glViewport(scene_data['SCENE_BEGIN_X'],
+                      scene_data['SCENE_BEGIN_Y'],
+                      scene_data['SCENE_WIDTH_X'],
                       scene_data['SCENE_HEIGHT_Y'])
 
+    @property
+    def window(self) -> '_GLFWwindow':
+        """
+        Get the window object used by the render to draw the models.
+
+        Returns: Window used by the render
+        """
         return self.__window
+
+    def enable_depth_buffer(self, enable_buffer: bool) -> None:
+        """
+        Set if enable the depth buffer or not.
+
+        When Depth Buffer is enabled, the depth of the points is considered when rendering the models on the screen.
+        Otherwise, the last drown model is the one who is drawn in front of all the other models.
+
+        It is recommended to enable the depth buffer when rendering 3D scenes and to disable it when rendering 2D
+        scenes.
+
+        Args:
+            enable_buffer: Boolean indicating if to enable or not the depth buffer on the rendering process.
+
+        Returns: None
+        """
+        if enable_buffer:
+            GL.glEnable(GL.GL_DEPTH_TEST)
+        else:
+            GL.glDisable(GL.GL_DEPTH_TEST)
 
     def on_loop(self, on_frame_tasks: list = None) -> None:
         """
@@ -125,18 +177,12 @@ class Render:
         if on_frame_tasks is None:
             on_frame_tasks = []
 
-        # Process the input so the GUI defined callbacks execute their logic correctly
-        # NOTE: The GUI defined callbacks are called from within the callbacks defined on the controller, that are
-        #       the ones who are really configured on GLFW.
-        self.__GUI.process_input()
+        # Clear the screen with the preloaded color
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
-        # draw models on screen
+        # Draw and render models and the GUI on the screen.
         for func in on_frame_tasks:
             func()
-
-        # Draw the frames defined on the GUI on the Scene.
-        self.__GUI.draw_frames()
 
         # Show the framerate of the application in the windows name if the variable __show_framerate is set to True.
         if self.__show_framerate:
@@ -148,6 +194,5 @@ class Render:
                 self.__previous_time = self.__current_time
 
         # Once the render is done, buffers are swapped, showing the complete scene.
-        self.__GUI.render()
         glfw.swap_buffers(self.__window)
         glfw.poll_events()

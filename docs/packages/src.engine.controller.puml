@@ -1,19 +1,17 @@
 @startuml
 
 !startsub INTERNAL
-
-package controller {
-    class Controller
+package src.engine.controller {
+    class src.engine.controller.Controller
 }
 !endsub
 
-src.engine.Engine o--o Controller
-hide members
+!startsub EXTERNAL
+    src.engine.controller.Controller --> src.utils
+    src.engine.controller.Controller .> src.program.Tools
+    src.engine.controller.Controller .> src.program.ViewMode
+!endsub
 
-!if (%false())
-    !startsub EXTERNAL
-        Engine o--o Controller
-    !endsub
-!endif
+hide members
 
 @enduml

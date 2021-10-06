@@ -166,7 +166,6 @@ class Model:
         Args:
             vertex: List of vertices of type np.float32.
         """
-
         GL.glBindVertexArray(self.vao)
         GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.vbo)
         GL.glBufferData(

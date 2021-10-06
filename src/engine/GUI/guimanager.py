@@ -28,12 +28,13 @@ work correctly.
 """
 
 # noinspection PyPep8Naming
-from typing import List, TYPE_CHECKING, Union
+from typing import Dict, List, TYPE_CHECKING, Union
 
 import OpenGL.constant as OGLConstant
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
 
+from src.engine.GUI.frames.combine_map_modal import CombineMapModal
 from src.engine.GUI.frames.confirmation_modal import ConfirmationModal
 from src.engine.GUI.frames.debug import Debug
 from src.engine.GUI.frames.loading import Loading
@@ -46,10 +47,13 @@ from src.engine.GUI.frames.tools.tools import Tools
 from src.engine.GUI.frames.tools_3D import Tools3D
 from src.engine.GUI.icon import Icon
 from src.engine.GUI.polygon_folder_manager import PolygonFolderManager
+from src.program.view_mode import ViewMode
 from src.utils import get_logger
 
 if TYPE_CHECKING:
     from src.engine.engine import Engine
+    from glfw import _GLFWwindow
+    from src.program.tools import Tools
 
 # noinspection SpellCheckingInspection
 log = get_logger(module='GUIMANAGER')
@@ -69,11 +73,25 @@ class GUIManager:
     the logic defined it its callbacks correctly.
     """
 
-    def __init__(self, engine: 'Engine'):
+    def __init__(self,
+                 engine: 'Engine',
+                 window: '_GLFWwindow',
+                 regular_font_size: int,
+                 tool_title_font_size: int,
+                 tool_sub_title_font_size: int,
+                 debug_mode: bool = False):
         """
         Constructor of the class.
 
         Must receive the engine in which the class will be used to make calls.
+
+        Args:
+            engine: Engine to use to execute the logic of the class.
+            debug_mode: Boolean indicating if the GUI should render debug frames.
+            tool_sub_title_font_size: Font size to use for the sub_title text.
+            tool_title_font_size: Font size to use for the tool_tile text.
+            regular_font_size: Font size to use for the regular font.
+            window: Window to use to draw the GUI.
         """
 
         # IMGUI parameters
@@ -83,6 +101,7 @@ class GUIManager:
         self.__font_regular = None
         self.__font_bold = None
         self.__font_tool_title = None
+        self.__font_tool_sub_title = None
 
         # GLFW parameters
         # ---------------
@@ -92,13 +111,128 @@ class GUIManager:
         # ----------------
         self.__engine = engine
         self.__polygon_folder_manager = PolygonFolderManager()
-        self.__component_list_2D = []
-        self.__component_list_3D = []
+        self.__model_id_list = []
         self.__icons_dict = None
+
+        # Frames used by the GUI
+        # ----------------------
+        self.__main_menu_bar = MainMenuBar(self)
+        self.__text_modal = TextModal(self)
+        self.__tools = Tools(self)
+        self.__loading = Loading(self)
+        self.__polygon_information = PolygonInformation(self)
+        self.__confirmation_modal = ConfirmationModal(self)
+        self.__tools_3d = Tools3D(self)
+        self.__mouse_coordinates = MouseCoordinates(self)
+        self.__combine_map_modal = CombineMapModal(self)
+
+        self.__component_list_2D = [
+            self.__main_menu_bar,
+            self.__mouse_coordinates,
+            self.__text_modal,
+            self.__tools,
+            self.__loading,
+            self.__polygon_information,
+            self.__confirmation_modal,
+            self.__combine_map_modal
+        ]
+
+        self.__component_list_3D = [
+            self.__main_menu_bar,
+            self.__loading,
+            self.__text_modal,
+            self.__confirmation_modal,
+            self.__tools_3d
+        ]
 
         # Auxiliary parameters
         # --------------------
         self.__is_mouse_inside_frame = False
+
+        self.__initialize_variables(window,
+                                    regular_font_size,
+                                    tool_title_font_size,
+                                    tool_sub_title_font_size,
+                                    debug_mode)
+
+    def __add_polygon_to_polygon_folder(self, folder_id: str, polygon_id: str) -> None:
+        """
+        Add an already existent polygon to the specified folder.
+
+        This methods change the polygon draw order so the polygons are draw in the order they are shown on the
+        GUI.
+
+        Args:
+            folder_id: Folder to use
+            polygon_id: Polygon to add to the folder
+
+        Returns: None
+        """
+
+        # Add the polygon to the folder
+        # -----------------------------
+        self.__polygon_folder_manager.add_polygon_to_folder(folder_id, polygon_id)
+
+        # Change the draw order of the polygon to match the showed folder on the GUI
+        # --------------------------------------------------------------------------
+        self.__engine.change_polygon_draw_priority(polygon_id,
+                                                   self.__polygon_folder_manager.get_polygon_position(polygon_id))
+
+    def __initialize_variables(self,
+                               window,
+                               regular_font_size: int,
+                               tool_title_font_size: int,
+                               tool_sub_title_font_size: int,
+                               debug_mode: bool = False) -> None:
+        """
+        Set the initial configurations of the GUI.
+
+        Args:
+            debug_mode: Boolean indicating if the GUI should render debug frames.
+            tool_sub_title_font_size: Font size to use for the sub_title text.
+            tool_title_font_size: Font size to use for the tool_tile text.
+            regular_font_size: Font size to use for the regular font.
+            window: Window to use to draw the GUI
+
+        Returns: None
+
+        """
+        log.info("Initializing GUI")
+        imgui.create_context()
+        self.__implementation = GlfwRenderer(window)
+        self.__glfw_window = window
+
+        # Style options
+        style = imgui.get_style()
+        style.frame_rounding = 5
+        imgui.style_colors_light(style)
+
+        # Font options
+        self.__io = imgui.get_io()
+        self.__font_regular = self.__io.fonts.add_font_from_file_ttf(
+            'resources/fonts/open_sans/OpenSans-Regular.ttf', regular_font_size
+        )
+        self.__font_bold = self.__io.fonts.add_font_from_file_ttf(
+            'resources/fonts/open_sans/OpenSans-Bold.ttf', regular_font_size
+        )
+        self.__font_tool_title = self.__io.fonts.add_font_from_file_ttf(
+            'resources/fonts/open_sans/OpenSans-Regular.ttf', tool_title_font_size
+        )
+        self.__font_tool_sub_title = self.__io.fonts.add_font_from_file_ttf(
+            'resources/fonts/open_sans/OpenSans-Regular.ttf', tool_sub_title_font_size
+        )
+
+        self.__implementation.refresh_font_texture()
+
+        # load the icons on the GUI
+        self.__load_icons()
+
+        if debug_mode:
+            debug = Debug(self)
+            test_window = TestWindow(self)
+
+            self.__component_list_2D += [debug, test_window]
+            self.__component_list_3D += [debug, test_window]
 
     def __load_icons(self) -> None:
         """
@@ -136,48 +270,43 @@ class GUIManager:
 
         Returns: None
         """
-        self.__polygon_folder_manager.add_polygon_to_imported_polygon_folder(polygon_id)
+        imported_polygon_id = self.__polygon_folder_manager.get_imported_polygon_folder_id()
+        self.__add_polygon_to_polygon_folder(imported_polygon_id, polygon_id)
 
         # update gui
         self.__update_frames_with_new_polygon(polygon_id)
 
-    def add_polygon_to_gui(self, polygon_id: str) -> None:
+    def add_model_to_gui(self, model_id: str) -> None:
         """
-        Tells the frames that make use of the polygon information that a new polygon was created.
+        Add a new model to the list of models to show on the GUI.
+
+        The model is added at the end of the list of models.
 
         Args:
-            polygon_id: Id of the created polygon
+            model_id: Name of the model to add.
+
+        Returns: Add the model to the list of models to be showed on the GUI.
+        """
+        self.__model_id_list.append(model_id)
+
+    def add_polygon_to_gui(self, polygon_id: str, polygon_folder_id: str = None) -> None:
+        """
+        Add a new polygon to the GUI and broadcast a method to all the frames that uses the information of the polygons.
+
+        Args:
+            polygon_folder_id: Polygon folder to add the polygon to.
+            polygon_id: ID of the created polygon.
 
         Returns: None
         """
-        folder_id = self.__polygon_folder_manager.create_new_folder('New Folder')
-        self.__polygon_folder_manager.add_polygon_to_folder(folder_id, polygon_id)
+        if polygon_folder_id is None:
+            folder_id = self.__polygon_folder_manager.create_new_folder('New Folder')
+            self.__add_polygon_to_polygon_folder(folder_id, polygon_id)
+        else:
+            self.__add_polygon_to_polygon_folder(polygon_folder_id, polygon_id)
 
-        # update gui
+        # Update the frames on the gui
         self.__update_frames_with_new_polygon(polygon_id)
-
-    def add_polygon_to_polygon_folder(self, folder_id: str, polygon_id: str) -> None:
-        """
-        Add an already existent polygon to the specified folder.
-
-        This methods change the polygon draw order so the polygons are draw in the order they are shown on the
-        GUI.
-
-        Args:
-            folder_id: Folder to use
-            polygon_id: Polygon to add to the folder
-
-        Returns: None
-        """
-
-        # Add the polygon to the folder
-        # -----------------------------
-        self.__polygon_folder_manager.add_polygon_to_folder(folder_id, polygon_id)
-
-        # Change the draw order of the polygon to match the showed folder on the GUI
-        # --------------------------------------------------------------------------
-        self.__engine.change_polygon_draw_order(polygon_id,
-                                                self.__polygon_folder_manager.get_polygon_position(polygon_id))
 
     def add_zoom(self) -> None:
         """
@@ -199,14 +328,6 @@ class GUIManager:
         Returns: None
         """
         self.__engine.apply_smoothing(polygon_id, model_id, distance_to_polygon)
-
-    def are_frame_fixed(self) -> bool:
-        """
-        Return the state of the frames. True if they are fixed (position and size can not be changed),  False  if not.
-
-        Returns: if frames are fixed or not.
-        """
-        return self.__engine.are_frames_fixed()
 
     def calculate_max_min_height(self, model_id: str, polygon_id: str, return_data: list) -> None:
         """
@@ -314,6 +435,17 @@ class GUIManager:
         else:
             raise NotImplementedError(f'Measure {measure_unit} not implemented.')
 
+    def change_map_quality(self, quality: int) -> None:
+        """
+        Change the quality used to render the maps.
+
+        Args:
+            quality: Quality to use in the rendering process
+
+        Returns: None
+        """
+        self.__engine.change_quality(quality)
+
     def change_points_height(self, polygon_id: str,
                              model_id: str,
                              min_height: float,
@@ -348,24 +480,30 @@ class GUIManager:
                                        transformation_type,
                                        filters)
 
-    def change_quality(self, quality: int) -> None:
+    def create_model_from_existent(self, base_model_id: str, second_model_id: str, model_name: str) -> None:
         """
-        Change the quality used to render the maps.
+        Ask the engine to merge two maps into a new one.
 
         Args:
-            quality: Quality to use in the rendering process
+            base_model_id: ID of the model to use as base for the merging of the maps.
+            second_model_id: ID of the model to use as the second model (the one who goes behind the base model).
+            model_name: Name of the generated model.
 
         Returns: None
         """
-        self.__engine.change_quality(quality)
+        self.__engine.create_model_from_existent(base_model_id, second_model_id, model_name)
 
-    def create_new_polygon(self) -> str:
+    def create_new_polygon(self, folder_id: str = None) -> str:
         """
-        Create a new polygon on the scene
+        Create a new polygon on the program and add it to a folder to be shown in the GUI.
+
+        If no folder is specified, a new folder is created.
 
         Returns: the id of the new polygon
         """
-        return self.__engine.create_new_polygon()
+        polygon_id = self.__engine.create_new_polygon()
+        self.add_polygon_to_gui(polygon_id, folder_id)
+        return polygon_id
 
     def create_polygon_folder(self, name: str = 'folder') -> str:
         """
@@ -378,74 +516,6 @@ class GUIManager:
         """
         return self.__polygon_folder_manager.create_new_folder(name)
 
-    def delete_all_polygons_inside_folder(self, polygon_folder_id: str) -> None:
-        """
-        Delete all the polygons that are inside a folder from the system and from the folder.
-
-        If the polygon is on two folders at the same time (should not happen), this also deletes
-        the polygon from the other folder.
-
-        Args:
-            polygon_folder_id: PolygonFolder ID of the folder to use.
-
-        Returns: None
-        """
-
-        polygons_inside = self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id).copy()
-        for polygon_id in polygons_inside:
-            self.delete_polygon_by_id(polygon_id)
-
-    def delete_polygon_by_id(self, polygon_id: str) -> None:
-        """
-        Delete the polygon with the specified id from the scene
-
-        Args:
-            polygon_id: Id of the polygon to delete
-
-        Returns: None
-        """
-        # delete it from the folders
-        self.__polygon_folder_manager.delete_polygon_from_all_folders(polygon_id)
-
-        # delete the polygon from the engine
-        self.__engine.delete_polygon_by_id(polygon_id)
-
-    def delete_polygon_folder(self, folder_id: str) -> None:
-        """
-        Delete a polygon folder from the list of folders.
-
-        Args:
-            folder_id: ID of the folder to delete.
-
-        Returns: None
-        """
-        self.__polygon_folder_manager.delete_folder(folder_id)
-
-    def delete_polygon_parameter(self, polygon_id: str, key: str) -> None:
-        """
-        Delete a parameter from a polygon.
-
-        Args:
-            polygon_id: ID of the polygon.
-            key: key to delete.
-
-        Returns: None
-        """
-        self.__engine.delete_parameter_from_polygon(polygon_id, key)
-
-    def disable_controller_keyboard_callback(self) -> None:
-        """
-        Disable the logic defined on the controller keyboard callback, but keep executing the logic defined on the
-        IMGUI defined callback.
-
-        This method is useful when writing inside textbox, and the logic from the controller must not be executed but
-        the one in the GUI should.
-
-        Returns: None
-        """
-        log.debug('key callback disabled')
-        self.__engine.enable_only_gui_keyboard_callback()
-
     def draw_frames(self) -> None:
         """
         Draw the components of the GUI (This dont render them).
@@ -453,10 +523,12 @@ class GUIManager:
         Returns: None
         """
 
-        if self.__engine.get_program_view_mode() == '2D':
+        if self.__engine.get_program_view_mode() == ViewMode.mode_2d:
             components_to_draw = self.__component_list_2D
-        else:
+        elif self.__engine.get_program_view_mode() == ViewMode.mode_3d:
             components_to_draw = self.__component_list_3D
+        else:
+            raise NotImplementedError('ViewMode not implemented on the GUI.')
 
         imgui.new_frame()
         with imgui.font(self.__font_regular):
@@ -468,18 +540,6 @@ class GUIManager:
 
         # check for the mouse component
         self.__is_mouse_inside_frame = imgui.get_io().want_capture_mouse
-
-    def enable_controller_keyboard_callback(self) -> None:
-        """
-        Enable the logic defined on the controller keyboard callback.
-
-        This method should be called after disable_controller_keyboard_callback to return the keyboard callbacks to its
-        normal state.
-
-        Returns: None
-        """
-        log.debug('key callback enabled')
-        self.__engine.disable_only_gui_keyboard_callback()
 
     def export_model_as_netcdf(self, model_id: str) -> None:
         """
@@ -559,7 +619,7 @@ class GUIManager:
         """
         return self.__engine.get_active_polygon_id()
 
-    def get_active_tool(self) -> str:
+    def get_active_tool(self) -> Union[Tools, None]:
         """
         Get the active tool being used in the program.
 
@@ -576,6 +636,15 @@ class GUIManager:
         """
         return self.__engine.get_camera_data()
 
+    def get_controller_keyboard_callback_state(self) -> bool:
+        """
+        Returns True if the keyboard callback defined by the controller (different from the one used by the GUI) is
+        enabled. Return false if the keyboard callback defined by the controller is disabled.
+
+        Returns: Boolean indicating the state of the controller keyboard callback.
+        """
+        return self.__engine.get_controller_key_callback_state()
+
     def get_cpt_file(self) -> str:
         """
         Get the CTP file used by the program.
@@ -583,6 +652,14 @@ class GUIManager:
 
         """
         return self.__engine.get_cpt_file()
+
+    def get_frame_fixed_state(self) -> bool:
+        """
+        Return the state of the frames. True if they are fixed (position and size can not be changed),  False  if not.
+
+        Returns: if frames are fixed or not.
+        """
+        return self.__engine.are_frames_fixed()
 
     def get_gui_key_callback(self) -> callable:
         """
@@ -705,7 +782,23 @@ class GUIManager:
 
         Returns: List of models loaded into the program.
         """
-        return self.__engine.get_model_list()
+        return self.__model_id_list
+
+    def get_model_names_dict(self) -> Dict[str, Union[str, None]]:
+        """
+        Get a dictionary with the models on the program and their names.
+
+        The dictionary uses the models ID as the key and the name as the values of the dictionary.
+
+        Returns: Dictionary with the ID of the models and the name of each one.
+        """
+        model_dict = {}
+
+        for model_id in self.__model_id_list:
+            model_info = self.__engine.get_model_information(model_id)
+            model_dict[model_id] = model_info.get('name', None)
+
+        return model_dict
 
     def get_polygon_folder_id_list(self) -> list:
         """
@@ -728,11 +821,11 @@ class GUIManager:
 
     def get_polygon_id_list(self) -> list:
         """
-        Get the full list of polygon ids currently being used on the program.
+        Get a list with all the IDs of the polygons being used by the program.
 
         Returns: list with the polygons
         """
-        return self.__engine.get_polygon_id_list()
+        return self.__polygon_folder_manager.get_polygon_id_list()
 
     def get_polygon_name(self, polygon_id: str) -> str:
         """
@@ -755,7 +848,7 @@ class GUIManager:
 
     def get_polygons_id_from_polygon_folder(self, polygon_folder_id: str) -> list:
         """
-        Get the list of polygons id that a folder contains.
+        Get a list with the IDs of the polygons stored inside a folder.
 
         Args:
             polygon_folder_id: ID of the polygon folder.
@@ -764,7 +857,7 @@ class GUIManager:
         """
         return self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id)
 
-    def get_program_view_mode(self) -> str:
+    def get_program_view_mode(self) -> ViewMode:
         """
         Ask the engine for the view mode being used for the program.
 
@@ -806,81 +899,6 @@ class GUIManager:
 
         """
         return self.__engine.get_zoom_level()
-
-    def initialize(self, window, engine: 'Engine', gui_manager: 'GUIManager') -> None:
-        """
-        Set the initial configurations of the GUI.
-
-        Args:
-            gui_manager: The object used to make this call.
-            engine: Engine used in the application
-            window: Window to use to draw the GUI
-
-        Returns: None
-
-        """
-        log.info("Initializing GUI")
-        imgui.create_context()
-        self.__implementation = GlfwRenderer(window)
-        self.__glfw_window = window
-
-        # Style options
-        style = imgui.get_style()
-        style.frame_rounding = 5
-        imgui.style_colors_light(style)
-
-        # Font options
-        self.__io = imgui.get_io()
-        self.__font_regular = self.__io.fonts.add_font_from_file_ttf(
-            'resources/fonts/open_sans/OpenSans-Regular.ttf', engine.get_font_size()
-        )
-        self.__font_bold = self.__io.fonts.add_font_from_file_ttf(
-            'resources/fonts/open_sans/OpenSans-Bold.ttf', engine.get_font_size()
-        )
-        self.__font_tool_title = self.__io.fonts.add_font_from_file_ttf(
-            'resources/fonts/open_sans/OpenSans-Regular.ttf', engine.get_tool_title_font_size()
-        )
-
-        self.__implementation.refresh_font_texture()
-
-        # load the icons on the GUI
-        self.__load_icons()
-
-        # initialize the components of the manager
-        # ----------------------------------------
-        main_menu_bar = MainMenuBar(gui_manager)
-        text_modal = TextModal(gui_manager)
-        tools = Tools(gui_manager)
-        loading = Loading(gui_manager)
-        polygon_information = PolygonInformation(gui_manager)
-        confirmation_modal = ConfirmationModal(gui_manager)
-        tools_3d = Tools3D(gui_manager)
-        mouse_coordinates = MouseCoordinates(gui_manager)
-
-        self.__component_list_2D = [
-            main_menu_bar,
-            mouse_coordinates,
-            text_modal,
-            tools,
-            loading,
-            polygon_information,
-            confirmation_modal
-        ]
-
-        self.__component_list_3D = [
-            main_menu_bar,
-            loading,
-            text_modal,
-            confirmation_modal,
-            tools_3d
-        ]
-
-        if self.__engine.is_program_debug_mode():
-            debug = Debug(gui_manager)
-            test_window = TestWindow(gui_manager)
-
-            self.__component_list_2D += [debug, test_window]
-            self.__component_list_3D += [debug, test_window]
 
     def interpolate_points(self, polygon_id: str, model_id: str, distance: float, type_interpolation: str) -> None:
         """
@@ -949,7 +967,7 @@ class GUIManager:
 
         Returns: None
         """
-        self.__engine.load_preview_interpolation_area(distance)
+        self.__engine.create_preview_interpolation_area(distance)
 
     def load_shapefile_file_with_dialog(self) -> None:
         """
@@ -990,8 +1008,29 @@ class GUIManager:
 
         # Change the draw order of the polygons inside the folder
         for polygon_id in self.get_polygons_id_from_polygon_folder(polygon_folder_id):
-            self.__engine.change_polygon_draw_order(polygon_id,
-                                                    self.__polygon_folder_manager.get_polygon_position(polygon_id))
+            self.__engine.change_polygon_draw_priority(polygon_id,
+                                                       self.__polygon_folder_manager.get_polygon_position(polygon_id))
+
+    def move_model_position(self, model_id: str, offset: int) -> None:
+        """
+        Change the priority of the selected model, making the rendering of the model before/after the others models.
+
+        The offset specify how many elements to move the element in the list of models. Can be a positive or negative
+        integer.
+
+        Args:
+            model_id: ID of the model to change.
+            offset: How many elements to move the selected model.
+
+        Returns: None
+        """
+        # Rearrange the models in the GUI
+        index = self.__model_id_list.index(model_id)
+        self.__model_id_list.pop(index)
+        self.__model_id_list.insert(index + offset, model_id)
+
+        # Change the drawing priority on the Engine
+        self.__engine.change_model_draw_priority(model_id, index + offset)
 
     def move_polygon_position(self, polygon_id: str, polygon_folder_id: str, movement_offset: int) -> None:
         """
@@ -1025,8 +1064,8 @@ class GUIManager:
         self.__polygon_folder_manager.move_polygon_position(polygon_folder_id, polygon_id, movement_offset)
 
         # Update the draw order of the polygons
-        self.__engine.change_polygon_draw_order(polygon_id,
-                                                self.__polygon_folder_manager.get_polygon_position(polygon_id))
+        self.__engine.change_polygon_draw_priority(polygon_id,
+                                                   self.__polygon_folder_manager.get_polygon_position(polygon_id))
 
     def move_polygon_to_polygon_folder(self, old_folder_id: str, polygon_id: str, folder_id: str) -> None:
         """
@@ -1048,95 +1087,19 @@ class GUIManager:
 
         # Change the draw order of the polygon to match the showed folder on the GUI
         # --------------------------------------------------------------------------
-        self.__engine.change_polygon_draw_order(polygon_id,
-                                                self.__polygon_folder_manager.get_polygon_position(polygon_id))
+        self.__engine.change_polygon_draw_priority(polygon_id,
+                                                   self.__polygon_folder_manager.get_polygon_position(polygon_id))
 
-    def optimize_gpu_memory(self) -> None:
+    def open_combine_map_modal(self) -> None:
         """
-        Calls the engine to optimize the memory on the GPU.
+        Open the modal to merge two maps into one.
 
-        Returns: None
+        Returns:  None
         """
-        self.__engine.optimize_gpu_memory()
+        self.__combine_map_modal.should_show = True
 
-    def process_input(self) -> None:
-        """
-        Process the input (events) that happened in the GUI.
-
-        Returns: None
-        """
-        self.__implementation.process_inputs()
-
-    def reload_models(self):
-        """
-        Ask the Scene to reload the models to better the definitions.
-
-        Returns: None
-        """
-        self.__engine.reload_models()
-
-    def remove_interpolation_preview(self, polygon_id: str) -> None:
-        """
-        Ask the engine to remove the interpolation preview of the specified polygon.
-
-        Do nothing if there is no interpolation area being showed.
-
-        Args:
-            polygon_id: Polygon id to delete the area.
-
-        Returns: None
-        """
-        self.__engine.remove_interpolation_preview(polygon_id)
-
-    def render(self) -> None:
-        """
-        Render the GUI (Components must be drew first).
-
-        Returns: None
-        """
-        imgui.render()
-        self.__implementation.render(imgui.get_draw_data())
-
-    def reset_camera_values(self) -> None:
-        """
-        Ask the engine to reset the values of the camera to it's initial values.
-
-        Returns: None
-        """
-        self.__engine.reset_camera_values()
-
-    def set_active_polygon(self, polygon_id: str) -> None:
-        """
-        Set a new active polygon on the program.
-
-        Args:
-            polygon_id: Polygon ID to set as the active polygon.
-
-        Returns: None
-        """
-        self.__engine.set_active_polygon(polygon_id)
-
-    def set_active_tool(self, tool: Union[str, None]) -> None:
-        """
-        Set the active tool on the engine.
-
-        Args:
-            tool: String representing the new tool too be active.
-
-        Returns: None
-        """
-        self.__engine.set_active_tool(tool)
-
-    def set_bold_font(self) -> None:
-        """
-        Set a bold font to use in the render on the GUI.
-
-        Returns: Set the font to bold.
-        """
-        imgui.pop_font()
-        imgui.push_font(self.__font_bold)
-
-    def set_confirmation_modal(self, modal_title: str, msg: str, yes_function: callable, no_function: callable) -> None:
+    def open_confirmation_modal(self, modal_title: str, msg: str, yes_function: callable,
+                                no_function: callable) -> None:
         """
         Opens a confirmation modal in the screen with two options (yes and no), after clicking each one execute the
         functions given.
@@ -1158,24 +1121,7 @@ class GUIManager:
 
         raise AssertionError('There is not a frame of class ConfirmationModal in the program.')
 
-    def set_loading_message(self, new_msg: str) -> None:
-        """
-        Set a new loading message in the loading frame.
-
-        Args:
-            new_msg: New message to show in the frame.
-
-        Returns: None
-        """
-        for frame in self.__component_list_2D:
-            if isinstance(frame, Loading):
-                frame.set_loading_message(new_msg)
-                return
-
-        raise AssertionError('There is not a frame from the Loading class on the list of frames '
-                             'handled by the GUIManager.')
-
-    def set_modal_text(self, modal_title: str, msg: str) -> None:
+    def open_text_modal(self, modal_title: str, msg: str) -> None:
         """
         Set the text of the modal frame and set it to show in the next frame.
 
@@ -1193,6 +1139,210 @@ class GUIManager:
                 return
 
         raise AssertionError('There is not a frame from the TextModal class to set a modal message.')
+
+    def optimize_gpu_memory(self) -> None:
+        """
+        Calls the engine to optimize the memory on the GPU.
+
+        Returns: None
+        """
+        self.__engine.optimize_gpu_memory()
+
+    def process_input(self) -> None:
+        """
+        Process the input (events) that happened in the GUI.
+
+        Returns: None
+        """
+        self.__implementation.process_inputs()
+
+    def reload_models(self):
+        """
+        Ask the Engine to reload the models into a better definition.
+
+        NOTE:
+            This method will create a loading frame on the application while the models are being reloaded.
+
+        IMPORTANT:
+            This method is asynchronous, this is, the logic that make the reload of the models run in another thread
+            while the main thread will still render the program in real time.
+
+        Returns: None
+        """
+        self.__engine.reload_models()
+
+    def remove_all_polygons_inside_folder(self, polygon_folder_id: str) -> None:
+        """
+        Remove all the polygons that are inside a folder from the system and from the folder.
+
+        If the polygon is on two folders at the same time (should not happen), this also deletes
+        the polygon from the other folder.
+
+        Args:
+            polygon_folder_id: PolygonFolder ID of the folder to use.
+
+        Returns: None
+        """
+
+        polygons_inside = self.__polygon_folder_manager.get_polygon_id_list(polygon_folder_id).copy()
+        for polygon_id in polygons_inside:
+            self.remove_polygon_by_id(polygon_id)
+
+    def remove_interpolation_preview(self, polygon_id: str) -> None:
+        """
+        Ask the engine to remove the interpolation preview of the specified polygon.
+
+        Do nothing if there is no interpolation area being showed.
+
+        Args:
+            polygon_id: Polygon id to delete the area.
+
+        Returns: None
+        """
+        self.__engine.remove_interpolation_preview(polygon_id)
+
+    def remove_model(self, model_id: str) -> None:
+        """
+        Ask the engine to remove the model with the specified ID.
+
+        This method removes the 2D model and the 3D model if ti exists.
+
+        Args:
+            model_id: ID of the model to remove.
+
+        Returns: None
+        """
+        self.__model_id_list.remove(model_id)
+        self.__engine.remove_model(model_id)
+
+    def remove_polygon_by_id(self, polygon_id: str) -> None:
+        """
+        Remove the polygon with the specified id from the scene and the GUIManager.
+
+        Args:
+            polygon_id: Id of the polygon to delete
+
+        Returns: None
+        """
+        # delete it from the folders
+        self.__polygon_folder_manager.delete_polygon_from_all_folders(polygon_id)
+
+        # delete the polygon from the engine
+        self.__engine.remove_polygon_by_id(polygon_id)
+
+    def remove_polygon_folder(self, folder_id: str) -> None:
+        """
+        Remove a polygon folder from the list of folders.
+
+        Args:
+            folder_id: ID of the folder to delete.
+
+        Returns: None
+        """
+        self.remove_all_polygons_inside_folder(folder_id)
+        self.__polygon_folder_manager.delete_folder(folder_id)
+
+    def remove_polygon_parameter(self, polygon_id: str, key: str) -> None:
+        """
+        Remove a parameter from a polygon.
+
+        Args:
+            polygon_id: ID of the polygon.
+            key: key to delete.
+
+        Returns: None
+        """
+        self.__engine.remove_parameter_from_polygon(polygon_id, key)
+
+    def render(self) -> None:
+        """
+        Render the GUI (Components must be drew first).
+
+        Returns: None
+        """
+        imgui.render()
+        self.__implementation.render(imgui.get_draw_data())
+
+    def reset_camera_values(self) -> None:
+        """
+        Ask the engine to reset the values of the camera to it's initial values.
+
+        Returns: None
+        """
+        self.__engine.reset_camera_values()
+
+    def set_active_model(self, model_id: str) -> None:
+        """
+        Change the active model being used by the program.
+
+        Args:
+            model_id: ID of the model to set as active.
+
+        Returns: None
+        """
+        self.__engine.set_active_model(model_id)
+
+    def set_active_polygon(self, polygon_id: Union[str, None]) -> None:
+        """
+        Set a new active polygon on the program.
+
+        Args:
+            polygon_id: Polygon ID to set as the active polygon.
+
+        Returns: None
+        """
+        self.__engine.set_active_polygon(polygon_id)
+
+    def set_active_tool(self, tool: Union[Tools, None]) -> None:
+        """
+        Set the active tool on the engine.
+
+        Args:
+            tool: String representing the new tool too be active.
+
+        Returns: None
+        """
+        self.__engine.set_active_tool(tool)
+
+    def set_bold_font(self) -> None:
+        """
+        Set a bold font to use in the render on the GUI.
+
+        Returns: Set the font to bold.
+        """
+        imgui.pop_font()
+        imgui.push_font(self.__font_bold)
+
+    def set_controller_keyboard_callback_state(self, new_state: bool) -> None:
+        """
+        Enable/Disable the logic defined on the controller keyboard callback.
+
+        This method should be called after disable_controller_keyboard_callback to return the keyboard callbacks to its
+        normal state.
+
+        Args:
+            new_state: New state of the keyboard callback used by the controller.
+
+        Returns: None
+        """
+        self.__engine.set_controller_key_callback(new_state)
+
+    def set_loading_message(self, new_msg: str) -> None:
+        """
+        Set a new loading message in the loading frame.
+
+        Args:
+            new_msg: New message to show in the frame.
+
+        Returns: None
+        """
+        for frame in self.__component_list_2D:
+            if isinstance(frame, Loading):
+                frame.set_loading_message(new_msg)
+                return
+
+        raise AssertionError('There is not a frame from the Loading class on the list of frames '
+                             'handled by the GUIManager.')
 
     def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """
@@ -1247,7 +1397,7 @@ class GUIManager:
         """
         self.__engine.set_new_parameter_to_polygon(polygon_id, key, value)
 
-    def set_program_view_mode(self, mode: str = '2D') -> None:
+    def set_program_view_mode(self, mode: 'ViewMode') -> None:
         """
         Ask the engine to change the view mode to the selected mode.
 
@@ -1266,6 +1416,17 @@ class GUIManager:
         """
         imgui.pop_font()
         imgui.push_font(self.__font_regular)
+
+    def set_tool_sub_title_font(self) -> None:
+        """
+        Set the font to use of the type sub_title.
+
+        The font will be smaller than the title font but bigger than the regular text.
+
+        Returns: None
+        """
+        imgui.pop_font()
+        imgui.push_font(self.__font_tool_sub_title)
 
     def set_tool_title_font(self) -> None:
         """

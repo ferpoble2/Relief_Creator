@@ -5,19 +5,13 @@ class Map3DModel {
     - __colors: list
     - __height_array: array
     - __height_limit: list
-    - __max_height: float
-    - __min_height: float
     - __model: array
     - __height_exaggeration_factor: float
-    - __height_conversion_factor: float
-    - __projection: array
     - __quality: int
-    - __view: array
 
     - __get_conversion_factor(): float
     - __set_height_buffer()
     ~ _update_uniforms()
-    + calculate_projection_matrix()
     + change_height_measure_unit(new_measure_unit)
     + change_height_normalization_factor(new_value)
     + change_vertices_measure_unit(new_measure_unit)

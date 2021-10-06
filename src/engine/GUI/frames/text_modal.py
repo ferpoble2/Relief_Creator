@@ -80,7 +80,7 @@ class TextModal(Frame):
             self._GUI_manager.set_active_tool(None)
 
             # Disable keyboard input
-            self._GUI_manager.disable_controller_keyboard_callback()
+            self._GUI_manager.set_controller_keyboard_callback_state(False)
 
             # Return the variable should_show to false since the modal was already opened
             self.__should_show = False
@@ -105,7 +105,7 @@ class TextModal(Frame):
                 # Close the pop up
                 self.__should_show = False
                 imgui.close_current_popup()
-                self._GUI_manager.enable_controller_keyboard_callback()
+                self._GUI_manager.set_controller_keyboard_callback_state(True)
 
             imgui.end_popup()
 

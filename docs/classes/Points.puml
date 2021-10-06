@@ -23,7 +23,6 @@
                     + remove_last_added_point()
                     + set_color_buffer(colors)
                     + set_first_point_color(new_color)
-                    + set_z_offset(new_value)
                     + set_last_point_color(new_color)
                     + set_normal_color(new_color)
                 }

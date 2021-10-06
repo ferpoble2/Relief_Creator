@@ -1,17 +1,15 @@
 # Folders to ignore
-env/
 .vscode/
-src/engine/__pycache__/
 __pycache__/
 venv/
-dist/
-build/
 .idea/
-output/
+local/
 
-# Exceptions
-!src/output
-!test/output
+# Specific folders to ignore
+/env/
+/dist/
+/build/
+/output/
 
 # Specific files
 *.log

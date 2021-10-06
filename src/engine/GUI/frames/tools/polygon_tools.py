@@ -23,6 +23,7 @@ from typing import TYPE_CHECKING
 
 import imgui
 
+from src.program.tools import Tools
 from src.utils import get_logger
 
 if TYPE_CHECKING:
@@ -186,16 +187,11 @@ class PolygonTools:
         """
         # change the tool to create polygon
         # ---------------------------------
-        self.__GUI_manager.set_active_tool('create_polygon')
+        self.__GUI_manager.set_active_tool(Tools.create_polygon)
 
         # create the polygon and add it to a folder
         # -----------------------------------------
-        new_polygon_id = self.__GUI_manager.create_new_polygon()
-        if folder_id is None:
-            folder_id = self.__GUI_manager.create_polygon_folder('New Folder')
-            self.__GUI_manager.add_polygon_to_polygon_folder(folder_id, new_polygon_id)
-        else:
-            self.__GUI_manager.add_polygon_to_polygon_folder(folder_id, new_polygon_id)
+        new_polygon_id = self.__GUI_manager.create_new_polygon(folder_id)
 
         # add the colors to the list of colors data
         # -----------------------------------------
@@ -232,13 +228,13 @@ class PolygonTools:
             # noinspection PyMissingOrEmptyDocstring
             def yes_function():
                 # delete the polygon from the program
-                self.__GUI_manager.delete_polygon_by_id(polygon_id)
+                self.__GUI_manager.remove_polygon_by_id(polygon_id)
 
                 # if the deleted polygon is the active, change the program status no None (deprecated code)
                 if active_polygon == polygon_id:
                     self.__GUI_manager.set_active_polygon(None)
 
-            self.__GUI_manager.set_confirmation_modal(
+            self.__GUI_manager.open_confirmation_modal(
                 'Confirmation',
                 f'Do you want to delete the polygon {self.__GUI_manager.get_polygon_name(polygon_id)}?',
                 yes_function,
@@ -326,14 +322,11 @@ class PolygonTools:
                     if self.__GUI_manager.get_active_polygon_id() in polygon_id_list:
                         self.__GUI_manager.set_active_polygon(None)
 
-                    # delete all the polygons in the folder
-                    self.__GUI_manager.delete_all_polygons_inside_folder(folder_id)
-
                     # delete the folder from the list of folders and don't render it's polygons
-                    self.__GUI_manager.delete_polygon_folder(folder_id)
+                    self.__GUI_manager.remove_polygon_folder(folder_id)
 
                 # ask for the confirmation of the action
-                self.__GUI_manager.set_confirmation_modal(
+                self.__GUI_manager.open_confirmation_modal(
                     'Confirmation',
                     f'Do you want to delete the folder {self.__GUI_manager.get_polygon_folder_name(folder_id)}?',
                     yes_function,
@@ -346,7 +339,7 @@ class PolygonTools:
         if self.__open_rename_folder_popup:
             # open the popup
             imgui.open_popup(f'Rename folder {folder_id}')
-            self.__GUI_manager.disable_controller_keyboard_callback()
+            self.__GUI_manager.set_controller_keyboard_callback_state(False)
 
             # store the folder name as initial input of the popup
             self.__rename_folder_input_text_value = self.__GUI_manager.get_polygon_folder_name(folder_id)
@@ -367,7 +360,7 @@ class PolygonTools:
 
             if imgui.button('Change name', self.__rename_size_x - self.__button_margin_width):
                 self.__GUI_manager.set_polygon_folder_name(folder_id, self.__rename_folder_input_text_value)
-                self.__GUI_manager.enable_controller_keyboard_callback()
+                self.__GUI_manager.set_controller_keyboard_callback_state(True)
                 imgui.close_current_popup()
 
             imgui.end_popup()
@@ -415,7 +408,7 @@ class PolygonTools:
                             self.__GUI_manager.set_active_tool(None)
                         else:
                             self.__GUI_manager.set_active_polygon(polygon_id)
-                            self.__GUI_manager.set_active_tool('create_polygon')
+                            self.__GUI_manager.set_active_tool(Tools.create_polygon)
 
     def __polygon_action_logic(self, active_polygon, polygon_id, polygon_folder_id) -> None:
         """
@@ -536,7 +529,7 @@ class PolygonTools:
 
             # open the pop up and disable the keyboard callback
             imgui.open_popup(f'Rename {polygon_id}')
-            self.__GUI_manager.disable_controller_keyboard_callback()
+            self.__GUI_manager.set_controller_keyboard_callback_state(False)
 
         if imgui.begin_popup_modal(f'Rename {polygon_id}')[0]:
 
@@ -558,19 +551,16 @@ class PolygonTools:
                 self.__input_text_value = ''
 
                 # close the modal and re-enable the glfw controller
-                self.__GUI_manager.enable_controller_keyboard_callback()
+                self.__GUI_manager.set_controller_keyboard_callback_state(True)
                 imgui.close_current_popup()
 
             imgui.end_popup()
 
         return clicked_selectable
 
-    def __show_polygon_tools(self, left_frame_width: int) -> None:
+    def __show_polygon_tools(self) -> None:
         """
         Show the polygon tools on the frame
-
-        Args:
-            left_frame_width: width of the frame.
         """
         self.__GUI_manager.set_tool_title_font()
         imgui.text("Polygon Tools")
@@ -602,9 +592,9 @@ class PolygonTools:
         self.__GUI_manager.change_dot_color_of_polygon(polygon_id, list(self.__dot_color_selected_default))
         self.__GUI_manager.change_color_of_polygon(polygon_id, list(self.__color_selected_default))
 
-    def render(self, frame_width: int) -> None:
+    def render(self) -> None:
         """
         Render the polygon tools to manage the polygons in the program.
         Returns: None
         """
-        self.__show_polygon_tools(frame_width)
+        self.__show_polygon_tools()

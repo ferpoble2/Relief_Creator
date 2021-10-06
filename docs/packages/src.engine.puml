@@ -5,66 +5,45 @@
 
 !startsub INTERNAL
 
-    package engine {
-        class Engine
-        class Settings
+    package src.engine {
+        class src.engine.Engine
+        class src.engine.Settings
 
         !includesub src.engine.scene.puml!INTERNAL
         !includesub src.engine.render.puml!INTERNAL
         !includesub src.engine.controller.puml!INTERNAL
         !includesub src.engine.gui.puml!INTERNAL
 
-        package data {
-            class decimation
-        }
-        class ProcessManager
-        class ThreadManager
-        class TaskManager
+        class src.engine.ProcessManager
+        class src.engine.ThreadManager
+        class src.engine.TaskManager
     }
 
-    Engine o--o Scene
-    Engine o--o Controller
-    Engine o--o Render
-    Engine o--o GUIManager
-    Engine -u.> Settings
-    ProcessManager --o Engine
-    ThreadManager --o Engine
-    TaskManager --o Engine
+    src.engine.Engine o-- src.engine.controller.Controller
+    src.engine.Engine -u.> src.engine.Settings
+    src.engine.ProcessManager --o src.engine.Engine
+    src.engine.ThreadManager --o src.engine.Engine
+    src.engine.TaskManager --o src.engine.Engine
 !endsub
 
 
-!if (%false())
-    !startsub EXTERNAL
-        Engine o- ShapefileExporter
-        Engine o--o Program
-        Engine .> ShapefileImporter
-        Engine .> NetcdfExporter
-        Engine .> NetCDF
-    !endsub
-!endif
+!startsub EXTERNAL
+    !includesub src.engine.scene.puml!EXTERNAL
+    !includesub src.engine.render.puml!EXTERNAL
+    !includesub src.engine.controller.puml!EXTERNAL
+    !includesub src.engine.gui.puml!EXTERNAL
+
+    src.engine.Engine o- src.output.ShapefileExporter
+    src.engine.Engine o--o src.program.Program
+    src.engine.Engine ..> src.input.ShapefileImporter
+    src.engine.Engine ..> src.input.NetCDF
+    src.engine.Engine ..> src.output.NetcdfExporter
+    src.engine.Engine ..> src.program.Tools
+    src.engine.Engine ..> src.program.ViewMode
+!endsub
 
 ' Code that will affect only the current diagramde
 ' can be messy since will not be imported
 hide members
-remove GUI
-remove scene
-remove data
-
-allowmixing
-
-package engine {
-    component "GUI" as guicomponent
-    component "Scene" as scenecomponent
-}
-
-Engine o-- scenecomponent
-Engine o-- guicomponent
-src.output.ShapefileExporter o- Engine
-Engine o--o src.program.Program
-Engine .> src.input.ShapefileImporter
-Engine .> src.output.NetcdfExporter
-Engine .> src.input.NetCDF
-
-left to right direction
 
 @enduml

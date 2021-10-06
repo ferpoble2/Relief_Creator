@@ -80,11 +80,124 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
     """
     root_grp = Dataset(file_name, "r", format="NETCDF4")
 
+    x = get_longitude_list_from_file(root_grp)
+    y = get_latitude_list_from_file(root_grp)
+    z = get_height_list_from_file(root_grp)
+
+    # If the Z variable is defined as unidimensional array, then it is necessary to flip the contents of the array once
+    # it is converted to a 2D matrix since the order of the y-axis is inverted.
+    if z.ndim == 1:
+        log.debug("Height of file is unidimensional.")
+        z = np.array(z)
+        z = z.reshape((len(y), len(x)))
+        z = np.flipud(z)
+
+    # Convert the variables to arrays to return
+    x = np.array(x)
+    y = np.array(y)
+    z = np.array(z)
+
+    # Change the order of the arrays if they are not sorted with ascending values
+    # ---------------------------------------------------------------------------
+    x_is_descending = x[0] > x[-1]
+    y_is_descending = y[0] > y[-1]
+
+    x = x if not x_is_descending else np.flip(x)
+    y = y if not y_is_descending else np.flip(y)
+
+    z = np.flip(z, 0) if y_is_descending else z
+    z = np.flip(z, 1) if x_is_descending else z
+
+    log.debug(f"Where X values descending: {x_is_descending}")
+    log.debug(f"Where Y values descending: {y_is_descending}")
+    log.debug(f"X values: {x}")
+    log.debug(f"Y values: {y}")
+
+    # Close the file
+    root_grp.close()
+
+    return x, y, z
+
+
+def get_height_list_from_file(root_grp):
+    """
+    Get the heights values from the Dataset as it is stored in the file.
+
+    This method gets the heights data stored in a netCDF4.Dataset object. The data retrieved is the same as it is
+    stored in the file, in the same order that the elements are defined in its interior and with the same shape.
+
+    Args:
+        root_grp: Dataset object from the class netcdf4.Dataset.
+
+    Returns: List with the latitude values defined in the Dataset object.
+    """
+    z = get_variables_from_grp(root_grp, HEIGHT_KEYS)
+    # Variable Z must be defined as an array on the netcdf files.
+    # Raise error if it is not defined.
+    if z is None:
+        raise NetCDFImportError(4, {'accepted_keys': HEIGHT_KEYS,
+                                    'file_keys': root_grp.variables.keys()})
+    return z
+
+
+def get_latitude_list_from_file(root_grp) -> list:
+    """
+    Get the latitude values from the Dataset as it is stored in the file.
+
+    This method gets the latitude data stored in a netCDF4.Dataset object. The data retrieved is the same as it is
+    stored in the file, in the same order that the elements are defined in its interior.
+
+    Args:
+        root_grp: Dataset object from the class netcdf4.Dataset.
+
+    Returns: List with the latitude values defined in the Dataset object.
+    """
+
+    y = get_variables_from_grp(root_grp, LATITUDE_KEYS)
+    # Ask if the file have the values for the y values defined as ranges, spacing and dimensions.
+    # Raise error if it is not defined as ranges/spacing/dimensions.
+    if y is None:
+        y_range_values = get_variables_from_grp(root_grp, ['y_range'])
+        y_range_array = np.array(y_range_values)
+        if y_range_values is None or len(y_range_array) < 2:
+            raise NetCDFImportError(2, {'accepted_keys': LATITUDE_KEYS,
+                                        'file_keys': root_grp.variables.keys()})
+
+        spacing_values = get_variables_from_grp(root_grp, ['spacing'])
+        spacing_array = np.array(spacing_values)
+        if spacing_values is None or len(spacing_array) < 2:
+            raise NetCDFImportError(2, {'accepted_keys': LATITUDE_KEYS,
+                                        'file_keys': root_grp.variables.keys()})
+
+        dimension_values = get_variables_from_grp(root_grp, ['dimension'])
+        dimension_array = np.array(dimension_values)
+        if dimension_values is None or len(dimension_array) < 2:
+            raise NetCDFImportError(2, {'accepted_keys': LATITUDE_KEYS,
+                                        'file_keys': root_grp.variables.keys()})
+
+        y = np.arange(y_range_array[0], y_range_array[1], spacing_array[1]).tolist()
+        y = [y] if type(y) is not list else y
+
+        if len(y) + 1 == dimension_array[1]:
+            y += [y_range_array[1]]
+    return y
+
+
+def get_longitude_list_from_file(root_grp) -> list:
+    """
+    Get the longitude values from the Dataset as it is stored in the file.
+
+    This method gets the longitude data stored in a netCDF4.Dataset object. The data retrieved is the same as it is
+    stored in the file, in the same order that the elements are defined in its interior.
+
+    Args:
+        root_grp: Dataset object from the class netcdf4.Dataset.
+
+    Returns: List with the latitude values defined in the Dataset object.
+    """
     # Ask if the arrays that contains the information related to the arrays of the map is defined on the netcdf file
     # with the names that are recognized by the program.
     x = get_variables_from_grp(root_grp, LONGITUDE_KEYS)
-    y = get_variables_from_grp(root_grp, LATITUDE_KEYS)
-    z = get_variables_from_grp(root_grp, HEIGHT_KEYS)
 
     # Ask if the file have the values for the x values defined as ranges, spacing and dimensions.
     # Raise error if it is not defined as ranges/spacing/dimensions
@@ -109,57 +222,11 @@ def read_info(file_name: str) -> (np.ndarray, np.ndarray, np.ndarray):
 
         # Generate the x-values given the ranges and spacing.
         x = np.arange(x_range_array[0], x_range_array[1], spacing_array[0]).tolist()
+        x = [x] if type(x) is not list else x
 
         # Add the last value of the range to the list if the x-value list is one short than the specified in the
         # dimensions
         if len(x) + 1 == dimension_array[0]:
             x += [x_range_array[1]]
 
-    # Ask if the file have the values for the y values defined as ranges, spacing and dimensions.
-    # Raise error if it is not defined as ranges/spacing/dimensions.
-    if y is None:
-        y_range_values = get_variables_from_grp(root_grp, ['y_range'])
-        y_range_array = np.array(y_range_values)
-        if y_range_values is None or len(y_range_array) < 2:
-            raise NetCDFImportError(2, {'accepted_keys': LATITUDE_KEYS,
-                                        'file_keys': root_grp.variables.keys()})
-
-        spacing_values = get_variables_from_grp(root_grp, ['spacing'])
-        spacing_array = np.array(spacing_values)
-        if spacing_values is None or len(spacing_array) < 2:
-            raise NetCDFImportError(2, {'accepted_keys': LATITUDE_KEYS,
-                                        'file_keys': root_grp.variables.keys()})
-
-        dimension_values = get_variables_from_grp(root_grp, ['dimension'])
-        dimension_array = np.array(dimension_values)
-        if dimension_values is None or len(dimension_array) < 2:
-            raise NetCDFImportError(2, {'accepted_keys': LATITUDE_KEYS,
-                                        'file_keys': root_grp.variables.keys()})
-
-        y = np.arange(y_range_array[0], y_range_array[1], spacing_array[1]).tolist()
-
-        if len(y) + 1 == dimension_array[1]:
-            y += [y_range_array[1]]
-
-    # Variable Z must be defined as an array on the netcdf files.
-    # Raise error if it is not defined.
-    if z is None:
-        raise NetCDFImportError(4, {'accepted_keys': HEIGHT_KEYS,
-                                    'file_keys': root_grp.variables.keys()})
-
-    # If the Z variable is defined as unidimensional array, then it is necessary to flip the contents of the array once
-    # it is converted to a 2D matrix since the order of the y-axis is inverted.
-    if z.ndim == 1:
-        z = np.array(z)
-        z = z.reshape((len(y), len(x)))
-        z = np.flipud(z)
-
-    # Convert the variables to arrays to return
-    x = np.array(x)
-    y = np.array(y)
-    z = np.array(z)
-
-    # Close the file
-    root_grp.close()
-
-    return x, y, z
+    return x

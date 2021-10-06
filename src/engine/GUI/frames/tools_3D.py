@@ -63,8 +63,9 @@ class Tools3D(Frame):
 
         # Create the window on the screen depending on the mode selected on the program
         # -----------------------------------------------------------------------------
-        if self._GUI_manager.are_frame_fixed():
-            imgui.begin('Tools 3D', False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE)
+        if self._GUI_manager.get_frame_fixed_state():
+            imgui.begin('Tools 3D', False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE |
+                        imgui.WINDOW_NO_FOCUS_ON_APPEARING)
             imgui.set_window_position(self.get_position()[0], self.get_position()[1])
             imgui.set_window_size(self._GUI_manager.get_left_frame_width(),
                                   self._GUI_manager.get_window_height() - self._GUI_manager.get_main_menu_bar_height(),
@@ -107,14 +108,16 @@ class Tools3D(Frame):
         imgui.text(f'Current value: {self._GUI_manager.get_height_normalization_factor_of_active_3D_model()}')
         _, self.__normalization_height_value = imgui.input_float('New factor',
                                                                  self.__normalization_height_value,
-                                                                 format='%.0f')
+                                                                 0,
+                                                                 0,
+                                                                 '%.0f')
         self.__normalization_height_value = max(self.__normalization_height_value, 0)
 
         # Disable the keyboard controller if the user is writing something on the GUI
-        if imgui.is_item_active():
-            self._GUI_manager.disable_controller_keyboard_callback()
-        else:
-            self._GUI_manager.enable_controller_keyboard_callback()
+        if imgui.is_item_active() and self._GUI_manager.get_controller_keyboard_callback_state():
+            self._GUI_manager.set_controller_keyboard_callback_state(False)
+        if (not imgui.is_item_active()) and (not self._GUI_manager.get_controller_keyboard_callback_state()):
+            self._GUI_manager.set_controller_keyboard_callback_state(True)
 
         # Apply changes using the data written by the user in the options
         if imgui.button('Change Factor', -1):

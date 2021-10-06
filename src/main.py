@@ -20,7 +20,6 @@ Main file of the relief application.
 
 Starts the main program, calling the engine and the logic.
 """
-from src.engine.engine import Engine
 from src.program.parser import get_command_line_arguments
 from src.program.program import Program
 
@@ -30,8 +29,7 @@ if __name__ == '__main__':
     debug_mode = command_line_args.debug if 'debug' in command_line_args else False
 
     # Create the program
-    engine = Engine()
-    program = Program(engine, debug_mode=debug_mode)
+    program = Program(debug_mode=debug_mode)
 
     # Start the program
     program.process_arguments(command_line_args)

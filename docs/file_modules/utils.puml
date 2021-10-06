@@ -1,6 +1,6 @@
 @startuml
 !$file = "(F,#ff75ff) File"
-class utils <<$file>> {
+class src.utils <<$file>> {
     + LONGITUDE_KEYS: list
     + LATITUDE_KEYS: list
     + HEIGHT_KEYS: list
@@ -12,9 +12,13 @@ class utils <<$file>> {
     + LOG_ONLY_LISTED_MODULES: boolean
     + LOG_LIST_MODULES: list
 
-    + interpolate(value, value_min, value_max, target_min, target_max, convert) : float
+    + dict_to_json(dictionary, filename): None
+    + dict_to_serializable_dict(dictionary): dict
     + get_logger(log_level, log_file_level, module, directory) : logger
-    + is_numeric(value) : boolean
+    + interpolate(value, value_min, value_max, target_min, target_max, convert) : float
     + is_clockwise(points): boolean
+    + is_numeric(value) : boolean
+    + json_to_dict(json_filename): dict
+    + list_to_serializable_list(list_obj): list
 }
 @enduml
