@@ -22,6 +22,7 @@ import os
 import unittest
 import warnings
 
+from src.engine.scene.transformation.linear_transformation import LinearTransformation
 from src.input.NetCDF import read_info
 from test.test_case import ProgramTestCase
 
@@ -44,12 +45,11 @@ class TestInterpolation(ProgramTestCase):
         self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
 
         # apply transformation with filters
-        self.engine.transform_points(polygon_id=self.engine.get_active_polygon_id(),
-                                     model_id=self.engine.get_active_model_id(),
-                                     min_height=2000,
-                                     max_height=3000,
-                                     transformation_type='linear',
-                                     filters=[])
+        transformation = LinearTransformation(self.engine.get_active_model_id(),
+                                              self.engine.get_active_polygon_id(),
+                                              2000,
+                                              3000)
+        self.engine.transform_points(transformation)
 
         # apply interpolation
         self.engine.interpolate_points(self.engine.get_active_polygon_id(),
@@ -79,12 +79,11 @@ class TestInterpolation(ProgramTestCase):
         self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
 
         # apply transformation with filters
-        self.engine.transform_points(polygon_id=self.engine.get_active_polygon_id(),
-                                     model_id=self.engine.get_active_model_id(),
-                                     min_height=2000,
-                                     max_height=3000,
-                                     transformation_type='linear',
-                                     filters=[])
+        transformation = LinearTransformation(self.engine.get_active_model_id(),
+                                              self.engine.get_active_polygon_id(),
+                                              2000,
+                                              3000)
+        self.engine.transform_points(transformation)
 
         # apply interpolation
         self.engine.interpolate_points(self.engine.get_active_polygon_id(),
@@ -114,12 +113,11 @@ class TestInterpolation(ProgramTestCase):
         self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
 
         # apply transformation with filters
-        self.engine.transform_points(polygon_id=self.engine.get_active_polygon_id(),
-                                     model_id=self.engine.get_active_model_id(),
-                                     min_height=2000,
-                                     max_height=3000,
-                                     transformation_type='linear',
-                                     filters=[])
+        transformation = LinearTransformation(self.engine.get_active_model_id(),
+                                              self.engine.get_active_polygon_id(),
+                                              2000,
+                                              3000)
+        self.engine.transform_points(transformation)
 
         # apply interpolation
         self.engine.interpolate_points(self.engine.get_active_polygon_id(),

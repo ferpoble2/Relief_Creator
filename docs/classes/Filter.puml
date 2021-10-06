@@ -1,0 +1,10 @@
+@startuml
+
+class Filter {
+    STATIC name: str
+
+    + initialize(scene)
+    + get_mask(model_vertices, mask): array
+}
+
+@enduml

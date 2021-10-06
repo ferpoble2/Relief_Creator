@@ -40,6 +40,7 @@
     src.engine.Engine ..> src.output.NetcdfExporter
     src.engine.Engine ..> src.program.Tools
     src.engine.Engine ..> src.program.ViewMode
+    src.engine.Engine ..> src.error.FilterError
 !endsub
 
 ' Code that will affect only the current diagramde

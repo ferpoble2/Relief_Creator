@@ -1,12 +1,12 @@
 @startuml
 class ReliefTools {
-    - __combo_options: list[str]
-    - __current_combo_option: int
+    - __transformation_options: list[str]
+    - __selected_transformation_option: int
     - __gui_manager: GUIManager
     - __max_height_value: float
     - __min_height_value: float
     - __polygon_data: dict
-    - __filter_name_list: list
+    - __filter_options: list
     - __filters: list
     - __max_min_data_values: list[float]
     - __return_array_values: list[float, None]

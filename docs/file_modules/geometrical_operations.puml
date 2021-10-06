@@ -1,0 +1,9 @@
+@startuml
+!$file = "(F,#ff75ff) File"
+class src.engine.scene.geometrical_operations <<$file>>{
+    delete_z_axis(list_of_points): list
+    get_bounding_box_indexes(points_array, polygon): list
+    generate_mask(points_array, polygon_points): array
+}
+
+@enduml

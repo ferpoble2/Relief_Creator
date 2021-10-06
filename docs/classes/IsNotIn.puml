@@ -1,0 +1,6 @@
+@startuml
+class IsNotIn {
+    - __polygon_points: List[float]
+    + polygon_id: str
+}
+@enduml

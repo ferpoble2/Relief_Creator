@@ -27,6 +27,13 @@ src.engine.gui.frames.tools.Tools *-- src.engine.gui.frames.tools.InterpolationT
     src.engine.gui.frames.tools.InterpolationTools ..> src.error.InterpolationError
     src.engine.gui.frames.tools.PolygonTools ..> src.program.Tools
     src.engine.gui.frames.tools.Tools ..> src.program.Tools
+
+    src.engine.gui.frames.tools.ReliefTools ..> src.engine.scene.filter.Filter
+    src.engine.gui.frames.tools.ReliefTools ..> src.engine.scene.filter.IsIn
+    src.engine.gui.frames.tools.ReliefTools ..> src.engine.scene.filter.IsNotIn
+    src.engine.gui.frames.tools.ReliefTools ..> src.engine.scene.filter.HeightLessThan
+    src.engine.gui.frames.tools.ReliefTools ..> src.engine.scene.filter.HeightGreaterThan
+    src.engine.gui.frames.tools.ReliefTools ..> src.engine.scene.transformation.LinearTransformation
 !endsub
 
 hide members

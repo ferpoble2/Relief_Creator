@@ -41,5 +41,8 @@ class ModelTransformationError(SceneError):
             5: f'Can not get data of filter. Unrecognized filter {filter_name}',
             6: 'Polygon to use in a filter not found or selected.',
             7: 'Polygon used in a filter does not have at least 3 vertices.',
-            8: 'Polygon used in filter is not simple/planar'
+            8: 'Polygon used in filter is not simple/planar',
+            9: 'Max height selected is lower than the min height selected',
+            10: 'Model not specified.',
+            11: 'Polygon not specified.'
         }

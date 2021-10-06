@@ -33,6 +33,7 @@ from src.engine.settings import Settings
 from src.engine.task_manager import TaskManager
 from src.engine.thread_manager import ThreadManager
 from src.error.export_error import ExportError
+from src.error.filter_error import FilterError
 from src.error.interpolation_error import InterpolationError
 from src.error.line_intersection_error import LineIntersectionError
 from src.error.model_transformation_error import ModelTransformationError
@@ -50,6 +51,7 @@ from src.utils import get_logger
 if TYPE_CHECKING:
     import numpy as np
     from src.program.program import Program
+    from src.engine.scene.transformation.transformation import Transformation
 
 log = get_logger(module='ENGINE')
 
@@ -1785,40 +1787,23 @@ class Engine:
         """
         self.__use_threads = value
 
-    def transform_points(self,
-                         polygon_id: str,
-                         model_id: str,
-                         min_height: float,
-                         max_height: float,
-                         transformation_type: str = 'linear',
-                         filters=None) -> None:
+    def transform_points(self, transformation: 'Transformation') -> None:
         """
-        Ask the scene to transform the height of the points of the specified polygon using a linear transformation.
-
-        Transformation types available:
-            - linear
+        Ask the scene to apply a transformation modifying the height of the model.
 
         Args:
-            filters: List with the filters to use in the modification of the points. List must be in the
-                format [(filter_id, args),...]
-            transformation_type: Type of transformation to do.
-            model_id: ID of the model to use for the interpolation.
-            polygon_id: ID of the polygon to use.
-            min_height: Min height of the points once converted.
-            max_height: Max height of the points once converted.
+            transformation: Transformation to apply.
 
         Returns: None
         """
-        if filters is None:
-            filters = []
-
         try:
-            self.scene.transform_points(polygon_id,
-                                        model_id,
-                                        min_height,
-                                        max_height,
-                                        transformation_type,
-                                        filters)
+            transformation.initialize(self.scene)
+            self.scene.transform_points(transformation)
+
+        except FilterError as e:
+            if e.code == 0:
+                self.set_modal_text('Error',
+                                    'Polygon in filter can not be None.')
 
         except ModelTransformationError as e:
             if e.code == 4:
@@ -1842,6 +1827,13 @@ class Engine:
             elif e.code == 8:
                 self.set_modal_text('Error',
                                     'One of the polygons used in a filter is not simple/planar.')
+            elif e.code == 9:
+                self.set_modal_text('Error', 'The new minimum value is higher or equal to'
+                                             ' the maximum value.')
+            elif e.code == 10:
+                self.set_modal_text('Error', 'Model not selected.')
+            elif e.code == 11:
+                self.set_modal_text('Error', 'Polygon not selected.')
             else:
                 raise NotImplementedError(f'ModelTransformationError with code {e.code} not handled.')
 

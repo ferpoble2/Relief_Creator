@@ -22,6 +22,11 @@ import os
 import unittest
 import warnings
 
+from src.engine.scene.filter.height_greater_than import HeightGreaterThan
+from src.engine.scene.filter.height_less_than import HeightLessThan
+from src.engine.scene.filter.is_in import IsIn
+from src.engine.scene.filter.is_not_in import IsNotIn
+from src.engine.scene.transformation.linear_transformation import LinearTransformation
 from src.input.NetCDF import read_info
 from test.test_case import ProgramTestCase
 
@@ -43,12 +48,12 @@ class TestContainsFilter(ProgramTestCase):
         self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_two_concentric_polygons.shp')
 
         # apply transformation with filters
-        self.engine.transform_points(polygon_id='Polygon 0',
-                                     model_id=self.engine.get_active_model_id(),
-                                     min_height=100,
-                                     max_height=200,
-                                     transformation_type='linear',
-                                     filters=[('is_not_in', 'Polygon 1')])
+        transformation = LinearTransformation(self.engine.get_active_model_id(),
+                                              'Polygon 0',
+                                              100,
+                                              200,
+                                              [IsNotIn('Polygon 1')])
+        self.engine.transform_points(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -72,13 +77,13 @@ class TestContainsFilter(ProgramTestCase):
         self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_three_concentric_polygons.shp')
 
         # apply transformation with filters
-        self.engine.transform_points(polygon_id='Polygon 0',
-                                     model_id=self.engine.get_active_model_id(),
-                                     min_height=100,
-                                     max_height=200,
-                                     transformation_type='linear',
-                                     filters=[('is_not_in', 'Polygon 1'),
-                                              ('is_in', 'Polygon 2')])
+        transformation = LinearTransformation(self.engine.get_active_model_id(),
+                                              'Polygon 0',
+                                              100,
+                                              200,
+                                              [IsNotIn('Polygon 1'),
+                                               IsIn('Polygon 2')])
+        self.engine.transform_points(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -103,12 +108,12 @@ class TestContainsFilter(ProgramTestCase):
                                              'shape_three_polygons_south_america.shp')
 
         # apply transformation with filters
-        self.engine.transform_points(polygon_id='Polygon 0',
-                                     model_id=self.engine.get_active_model_id(),
-                                     min_height=100,
-                                     max_height=200,
-                                     transformation_type='linear',
-                                     filters=[('is_not_in', 'Polygon 1')])
+        transformation = LinearTransformation(self.engine.get_active_model_id(),
+                                              'Polygon 0',
+                                              100,
+                                              200,
+                                              [IsNotIn('Polygon 1')])
+        self.engine.transform_points(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -133,13 +138,13 @@ class TestContainsFilter(ProgramTestCase):
                                              'shape_three_polygons_south_america.shp')
 
         # apply transformation with filters
-        self.engine.transform_points(polygon_id='Polygon 0',
-                                     model_id=self.engine.get_active_model_id(),
-                                     min_height=100,
-                                     max_height=200,
-                                     transformation_type='linear',
-                                     filters=[('is_not_in', 'Polygon 1'),
-                                              ('is_in', 'Polygon 2')])
+        transformation = LinearTransformation(self.engine.get_active_model_id(),
+                                              'Polygon 0',
+                                              100,
+                                              200,
+                                              [IsNotIn('Polygon 1'),
+                                               IsIn('Polygon 2')])
+        self.engine.transform_points(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -173,12 +178,12 @@ class TestHeightGreaterFilter(ProgramTestCase):
         self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
 
         # create polygon to modify the scene.
-        self.engine.transform_points(polygon_id=self.engine.get_active_polygon_id(),
-                                     model_id=self.engine.get_active_model_id(),
-                                     min_height=100,
-                                     max_height=200,
-                                     transformation_type='linear',
-                                     filters=[('height_less_than', 50)])
+        transformation = LinearTransformation(self.engine.get_active_model_id(),
+                                              self.engine.get_active_polygon_id(),
+                                              100,
+                                              200,
+                                              [HeightLessThan(50)])
+        self.engine.transform_points(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -202,12 +207,12 @@ class TestHeightGreaterFilter(ProgramTestCase):
         self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
 
         # create polygon to modify the scene.
-        self.engine.transform_points(polygon_id=self.engine.get_active_polygon_id(),
-                                     model_id=self.engine.get_active_model_id(),
-                                     min_height=100,
-                                     max_height=200,
-                                     transformation_type='linear',
-                                     filters=[('height_greater_than', 50)])
+        transformation = LinearTransformation(self.engine.get_active_model_id(),
+                                              self.engine.get_active_polygon_id(),
+                                              100,
+                                              200,
+                                              [HeightGreaterThan(50)])
+        self.engine.transform_points(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -232,13 +237,13 @@ class TestHeightGreaterFilter(ProgramTestCase):
                                              'shape_three_polygons_south_america.shp')
 
         # apply transformation with filters
-        self.engine.transform_points(polygon_id='Polygon 0',
-                                     model_id=self.engine.get_active_model_id(),
-                                     min_height=100,
-                                     max_height=200,
-                                     transformation_type='linear',
-                                     filters=[('height_greater_than', 0),
-                                              ('height_less_than', 3000)])
+        transformation = LinearTransformation(self.engine.get_active_model_id(),
+                                              self.engine.get_active_polygon_id(),
+                                              100,
+                                              200,
+                                              [HeightGreaterThan(0),
+                                               HeightLessThan(3000)])
+        self.engine.transform_points(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -264,34 +269,6 @@ class TestMixedFilters(ProgramTestCase):
         super().setUp()
         warnings.simplefilter('ignore', category=DeprecationWarning)
 
-    def test_non_existent_filter(self):
-        self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
-                                           'resources/test_resources/netcdf/test_file_1.nc')
-
-        # load polygon
-        self.engine.create_polygon_from_file('resources/test_resources/polygons/'
-                                             'shape_three_polygons_south_america.shp')
-
-        # create polygon to modify the scene.
-        with self.assertRaises(NotImplementedError):
-            self.engine.transform_points(polygon_id='Polygon 0',
-                                         model_id=self.engine.get_active_model_id(),
-                                         min_height=800,
-                                         max_height=2500,
-                                         transformation_type='linear',
-                                         filters=[('Non_existent_filter', 0)])
-
-        with self.assertRaises(NotImplementedError):
-            self.engine.transform_points(polygon_id='Polygon 0',
-                                         model_id=self.engine.get_active_model_id(),
-                                         min_height=800,
-                                         max_height=2500,
-                                         transformation_type='linear',
-                                         filters=[('height_greater_than', 0),
-                                                  ('height_less_than', 5800),
-                                                  ('Non_existent_filter', 'Polygon 2'),
-                                                  ('is_in', 'Polygon 1')])
-
     def test_height_contain(self):
         self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
                                            'resources/test_resources/netcdf/test_file_1.nc')
@@ -301,15 +278,15 @@ class TestMixedFilters(ProgramTestCase):
                                              'shape_three_polygons_south_america.shp')
 
         # create polygon to modify the scene.
-        self.engine.transform_points(polygon_id='Polygon 0',
-                                     model_id=self.engine.get_active_model_id(),
-                                     min_height=800,
-                                     max_height=2500,
-                                     transformation_type='linear',
-                                     filters=[('height_greater_than', 0),
-                                              ('height_less_than', 5800),
-                                              ('is_not_in', 'Polygon 2'),
-                                              ('is_in', 'Polygon 1')])
+        transformation = LinearTransformation(self.engine.get_active_model_id(),
+                                              'Polygon 0',
+                                              800,
+                                              2500,
+                                              [HeightGreaterThan(0),
+                                               HeightLessThan(5800),
+                                               IsNotIn('Polygon 2'),
+                                               IsIn('Polygon 1')])
+        self.engine.transform_points(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),

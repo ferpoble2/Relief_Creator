@@ -27,7 +27,7 @@ from shapely.ops import triangulate
 from shapely.vectorized import contains
 from skimage.filters import gaussian as gaussian_filter
 
-from src.utils import get_logger, interpolate, is_clockwise
+from src.utils import get_logger, is_clockwise
 
 log = get_logger(module='TRANSFORMATION_HELPER')
 
@@ -71,62 +71,6 @@ class TransformationHelper:
                 new_list.append(pair_used)
                 pair_used = []
         return new_list
-
-    def __generate_filter_masks(self,
-                                points_to_modify: np.ndarray,
-                                points_array: np.ndarray,
-                                height_array: np.ndarray,
-                                filter_data: list) -> np.ndarray:
-        """
-        Generates a mask that indicates which points are inside the corresponding filters.
-
-        Requires and initial mask that indicates the points that can be filtered from the one who do not. If no filter
-        is applied, then the same mask given as input is returned.
-
-        Filter are expected to be received in a list with the following format [(filter_name, arguments),...].
-        The list of accepted filters and its arguments are as follows:
-            height_less_than: int
-            height_greater_than: int
-            is_in: List[float]
-            is_not_in: List[float]
-        Use of a filter not listed before will raise NotImplementedError.
-
-        Args:
-            points_to_modify: Initial mask in which to apply the filters on.
-            points_array: Array with the points and their position.
-            height_array: Array with the height of the points.
-            filter_data: Filters to use to generate the masks.
-
-        Returns: Mask with the filters applied over it.
-        """
-        mask_modified = points_to_modify.copy()
-        for filter_obj in filter_data:
-            filter_name = filter_obj[0]
-            filter_arguments = filter_obj[1]
-
-            if filter_name == 'height_less_than':  # arguments: int
-                indices = np.where(height_array > filter_arguments)
-                mask_modified[indices] = False
-
-            elif filter_name == 'height_greater_than':  # arguments: int
-                indices = np.where(height_array < filter_arguments)
-                mask_modified[indices] = False
-
-            elif filter_name == 'is_in':  # arguments: list[float]
-                polygon_mask = self.__generate_mask(points_array, filter_arguments) & points_to_modify
-                indices = np.where(polygon_mask == True)
-                mask_modified[indices] = True
-
-            elif filter_name == 'is_not_in':  # arguments: list[float]
-                polygon_mask = self.__generate_mask(points_array, filter_arguments) & points_to_modify
-                indices = np.where(polygon_mask == True)
-                mask_modified[indices] = False
-
-            else:
-                raise NotImplementedError(f'Functionality to generate the mask of the filter {filter_name} '
-                                          f'not implemented.')
-
-        return mask_modified
 
     # noinspection SpellCheckingInspection
     def __generate_mask(self, points_array: np.ndarray, polygon_points) -> np.ndarray:
@@ -420,81 +364,6 @@ class TransformationHelper:
         heights[min_y_index:max_y_index, min_x_index:max_x_index] = heights_cut
 
         return heights
-
-    def modify_points_inside_polygon_linear(self, points_array: np.ndarray,
-                                            height: np.ndarray,
-                                            polygon_points: List[float],
-                                            new_max_height: float,
-                                            new_min_height: float,
-                                            filter_data: list = None) -> np.ndarray:
-        """
-        Calculate a new height for the points that are inside a given polygon using a linear transformation
-        algorithm and the specified minimum and maximum heights. This method does not modify the original arrays
-        given as input.
-
-        Also apply the specified masks over the transformation before doing the transformation of the heights,
-        modifying only the points that are selected by the masks.
-
-        The list of accepted filters and its arguments are as follows:
-            height_less_than: int
-            height_greater_than: int
-            is_in: List[float]
-            is_not_in: List[float]
-        Use of a filter not listed before will raise NotImplementedError.
-
-        Args:
-            filter_data: Filters to use on the transformation to apply. List must have format [(filter_id, args),...].
-            height: Array with the height of the points. must have shape (x, y)
-            points_array: Points to modify (numpy array of points), must have shape (x, y, 3). z-axis value is not used.
-            polygon_points: List of points in the polygon. [x1, y1, z1, x2, y2, z2, ...]
-            new_max_height: New maximum height to use to transform the height of the points.
-            new_min_height: New minimum to use to transform the height of the points.
-
-        Returns: numpy array with shape (x, y) with the height of the points modified
-        """
-        if filter_data is None:
-            filter_data = []
-
-        points_array = points_array.copy()
-        height = height.copy()
-
-        # generate polygon and get the bounding box of the indices.
-        points_no_z_axis = self.__delete_z_axis(polygon_points)
-        closed_polygon = LinearRing(points_no_z_axis)
-        [min_x_index, max_x_index, min_y_index, max_y_index] = self.__get_bounding_box_indexes(points_array,
-                                                                                               closed_polygon)
-
-        points_array_cut = points_array[min_y_index:max_y_index, min_x_index:max_x_index, :]
-        height_cut = height[min_y_index:max_y_index, min_x_index:max_x_index]
-
-        # do nothing in case that no points from the map are selected
-        if len(points_array_cut) == 0:
-            return height
-
-        log.debug('Generating mask')
-        flags = self.__generate_mask(points_array_cut, polygon_points)
-        log.debug('Mask generated')
-
-        # get the masks of the filters and apply them
-        filtered_flags = self.__generate_filter_masks(flags,
-                                                      points_array_cut,
-                                                      height_cut,
-                                                      filter_data)
-
-        # modify the height linearly if there are points to modify
-        if len(height_cut[filtered_flags]) > 0:
-            current_min_height = np.nanmin(height_cut[filtered_flags])
-            current_max_height = np.nanmax(height_cut[filtered_flags])
-
-            new_height = interpolate(height_cut[filtered_flags], float(current_min_height), float(current_max_height),
-                                     new_min_height,
-                                     new_max_height,
-                                     False)
-
-            height_cut[filtered_flags] = new_height
-            height[min_y_index:max_y_index, min_x_index:max_x_index] = height_cut
-
-        return height
 
     def merge_matrices(self, first_matrix: np.ndarray, second_matrix: np.ndarray) -> np.ndarray:
         """
