@@ -1,7 +1,6 @@
 @startuml
             class Scene{
                 - __bilinear_interpolation(x, y, points): float
-                - __process_filters(filters): list
                 + add_model(model)
                 + add_new_vertex_to_polygon_using_map_coords(x_coord, y_coord, polygon_id)
                 + add_new_vertex_to_polygon_using_window_coords(position_x, position_y, polygon_id, model_id,

@@ -37,7 +37,6 @@ from src.engine.scene.model.tranformations.transformations import ortho, perspec
 from src.engine.scene.transformation.transformation import Transformation
 from src.engine.scene.transformation_helper import TransformationHelper
 from src.error.interpolation_error import InterpolationError
-from src.error.model_transformation_error import ModelTransformationError
 from src.error.scene_error import SceneError
 from src.program.view_mode import ViewMode
 from src.utils import get_logger
@@ -46,9 +45,6 @@ if TYPE_CHECKING:
     from engine.engine import Engine
 
 log = get_logger(module="SCENE")
-
-# List with all the filters accepted by the scene to modify the height of the maps
-FILTER_LIST = ['is_in', 'is_not_in', 'height_less_than', 'height_greater_than']
 
 
 class Scene:
@@ -122,78 +118,6 @@ class Scene:
         # Variables that count the amount of ID given to the models and polygons
         self.__polygon_id_count: int = 0
         self.__model_id_count: int = 0
-
-    def __process_filters(self, filters=None):
-        """
-        Given a list with the filters in the format [(id_filter, args),...], format them in a format suitable to
-        use in the TransformationHelper class.
-
-        The list of accepted filters and its arguments are as follows:
-            height_less_than: int/float
-            height_greater_than: int/float
-            is_in: str (polygon id)
-            is_not_in: str (polygon id)
-
-        Use of filters not listed here or in the FILTER_LIST variable of the module will raise a
-        NotImplemented error.
-
-        Args:
-            filters: Filters to use in the format [(id_filter, args),...].
-
-        Returns:
-            List with the filters and the data necessary to apply them. For example:
-
-            [('height_less_than', 199),
-             ('height_greater_than', 400),
-             ('is_in', [(0,0), (50,0), ...], # Argument is the list of points of the polygon
-             ('is_not_in', [(0,0), (50,0), ...]) # Argument is the list of points of the polygon
-        """
-        if filters is None:
-            filters = []
-
-        filter_data = []
-        for filter_obj in filters:
-            id_filter = filter_obj[0]
-
-            # check if the filter is accepted by the scene
-            if id_filter not in FILTER_LIST:
-                raise NotImplementedError(f'Can not process filter with ID {id_filter} since it is not in the list '
-                                          f'of accepted filters.')
-
-            # height filters
-            if id_filter == 'height_less_than' or id_filter == 'height_greater_than':
-                height = float(filter_obj[1])
-                filter_data.append((id_filter, height))
-
-            # polygon filters
-            elif id_filter == 'is_in' or id_filter == 'is_not_in':
-                # get the points of the polygon
-                polygon_id = filter_obj[1]
-
-                # Get the data and check it
-                # -------------------------
-                # Check if the polygon is simple/planar or not. If not, raise exception.
-                if not self.is_polygon_planar(polygon_id):
-                    raise ModelTransformationError(8)
-
-                # Get vertices of polygon. raise exception if the is problems getting the information.
-                try:
-                    polygon_points = self.get_polygon_points(polygon_id)
-
-                except SceneError:  # polygon not found
-                    raise ModelTransformationError(6)
-
-                # Check that have at least three vertices
-                if len(polygon_points) < 9:
-                    raise ModelTransformationError(7)
-
-                # Store the data
-                filter_data.append((id_filter, polygon_points))
-
-            else:
-                raise NotImplementedError(f'Processing process for filter {id_filter} not implemented on the Scene.')
-
-        return filter_data
 
     def add_model(self, model: Map2DModel) -> None:
         """
