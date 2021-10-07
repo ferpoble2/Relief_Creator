@@ -28,6 +28,7 @@ from src.engine.scene.filter.height_greater_than import HeightGreaterThan
 from src.engine.scene.filter.height_less_than import HeightLessThan
 from src.engine.scene.filter.is_in import IsIn
 from src.engine.scene.filter.is_not_in import IsNotIn
+from src.engine.scene.transformation.fill_nan_transformation import FillNanTransformation
 from src.engine.scene.transformation.linear_transformation import LinearTransformation
 from src.utils import get_logger
 
@@ -49,7 +50,7 @@ class ReliefTools:
         """
         self.__gui_manager: 'GUIManager' = gui_manager
 
-        self.__transformation_options = ["Linear"]
+        self.__transformation_options = ["Fill with nan", "Linear"]
         self.__selected_transformation_option = 0
 
         self.__max_height_value = 0
@@ -270,13 +271,20 @@ class ReliefTools:
 
         # Parameters for the transformation
         # ---------------------------------
-        _, self.__min_height_value = imgui.input_float('Min Height', self.__min_height_value)
-        _, self.__max_height_value = imgui.input_float('Max Height', self.__max_height_value)
+        if self.__selected_transformation_option == 1:
+            _, self.__min_height_value = imgui.input_float('Min Height', self.__min_height_value)
+            _, self.__max_height_value = imgui.input_float('Max Height', self.__max_height_value)
 
         # Apply transformation button
         # ---------------------------
         if imgui.button('Change Height', -1):
             if self.__selected_transformation_option == 0:
+                transformation = FillNanTransformation(active_model_id,
+                                                       active_polygon_id,
+                                                       self.__filters)
+                self.__gui_manager.change_points_height(transformation)
+
+            if self.__selected_transformation_option == 1:
                 transformation = LinearTransformation(active_model_id,
                                                       active_polygon_id,
                                                       self.__min_height_value,

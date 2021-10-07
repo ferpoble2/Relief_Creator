@@ -1,0 +1,11 @@
+@startuml
+
+class FillNanTransformation {
+    - __polygon_points: List[float]
+    - __vertex_array: array
+
+    + initialize(scene)
+    + apply(): array
+}
+
+@enduml

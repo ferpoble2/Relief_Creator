@@ -34,6 +34,7 @@ src.engine.gui.frames.tools.Tools *-- src.engine.gui.frames.tools.InterpolationT
     src.engine.gui.frames.tools.ReliefTools ..> src.engine.scene.filter.HeightLessThan
     src.engine.gui.frames.tools.ReliefTools ..> src.engine.scene.filter.HeightGreaterThan
     src.engine.gui.frames.tools.ReliefTools ..> src.engine.scene.transformation.LinearTransformation
+    src.engine.gui.frames.tools.ReliefTools ..> src.engine.scene.transformation.FillNanTransformation
 !endsub
 
 hide members

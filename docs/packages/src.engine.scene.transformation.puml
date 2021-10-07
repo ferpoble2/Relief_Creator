@@ -9,9 +9,11 @@
 package src.engine.scene.transformation {
     class src.engine.scene.transformation.Transformation
     class src.engine.scene.transformation.LinearTransformation
+    class src.engine.scene.transformation.FillNanTransformation
 }
 
 src.engine.scene.transformation.LinearTransformation -u-|> src.engine.scene.transformation.Transformation
+src.engine.scene.transformation.FillNanTransformation -u-|> src.engine.scene.transformation.Transformation
 !endsub
 
 !startsub EXTERNAL
@@ -20,6 +22,9 @@ src.engine.scene.transformation.LinearTransformation -u-|> src.engine.scene.tran
     src.engine.scene.transformation.Transformation ..> src.error.ModelTransformationError
     src.engine.scene.transformation.LinearTransformation ..> src.engine.scene.geometrical_operations
     src.engine.scene.transformation.Transformation ..> src.engine.scene.filter.Filter
+
+    src.engine.scene.transformation.FillNanTransformation ..> src.engine.scene.geometrical_operations
+    src.engine.scene.transformation.FillNanTransformation ..> src.error.ModelTransformationError
 !endsub
 
 

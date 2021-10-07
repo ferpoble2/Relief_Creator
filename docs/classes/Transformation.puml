@@ -1,0 +1,13 @@
+@startuml
+
+class Transformation {
+    + model_id: str
+    + polygon_id: str
+    + filter_list: List[Filter]
+
+    + initialize(scene)
+    + apply_filters(model_vertices): array
+    + apply(): array
+}
+
+@enduml

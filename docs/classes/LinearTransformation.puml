@@ -1,0 +1,13 @@
+@startuml
+
+class LinearTransformation {
+    - __min_height: float
+    - __max_height: float
+    - __polygon_points: List[float]
+    - __vertex_array: array
+
+    + initialize(scene)
+    + apply(): array
+}
+
+@enduml
