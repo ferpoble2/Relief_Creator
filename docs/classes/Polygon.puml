@@ -10,8 +10,6 @@
                     - __check_intersection(line_x_1, line_y_1, line_x_2, line_y_2): boolean
                     - __check_repeated_point(x, y, z)
                     - __get_intersection(line_x_1, line_y_1, line_x_2, line_y_2): list
-                    - __get_internal_points_in_shapely_format(): Polygon
-                    - __get_external_polygon_points_in_shapely_format(distance): Polygon
                     - __str__()
                     - __update_planar_state()
                     + add_point(x, y, z)
@@ -21,7 +19,6 @@
                     + get_name(): str
                     + get_parameter(key): any
                     + get_point_list(): list
-                    + get_exterior_polygon_points(distance): list
                     + get_point_number(): int
                     + get_parameter_list(): list
                     + is_planar()

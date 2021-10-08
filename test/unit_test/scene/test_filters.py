@@ -161,7 +161,7 @@ class TestContainsFilter(ProgramTestCase):
         os.remove('resources/test_resources/temp/temp_is_in_filter_polygon_not_in_map.nc')
 
 
-class TestHeightGreaterFilter(ProgramTestCase):
+class TestHeightFilter(ProgramTestCase):
 
     def setUp(self) -> None:
         """

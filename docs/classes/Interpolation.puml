@@ -1,0 +1,10 @@
+@startuml
+class Interpolation {
+    + model_id: str
+    + polygon_id: str
+    + distance: float
+
+    + initialize(scene)
+    + apply(): array
+}
+@enduml

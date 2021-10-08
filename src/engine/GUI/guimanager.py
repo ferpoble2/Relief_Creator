@@ -55,6 +55,7 @@ if TYPE_CHECKING:
     from glfw import _GLFWwindow
     from src.program.tools import Tools
     from src.engine.scene.transformation.transformation import Transformation
+    from src.engine.scene.interpolation.interpolation import Interpolation
 
 # noinspection SpellCheckingInspection
 log = get_logger(module='GUIMANAGER')
@@ -316,19 +317,6 @@ class GUIManager:
         Returns: None
         """
         self.__engine.add_zoom()
-
-    def apply_smoothing(self, polygon_id: str, model_id: str, distance_to_polygon: float) -> None:
-        """
-        Ask the engine to apply a smoothing algorithm over the interpolation area of the polygon.
-
-        Args:
-            polygon_id: id of the polygon to use for the smoothing.
-            model_id: id of the model to use for the smoothing.
-            distance_to_polygon: distance to use for the compute of the external polygon and the smoothing area.
-
-        Returns: None
-        """
-        self.__engine.apply_smoothing(polygon_id, model_id, distance_to_polygon)
 
     def calculate_max_min_height(self, model_id: str, polygon_id: str, return_data: list) -> None:
         """
@@ -878,19 +866,16 @@ class GUIManager:
         """
         return self.__engine.get_zoom_level()
 
-    def interpolate_points(self, polygon_id: str, model_id: str, distance: float, type_interpolation: str) -> None:
+    def interpolate_points(self, interpolation: 'Interpolation') -> None:
         """
-        Call the engine to interpolate the points using the specified polygons and the specified distance.
+        Call the engine to interpolate the points.
 
         Args:
-            type_interpolation: Type of interpolation to use.
-            model_id: ID of the model to use.
-            polygon_id: ID of the polygon.
-            distance: Distance to use for the interpolation.
+            interpolation: Interpolation to use to modify the points of the model.
 
         Returns: None
         """
-        self.__engine.interpolate_points(polygon_id, model_id, distance, type_interpolation)
+        self.__engine.interpolate_points(interpolation)
 
     def is_mouse_inside_frame(self) -> bool:
         """

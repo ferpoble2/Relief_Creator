@@ -25,7 +25,7 @@ import warnings
 
 import numpy as np
 
-from src.utils import dict_to_json, dict_to_serializable_dict, get_logger, interpolate, is_clockwise, is_numeric, \
+from src.utils import dict_to_json, dict_to_serializable_dict, get_logger, is_clockwise, is_numeric, \
     json_to_dict
 
 
@@ -165,25 +165,6 @@ class TestLogger(unittest.TestCase):
 
         # remove files
         os.remove('resources/test_resources/temp/TEST_LOGGER.log')
-
-
-class TestInterpolation(unittest.TestCase):
-
-    def test_simple_values(self):
-        self.assertEqual(50, interpolate(5, 0, 10, 0, 100, True))
-
-    def test_border_case(self):
-        # initial interval is just one value
-        self.assertEqual(50,
-                         interpolate(5, 5, 5, 0, 100, True),
-                         'Interpolate function does not return average of target values when initial interval'
-                         'is just one value.')
-
-        # parameters are given in incorrect order
-        self.assertEqual(50,
-                         interpolate(5, 10, 0, 100, 0, True),
-                         'Interpolate function does not return correct value when intervals are given in different'
-                         'order (max store min values and min store maximum values)')
 
 
 class TestSerializeDict(unittest.TestCase):

@@ -36,5 +36,8 @@ class InterpolationError(SceneError):
             0: 'Error description not selected.',
             1: 'Not enough points in the polygon to do the interpolation.',
             2: 'Distance must be greater than 0 to realize the interpolation.',
-            3: 'Can not interpolate model that is not an instance of Map2DModel.'
+            3: 'Can not interpolate model that is not an instance of Map2DModel.',
+            4: 'Model can not be None.',
+            5: 'Polygon can not be None',
+            6: 'Polygon is not planar'
         }

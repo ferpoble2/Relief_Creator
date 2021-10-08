@@ -7,16 +7,14 @@
 !startsub INTERNAL
 package src.engine.scene {
     class src.engine.scene.Scene
-    class src.engine.scene.TransformationHelper
     class src.engine.scene.UnitConverter
 
 
     !includesub src.engine.scene.model.puml!INTERNAL
     !includesub src.engine.scene.transformation.puml!INTERNAL
     !includesub src.engine.scene.filter.puml!INTERNAL
+    !includesub src.engine.scene.interpolation.puml!INTERNAL
 }
-
-src.engine.scene.Scene .> src.engine.scene.TransformationHelper
 !endsub
 
 
@@ -24,6 +22,7 @@ src.engine.scene.Scene .> src.engine.scene.TransformationHelper
     !includesub src.engine.scene.model.puml!EXTERNAL
     !includesub src.engine.scene.transformation.puml!EXTERNAL
     !includesub src.engine.scene.filter.puml!EXTERNAL
+    !includesub src.engine.scene.interpolation.puml!EXTERNAL
 
     src.engine.scene.Scene o-u--o src.engine.Engine
     src.engine.scene.Scene ..> src.error.SceneError
@@ -34,5 +33,4 @@ src.engine.scene.Scene .> src.engine.scene.TransformationHelper
 ' Code that will affect only the current diagram
 ' can be messy since will not be imported
 hide members
-
 @enduml

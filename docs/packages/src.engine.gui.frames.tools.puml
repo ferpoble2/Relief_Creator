@@ -35,6 +35,11 @@ src.engine.gui.frames.tools.Tools *-- src.engine.gui.frames.tools.InterpolationT
     src.engine.gui.frames.tools.ReliefTools ..> src.engine.scene.filter.HeightGreaterThan
     src.engine.gui.frames.tools.ReliefTools ..> src.engine.scene.transformation.LinearTransformation
     src.engine.gui.frames.tools.ReliefTools ..> src.engine.scene.transformation.FillNanTransformation
+
+    src.engine.gui.frames.tools.InterpolationTools ..> src.engine.scene.interpolation.CubicInterpolation
+    src.engine.gui.frames.tools.InterpolationTools ..> src.engine.scene.interpolation.NearestInterpolation
+    src.engine.gui.frames.tools.InterpolationTools ..> src.engine.scene.interpolation.LinearInterpolation
+    src.engine.gui.frames.tools.InterpolationTools ..> src.engine.scene.interpolation.SmoothInterpolation
 !endsub
 
 hide members

@@ -68,7 +68,7 @@ class Engine {
     + get_tool_title_font_size(): int
     + get_window_setting_data(): dict
     + get_zoom_level(): float
-    + interpolate_points(polygon_id, model_id, distance, type_interpolation)
+    + interpolate_points(interpolation)
     + is_mouse_hovering_frame()
     + is_polygon_planar(polygon_id)
     + is_program_debug_mode(): boolean

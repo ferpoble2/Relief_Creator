@@ -1,0 +1,47 @@
+@startuml
+
+' Template file to use to create the diagrams od the packages.
+' Every file must have a sub part called INTERNAL with the internal connections of the package and
+' a sub part called EXTERNAL with the external parts.
+
+!startsub INTERNAL
+
+package src.engine.scene.interpolation {
+    class src.engine.scene.interpolation.Interpolation
+    class src.engine.scene.interpolation.LinearInterpolation
+    class src.engine.scene.interpolation.NearestInterpolation
+    class src.engine.scene.interpolation.CubicInterpolation
+    class src.engine.scene.interpolation.SmoothInterpolation
+}
+
+src.engine.scene.interpolation.LinearInterpolation -u-|> src.engine.scene.interpolation.Interpolation
+src.engine.scene.interpolation.NearestInterpolation -u-|> src.engine.scene.interpolation.Interpolation
+src.engine.scene.interpolation.CubicInterpolation -u-|> src.engine.scene.interpolation.Interpolation
+src.engine.scene.interpolation.SmoothInterpolation -u-|> src.engine.scene.interpolation.Interpolation
+
+!endsub
+
+!startsub EXTERNAL
+    src.engine.scene.interpolation.Interpolation ..> src.error.InterpolationError
+    src.engine.scene.interpolation.Interpolation <...> src.engine.scene.Scene
+
+    src.engine.scene.interpolation.LinearInterpolation ..> src.engine.scene.geometrical_operations
+    src.engine.scene.interpolation.LinearInterpolation ..> src.utils
+    src.engine.scene.interpolation.LinearInterpolation ..> src.error.InterpolationError
+    src.engine.scene.interpolation.NearestInterpolation ..> src.engine.scene.geometrical_operations
+    src.engine.scene.interpolation.NearestInterpolation ..> src.utils
+    src.engine.scene.interpolation.NearestInterpolation ..> src.error.InterpolationError
+    src.engine.scene.interpolation.CubicInterpolation ..> src.engine.scene.geometrical_operations
+    src.engine.scene.interpolation.CubicInterpolation ..> src.utils
+    src.engine.scene.interpolation.CubicInterpolation ..> src.error.InterpolationError
+    src.engine.scene.interpolation.SmoothInterpolation ..> src.engine.scene.geometrical_operations
+    src.engine.scene.interpolation.SmoothInterpolation ..> src.utils
+    src.engine.scene.interpolation.SmoothInterpolation ..> src.error.InterpolationError
+!endsub
+
+
+' Code that will affect only the current diagram
+' can be messy since it will not be imported
+hide members
+
+@enduml

@@ -18,16 +18,102 @@
 """
 File with the tests related to the interpolation functionality.
 """
+
 import os
 import unittest
 import warnings
 
+import numpy as np
+
+from src.engine.scene.interpolation.cubic_interpolation import CubicInterpolation
+from src.engine.scene.interpolation.linear_interpolation import LinearInterpolation
+from src.engine.scene.interpolation.nearest_interpolation import NearestInterpolation
+from src.engine.scene.interpolation.smooth_interpolation import SmoothInterpolation
 from src.engine.scene.transformation.linear_transformation import LinearTransformation
 from src.input.NetCDF import read_info
 from test.test_case import ProgramTestCase
 
 
-class TestInterpolation(ProgramTestCase):
+class TestSmoothingInterpolation(ProgramTestCase):
+
+    def setUp(self) -> None:
+        """
+        Logic that runs at the beginning o every tests.
+
+        Returns: None
+        """
+        super().setUp()
+        warnings.simplefilter('ignore', category=DeprecationWarning)
+
+        # initialize variables
+        self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
+                                           'resources/test_resources/netcdf/test_file_1.nc')
+
+    def test_smoothing_normal_application(self):
+        # load list of polygons
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
+
+        # apply transformation with filters
+        interpolation = SmoothInterpolation(self.engine.get_active_model_id(),
+                                            self.engine.get_active_polygon_id(),
+                                            2)
+        self.engine.interpolate_points(interpolation)
+
+        # export model to compare data
+        self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
+                                           'resources/test_resources/temp/temp_smoothing_1')
+
+        # read data and compare
+        info_written = read_info('resources/test_resources/temp/temp_smoothing_1.nc')
+        info_expected = read_info('resources/test_resources/expected_data/netcdf/expected_smoothing_1.nc')
+
+        np.testing.assert_array_equal(info_written[0],
+                                      info_expected[0],
+                                      'Info on the x array is not equal to the expected.')
+        np.testing.assert_array_equal(info_written[1],
+                                      info_expected[1],
+                                      'Info on the y array is not equal to the expected.')
+        np.testing.assert_array_almost_equal(info_written[2],
+                                             info_expected[2],
+                                             3,
+                                             'Info on the height matrix is not equal to the expected.')
+
+        os.remove('resources/test_resources/temp/temp_smoothing_1.nc')
+
+    def test_smoothing_multiple_applications(self):
+        # load list of polygons
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
+
+        # apply transformation with filters
+        for _ in range(5):
+            interpolation = SmoothInterpolation(self.engine.get_active_model_id(),
+                                                self.engine.get_active_polygon_id(),
+                                                2)
+            self.engine.interpolate_points(interpolation)
+
+        # export model to compare data
+        self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
+                                           'resources/test_resources/temp/temp_smoothing_2')
+
+        # read data and compare
+        info_written = read_info('resources/test_resources/temp/temp_smoothing_2.nc')
+        info_expected = read_info('resources/test_resources/expected_data/netcdf/expected_smoothing_2.nc')
+
+        np.testing.assert_array_equal(info_written[0],
+                                      info_expected[0],
+                                      'Info on the x array is not equal to the expected.')
+        np.testing.assert_array_equal(info_written[1],
+                                      info_expected[1],
+                                      'Info on the y array is not equal to the expected.')
+        np.testing.assert_array_almost_equal(info_written[2],
+                                             info_expected[2],
+                                             3,
+                                             'Info on the height matrix is not equal to the expected.')
+
+        os.remove('resources/test_resources/temp/temp_smoothing_2.nc')
+
+
+class TestCubicInterpolation(ProgramTestCase):
 
     def setUp(self) -> None:
         """
@@ -52,10 +138,10 @@ class TestInterpolation(ProgramTestCase):
         self.engine.transform_points(transformation)
 
         # apply interpolation
-        self.engine.interpolate_points(self.engine.get_active_polygon_id(),
-                                       self.engine.get_active_model_id(),
-                                       2,
-                                       'cubic')
+        interpolation = CubicInterpolation(self.engine.get_active_model_id(),
+                                           self.engine.get_active_polygon_id(),
+                                           2)
+        self.engine.interpolate_points(interpolation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -74,6 +160,20 @@ class TestInterpolation(ProgramTestCase):
 
         os.remove('resources/test_resources/temp/temp_interpolation_2.nc')
 
+
+class TestNearestInterpolation(ProgramTestCase):
+
+    def setUp(self) -> None:
+        """
+        Logic that runs at the beginning o every tests.
+
+        Returns: None
+        """
+        super().setUp()
+        warnings.simplefilter('ignore', category=DeprecationWarning)
+        self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
+                                           'resources/test_resources/netcdf/test_file_1.nc')
+
     def test_nearest_normal_application(self):
         # load list of polygons
         self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
@@ -86,10 +186,10 @@ class TestInterpolation(ProgramTestCase):
         self.engine.transform_points(transformation)
 
         # apply interpolation
-        self.engine.interpolate_points(self.engine.get_active_polygon_id(),
-                                       self.engine.get_active_model_id(),
-                                       2,
-                                       'nearest')
+        interpolation = NearestInterpolation(self.engine.get_active_model_id(),
+                                             self.engine.get_active_polygon_id(),
+                                             2)
+        self.engine.interpolate_points(interpolation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -108,6 +208,20 @@ class TestInterpolation(ProgramTestCase):
 
         os.remove('resources/test_resources/temp/temp_interpolation_3.nc')
 
+
+class TestLinearInterpolation(ProgramTestCase):
+
+    def setUp(self) -> None:
+        """
+        Logic that runs at the beginning o every tests.
+
+        Returns: None
+        """
+        super().setUp()
+        warnings.simplefilter('ignore', category=DeprecationWarning)
+        self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
+                                           'resources/test_resources/netcdf/test_file_1.nc')
+
     def test_linear_normal_application(self):
         # load list of polygons
         self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_2.shp')
@@ -120,10 +234,10 @@ class TestInterpolation(ProgramTestCase):
         self.engine.transform_points(transformation)
 
         # apply interpolation
-        self.engine.interpolate_points(self.engine.get_active_polygon_id(),
-                                       self.engine.get_active_model_id(),
-                                       2,
-                                       'linear')
+        interpolation = LinearInterpolation(self.engine.get_active_model_id(),
+                                            self.engine.get_active_polygon_id(),
+                                            2)
+        self.engine.interpolate_points(interpolation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),

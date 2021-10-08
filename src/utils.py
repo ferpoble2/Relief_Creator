@@ -112,44 +112,6 @@ def get_logger(log_level: int = LOG_LEVEL,
     return log
 
 
-def interpolate(value: float, value_min: float, value_max: float, target_min: float = -1,
-                target_max: float = 1, convert: bool = True) -> float:
-    """
-    Interpolate the given value between the other specified values.
-
-    To interpolate the value between the target values it is necessary to specify an initial interval in which
-    the value exists (value_min and value_max) and the target interval to interpolate it (target_min and target_max).
-
-    If value_min and value_max are equal, then average between the targets values will be returned.
-
-    Args:
-        convert: True to convert the value to float
-        value: Value to interpolate.
-        value_min: Minimum value of the values.
-        value_max: Maximum value of the values.
-        target_min: Minimum value of the interpolation interval.
-        target_max: Maximum value of the interpolation interval.
-
-    Returns: Interpolated value.
-    """
-    if convert:
-        value = float(value)
-
-    # Check values and store them in the correct variables
-    value_min, value_max = min(value_min, value_max), max(value_min, value_max)
-    target_min, target_max = min(target_min, target_max), max(target_min, target_max)
-
-    # Case initial interval is just one value.
-    if value_min == value_max:
-        return (target_min + target_max) / 2.0
-
-    if target_min == target_max:
-        return target_max
-
-    # Return corresponding values
-    return (value - value_min) * (float(target_max) - target_min) / (float(value_max) - value_min) + target_min
-
-
 def is_numeric(value: str) -> bool:
     """
     Check if a value can be converted to float.

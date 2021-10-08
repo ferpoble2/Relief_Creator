@@ -15,7 +15,6 @@ class src.utils <<$file>> {
     + dict_to_json(dictionary, filename): None
     + dict_to_serializable_dict(dictionary): dict
     + get_logger(log_level, log_file_level, module, directory) : logger
-    + interpolate(value, value_min, value_max, target_min, target_max, convert) : float
     + is_clockwise(points): boolean
     + is_numeric(value) : boolean
     + json_to_dict(json_filename): dict

@@ -29,7 +29,7 @@ from src.input.NetCDF import read_info
 from test.test_case import ProgramTestCase
 
 
-class TestModifyHeightLinear(ProgramTestCase):
+class TestLinearTransformation(ProgramTestCase):
 
     def setUp(self) -> None:
         """

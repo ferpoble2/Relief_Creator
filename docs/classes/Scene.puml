@@ -6,7 +6,6 @@
                 + add_new_vertex_to_polygon_using_window_coords(position_x, position_y, polygon_id, model_id,
                                                                 scene_settings_data, window_settings_data)
                 + add_polygon(polygon)
-                + apply_smoothing_algorithm(polygon_id, model_id, distance_to_polygon)
                 + calculate_map_position_from_window(position_x, position_y, polygon_id, model_id, scene_settings_data,
                                                        window_settings_data): (float, float)
                 + calculate_max_min_height(model_id, polygon_id): tuple
