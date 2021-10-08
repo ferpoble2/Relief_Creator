@@ -62,7 +62,7 @@ class CubicInterpolation(Interpolation):
         """
         super().initialize(scene)
 
-        self.__model_vertices = scene.get_map2d_model_vertices_array(self.model_id).copy()
+        self.__model_vertices = scene.get_map2d_model_vertices_array(self.model_id)
         self.__polygon_points = scene.get_polygon_points(self.polygon_id)
 
         if not scene.is_polygon_planar(self.polygon_id):
@@ -79,6 +79,9 @@ class CubicInterpolation(Interpolation):
 
         The interpolation modify the heights of the points that are between the external
         and internal polygon.
+
+        The vertices of the model are modified directly, the returned array is a reference to the vertices of the
+        model modified.
 
         Returns: Array with the modified points.
         """

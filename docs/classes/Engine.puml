@@ -5,6 +5,8 @@ class Engine {
     + render: Render
     + scene: Scene
     + window: GLFWWindow
+    + use_threads: boolean
+    + wait_loading_frame_render: boolean
     - __thread_manager: ThreadManager
     - __process_manager: ProcessManager
     - __task_manager: TaskManager
@@ -101,10 +103,8 @@ class Engine {
     + set_process_task(parallel_task, then_task, parallel_task_args, then_task_args)
     + set_program_loading(new_state)
     + set_program_view_mode(mode)
-    + set_task_for_next_frame(task)
     + set_task_with_loading_frame(task)
     + set_thread_task(parallel_task, then, parallel_task_args, then_task_args)
-    + should_use_threads(value)
     + transform_points(transformation)
     + undo_action()
     + update_current_3D_model()

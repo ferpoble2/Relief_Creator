@@ -113,7 +113,6 @@ class TestPlanarity(ProgramTestCase):
 class TestUndoAction(ProgramTestCase):
 
     def test_undo_point_added(self):
-        self.engine.should_use_threads(False)
         self.engine.create_model_from_file(
             'resources/test_resources/cpt/colors_0_100_200.cpt',
             'resources/test_resources/netcdf/test_file_1.nc'

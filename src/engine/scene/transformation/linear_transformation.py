@@ -102,7 +102,7 @@ class LinearTransformation(Transformation):
         super().initialize(scene)
 
         self.__polygon_points = scene.get_polygon_points(self.polygon_id)
-        self.__vertex_array = scene.get_map2d_model_vertices_array(self.model_id).copy()
+        self.__vertex_array = scene.get_map2d_model_vertices_array(self.model_id)
 
         if self.__min_height > self.__max_height:
             raise ModelTransformationError(9)
@@ -116,6 +116,9 @@ class LinearTransformation(Transformation):
     def apply(self) -> np.ndarray:
         """
         Apply the transformation of the points over the vertices of the model.
+
+        The vertices of the model are modified directly, the returned array is a reference to the vertices of the
+        model modified.
 
         Returns: Model vertices modified.
         """

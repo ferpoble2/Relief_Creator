@@ -120,20 +120,6 @@ class Scene:
         self.__polygon_id_count: int = 0
         self.__model_id_count: int = 0
 
-    def add_model(self, model: Map2DModel) -> None:
-        """
-        Add a model to the hash of models.
-
-        This method should be called only when testing or experimenting, to load a new model to the program use the
-        method refresh_with_model_2d_async, that method will load the model on the scene and add it to the scene.
-
-        Args:
-            model: Model to add to the hashtable.
-
-        Returns: None
-        """
-        self.__model_hash[model.id] = model
-
     def add_new_vertex_to_polygon_using_map_coords(self,
                                                    x_coord: float,
                                                    y_coord: float,
@@ -196,22 +182,6 @@ class Scene:
                                                                    allow_outside_map=True,
                                                                    allow_outside_scene=False)
             self.__polygon_hash[polygon_id].add_point(new_x, new_y)
-
-    def add_polygon(self, polygon: 'Polygon') -> None:
-        """
-        Add a new polygon to render on the scene.
-
-        This method should only be called on testing on experimenting. To add a new polygon to the scene call the
-        method create_new_polygon, this method will create a polygon and add it to the scene to be rendered.
-
-        Args:
-            polygon: Polygon to add to the scene
-
-        Returns: None
-        """
-        log.debug("Added polygon to the scene")
-        self.__polygon_hash[polygon.get_id()] = polygon
-        self.__polygon_id_count += 1
 
     def calculate_map_position_from_window(self,
                                            position_x: int,
@@ -468,18 +438,19 @@ class Scene:
         self.__polygon_draw_priority.insert(new_priority, polygon_id)
 
     def create_3D_model_if_not_exists(self,
-                                      model_id: str) -> None:
+                                      model_id: Union[str, None]) -> None:
         """
         Create a new map3D_model object and add it to the scene.
 
-        This method removes all the other 3D models loaded into the scene.
+        This method creates the 3D model of an existent 2D model if the 3D model does not exists. Also, removes all
+        the other 3D models loaded into the program.
 
         Args:
             model_id: ID of the model to generate the 3D model.
 
         Returns: Id of the new map3D_model
         """
-        if model_id not in self.__3d_model_hash:
+        if model_id in self.__model_hash and model_id not in self.__3d_model_hash:
             self.reset_camera_values()
             new_model = Map3DModel(self, self.__model_hash[model_id])
             new_model.id = model_id
@@ -500,7 +471,7 @@ class Scene:
                                      quality_maps: int = 3,
                                      then=lambda x: None) -> None:
         """
-        Refresh the scene, adding the new model to the hash of models and rendering it.
+        Refresh the scene, adding the new model to the scene.
 
         The color file must be in CPT format to create the model correctly.
 
@@ -569,11 +540,11 @@ class Scene:
             model.id = str(self.__model_id_count)
             self.__model_id_count += 1
 
-            # Update scene model information
-            # ------------------------------
+            # Update scene model information and add the model to the scene
+            # -------------------------------------------------------------
             self.update_projection_matrix_2D()
             self.__model_draw_priority.append(model.id)
-            self.add_model(model)
+            self.__model_hash[model.id] = model
 
             # Reset the zoom level, position and projection if there was no active model before.
             # ----------------------------------------------------------------------------------
@@ -656,10 +627,11 @@ class Scene:
         else:
             self.__polygon_draw_priority.insert(priority_position, new_polygon_id)
 
-        # Create the polygon and return its id
-        # ------------------------------------
+        # Create the polygon, add it to the scene and return its ID
+        # ---------------------------------------------------------
         polygon = Polygon(self, new_polygon_id, point_list, parameters)
-        self.add_polygon(polygon)
+        self.__polygon_hash[polygon.get_id()] = polygon
+        self.__polygon_id_count += 1
 
         return new_polygon_id
 
@@ -1384,7 +1356,7 @@ class Scene:
 
         Returns: None
         """
-        # Apply th transformation
+        # Apply the transformation
         new_vertices = transformation.apply()
 
         # Modify the height of the modified model

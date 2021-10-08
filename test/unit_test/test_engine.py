@@ -120,7 +120,7 @@ class TestSetActiveModel(ProgramTestCase):
 class TestSetThreadTask(ProgramTestCase):
 
     def test_set_thread_task(self):
-        self.engine.should_use_threads(True)
+        self.engine.use_threads = True
 
         for task_sleep_time in THREAD_ATTEMPT_TIMES:
 
@@ -147,7 +147,7 @@ class TestSetThreadTask(ProgramTestCase):
                 break
 
     def test_set_thread_task_return_value(self):
-        self.engine.should_use_threads(True)
+        self.engine.use_threads = True
 
         def sleep_then_return_50(time_to_sleep):
             """Function that sleep and then return the integer 50."""

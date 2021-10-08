@@ -91,6 +91,7 @@ class Engine:
         self.controller = Controller()
 
         self.__use_threads = True
+        self.__wait_loading_frame_render = True
         self.__process_manager = ProcessManager()
         self.__thread_manager = ThreadManager()
         self.__task_manager = TaskManager()
@@ -115,6 +116,48 @@ class Engine:
         glfw.set_mouse_button_callback(self.window, self.controller.get_mouse_button_callback(self))
         glfw.set_cursor_pos_callback(self.window, self.controller.get_cursor_position_callback(self))
         glfw.set_scroll_callback(self.window, self.controller.get_mouse_scroll_callback(self))
+
+    @property
+    def use_threads(self) -> bool:
+        """
+        Set if the engine should use threads or not.
+        """
+        return self.__use_threads
+
+    @use_threads.setter
+    def use_threads(self, value: bool) -> None:
+        """
+        Set if the engine should use threads or not.
+
+        If not, then threads logic is executed the moment the thread is set.
+
+        Args:
+            value: If to use threads or not.
+
+        Returns: None
+        """
+        self.__use_threads = value
+
+    @property
+    def wait_loading_frame_render(self) -> bool:
+        """
+        Set if the engine should wait for the loading frame to render or not.
+        """
+        return self.__wait_loading_frame_render
+
+    @wait_loading_frame_render.setter
+    def wait_loading_frame_render(self, value: bool) -> None:
+        """
+        Set if the engine should wait for the loading frame to render or not.
+
+        If not, then logic is executed the moment the methods are called.
+
+        Args:
+            value: If to wait for the render of the loading frame.
+
+        Returns: None
+        """
+        self.__wait_loading_frame_render = value
 
     def add_new_vertex_to_active_polygon_using_real_coords(self, position_x: float, position_y: float) -> None:
         """
@@ -1669,17 +1712,6 @@ class Engine:
         else:
             raise ValueError(f'Can not change program view mode to {mode}.')
 
-    def set_task_for_next_frame(self, task: callable) -> None:
-        """
-        Store a function and executes it in the next frame of the application.
-
-        Args:
-            task: Function to execute.
-
-        Returns: None
-        """
-        self.__task_manager.set_task(task, 2)
-
     def set_task_with_loading_frame(self, task: callable) -> None:
         """
         Set a task to be executed at the end of the next frame. Also configures the loading setting of
@@ -1690,14 +1722,18 @@ class Engine:
 
         Returns: None
         """
-        self.program.set_loading(True)
+        if self.__wait_loading_frame_render:
+            self.program.set_loading(True)
 
-        # noinspection PyMissingOrEmptyDocstring
-        def task_loading():
+            # noinspection PyMissingOrEmptyDocstring
+            def task_loading():
+                task()
+                self.program.set_loading(False)
+
+            self.__task_manager.set_task(task_loading, 3)
+
+        else:
             task()
-            self.program.set_loading(False)
-
-        self.__task_manager.set_task(task_loading, 3)
 
     def set_thread_task(self, parallel_task, then, parallel_task_args=None, then_task_args=None) -> None:
         """
@@ -1730,19 +1766,6 @@ class Engine:
             else:
                 then(*then_task_args)
 
-    def should_use_threads(self, value: bool) -> None:
-        """
-        Set if the engine should use threads or not.
-
-        If not, then threads logic is executed the moment the thread is set.
-
-        Args:
-            value: If to use threads or not.
-
-        Returns: None
-        """
-        self.__use_threads = value
-
     def transform_points(self, transformation: 'Transformation') -> None:
         """
         Ask the scene to apply a transformation modifying the height of the model.
@@ -1753,8 +1776,15 @@ class Engine:
         Returns: None
         """
         try:
+
+            # Initialize the transformations and catch all the possible errors
+            # ----------------------------------------------------------------
             transformation.initialize(self.scene)
-            self.scene.transform_points(transformation)
+
+            # Run the transformation in a different thread
+            # --------------------------------------------
+            self.set_loading_message('Applying transformation.')
+            self.set_task_with_loading_frame(lambda: self.scene.transform_points(transformation))
 
         except FilterError as e:
             if e.code == 0:

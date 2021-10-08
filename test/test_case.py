@@ -42,7 +42,8 @@ class ProgramTestCase(unittest.TestCase):
 
         self.program = Program()
         self.engine = self.program.engine
-        self.engine.should_use_threads(False)
+        self.engine.use_threads = False
+        self.engine.wait_loading_frame_render = False
 
     def tearDown(self) -> None:
         """
