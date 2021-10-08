@@ -22,7 +22,7 @@ folders of the GUI.
 from typing import Dict
 
 from src.engine.GUI.polygon_folder import PolygonFolder
-from src.error.polygon_folder_not_found_error import PolygonFolderNotFoundError
+from src.error.polygon_folder_error import PolygonFolderError
 
 
 class PolygonFolderManager:
@@ -131,7 +131,7 @@ class PolygonFolderManager:
         folder = self.__folders.get(folder_id)
 
         if folder is None:
-            raise PolygonFolderNotFoundError(0)
+            raise PolygonFolderError(0)
 
         self.__folders[folder_id] = PolygonFolder(folder_id=folder_id)
 
@@ -148,7 +148,7 @@ class PolygonFolderManager:
             self.__folders.pop(folder_id)
 
         else:
-            raise PolygonFolderNotFoundError(0)
+            raise PolygonFolderError(0)
 
     def delete_polygon_from_all_folders(self, polygon_id: str) -> None:
         """
@@ -175,7 +175,7 @@ class PolygonFolderManager:
         folder = self.__folders.get(folder_id)
 
         if folder is None:
-            raise PolygonFolderNotFoundError(0)
+            raise PolygonFolderError(0)
 
         folder.delete_polygon(polygon_id)
 
@@ -198,7 +198,7 @@ class PolygonFolderManager:
         """
         folder = self.__folders.get(folder_id)
         if folder is None:
-            raise PolygonFolderNotFoundError(0)
+            raise PolygonFolderError(0)
 
         return folder.get_name()
 
@@ -216,7 +216,7 @@ class PolygonFolderManager:
         if folder_id is not None:
             folder = self.__folders.get(folder_id)
             if folder is None:
-                raise PolygonFolderNotFoundError(0)
+                raise PolygonFolderError(0)
 
             return folder.get_polygon_list()
 
@@ -252,7 +252,7 @@ class PolygonFolderManager:
         """
         folder = self.__folders.get(folder_id)
         if folder is None:
-            raise PolygonFolderNotFoundError(0)
+            raise PolygonFolderError(0)
 
         folder.set_name(new_name)
 

@@ -21,8 +21,17 @@ File containing the class FolderError
 from src.error.GUI_error import GUIError
 
 
-class FolderError(GUIError):
+class PolygonFolderError(GUIError):
     """
     Error to use for folder errors.
     """
-    pass
+
+    def __init__(self, err_code: int = 0):
+        """
+        Constructor of the class PolygonFolderNotFoundError.
+        """
+        super(self).__init__(err_code)
+
+        self.codes = {
+            0: 'Polygon Folder not found in the program.'
+        }

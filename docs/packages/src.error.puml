@@ -6,20 +6,19 @@ left to right direction
 package src.error {
     class src.error.BaseError
     class src.error.ExportError
-    class src.error.FolderError
     class src.error.GUIError
     class src.error.InterpolationError
     class src.error.LineIntersectionError
     class src.error.ModelTransformationError
     class src.error.NetcdfImportError
     class src.error.PolygonError
-    class src.error.PolygonFolderNotFoundError
     class src.error.RepeatedPointError
     class src.error.SceneError
-    class src.error.WrongInterpolationTypeError
     class src.error.FilterError
+    class src.error.PolygonFolderError
 }
 
+src.error.BaseError <|-- src.error.PolygonFolderError
 src.error.BaseError <|-- src.error.SceneError
 src.error.BaseError <|-- src.error.PolygonError
 src.error.BaseError <|-- src.error.ExportError
@@ -29,9 +28,6 @@ src.error.BaseError <|-- src.error.FilterError
 
 src.error.PolygonError <|-- src.error.RepeatedPointError
 src.error.PolygonError <|-- src.error.LineIntersectionError
-src.error.GUIError <|-- src.error.WrongInterpolationTypeError
-src.error.GUIError <|-- src.error.FolderError
-src.error.FolderError <|-- src.error.PolygonFolderNotFoundError
 src.error.SceneError <|-- src.error.ModelTransformationError
 src.error.SceneError <|-- src.error.InterpolationError
 !endsub
