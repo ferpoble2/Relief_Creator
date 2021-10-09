@@ -1,38 +1,33 @@
 @startuml
-                class Map2DModel {
-                    - __x: array
-                    - __y: array
-                    - __z: array
-                    - __color_file: str
-                    - __colors: array
-                    - __height_limit: array
-                    - __vertices: list
-                    - __indices: list
-                    - __triangles_to_delete: list
-                    - __new_indices: list
-                    - __name: str
+    class Map2DModel {
+        - __x: array
+        - __y: array
+        - __z: array
+        - __color_file: str
+        - __colors: array
+        - __height_limit: array
+        - __triangles_to_delete: list
+        - __name: str
 
 
-                    - __add_triangles_inside_zone_to_delete_list(left_coordinate, right_coordinate, top_coordinate, bottom_coordinate)
-                    - __generate_index_list(step_x, step_y, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): list
-                    - __generate_vertices_list(x, y, z, z_value): list
-                    - __get_index_closest_value(list_to_evaluate, value): int
-                    - __get_vertex_index(x_pos, y_pos): int
-                    - __is_triangle_inside_zone(index_triangle, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): boolean
-                    - __print_indices()
-                    - __print_vertices()
-                    - __set_height_buffer()
-                    ~ _update_uniforms()
-                    + get_color_file(): str
-                    + get_height_array(): array
-                    + get_height_on_coordinates(x_coordinate, y_coordinate): float
-                    + get_model_coordinate_array(): (array, array)
-                    + get_name(): str
-                    + get_vertices_shape(): tuple
-                    + optimize_gpu_memory_async(then)
-                    + recalculate_vertices_from_grid_async(quality, then)
-                    + set_color_file(filename)
-                    + set_vertices_from_grid_async(x,y,z,quality, then)
-                    + update_heights(new_height)
-                }
+        - __add_triangles_inside_zone_to_delete_list(left_coordinate, right_coordinate, top_coordinate, bottom_coordinate)
+        - __generate_index_list(step_x, step_y, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): list
+        - __generate_vertices_list(x, y, z, z_value): list
+        - __get_index_closest_value(list_to_evaluate, value): int
+        - __get_vertex_index(x_pos, y_pos): int
+        - __is_triangle_inside_zone(index_triangle, left_coordinate, right_coordinate, top_coordinate, bottom_coordinate): boolean
+        - __set_height_buffer()
+        ~ _update_uniforms()
+        + get_color_file(): str
+        + get_height_array(): array
+        + get_height_on_coordinates(x_coordinate, y_coordinate): float
+        + get_model_coordinate_array(): (array, array)
+        + get_name(): str
+        + get_vertices_shape(): tuple
+        + optimize_gpu_memory_async(then)
+        + update_indices_async(quality, then)
+        + set_color_file(filename)
+        + set_vertices_from_grid_async(x,y,z,quality, then)
+        + update_vertices(new_height)
+    }
 @enduml

@@ -69,8 +69,7 @@ class MapModel(Model):
                              top_coordinate: float = 90,
                              bottom_coordinate: float = -90) -> np.ndarray:
         """
-        Generate an index list given an already loaded list of vertices. Method use the list of vertices
-        stored in the self.__vertices variable.
+        Generate an index list given an already loaded list of vertices.
 
         Vertices are expected to be given as in the output of the __generate_vertices_list method.
 
@@ -83,6 +82,8 @@ class MapModel(Model):
             bottom_coordinate: Bottom coordinate to cut the map.
             step_x: Number of vertices in the x axis
             step_y: Number of elements in the y axis
+            x_value_array: Values used in the x-axis
+            y_value_array: Values used in the y-axis
 
         Returns: List of index
         """
@@ -154,16 +155,6 @@ class MapModel(Model):
         index_5 = index_5.reshape(-1)
         index_6 = index_6.reshape(-1)
 
-        # add the indices
-        # ---------------
-        # DEPRECATED CODE
-        # for ind in range(len(index_1)):
-        #     indices.append(index_1[ind])
-        #     indices.append(index_2[ind])
-        #     indices.append(index_3[ind])
-        #     indices.append(index_4[ind])
-        #     indices.append(index_5[ind])
-        #     indices.append(index_6[ind])
         indices = np.zeros((len(index_1), 6))
         indices[:, 0] = index_1
         indices[:, 1] = index_2
@@ -172,24 +163,5 @@ class MapModel(Model):
         indices[:, 4] = index_5
         indices[:, 5] = index_6
         indices = indices.reshape(-1).astype(np.uint32)
-
-        # Deprecated Code
-        # ---------------
-        # import time
-        # time_before = time.time()
-        #
-        # for row in range(len(self.__y))[index_minimum_y:index_maximum_y + 1:step_y]:
-        #     for col in range(len(self.__x))[index_minimum_x:index_maximum_x + 1:step_x]:
-        #         if col + step_x < len(self.__x) and row + step_y < len(self.__y):
-        #             indices.append(self.__get_vertex_index(col, row))
-        #             indices.append(self.__get_vertex_index(col + step_x, row))
-        #             indices.append(self.__get_vertex_index(col, row + step_y))
-        #
-        #             indices.append(self.__get_vertex_index(col + step_x, row))
-        #             indices.append(self.__get_vertex_index(col + step_x, row + step_y))
-        #             indices.append(self.__get_vertex_index(col, row + step_y))
-        #             pass
-        #
-        # print(f'Duration of indices: {time.time() - time_before}')
 
         return indices

@@ -54,20 +54,13 @@ class Map2DModel(MapModel):
         self.__colors = []
         self.__height_limit = []
 
-        # grid values
-        self.__x = None
-        self.__y = None
-        self.__z = None
-
-        # vertices values (used in the buffer)
-        self.__vertices: np.ndarray = np.array([])
-
-        # indices of the model (used in the buffer)
-        self.__indices: np.ndarray = np.array([])
+        # Grid variables
+        # --------------
+        self.__x = None  # Values used for the x-axis of the model
+        self.__y = None  # Values used for the y-axis of the model
 
         # utilities variables
         self.__triangles_to_delete = np.array([])  # triangles overlapped to delete when optimizing memory
-        self.__new_indices = None  # new indices of triangles calculated using parallelism
         self.__name = name  # name of the model. Can be None
 
     def __add_triangles_inside_zone_to_delete_list(self,
@@ -91,11 +84,8 @@ class Map2DModel(MapModel):
 
         # Get the variables and matrix to use
         # --------------------------
-
         log.debug('Converting array in array')
-        indices_array = np.array(self.__indices)
-        log.debug('Finished converting array in array')
-
+        indices_array = self.get_indices_array()
         indices_array = indices_array.reshape(-1)
         vertices_array = self.get_vertices_array().reshape((-1, 3))
 
@@ -128,52 +118,9 @@ class Map2DModel(MapModel):
         mask[np.where(indices_with_coords_array[7] > top_coordinate)[0]] = False
 
         inside = np.where(mask == True)[0]  # noqa
-        log.debug('Finished creation of mask with values')
-
-        # Deprecated Code (using intersection instead of masks)
-        # -----------------------------------------------------
-        # index_out_1 = np.where(indices_with_coords_array[0] > left_coordinate)[0]
-        # index_out_2 = np.where(indices_with_coords_array[3] > left_coordinate)[0]
-        # index_out_3 = np.where(indices_with_coords_array[6] > left_coordinate)[0]
-        # all_right = np.intersect1d(np.intersect1d(index_out_1, index_out_2), index_out_3)
-        #
-        # index_out_1 = np.where(indices_with_coords_array[0] < right_coordinate)[0]
-        # index_out_2 = np.where(indices_with_coords_array[3] < right_coordinate)[0]
-        # index_out_3 = np.where(indices_with_coords_array[6] < right_coordinate)[0]
-        # all_left = np.intersect1d(np.intersect1d(index_out_1, index_out_2), index_out_3)
-        #
-        # index_out_1 = np.where(indices_with_coords_array[1] < top_coordinate)[0]
-        # index_out_2 = np.where(indices_with_coords_array[4] < top_coordinate)[0]
-        # index_out_3 = np.where(indices_with_coords_array[7] < top_coordinate)[0]
-        # all_bottom = np.intersect1d(np.intersect1d(index_out_1, index_out_2), index_out_3)
-        #
-        # index_out_1 = np.where(indices_with_coords_array[1] > bottom_coordinate)[0]
-        # index_out_2 = np.where(indices_with_coords_array[4] > bottom_coordinate)[0]
-        # index_out_3 = np.where(indices_with_coords_array[7] > bottom_coordinate)[0]
-        # all_top = np.intersect1d(np.intersect1d(index_out_1, index_out_2), index_out_3)
-        #
-        # inside = np.intersect1d(np.intersect1d(np.intersect1d(all_left, all_right), all_bottom), all_top)
 
         log.debug('Converting array to list')
-        # to_delete = list(inside)
         to_delete = inside
-        # log.debug('Finished conversion')
-
-        # Deprecated Code
-        # ---------------
-        # print(f'Triangles added using numpy with time: {time.time() - initial}')
-        #
-        # initial = time.time()
-        #
-        # index_array = np.array(self.__indices)
-        # index_array = index_array.reshape((-1, 3))
-        #
-        # for index in range(len(index_array)):
-        #     triangle = index_array[index]
-        #     if self.__is_triangle_inside_zone(triangle, left_coordinate, right_coordinate, top_coordinate,
-        #                                       bottom_coordinate):
-        #         to_delete.append(index)
-        # print(f'Triangles added with time: {time.time() - initial}')
 
         log.debug(f"Triangles to delete added: {len(to_delete)}")
 
@@ -217,8 +164,7 @@ class Map2DModel(MapModel):
                               top_coordinate: float = 90,
                               bottom_coordinate: float = -90) -> np.ndarray:
         """
-        Generate an index list given an already loaded list of vertices. Method use the list of vertices
-        stored in the self.__vertices variable.
+        Generate an index list given an already loaded list of vertices.
 
         Vertices are expected to be given as in the output of the __generate_vertices_list method.
 
@@ -329,33 +275,16 @@ class Map2DModel(MapModel):
         # :::: multiply the index value by 3
         # ---------------------------------------------------------------------
         for coordinate in index_triangle:
-            if self.__vertices[coordinate * 3] < left_coordinate or \
-                    self.__vertices[coordinate * 3] > right_coordinate or \
-                    self.__vertices[coordinate * 3 + 1] < bottom_coordinate or \
-                    self.__vertices[coordinate * 3 + 1] > top_coordinate:
+            vertices = self.get_vertices_array()
+            if vertices[coordinate * 3] < left_coordinate or \
+                    vertices[coordinate * 3] > right_coordinate or \
+                    vertices[coordinate * 3 + 1] < bottom_coordinate or \
+                    vertices[coordinate * 3 + 1] > top_coordinate:
                 return False
 
         # Return true if triangle is inside
         # ---------------------------------
         return True
-
-    def __print_indices(self) -> None:
-        """
-        Print the indices of the model.
-        Returns: None
-        """
-
-        for i in range(int(len(self.__indices) / 3)):
-            print(f"I{i}: " + "".join(str(self.__indices[i * 3:(i + 1) * 3])))
-
-    def __print_vertices(self) -> None:
-        """
-        Print the vertices of the model.
-        Returns: None
-        """
-        print(f"Total Vertices: {len(self.__vertices)}")
-        for i in range(int(len(self.__vertices) / 3)):
-            print(f"P{i}: " + "".join(str(self.__vertices[i * 3:(i + 1) * 3])))
 
     def _update_uniforms(self) -> None:
         """
@@ -395,9 +324,13 @@ class Map2DModel(MapModel):
         The numpy array has shape (rows, cols). Where rows and cols is the number of rows and cols of the grid that
         stores the vertices of the model.
 
+        The returned array is not a copy of the vertices used in the model, but a real reference to the array used in
+        the model. Any modification to the array will modify the information stored in the model.
+
         Returns: numpy array with the values of the buffer.
         """
-        return self.__z
+        heights = self.get_vertices_array().reshape(self.get_vertices_shape())[:, :, 2]
+        return heights
 
     def get_height_on_coordinates(self, x_coordinate: float, y_coordinate: float) -> Union[float, None]:
         """
@@ -417,13 +350,13 @@ class Map2DModel(MapModel):
 
         # Security check
         # --------------
-        if self.__x is None or self.__y is None or self.__z is None:
+        if self.__x is None or self.__y is None:
             return None
 
         # Change the order of the arrays if they are not sorted with ascending values
         x_values = self.__x
         y_values = self.__y
-        z_values = self.__z
+        z_values = self.get_height_array()
 
         # Return None if the coordinate asked is outside of the model.
         if x_coordinate <= np.min(x_values) or x_coordinate >= np.max(x_values) or y_coordinate <= np.min(y_values) \
@@ -504,40 +437,138 @@ class Map2DModel(MapModel):
 
             indices_to_delete = np.concatenate((vertex_1, vertex_2, vertex_3)).astype(int)
 
-            # deprecated code
-            # ---------------
-            # indices_to_delete = []
-            # for index_to_delete in self.__triangles_to_delete:
-            #     indices_to_delete.append(index_to_delete * 3)
-            #     indices_to_delete.append(index_to_delete * 3 + 1)
-            #     indices_to_delete.append(index_to_delete * 3 + 2)
-
             log.debug("Generating mask for the indices")
-            mask = np.ones(len(self.__indices), dtype=bool)
+            mask = np.ones(len(self.get_indices_array()), dtype=bool)
             mask[indices_to_delete] = False
 
             log.debug("Applying mask to the indices")
 
-            # Deprecated code
-            # arr_indices = np.array(self.__indices)  # time consuming (must optimize)
-            # new_indices = arr_indices[mask]
-            # self.__indices = new_indices.tolist()  # time consuming (must optimize)
-
             # noinspection PyTypeChecker
-            self.__indices = self.__indices[mask]
+            new_indices = self.get_indices_array()[mask]
             log.debug('Ended applying mask to indices')
 
             self.__triangles_to_delete = np.array([])
 
+            return new_indices
+
         # noinspection PyMissingOrEmptyDocstring
-        def then_routine():
-            # Set the new vertices on the engine
-            self.set_indices(np.array(self.__indices, dtype=np.uint32))
+        def then_routine(new_indices):
+            self.set_indices(np.array(new_indices, dtype=np.uint32))
             then()
 
         self.scene.set_thread_task(parallel_task=parallel_routine, then=then_routine)
 
-    def recalculate_vertices_from_grid_async(self, quality: int = 2, then=lambda: None) -> None:
+    def set_color_file(self, filename: str) -> None:
+        """
+        Set the color file to use for the model.
+
+        Args:
+            filename: File to use for the colors.
+
+        Returns: None
+        """
+        if len(self.get_vertices_array()) == 0:
+            raise AssertionError('Did you forget to set the vertices? (set_vertices_from_grid)')
+
+        # Set the shaders to use colors
+        # -----------------------------
+        self.set_shaders('./src/engine/shaders/model_2d_colors_vertex.glsl',
+                         './src/engine/shaders/model_2d_colors_fragment.glsl')
+
+        # Extract the data for the coloration from the file
+        # -------------------------------------------------
+        self.__color_file = filename
+
+        file_data = read_file(filename)
+        colors = []
+        height_limit = []
+
+        for element in file_data:
+            colors.append(element['color'])
+            height_limit.append(element['height'])
+
+        # Store the data of the coloration to be passed to the shader
+        # -----------------------------------------------------------
+        if len(colors) > 500:
+            raise BufferError('Shader used does not support more than 500 colors in the file.')
+
+        self.__colors = np.array(colors, dtype=np.float32)
+        self.__height_limit = np.array(height_limit, dtype=np.float32)
+
+    def set_vertices_from_grid_async(self, x, y, z, quality=1, then=lambda: None) -> None:
+        """
+        Set the vertices of the model from a grid.
+
+        This method:
+         - Store in the class variables the original values of the grid loaded.
+         - Set the vertices of the model after applying a decimation algorithm over them to reduce the number
+           of vertices to render.
+         - Set the height buffer with the height of the vertices.
+
+        Args:
+            then: Task too do after the thread execution
+            quality: Quality of the grid to render. 1 for max quality, 2 or more for less quality.
+            x: X values of the grid to use.
+            y: Y values of the grid.
+            z: Z values of the grid.
+
+        Returns: None
+
+        """
+
+        # store the data for future operations.
+        self.__x = np.array(x)
+        self.__y = np.array(y)
+
+        def parallel_routine():
+            """
+            Routine to be executed in parallel
+            """
+
+            # Set the vertices in the buffer
+            log.debug("Loading buffers")
+            self.scene.set_loading_message("Loading vertices...")
+            vertices = self.__generate_vertices_list(x, y, z)
+
+            log.debug("Generating Indices")
+            self.scene.set_loading_message("Generating polygons...")
+            scene_data = self.scene.get_scene_setting_data()
+            indices = self.__generate_index_list(int(len(self.__x) / scene_data['SCENE_WIDTH_X']) + quality,
+                                                 int(len(self.__y) / scene_data['SCENE_HEIGHT_Y']) + quality)
+
+            self.scene.set_loading_message("Drawing model on screen...")
+            return vertices, indices
+
+        def then_routine(vertices_indices):
+            """
+            Routine to be executed after the parallel routine
+
+            Args:
+                vertices_indices: Tuple with the list of vertices and indices to use in the model.
+            """
+            vertices = vertices_indices[0]
+            indices = vertices_indices[1]
+
+            self.set_vertices(
+                np.array(
+                    vertices,
+                    dtype=np.float32,
+                )
+            )
+            self.set_indices(np.array(indices, dtype=np.uint32))
+
+            # Only select this shader if there is no shader selected.
+            if self.shader_program is None:
+                self.set_shaders(
+                    "./src/engine/shaders/model_2d_vertex.glsl", "./src/engine/shaders/model_2d_fragment.glsl"
+                )
+
+            # call the then routine
+            then()
+
+        self.scene.set_thread_task(parallel_routine, then_routine)
+
+    def update_indices_async(self, quality: int = 2, then=lambda: None) -> None:
         """
         Recalculate vertices from grid.
 
@@ -550,7 +581,6 @@ class Map2DModel(MapModel):
             then: Routine to execute after the parallel tasks.
             quality: quality of the rendering process.
         """
-        self.__new_indices = None
 
         # noinspection PyMissingOrEmptyDocstring
         def parallel_tasks():
@@ -592,12 +622,12 @@ class Map2DModel(MapModel):
             extra_x = (right_coordinate - left_coordinate) * (extra_proportion - 1)
             extra_y = (top_coordinate - bottom_coordinate) * (extra_proportion - 1)
 
-            self.__new_indices = self.__generate_index_list(step_x + quality,
-                                                            step_y + quality,
-                                                            left_coordinate - extra_x,
-                                                            right_coordinate + extra_x,
-                                                            top_coordinate + extra_y,
-                                                            bottom_coordinate - extra_y)
+            new_indices = self.__generate_index_list(step_x + quality,
+                                                     step_y + quality,
+                                                     left_coordinate - extra_x,
+                                                     right_coordinate + extra_x,
+                                                     top_coordinate + extra_y,
+                                                     bottom_coordinate - extra_y)
 
             # Delete old triangles that are in the same place as the new ones
             # ---------------------------------------------------------------
@@ -608,139 +638,25 @@ class Map2DModel(MapModel):
                 top_coordinate,
                 bottom_coordinate)
 
+            return new_indices
+
         # noinspection PyMissingOrEmptyDocstring
-        def then_routine():
-            # Set the new indices
-            # -------------------
-            self.__indices = np.concatenate((self.__indices, self.__new_indices))
-            self.set_indices(np.array(self.__indices, dtype=np.uint32))
+        def then_routine(new_indices):
+            updated_indices = np.concatenate((self.get_indices_array(), new_indices))
+            self.set_indices(np.array(updated_indices, dtype=np.uint32))
 
             # call the then routine
             then()
 
         self.scene.set_thread_task(parallel_tasks, then_routine)
 
-    def set_color_file(self, filename: str) -> None:
+    def update_vertices(self) -> None:
         """
+        Update the vertices array of the model.
 
-        Args:
-            filename: File to use for the colors.
-
-        Returns: None
-
-        """
-        log.debug('Setting colors from file')
-        if len(self.__vertices) == 0:
-            raise AssertionError('Did you forget to set the vertices? (set_vertices_from_grid)')
-
-        # set the shaders
-        self.set_shaders('./src/engine/shaders/model_2d_colors_vertex.glsl',
-                         './src/engine/shaders/model_2d_colors_fragment.glsl')
-        self.__color_file = filename
-
-        file_data = read_file(filename)
-        colors = []
-        height_limit = []
-
-        for element in file_data:
-            colors.append(element['color'])
-            height_limit.append(element['height'])
-
-        # send error in case too many colors are passed
-        if len(colors) > 500:
-            raise BufferError('Shader used does not support more than 500 colors in the file.')
-
-        self.__colors = np.array(colors, dtype=np.float32)
-        self.__height_limit = np.array(height_limit, dtype=np.float32)
-
-    def set_vertices_from_grid_async(self, x, y, z, quality=1, then=lambda: None) -> None:
-        """
-        Set the vertices of the model from a grid.
-
-        This method:
-         - Store in the class variables the original values of the grid loaded.
-         - Set the vertices of the model after applying a decimation algorithm over them to reduce the number
-           of vertices to render.
-         - Set the height buffer with the height of the vertices.
-
-        Args:
-            then: Task too do after the thread execution
-            quality: Quality of the grid to render. 1 for max quality, 2 or more for less quality.
-            x: X values of the grid to use.
-            y: Y values of the grid.
-            z: Z values of the grid.
-
-        Returns: None
-
-        """
-
-        # store the data for future operations.
-        self.__x = np.array(x)
-        self.__y = np.array(y)
-        self.__z = np.array(z)
-
-        def parallel_routine():
-            """
-            Routine to be executed in parallel
-            """
-
-            # Set the vertices in the buffer
-            log.debug("Loading buffers")
-            self.scene.set_loading_message("Loading vertices...")
-            self.__vertices = self.__generate_vertices_list(x, y, z)
-
-            log.debug("Generating Indices")
-            self.scene.set_loading_message("Generating polygons...")
-            scene_data = self.scene.get_scene_setting_data()
-            self.__indices = self.__generate_index_list(int(len(self.__x) / scene_data['SCENE_WIDTH_X']) + quality,
-                                                        int(len(self.__y) / scene_data['SCENE_HEIGHT_Y']) + quality)
-
-            self.scene.set_loading_message("Drawing model on screen...")
-
-        def then_routine():
-            """
-            Routine to be executed after the parallel routine
-            """
-            self.set_vertices(
-                np.array(
-                    self.__vertices,
-                    dtype=np.float32,
-                )
-            )
-            self.set_indices(np.array(self.__indices, dtype=np.uint32))
-
-            # Only select this shader if there is no shader selected.
-            if self.shader_program is None:
-                self.set_shaders(
-                    "./src/engine/shaders/model_2d_vertex.glsl", "./src/engine/shaders/model_2d_fragment.glsl"
-                )
-
-            # call the then routine
-            then()
-
-        self.scene.set_thread_task(parallel_routine, then_routine)
-
-    def update_heights(self, new_height: np.ndarray) -> None:
-        """
-        Change the values of the heights of the model.
-
-        Array of new heights must have the same shape that the array of vertices but with only one element per
-        vertex. For example, if the vertices have shape (row, cols, 3), the new_height variable must have shape
-        (row, cols).
-
-        Args:
-            new_height: Numpy array with the new height values.
+        Update the vertices array used on the GPU with the actual information of the vertices stored in the model.
 
         Returns: None
         """
-
-        # Update vertices of the model
-        vertices = self.__vertices.reshape(self.get_vertices_shape())
-        vertices[:, :, 2] = new_height
-
-        # Update utility variables
-        self.__z = vertices[:, :, 2]
-
-        # Set the vertices in the buffer
-        vertices = vertices.reshape(-1)
+        vertices = self.get_vertices_array().reshape(-1)
         self.set_vertices(vertices)

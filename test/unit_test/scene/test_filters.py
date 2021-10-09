@@ -53,7 +53,7 @@ class TestContainsFilter(ProgramTestCase):
                                               100,
                                               200,
                                               [IsNotIn('Polygon 1')])
-        self.engine.transform_points(transformation)
+        self.engine.apply_transformation(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -83,7 +83,7 @@ class TestContainsFilter(ProgramTestCase):
                                               200,
                                               [IsNotIn('Polygon 1'),
                                                IsIn('Polygon 2')])
-        self.engine.transform_points(transformation)
+        self.engine.apply_transformation(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -113,7 +113,7 @@ class TestContainsFilter(ProgramTestCase):
                                               100,
                                               200,
                                               [IsNotIn('Polygon 1')])
-        self.engine.transform_points(transformation)
+        self.engine.apply_transformation(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -144,7 +144,7 @@ class TestContainsFilter(ProgramTestCase):
                                               200,
                                               [IsNotIn('Polygon 1'),
                                                IsIn('Polygon 2')])
-        self.engine.transform_points(transformation)
+        self.engine.apply_transformation(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -183,7 +183,7 @@ class TestHeightFilter(ProgramTestCase):
                                               100,
                                               200,
                                               [HeightLessThan(50)])
-        self.engine.transform_points(transformation)
+        self.engine.apply_transformation(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -212,7 +212,7 @@ class TestHeightFilter(ProgramTestCase):
                                               100,
                                               200,
                                               [HeightGreaterThan(50)])
-        self.engine.transform_points(transformation)
+        self.engine.apply_transformation(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -243,7 +243,7 @@ class TestHeightFilter(ProgramTestCase):
                                               200,
                                               [HeightGreaterThan(0),
                                                HeightLessThan(3000)])
-        self.engine.transform_points(transformation)
+        self.engine.apply_transformation(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -286,7 +286,7 @@ class TestMixedFilters(ProgramTestCase):
                                                HeightLessThan(5800),
                                                IsNotIn('Polygon 2'),
                                                IsIn('Polygon 1')])
-        self.engine.transform_points(transformation)
+        self.engine.apply_transformation(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),

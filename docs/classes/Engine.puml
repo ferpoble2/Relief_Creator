@@ -14,6 +14,8 @@ class Engine {
     - __initialize_components()
     + add_new_vertex_to_active_polygon_using_window_coords(position_x, position_y)
     + add_zoom()
+    + apply_interpolation(interpolation)
+    + apply_transformation(transformation)
     + are_frames_fixed(): boolean
     + calculate_max_min_height(model_id, polygon_id): tuple
     + change_3D_model_height_unit(model_id, measure_unit)
@@ -70,7 +72,6 @@ class Engine {
     + get_tool_title_font_size(): int
     + get_window_setting_data(): dict
     + get_zoom_level(): float
-    + interpolate_points(interpolation)
     + is_mouse_hovering_frame()
     + is_polygon_planar(polygon_id)
     + is_program_debug_mode(): boolean
@@ -105,7 +106,6 @@ class Engine {
     + set_program_view_mode(mode)
     + set_task_with_loading_frame(task)
     + set_thread_task(parallel_task, then, parallel_task_args, then_task_args)
-    + transform_points(transformation)
     + undo_action()
     + update_current_3D_model()
     + update_scene_models_colors()

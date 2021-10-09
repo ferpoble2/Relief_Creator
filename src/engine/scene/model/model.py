@@ -113,7 +113,7 @@ class Model:
 
         Returns: Numpy array with the elements currently being used in the model.
         """
-        return self.__vertices_array
+        return self.__indices_array
 
     def get_vertices_array(self) -> np.ndarray:
         """

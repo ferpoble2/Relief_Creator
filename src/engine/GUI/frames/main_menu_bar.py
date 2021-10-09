@@ -179,7 +179,7 @@ class MainMenuBar(Frame):
                 for polygon_id in polygon_id_list:
                     transformation = FillNanTransformation(active_model_id,
                                                            polygon_id)
-                    self._GUI_manager.change_points_height(transformation)
+                    self._GUI_manager.apply_transformation(transformation)
 
             imgui.end_menu()
 

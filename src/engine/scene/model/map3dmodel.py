@@ -54,7 +54,8 @@ class Map3DModel(MapModel):
                          "./src/engine/shaders/model_3d_fragment.glsl")
         self.__model_2D_used = model_2d
 
-        # Color variables
+        # Coloration variables
+        # --------------------
         self.__color_file = ''
         self.__colors = []
         self.__height_color_limits = []
@@ -70,12 +71,11 @@ class Map3DModel(MapModel):
         self.__height_array = np.array([])  # Unidimensional array
 
         self.__height_exaggeration_factor = 1
-
         self.__height_measure_unit = height_measure_unit
 
         # Rendering variables
         # -------------------
-        self.__model = identity()
+        self.__model = identity()  # Model matrix to use in the rendering
         self.__quality = 0  # Quality of the 3D model (0 is maximum)
 
         # Set the data for the model
@@ -164,7 +164,7 @@ class Map3DModel(MapModel):
         """
         self.__height_measure_unit = new_measure_unit
 
-    def change_height_normalization_factor(self, new_value) -> None:
+    def change_height_normalization_factor(self, new_value: float) -> None:
         """
         Change the normalization factor used to modify the heights of the model.
 
@@ -176,14 +176,14 @@ class Map3DModel(MapModel):
         Returns: None
         """
 
-        # do nothing if the value is the same than the before.
+        # Do nothing if the value is the same than the before.
         if self.__height_exaggeration_factor == new_value:
             return
 
-        # change the value
+        # Update the value
         self.__height_exaggeration_factor = new_value
 
-        # modify the vertices array to fit the new heights
+        # Modify the vertices array to fit the new heights
         height_array = self.__height_array * self.__height_exaggeration_factor * self.__get_conversion_factor()
         height_array = height_array.reshape(self.__vertices_shape[:2])
 
@@ -220,17 +220,18 @@ class Map3DModel(MapModel):
 
     def set_color_file(self, filename: str) -> None:
         """
+        Set the color file to use for the model.
 
         Args:
             filename: File to use for the colors.
 
         Returns: None
-
         """
         if len(self.get_vertices_array()) == 0:
             raise AssertionError('Did you forget to set the vertices? (set_vertices_from_grid)')
 
-        # set variables
+        # Extract the data for the coloration from the file
+        # -------------------------------------------------
         self.__color_file = filename
 
         file_data = read_file(filename)
@@ -241,7 +242,8 @@ class Map3DModel(MapModel):
             colors.append(element['color'])
             height_limit.append(element['height'])
 
-        # send error in case too many colors are passed
+        # Store the data of the coloration to be passed to the shader
+        # -----------------------------------------------------------
         if len(colors) > 500:
             raise BufferError('Shader used does not support more than 500 colors in the file.')
 
@@ -260,7 +262,8 @@ class Map3DModel(MapModel):
         # -------------------------------------
         self.__vertices_shape = self.__model_2D_used.get_vertices_shape()
 
-        # Get a copy of the arrays and transform the height of the points to the same unit as the other coordinates.
+        # Get a copy of the arrays and transform the height of the points to the same unit as the other coordinates
+        # ---------------------------------------------------------------------------------------------------------
         self.__vertices_array = self.__model_2D_used.get_vertices_array().copy()
         self.__vertices_array = self.__vertices_array.reshape(self.__model_2D_used.get_vertices_shape())
         self.__vertices_array[:, :, 2] = self.__vertices_array[:, :, 2] * self.__height_exaggeration_factor * \

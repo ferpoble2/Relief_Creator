@@ -282,7 +282,7 @@ class ReliefTools:
                 transformation = FillNanTransformation(active_model_id,
                                                        active_polygon_id,
                                                        self.__filters)
-                self.__gui_manager.change_points_height(transformation)
+                self.__gui_manager.apply_transformation(transformation)
 
             if self.__selected_transformation_option == 1:
                 transformation = LinearTransformation(active_model_id,
@@ -290,7 +290,7 @@ class ReliefTools:
                                                       self.__min_height_value,
                                                       self.__max_height_value,
                                                       self.__filters)
-                self.__gui_manager.change_points_height(transformation)
+                self.__gui_manager.apply_transformation(transformation)
 
     def render(self) -> None:
         """

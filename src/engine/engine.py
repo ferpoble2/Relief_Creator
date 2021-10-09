@@ -230,6 +230,93 @@ class Engine:
         self.program.add_zoom()
         self.scene.update_projection_matrix_2D()
 
+    def apply_interpolation(self, interpolation: 'Interpolation') -> None:
+        """
+        Ask the scene to modify the points of a model using the specified interpolation.
+
+        Args:
+            interpolation: Interpolation to use to modify the points of a model.
+
+        Returns: None
+        """
+        try:
+            interpolation.initialize(self.scene)
+            self.scene.apply_interpolation(interpolation)
+
+        except InterpolationError as e:
+            if e.code == 1:
+                self.set_modal_text('Error', 'There is not enough points in the polygon to do'
+                                             ' the interpolation.')
+            elif e.code == 2:
+                self.set_modal_text('Error', 'Distance must be greater than 0 to do the '
+                                             'interpolation')
+            elif e.code == 3:
+                self.set_modal_text('Error', 'Model used for interpolation is not accepted by '
+                                             'the program.')
+            elif e.code == 4:
+                self.set_modal_text('Error', 'Model not selected.')
+            elif e.code == 5:
+                self.set_modal_text('Error', 'Polygon not selected.')
+            elif e.code == 6:
+                self.set_modal_text('Error', 'Polygon selected is not planar.')
+
+    def apply_transformation(self, transformation: 'Transformation') -> None:
+        """
+        Ask the scene to apply a transformation modifying the height of the model.
+
+        Args:
+            transformation: Transformation to apply.
+
+        Returns: None
+        """
+        try:
+
+            # Initialize the transformations and catch all the possible errors
+            # ----------------------------------------------------------------
+            transformation.initialize(self.scene)
+
+            # Run the transformation in a different thread
+            # --------------------------------------------
+            self.set_loading_message('Applying transformation.')
+            self.set_task_with_loading_frame(lambda: self.scene.apply_transformation(transformation))
+
+        except FilterError as e:
+            if e.code == 0:
+                self.set_modal_text('Error',
+                                    'Polygon in filter can not be None.')
+
+        except ModelTransformationError as e:
+            if e.code == 4:
+                self.set_modal_text('Error',
+                                    'The current model is not supported to use to update the '
+                                    'height of the vertices, try using another type of '
+                                    'model.')
+            elif e.code == 2:
+                self.set_modal_text('Error',
+                                    'The polygon must have at least 3 points to be able to '
+                                    'modify the heights.')
+            elif e.code == 3:
+                self.set_modal_text('Error',
+                                    'The polygon is not planar. Try using a planar polygon.')
+            elif e.code == 6:
+                self.set_modal_text('Error',
+                                    'Polygon not selected or invalid in filter.')
+            elif e.code == 7:
+                self.set_modal_text('Error',
+                                    'Polygons used in filters must have at least 3 vertices.')
+            elif e.code == 8:
+                self.set_modal_text('Error',
+                                    'One of the polygons used in a filter is not simple/planar.')
+            elif e.code == 9:
+                self.set_modal_text('Error', 'The new minimum value is higher or equal to'
+                                             ' the maximum value.')
+            elif e.code == 10:
+                self.set_modal_text('Error', 'Model not selected.')
+            elif e.code == 11:
+                self.set_modal_text('Error', 'Polygon not selected.')
+            else:
+                raise NotImplementedError(f'ModelTransformationError with code {e.code} not handled.')
+
     def are_frames_fixed(self) -> bool:
         """
         Return if the frames are fixed or not in the application.
@@ -1190,37 +1277,6 @@ class Engine:
         return self.program.get_zoom_level()
 
     # noinspection PyUnresolvedReferences
-    def interpolate_points(self, interpolation: 'Interpolation') -> None:
-        """
-        Ask the scene to modify the points of a model using the specified interpolation.
-
-
-        Args:
-            interpolation: Interpolation to use to modify the points of a model.
-
-        Returns: None
-        """
-        try:
-            interpolation.initialize(self.scene)
-            self.scene.interpolate_points(interpolation)
-
-        except InterpolationError as e:
-            if e.code == 1:
-                self.set_modal_text('Error', 'There is not enough points in the polygon to do'
-                                             ' the interpolation.')
-            elif e.code == 2:
-                self.set_modal_text('Error', 'Distance must be greater than 0 to do the '
-                                             'interpolation')
-            elif e.code == 3:
-                self.set_modal_text('Error', 'Model used for interpolation is not accepted by '
-                                             'the program.')
-            elif e.code == 4:
-                self.set_modal_text('Error', 'Model not selected.')
-            elif e.code == 5:
-                self.set_modal_text('Error', 'Polygon not selected.')
-            elif e.code == 6:
-                self.set_modal_text('Error', 'Polygon selected is not planar.')
-
     def is_mouse_hovering_frame(self) -> bool:
         """
         Ask the GUIManager if the mouse is hovering a frame.
@@ -1765,63 +1821,6 @@ class Engine:
                 then(ret_val, *then_task_args)
             else:
                 then(*then_task_args)
-
-    def transform_points(self, transformation: 'Transformation') -> None:
-        """
-        Ask the scene to apply a transformation modifying the height of the model.
-
-        Args:
-            transformation: Transformation to apply.
-
-        Returns: None
-        """
-        try:
-
-            # Initialize the transformations and catch all the possible errors
-            # ----------------------------------------------------------------
-            transformation.initialize(self.scene)
-
-            # Run the transformation in a different thread
-            # --------------------------------------------
-            self.set_loading_message('Applying transformation.')
-            self.set_task_with_loading_frame(lambda: self.scene.transform_points(transformation))
-
-        except FilterError as e:
-            if e.code == 0:
-                self.set_modal_text('Error',
-                                    'Polygon in filter can not be None.')
-
-        except ModelTransformationError as e:
-            if e.code == 4:
-                self.set_modal_text('Error',
-                                    'The current model is not supported to use to update the '
-                                    'height of the vertices, try using another type of '
-                                    'model.')
-            elif e.code == 2:
-                self.set_modal_text('Error',
-                                    'The polygon must have at least 3 points to be able to '
-                                    'modify the heights.')
-            elif e.code == 3:
-                self.set_modal_text('Error',
-                                    'The polygon is not planar. Try using a planar polygon.')
-            elif e.code == 6:
-                self.set_modal_text('Error',
-                                    'Polygon not selected or invalid in filter.')
-            elif e.code == 7:
-                self.set_modal_text('Error',
-                                    'Polygons used in filters must have at least 3 vertices.')
-            elif e.code == 8:
-                self.set_modal_text('Error',
-                                    'One of the polygons used in a filter is not simple/planar.')
-            elif e.code == 9:
-                self.set_modal_text('Error', 'The new minimum value is higher or equal to'
-                                             ' the maximum value.')
-            elif e.code == 10:
-                self.set_modal_text('Error', 'Model not selected.')
-            elif e.code == 11:
-                self.set_modal_text('Error', 'Polygon not selected.')
-            else:
-                raise NotImplementedError(f'ModelTransformationError with code {e.code} not handled.')
 
     def undo_action(self) -> None:
         """

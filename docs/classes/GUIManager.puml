@@ -34,10 +34,12 @@ class GUIManager{
     - __update_frames_with_new_polygon(polygon_id)
     - __initialize_variables(window, regular_font_size, tool_title_font_size, tool_sub_title_font_size, debug_mode)
     + add_imported_polygon(polygon_id)
+    + add_model_to_gui(model_id)
     + add_polygon_to_gui(polygon_id)
     + add_polygon_to_polygon_folder(folder_id, polygon_id)
-    + add_model_to_gui(model_id)
     + add_zoom()
+    + apply_interpolation(interpolation)
+    + apply_transformation(transformation)
     + are_frame_fixed()
     + calculate_max_min_height(model_id, polygon_id): tuple
     + change_color_file_with_dialog()
@@ -47,37 +49,32 @@ class GUIManager{
     + change_height_unit_current_3D_model(measure_unit)
     + change_height_using_active_polygon(polygon_id, min_height, max_height, type)
     + change_map_position_unit_current_3D_model(measure_unit)
-    + change_points_height(transformation)
+    + change_model_priority(model_id, offset)
     + change_quality(quality)
+    + create_model_from_existent(base_model_id, second_model_id, model_name)
     + create_new_polygon(): str
     + create_polygon_folder(name): PolygonFolder
-    + remove_all_polygons_inside_folder(polygon_folder_id)
-    + remove_polygon_by_id(polygon_id)
-    + remove_polygon_parameter(polygon_id, key)
     + draw_frames()
-    + move_folder_position(polygon_folder_id, movement_offset)
-    + move_polygon_position(polygon_id, polygon_folder_id, movement_offset)
     + export_model_as_netcdf(model_id)
     + export_polygon_with_id(polygon_id)
     + export_polygons_inside_folder(polygon_folder_id)
     + fix_frames_position(value)
+    + get_3d_model_list(): List[str]
     + get_active_model_id(): str
     + get_active_polygon_id(): str
     + get_active_tool(): str
+    + get_controller_keyboard_callback_state(): boolean
     + get_cpt_file(): str
-    + get_model_list(): List[str]
-    + get_3d_model_list(): List[str]
     + get_gui_key_callback(): function
     + get_gui_mouse_scroll_callback(): function
     + get_height_normalization_factor_of_active_3D_model(): float
     + get_icon(icon_name): Icon
     + get_left_frame_width(): int
-    + change_model_priority(model_id, offset)
     + get_main_menu_bar_height(): int
-    + get_controller_keyboard_callback_state(): boolean
     + get_map_coordinates_from_window_coordinates(x_coordinate, y_coordinate): (float, float)
     + get_map_height_on_coordinates(x_coordinate, y_coordinate): float
     + get_map_position(): list
+    + get_model_list(): List[str]
     + get_model_names_dict(): dict
     + get_polygon_folder_id_list(): list
     + get_polygon_folder_name(polygon_folder_id): str
@@ -91,7 +88,6 @@ class GUIManager{
     + get_window_width(): int
     + get_zoom_level(): float
     + initialize(window, mode)
-    + interpolate_points(interpolation)
     + is_mouse_inside_frame(): boolean
     + is_polygon_planar()
     + is_program_loading(): boolean
@@ -99,30 +95,34 @@ class GUIManager{
     + load_netcdf_file_with_dialog()
     + load_preview_interpolation_area(distance)
     + load_shapefile_file_with_dialog()
-    + create_model_from_existent(base_model_id, second_model_id, model_name)
+    + move_folder_position(polygon_folder_id, movement_offset)
+    + move_polygon_position(polygon_id, polygon_folder_id, movement_offset)
     + move_polygon_to_polygon_folder(polygon_id, folder_id)
+    + open_combine_map_modal()
+    + open_confirmation_modal(modal_title, msg, yes_function, no_function)
+    + open_text_modal(modal_title, msg)
     + optimize_gpu_memory()
     + process_input()
     + reload_models()
+    + remove_all_polygons_inside_folder(polygon_folder_id)
     + remove_interpolation_preview(polygon_id)
     + remove_model(model_id)
+    + remove_polygon_by_id(polygon_id)
+    + remove_polygon_parameter(polygon_id, key)
     + render()
     + reset_camera_values()
     + set_active_polygon(polygon_id)
     + set_active_tool(tool)
     + set_bold_font()
-    + open_confirmation_modal(modal_title, msg, yes_function, no_function)
-    + open_combine_map_modal()
-    + set_loading_message(new_msg)
-    + open_text_modal(modal_title, msg)
-    + set_models_polygon_mode(polygon_mode)
     + set_controller_key_callback(new_state)
+    + set_loading_message(new_msg)
+    + set_models_polygon_mode(polygon_mode)
     + set_polygon_folder_name(polygon_folder_id, new_name)
     + set_polygon_name(polygon_id, new_name)
-    + set_tool_sub_title_font()
     + set_polygon_parameter(polygon_id, key, value)
     + set_program_view_mode(mode)
     + set_regular_font()
+    + set_tool_sub_title_font()
     + set_tool_title_font()
     + undo()
     + update_current_3D_model()

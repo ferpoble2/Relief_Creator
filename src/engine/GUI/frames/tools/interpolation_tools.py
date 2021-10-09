@@ -84,25 +84,25 @@ class InterpolationTools:
                 interpolation = LinearInterpolation(self.__gui_manager.get_active_model_id(),
                                                     self.__gui_manager.get_active_polygon_id(),
                                                     self.__distance_current_value)
-                self.__gui_manager.interpolate_points(interpolation)
+                self.__gui_manager.apply_interpolation(interpolation)
 
             elif self.__current_combo_option == 1:
                 interpolation = NearestInterpolation(self.__gui_manager.get_active_model_id(),
                                                      self.__gui_manager.get_active_polygon_id(),
                                                      self.__distance_current_value)
-                self.__gui_manager.interpolate_points(interpolation)
+                self.__gui_manager.apply_interpolation(interpolation)
 
             elif self.__current_combo_option == 2:
                 interpolation = CubicInterpolation(self.__gui_manager.get_active_model_id(),
                                                    self.__gui_manager.get_active_polygon_id(),
                                                    self.__distance_current_value)
-                self.__gui_manager.interpolate_points(interpolation)
+                self.__gui_manager.apply_interpolation(interpolation)
 
             elif self.__current_combo_option == 3:
                 interpolation = SmoothInterpolation(self.__gui_manager.get_active_model_id(),
                                                     self.__gui_manager.get_active_polygon_id(),
                                                     self.__distance_current_value)
-                self.__gui_manager.interpolate_points(interpolation)
+                self.__gui_manager.apply_interpolation(interpolation)
 
             else:
                 raise NotImplementedError('Interpolation method not implemented on the GUI.')

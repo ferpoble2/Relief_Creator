@@ -50,7 +50,7 @@ class TestLinearTransformation(ProgramTestCase):
                                               self.engine.get_active_polygon_id(),
                                               2000,
                                               3000)
-        self.engine.transform_points(transformation)
+        self.engine.apply_transformation(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -89,7 +89,7 @@ class TestFillNanTransformation(ProgramTestCase):
         # apply transformation with filters
         transformation = FillNanTransformation(self.engine.get_active_model_id(),
                                                self.engine.get_active_polygon_id())
-        self.engine.transform_points(transformation)
+        self.engine.apply_transformation(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
@@ -122,7 +122,7 @@ class TestFillNanTransformation(ProgramTestCase):
         # apply transformation with filters
         transformation = FillNanTransformation(self.engine.get_active_model_id(),
                                                self.engine.get_active_polygon_id())
-        self.engine.transform_points(transformation)
+        self.engine.apply_transformation(transformation)
 
         # export model to compare data
         self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),

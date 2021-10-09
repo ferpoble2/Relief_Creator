@@ -318,6 +318,28 @@ class GUIManager:
         """
         self.__engine.add_zoom()
 
+    def apply_interpolation(self, interpolation: 'Interpolation') -> None:
+        """
+        Call the engine to interpolate the points.
+
+        Args:
+            interpolation: Interpolation to use to modify the points of the model.
+
+        Returns: None
+        """
+        self.__engine.apply_interpolation(interpolation)
+
+    def apply_transformation(self, transformation: 'Transformation') -> None:
+        """
+        Call the engine to change the height of the points inside the specified polygon.
+
+        Args:
+            transformation: Transformation to apply.
+
+        Returns: None
+        """
+        self.__engine.apply_transformation(transformation)
+
     def calculate_max_min_height(self, model_id: str, polygon_id: str, return_data: list) -> None:
         """
         Ask the engine for max and min values of the vertices that are inside the polygon.
@@ -434,17 +456,6 @@ class GUIManager:
         Returns: None
         """
         self.__engine.change_quality(quality)
-
-    def change_points_height(self, transformation: 'Transformation') -> None:
-        """
-        Call the engine to change the height of the points inside the specified polygon.
-
-        Args:
-            transformation: Transformation to apply.
-
-        Returns: None
-        """
-        self.__engine.transform_points(transformation)
 
     def create_model_from_existent(self, base_model_id: str, second_model_id: str, model_name: str) -> None:
         """
@@ -865,17 +876,6 @@ class GUIManager:
 
         """
         return self.__engine.get_zoom_level()
-
-    def interpolate_points(self, interpolation: 'Interpolation') -> None:
-        """
-        Call the engine to interpolate the points.
-
-        Args:
-            interpolation: Interpolation to use to modify the points of the model.
-
-        Returns: None
-        """
-        self.__engine.interpolate_points(interpolation)
 
     def is_mouse_inside_frame(self) -> bool:
         """
