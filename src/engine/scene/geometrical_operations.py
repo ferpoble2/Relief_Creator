@@ -52,7 +52,7 @@ def delete_z_axis(list_of_points: List[float]) -> list:
     return new_list
 
 
-def get_bounding_box_indexes(points_array: np.ndarray, polygon: LinearRing) -> list:
+def get_bounding_box_indexes(points_array: np.ndarray, polygon: LinearRing) -> list[int]:
     """
     Get the indices to use in the matrix to get only the values of the matrix that are inside the bounding
     box of the polygon.
