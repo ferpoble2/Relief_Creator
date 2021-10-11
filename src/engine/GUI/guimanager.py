@@ -37,6 +37,7 @@ from imgui.integrations.glfw import GlfwRenderer
 from src.engine.GUI.frames.combine_map_modal import CombineMapModal
 from src.engine.GUI.frames.confirmation_modal import ConfirmationModal
 from src.engine.GUI.frames.debug import Debug
+from src.engine.GUI.frames.interpolate_nan_map_modal import InterpolateNanMapModal
 from src.engine.GUI.frames.loading import Loading
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar
 from src.engine.GUI.frames.mouse_coordinates import MouseCoordinates
@@ -128,6 +129,7 @@ class GUIManager:
         self.__tools_3d = Tools3D(self)
         self.__mouse_coordinates = MouseCoordinates(self)
         self.__combine_map_modal = CombineMapModal(self)
+        self.__interpolate_nan_map_modal = InterpolateNanMapModal(self)
 
         self.__component_list_2D = [
             self.__main_menu_bar,
@@ -137,7 +139,8 @@ class GUIManager:
             self.__loading,
             self.__polygon_information,
             self.__confirmation_modal,
-            self.__combine_map_modal
+            self.__combine_map_modal,
+            self.__interpolate_nan_map_modal
         ]
 
         self.__component_list_3D = [
@@ -494,7 +497,7 @@ class GUIManager:
 
     def draw_frames(self) -> None:
         """
-        Draw the components of the GUI (This dont render them).
+        Draw the components of the GUI (This method do not render them).
 
         Returns: None
         """
@@ -1060,6 +1063,14 @@ class GUIManager:
         """
         self.__combine_map_modal.should_show = True
 
+    def open_interpolate_nan_map_modal(self) -> None:
+        """
+        Open the modal to select the type of interpolation to fill the nan values of the map.
+
+        Returns: None
+        """
+        self.__interpolate_nan_map_modal.should_show = True
+
     def open_confirmation_modal(self, modal_title: str, msg: str, yes_function: callable,
                                 no_function: callable) -> None:
         """
@@ -1101,14 +1112,6 @@ class GUIManager:
                 return
 
         raise AssertionError('There is not a frame from the TextModal class to set a modal message.')
-
-    def optimize_gpu_memory(self) -> None:
-        """
-        Calls the engine to optimize the memory on the GPU.
-
-        Returns: None
-        """
-        self.__engine.optimize_gpu_memory()
 
     def process_input(self) -> None:
         """

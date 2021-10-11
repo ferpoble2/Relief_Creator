@@ -154,7 +154,7 @@ class MainMenuBar(Frame):
                 self._GUI_manager.undo_action()
             imgui.end_menu()
 
-    def __tools_menu(self, model_loaded: bool):
+    def __map_tools_menu(self, model_loaded: bool):
         """
         Options for the user to modify the maps.
 
@@ -172,7 +172,7 @@ class MainMenuBar(Frame):
 
             # Render the elements of the tools
             # --------------------------------
-            imgui.menu_item('Merge maps...', None, False, model_loaded)
+            imgui.menu_item('Merge maps', None, False, model_loaded)
             if imgui.is_item_clicked() and model_loaded:
                 self._GUI_manager.open_combine_map_modal()
 
@@ -180,6 +180,10 @@ class MainMenuBar(Frame):
             if imgui.is_item_clicked() and should_execute_logic:
                 map_transformation = FillNanMapTransformation(self._GUI_manager.get_active_model_id())
                 self._GUI_manager.apply_map_transformation(map_transformation)
+
+            imgui.menu_item('Interpolate NaN values', None, False, model_loaded)
+            if imgui.is_item_clicked() and model_loaded:
+                self._GUI_manager.open_interpolate_nan_map_modal()
 
             imgui.end_menu()
 
@@ -198,6 +202,6 @@ class MainMenuBar(Frame):
 
             self.__view_menu(model_loaded)
 
-            self.__tools_menu(model_loaded)
+            self.__map_tools_menu(model_loaded)
 
             imgui.end_main_menu_bar()

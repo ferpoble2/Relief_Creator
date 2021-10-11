@@ -1,0 +1,12 @@
+@startuml
+
+class InterpolateNanMapTransformation{
+
+     - __interpolation_type: InterpolateNanMapTransformationType
+     - __model_vertices: array
+
+     + initialize(scene): None
+     + apply(): array
+}
+
+@enduml

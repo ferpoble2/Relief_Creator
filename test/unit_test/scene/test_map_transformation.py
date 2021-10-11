@@ -26,6 +26,8 @@ import warnings
 import numpy as np
 
 from src.engine.scene.map_transformation.fill_nan_map_transformation import FillNanMapTransformation
+from src.engine.scene.map_transformation.interpolate_nan_map_transformation import InterpolateNanMapTransformation, \
+    InterpolateNanMapTransformationType
 from src.engine.scene.map_transformation.merge_maps_transformation import MergeMapsTransformation
 from src.error.map_transformation_error import MapTransformationError
 from src.input.NetCDF import read_info
@@ -195,6 +197,87 @@ class TestFillNanTransformation(ProgramTestCase):
                                       "heights stored are not equal to the expected.")
 
         os.remove('resources/test_resources/temp/fill_polygon_outside.nc')
+
+
+class TestInterpolateNanMapTransformation(ProgramTestCase):
+
+    def setUp(self) -> None:
+        """Logic executed before every test."""
+        super().setUp()
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_data_nan_values.nc')
+
+    def test_cubic_transformation(self):
+        # Apply transformation
+        # --------------------
+        map_transformation = InterpolateNanMapTransformation(self.engine.get_active_model_id(),
+                                                             InterpolateNanMapTransformationType.cubic)
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
+                                           'resources/test_resources/temp/interpolate_nan_map_3.nc')
+
+        # Check values
+        # ------------
+        self.check_map_values('resources/test_resources/temp/interpolate_nan_map_3.nc',
+                              'resources/test_resources/expected_data/netcdf/expected_map_transformation_5.nc')
+
+        os.remove('resources/test_resources/temp/interpolate_nan_map_3.nc')
+
+    def test_nearest_transformation(self):
+        # Apply transformation
+        # --------------------
+        map_transformation = InterpolateNanMapTransformation(self.engine.get_active_model_id(),
+                                                             InterpolateNanMapTransformationType.nearest)
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
+                                           'resources/test_resources/temp/interpolate_nan_map_2.nc')
+
+        # Check values
+        # ------------
+        self.check_map_values('resources/test_resources/temp/interpolate_nan_map_2.nc',
+                              'resources/test_resources/expected_data/netcdf/expected_map_transformation_4.nc')
+
+        os.remove('resources/test_resources/temp/interpolate_nan_map_2.nc')
+
+    def test_linear_transformation(self):
+        # Apply transformation
+        # --------------------
+        map_transformation = InterpolateNanMapTransformation(self.engine.get_active_model_id(),
+                                                             InterpolateNanMapTransformationType.linear)
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
+                                           'resources/test_resources/temp/interpolate_nan_map_1.nc')
+
+        # Check values
+        # ------------
+        self.check_map_values('resources/test_resources/temp/interpolate_nan_map_1.nc',
+                              'resources/test_resources/expected_data/netcdf/expected_map_transformation_3.nc')
+
+        os.remove('resources/test_resources/temp/interpolate_nan_map_1.nc')
+
+    def check_map_values(self, generated_file: str, expected_data_file: str) -> None:
+        """
+        Check the data from a generated netcdf file and the data in the expected_data_file.
+
+        Asserts used are the ones defined in teh numpy.testing library.
+
+        Args:
+            generated_file: Netcdf file with the data to check.
+            expected_data_file: Netcdf file with the expected data from the generated file.
+
+        Returns: None
+        """
+        x, y, z = read_info(generated_file)
+        expected_x, expected_y, expected_z = read_info(expected_data_file)
+        np.testing.assert_array_equal(expected_x,
+                                      x,
+                                      "x array stored is not the same as the expected.")
+        np.testing.assert_array_equal(expected_y,
+                                      y,
+                                      "y array stored is not the same as the expected.")
+        np.testing.assert_array_equal(expected_z,
+                                      z,
+                                      "heights stored are not equal to the expected.")
 
 
 if __name__ == '__main__':

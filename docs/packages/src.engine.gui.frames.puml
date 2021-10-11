@@ -14,6 +14,7 @@ package src.engine.gui.frames {
     class src.engine.gui.frames.Tools_3D
     class src.engine.gui.frames.MouseCoordinates
     class src.engine.gui.frames.CombineMapModal
+    class src.engine.gui.frames.InterpolateNanMapModal
 }
 
 src.engine.gui.frames.Tools_3D -u-|> src.engine.gui.frames.Frame
@@ -27,6 +28,7 @@ src.engine.gui.frames.Tools -u-|> src.engine.gui.frames.Frame
 src.engine.gui.frames.ConfirmationModal -u-|> src.engine.gui.frames.Frame
 src.engine.gui.frames.MouseCoordinates -u-|> src.engine.gui.frames.Frame
 src.engine.gui.frames.CombineMapModal -u-|> src.engine.gui.frames.Frame
+src.engine.gui.frames.InterpolateNanMapModal -u-|> src.engine.gui.frames.Frame
 !endsub
 
 !startsub EXTERNAL
@@ -34,6 +36,7 @@ src.engine.gui.frames.CombineMapModal -u-|> src.engine.gui.frames.Frame
     src.engine.gui.frames.MainMenuBar ..> src.program.ViewMode
     src.engine.gui.GUIManager o--o src.engine.gui.frames.Frame
 
+    src.engine.gui.frames.InterpolateNanMapModal ..> src.engine.scene.map_transformation.InterpolateNanMapTransformation
     src.engine.gui.frames.CombineMapModal ..> src.engine.scene.map_transformation.MergeMapsTransformation
     src.engine.gui.frames.MainMenuBar ..> src.engine.scene.map_transformation.FillNanMapTransformation
 !endsub

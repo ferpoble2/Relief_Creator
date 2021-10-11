@@ -101,10 +101,6 @@ class Tools(Frame):
             log.debug("-----------------------------------")
             self._GUI_manager.reload_models()
 
-        # if imgui.button("Optimize GPU memory", width=left_frame_width - self.__button_margin_width):
-        #     log.debug("Optimize GPU memory button pressed")
-        #     self._GUI_manager.optimize_gpu_memory()
-
         changed, values = imgui.slider_int("Quality", self.__slide_bar_quality, 1, 30)
         if changed:
             log.debug("Changed slide bar quality")
