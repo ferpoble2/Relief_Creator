@@ -40,7 +40,16 @@
     src.engine.Engine ..> src.output.NetcdfExporter
     src.engine.Engine ..> src.program.Tools
     src.engine.Engine ..> src.program.ViewMode
+
+    src.engine.Engine ..> src.error.ExportError
     src.engine.Engine ..> src.error.FilterError
+    src.engine.Engine ..> src.error.InterpolationError
+    src.engine.Engine ..> src.error.LineIntersectionError
+    src.engine.Engine ..> src.error.TransformationError
+    src.engine.Engine ..> src.error.NetCDFImportError
+    src.engine.Engine ..> src.error.RepeatedPointError
+    src.engine.Engine ..> src.error.SceneError
+    src.engine.Engine ..> src.error.MapTransformationError
 !endsub
 
 ' Code that will affect only the current diagramde

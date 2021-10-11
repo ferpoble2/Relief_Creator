@@ -36,10 +36,11 @@ from src.error.export_error import ExportError
 from src.error.filter_error import FilterError
 from src.error.interpolation_error import InterpolationError
 from src.error.line_intersection_error import LineIntersectionError
-from src.error.model_transformation_error import ModelTransformationError
+from src.error.map_transformation_error import MapTransformationError
 from src.error.netcdf_import_error import NetCDFImportError
 from src.error.repeated_point_error import RepeatedPointError
 from src.error.scene_error import SceneError
+from src.error.transformation_error import TransformationError
 from src.input.NetCDF import read_info
 from src.input.shapefile_importer import ShapefileImporter
 from src.output.netcdf_exporter import NetcdfExporter
@@ -53,6 +54,7 @@ if TYPE_CHECKING:
     from src.program.program import Program
     from src.engine.scene.transformation.transformation import Transformation
     from src.engine.scene.interpolation.interpolation import Interpolation
+    from src.engine.scene.map_transformation.map_transformation import MapTransformation
 
 log = get_logger(module='ENGINE')
 
@@ -260,6 +262,35 @@ class Engine:
             elif e.code == 6:
                 self.set_modal_text('Error', 'Polygon selected is not planar.')
 
+    def apply_map_transformation(self, map_transformation: 'MapTransformation') -> None:
+        """
+        Ask the scene to modify the points of a map using a MapTransformation.
+
+        Args:
+            map_transformation: Transformation to apply on the models.
+
+        Returns: None
+        """
+        try:
+            # Initialize the transformation
+            # -----------------------------
+            map_transformation.initialize(self.scene)
+
+            # Run the transformation in a different thread
+            # --------------------------------------------
+            self.set_loading_message('Applying map transformation.')
+            self.set_task_with_loading_frame(lambda: self.scene.apply_map_transformation(map_transformation))
+
+        except MapTransformationError as e:
+            if e.code == 0:
+                self.set_modal_text('Error', 'Model specified can not be None.')
+            elif e.code == 1:
+                self.set_modal_text('Error', 'Model specified not found in the program.')
+            elif e.code == 2:
+                self.set_modal_text('Error', 'One polygon used for the transformation is not planar.')
+            else:
+                raise NotImplementedError(f'MapTransformationError with code {e.code} not handled.')
+
     def apply_transformation(self, transformation: 'Transformation') -> None:
         """
         Ask the scene to apply a transformation modifying the height of the model.
@@ -285,7 +316,7 @@ class Engine:
                 self.set_modal_text('Error',
                                     'Polygon in filter can not be None.')
 
-        except ModelTransformationError as e:
+        except TransformationError as e:
             if e.code == 4:
                 self.set_modal_text('Error',
                                     'The current model is not supported to use to update the '
@@ -315,7 +346,7 @@ class Engine:
             elif e.code == 11:
                 self.set_modal_text('Error', 'Polygon not selected.')
             else:
-                raise NotImplementedError(f'ModelTransformationError with code {e.code} not handled.')
+                raise NotImplementedError(f'TransformationError with code {e.code} not handled.')
 
     def are_frames_fixed(self) -> bool:
         """
@@ -549,41 +580,6 @@ class Engine:
         Returns: None
         """
         Settings.WIDTH = width
-
-    def create_model_from_existent(self, base_model_id: str, second_model_id: str, new_model_name: str) -> None:
-        """
-        Ask the scene to merge thw two models into a new one.
-
-        The created model is added to the scene.
-
-        Args:
-            base_model_id: ID of the base model to use for the
-            second_model_id: ID of the second model to use for the merging (the one to use below the base model)
-            new_model_name: Name of the new generated model.
-
-        Returns: None
-        """
-        self.program.set_loading(True)
-        self.set_loading_message("Please wait a moment...")
-
-        def then_routine(model_id: str) -> None:
-            """
-            Routine to execute after the creation of the new model.
-
-            Args:
-                model_id: ID of the generated model.
-
-            Returns: None
-            """
-            self.gui_manager.add_model_to_gui(model_id)
-            self.program.set_loading(False)
-
-        self.scene.create_model_from_existent(base_model_id,
-                                              second_model_id,
-                                              new_model_name,
-                                              self.program.get_cpt_file(),
-                                              self.program.get_active_model(),
-                                              then_routine)
 
     def create_model_from_file(self, path_color_file: str, path_model: str, then: callable = lambda: None) -> None:
         """

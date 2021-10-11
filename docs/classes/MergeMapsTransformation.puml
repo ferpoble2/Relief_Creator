@@ -1,0 +1,11 @@
+@startuml
+class MergeMapsTransformation {
+    __second_model_id: str
+
+    __base_model_vertices: array
+    __second_model_vertices: array
+
+    + initialize(scene)
+    + apply(): array
+}
+@enduml

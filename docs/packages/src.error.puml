@@ -9,13 +9,14 @@ package src.error {
     class src.error.GUIError
     class src.error.InterpolationError
     class src.error.LineIntersectionError
-    class src.error.ModelTransformationError
+    class src.error.TransformationError
     class src.error.NetcdfImportError
     class src.error.PolygonError
     class src.error.RepeatedPointError
     class src.error.SceneError
     class src.error.FilterError
     class src.error.PolygonFolderError
+    class src.error.MapTransformationError
 }
 
 src.error.BaseError <|-- src.error.PolygonFolderError
@@ -28,8 +29,9 @@ src.error.BaseError <|-- src.error.FilterError
 
 src.error.PolygonError <|-- src.error.RepeatedPointError
 src.error.PolygonError <|-- src.error.LineIntersectionError
-src.error.SceneError <|-- src.error.ModelTransformationError
+src.error.SceneError <|-- src.error.TransformationError
 src.error.SceneError <|-- src.error.InterpolationError
+src.error.SceneError <|-- src.error.MapTransformationError
 !endsub
 
 !startsub EXTERNAL

@@ -1,0 +1,10 @@
+@startuml
+
+class MapTransformation {
+    + model_id: str
+
+    + initialize(scene)
+    + apply(): array
+}
+
+@enduml

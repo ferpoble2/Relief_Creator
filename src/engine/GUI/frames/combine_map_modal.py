@@ -22,7 +22,8 @@ from typing import List, TYPE_CHECKING, Union
 
 import imgui
 
-from engine.GUI.frames.frame import Frame
+from src.engine.GUI.frames.frame import Frame
+from src.engine.scene.map_transformation.merge_maps_transformation import MergeMapsTransformation
 
 if TYPE_CHECKING:
     from src.engine.GUI.guimanager import GUIManager
@@ -106,20 +107,20 @@ class CombineMapModal(Frame):
 
         if imgui.begin_popup_modal(self.__modal_title)[0]:
             imgui.text("Select the maps to merge:")
-            _, self.__selected_map_1 = imgui.combo("Primary map", self.__selected_map_1, self.__model_name_list)
-            _, self.__selected_map_2 = imgui.combo("Secondary map", self.__selected_map_2, self.__model_name_list)
-
-            _, self.__new_map_name = imgui.input_text("Name of new map", self.__new_map_name, 500)
+            _, self.__selected_map_1 = imgui.combo("Base model", self.__selected_map_1, self.__model_name_list)
+            _, self.__selected_map_2 = imgui.combo("Secondary model", self.__selected_map_2, self.__model_name_list)
 
             if imgui.button("Close", self.__button_width):
+                self._GUI_manager.set_controller_keyboard_callback_state(True)
                 imgui.close_current_popup()
 
             imgui.same_line()
 
             if imgui.button("Merge Maps", self.__button_width):
-                self._GUI_manager.create_model_from_existent(self.__model_id_list[self.__selected_map_1],
-                                                             self.__model_id_list[self.__selected_map_2],
-                                                             self.__new_map_name)
+                map_transformation = MergeMapsTransformation(self.__model_id_list[self.__selected_map_1],
+                                                             self.__model_id_list[self.__selected_map_2])
+                self._GUI_manager.apply_map_transformation(map_transformation)
+                self._GUI_manager.set_controller_keyboard_callback_state(True)
                 imgui.close_current_popup()
 
             imgui.end_popup()

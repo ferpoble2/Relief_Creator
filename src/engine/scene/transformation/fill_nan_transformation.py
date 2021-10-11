@@ -26,7 +26,7 @@ from shapely.geometry import LinearRing
 
 from src.engine.scene.geometrical_operations import delete_z_axis, generate_mask, get_bounding_box_indexes
 from src.engine.scene.transformation.transformation import Transformation
-from src.error.model_transformation_error import ModelTransformationError
+from src.error.transformation_error import TransformationError
 
 if TYPE_CHECKING:
     from src.engine.scene.scene import Scene
@@ -58,10 +58,10 @@ class FillNanTransformation(Transformation):
         self.__vertex_array = scene.get_map2d_model_vertices_array(self.model_id)
 
         if len(self.__polygon_points) < 9:
-            raise ModelTransformationError(2)
+            raise TransformationError(2)
 
         if not scene.is_polygon_planar(self.polygon_id):
-            raise ModelTransformationError(3)
+            raise TransformationError(3)
 
     def apply(self) -> np.ndarray:
         """
@@ -92,8 +92,8 @@ class FillNanTransformation(Transformation):
         filtered_flags = self.apply_filters(points_array_cut)
         flags = polygon_flags & filtered_flags
 
-        # modify the height linearly if there are points to modify
-        if len(height_cut[filtered_flags]) > 0:
+        # set nan to the values of the height
+        if len(height_cut[flags]) > 0:
             height_cut[flags] = np.nan
             height[min_y_index:max_y_index, min_x_index:max_x_index] = height_cut
 

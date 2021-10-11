@@ -14,6 +14,7 @@ package src.engine.scene {
     !includesub src.engine.scene.transformation.puml!INTERNAL
     !includesub src.engine.scene.filter.puml!INTERNAL
     !includesub src.engine.scene.interpolation.puml!INTERNAL
+    !includesub src.engine.scene.map_transformation.puml!INTERNAL
 }
 !endsub
 
@@ -23,6 +24,7 @@ package src.engine.scene {
     !includesub src.engine.scene.transformation.puml!EXTERNAL
     !includesub src.engine.scene.filter.puml!EXTERNAL
     !includesub src.engine.scene.interpolation.puml!EXTERNAL
+    !includesub src.engine.scene.map_transformation.puml!EXTERNAL
 
     src.engine.scene.Scene o-u--o src.engine.Engine
     src.engine.scene.Scene ..> src.error.SceneError

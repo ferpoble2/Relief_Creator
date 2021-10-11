@@ -24,7 +24,7 @@ import OpenGL.GL as GL
 import imgui
 
 from src.engine.GUI.frames.frame import Frame
-from src.engine.scene.transformation.fill_nan_transformation import FillNanTransformation
+from src.engine.scene.map_transformation.fill_nan_map_transformation import FillNanMapTransformation
 from src.program.view_mode import ViewMode
 from src.utils import get_logger
 
@@ -161,25 +161,25 @@ class MainMenuBar(Frame):
         Args:
             model_loaded: Boolean indicating if there is a model loaded in the program.
         """
-        if imgui.begin_menu('Tools', True):
+        if imgui.begin_menu('Map Tools', True):
 
             # Get the information ready for the menu to work
             # ----------------------------------------------
             polygon_id_list = self._GUI_manager.get_polygon_id_list()
-            polygons_loaded = polygon_id_list != []
 
+            polygons_loaded = polygon_id_list != []
             should_execute_logic = model_loaded and polygons_loaded
 
-            # Render the item
-            # ---------------
+            # Render the elements of the tools
+            # --------------------------------
+            imgui.menu_item('Merge maps...', None, False, model_loaded)
+            if imgui.is_item_clicked() and model_loaded:
+                self._GUI_manager.open_combine_map_modal()
+
             imgui.menu_item('Fill all polygons with NaN', None, False, should_execute_logic)
             if imgui.is_item_clicked() and should_execute_logic:
-                # Apply a transformation to all the polygons in the program
-                active_model_id = self._GUI_manager.get_active_model_id()
-                for polygon_id in polygon_id_list:
-                    transformation = FillNanTransformation(active_model_id,
-                                                           polygon_id)
-                    self._GUI_manager.apply_transformation(transformation)
+                map_transformation = FillNanMapTransformation(self._GUI_manager.get_active_model_id())
+                self._GUI_manager.apply_map_transformation(map_transformation)
 
             imgui.end_menu()
 

@@ -56,6 +56,7 @@ if TYPE_CHECKING:
     from src.program.tools import Tools
     from src.engine.scene.transformation.transformation import Transformation
     from src.engine.scene.interpolation.interpolation import Interpolation
+    from src.engine.scene.map_transformation.map_transformation import MapTransformation
 
 # noinspection SpellCheckingInspection
 log = get_logger(module='GUIMANAGER')
@@ -329,6 +330,17 @@ class GUIManager:
         """
         self.__engine.apply_interpolation(interpolation)
 
+    def apply_map_transformation(self, map_transformation: 'MapTransformation') -> None:
+        """
+        Ask the engine of the program to apply a map transformation.
+
+        Args:
+            map_transformation: Transformation to apply on the models.
+
+        Returns: None
+        """
+        self.__engine.apply_map_transformation(map_transformation)
+
     def apply_transformation(self, transformation: 'Transformation') -> None:
         """
         Call the engine to change the height of the points inside the specified polygon.
@@ -456,19 +468,6 @@ class GUIManager:
         Returns: None
         """
         self.__engine.change_quality(quality)
-
-    def create_model_from_existent(self, base_model_id: str, second_model_id: str, model_name: str) -> None:
-        """
-        Ask the engine to merge two maps into a new one.
-
-        Args:
-            base_model_id: ID of the model to use as base for the merging of the maps.
-            second_model_id: ID of the model to use as the second model (the one who goes behind the base model).
-            model_name: Name of the generated model.
-
-        Returns: None
-        """
-        self.__engine.create_model_from_existent(base_model_id, second_model_id, model_name)
 
     def create_new_polygon(self, folder_id: str = None) -> str:
         """

@@ -16,5 +16,8 @@
 #  END GPL LICENSE BLOCK
 
 """
-File Description.
+Module that defines the Transformations of the program.
+
+Each transformation is associated with a specified model and a specified polygon that will be used to apply the
+transformation over the data of the model.
 """

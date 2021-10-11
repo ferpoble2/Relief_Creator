@@ -17,6 +17,8 @@
 
 """
 Module that defines the class Transformation, class that stores the logic of the transformation of the program.
+
+Every transformation must have, at least, one model and polygon associated to them. Otherwise, an exception is raised.
 """
 
 from typing import List, TYPE_CHECKING
@@ -24,7 +26,7 @@ from typing import List, TYPE_CHECKING
 import numpy as np
 
 from src.engine.scene.filter.filter import Filter
-from src.error.model_transformation_error import ModelTransformationError
+from src.error.transformation_error import TransformationError
 
 if TYPE_CHECKING:
     from src.engine.scene.scene import Scene
@@ -71,10 +73,10 @@ class Transformation:
             transformation_filter.initialize(scene)
 
         if self.model_id is None:
-            raise ModelTransformationError(10)
+            raise TransformationError(10)
 
         if self.polygon_id is None:
-            raise ModelTransformationError(11)
+            raise TransformationError(11)
 
     def apply_filters(self, model_vertices: np.ndarray) -> np.ndarray:
         """

@@ -4,7 +4,8 @@
         + add_new_vertex_to_polygon_using_map_coords(x_coord, y_coord, polygon_id)
         + add_new_vertex_to_polygon_using_window_coords(position_x, position_y, polygon_id, model_id,
                                                         scene_settings_data, window_settings_data)
-        + apply_interpolation(polygon_id, model_id, distance, type_interpolation)
+        + apply_interpolation(interpolation)
+        + apply_map_transformation(map_transformation)
         + apply_transformation(transformation)
         + calculate_map_position_from_window(position_x, position_y, polygon_id, model_id, scene_settings_data,
                                                window_settings_data): (float, float)
@@ -20,8 +21,6 @@
         + change_polygon_draw_priority(polygon_id, new_position)
         + create_3D_model_if_not_exists(model_id)
         + create_model_from_data_async(path_color_file, path_model, model_id)
-        + create_model_from_existent(base_model_id, second_model_id, new_model_name, path_color_file,
-                                      active_model_id)
         + create_new_polygon(): str
         + delete_polygon_by_id(polygon_id)
         + delete_polygon_param(polygon_id, key)

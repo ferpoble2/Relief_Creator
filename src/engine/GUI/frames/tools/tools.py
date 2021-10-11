@@ -140,16 +140,19 @@ class Tools(Frame):
         else:
             imgui.begin('Tools')
 
+        # Show the active tool on the application
+        # ---------------------------------------
         self.__show_active_tool()
 
-        left_frame_width = self._GUI_manager.get_left_frame_width()
-
+        # Show the different tools of the application
+        # -------------------------------------------
         imgui.separator()
         self.__show_visualization_tools()
 
         imgui.separator()
         self.__polygon_tools.render()
 
+        # Show relief and interpolation tools only if there is an active polygon on the program
         if self._GUI_manager.get_active_polygon_id() is not None:
             imgui.separator()
             self.__relief_tools.render()

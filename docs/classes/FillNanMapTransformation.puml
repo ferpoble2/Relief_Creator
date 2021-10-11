@@ -1,0 +1,9 @@
+@startuml
+class FillNanMapTransformation {
+    - __polygon_points: dict
+    - __model_vertices: array
+
+    + initialize(scene)
+    + apply(): array
+}
+@enduml

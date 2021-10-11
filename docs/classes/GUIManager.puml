@@ -39,6 +39,7 @@ class GUIManager{
     + add_polygon_to_polygon_folder(folder_id, polygon_id)
     + add_zoom()
     + apply_interpolation(interpolation)
+    + apply_map_transformation(map_transformation)
     + apply_transformation(transformation)
     + are_frame_fixed()
     + calculate_max_min_height(model_id, polygon_id): tuple
@@ -51,7 +52,6 @@ class GUIManager{
     + change_map_position_unit_current_3D_model(measure_unit)
     + change_model_priority(model_id, offset)
     + change_quality(quality)
-    + create_model_from_existent(base_model_id, second_model_id, model_name)
     + create_new_polygon(): str
     + create_polygon_folder(name): PolygonFolder
     + draw_frames()

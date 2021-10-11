@@ -20,40 +20,10 @@ Module to tests the creation of models on the scene.
 """
 import os
 
-import numpy as np
 import psutil
 
-from src.input.NetCDF import read_info
 from src.program.view_mode import ViewMode
 from test.test_case import ProgramTestCase
-
-
-class TestCreateModelFromExistent(ProgramTestCase):
-
-    def test_creation_model(self):
-        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                           'resources/test_resources/netcdf/test_model_3.nc')
-        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                           'resources/test_resources/netcdf/test_model_4.nc')
-
-        self.engine.create_model_from_existent('0', '1', 'new_model')
-        self.engine.export_model_as_netcdf('2', 'resources/test_resources/temp/combined_model_test.nc')
-
-        x, y, z = read_info('resources/test_resources/temp/combined_model_test.nc')
-        expected_x, expected_y, expected_z = read_info(
-            'resources/test_resources/expected_data/netcdf/expected_combined.nc')
-
-        np.testing.assert_array_equal(expected_x,
-                                      x,
-                                      "x array stored is not the same as the expected.")
-        np.testing.assert_array_equal(expected_y,
-                                      y,
-                                      "y array stored is not the same as the expected.")
-        np.testing.assert_array_equal(expected_z,
-                                      z,
-                                      "heights stored are not equal to the expected.")
-
-        os.remove('resources/test_resources/temp/combined_model_test.nc')
 
 
 class Test3DModelCreationMemoryUsageOneModel(ProgramTestCase):

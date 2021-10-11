@@ -27,7 +27,7 @@ from shapely.geometry.polygon import LinearRing as LinearRing
 from src.engine.scene.filter.filter import Filter
 from src.engine.scene.geometrical_operations import delete_z_axis, generate_mask, get_bounding_box_indexes
 from src.engine.scene.transformation.transformation import Transformation
-from src.error.model_transformation_error import ModelTransformationError
+from src.error.transformation_error import TransformationError
 
 if TYPE_CHECKING:
     from src.engine.scene.scene import Scene
@@ -105,13 +105,13 @@ class LinearTransformation(Transformation):
         self.__vertex_array = scene.get_map2d_model_vertices_array(self.model_id)
 
         if self.__min_height > self.__max_height:
-            raise ModelTransformationError(9)
+            raise TransformationError(9)
 
         if len(self.__polygon_points) < 9:
-            raise ModelTransformationError(2)
+            raise TransformationError(2)
 
         if not scene.is_polygon_planar(self.polygon_id):
-            raise ModelTransformationError(3)
+            raise TransformationError(3)
 
     def apply(self) -> np.ndarray:
         """

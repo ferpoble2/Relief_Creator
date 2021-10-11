@@ -22,9 +22,6 @@ src.engine.gui.frames.tools.Tools *-- src.engine.gui.frames.tools.InterpolationT
 
 !startsub EXTERNAL
     src.engine.gui.frames.tools.Tools -u--|> src.engine.gui.frames.Frame
-    src.engine.gui.frames.tools.ReliefTools ..> src.error.SceneError
-    src.engine.gui.frames.tools.ReliefTools ..> src.error.ModelTransformationError
-    src.engine.gui.frames.tools.InterpolationTools ..> src.error.InterpolationError
     src.engine.gui.frames.tools.PolygonTools ..> src.program.Tools
     src.engine.gui.frames.tools.Tools ..> src.program.Tools
 

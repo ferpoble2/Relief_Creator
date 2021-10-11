@@ -1,0 +1,36 @@
+@startuml
+
+' Template file to use to create the diagrams od the packages.
+' Every file must have a sub part called INTERNAL with the internal connections of the package and
+' a sub part called EXTERNAL with the external parts.
+
+!startsub INTERNAL
+
+package src.engine.scene.map_transformation {
+    class src.engine.scene.map_transformation.MapTransformation
+    class src.engine.scene.map_transformation.MergeMapsTransformation
+    class src.engine.scene.map_transformation.FillNanMapTransformation
+}
+
+src.engine.scene.map_transformation.MergeMapsTransformation -u-|> src.engine.scene.map_transformation.MapTransformation
+src.engine.scene.map_transformation.FillNanMapTransformation -u-|> src.engine.scene.map_transformation.MapTransformation
+!endsub
+
+!startsub EXTERNAL
+    src.engine.scene.map_transformation.MapTransformation <..> src.engine.scene.Scene
+
+    src.engine.scene.map_transformation.MapTransformation ..> src.error.MapTransformationError
+
+    src.engine.scene.map_transformation.MergeMapsTransformation ..> src.error.MapTransformationError
+    src.engine.scene.map_transformation.MergeMapsTransformation ..> src.engine.scene.geometrical_operations
+
+    src.engine.scene.map_transformation.FillNanMapTransformation ..> src.error.MapTransformationError
+    src.engine.scene.map_transformation.FillNanMapTransformation ..> src.engine.scene.geometrical_operations
+!endsub
+
+
+' Code that will affect only the current diagram
+' can be messy since it will not be imported
+hide members
+
+@enduml

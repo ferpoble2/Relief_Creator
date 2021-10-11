@@ -28,9 +28,9 @@ import OpenGL.constant as OGLConstant
 import numpy as np
 
 from src.engine.scene.camera import Camera
-from src.engine.scene.geometrical_operations import get_external_polygon_points, get_max_min_inside_polygon, \
-    merge_matrices
+from src.engine.scene.geometrical_operations import get_external_polygon_points, get_max_min_inside_polygon
 from src.engine.scene.interpolation.interpolation import Interpolation
+from src.engine.scene.map_transformation.map_transformation import MapTransformation
 from src.engine.scene.model.lines import Lines
 from src.engine.scene.model.map2dmodel import Map2DModel
 from src.engine.scene.model.map3dmodel import Map3DModel
@@ -207,6 +207,19 @@ class Scene:
         self.__engine.set_loading_message('Interpolating points, this may take a while.')
         self.__engine.set_program_loading(True)
         self.__engine.set_thread_task(parallel_task, then_task)
+
+    def apply_map_transformation(self, map_transformation: 'MapTransformation') -> None:
+        """
+        Modify the model specified in the transformation using the transformation itself and update the vertices of
+        the model.
+
+        Args:
+            map_transformation: MapTransformation to apply on the models.
+
+        Returns: None
+        """
+        map_transformation.apply()
+        self.__model_hash[map_transformation.model_id].update_vertices()
 
     def apply_transformation(self, transformation: 'Transformation') -> None:
         """
@@ -596,47 +609,6 @@ class Scene:
 
         log.debug("Setting vertices from grid.")
         model.set_vertices_from_grid_async(X, Y, Z, quality_maps, then_routine)
-
-    def create_model_from_existent(self,
-                                   base_model_id: str,
-                                   second_model_id: str,
-                                   new_model_name: str,
-                                   path_color_file: str,
-                                   active_model_id: str,
-                                   then: Callable = lambda x: None) -> None:
-        """
-        Generate a new 2D model on the scene merging already existent models.
-
-        IMPORTANT:
-            This method is asynchronous, this is, the logic defined in this method (the load of the model into the
-            program) is executed in a different thread from the main one, and thus, this method returns immediately
-            after being called.
-
-            To execute logic after the load of the model into the program, use the 'then' parameter.
-
-        Args:
-            then: Routine to execute after the creation of the model. Receives the ID of the generated model as
-                  only parameter.
-            active_model_id: ID of the active model on the program.
-            path_color_file: Path to the color file to use for the coloring of the model.
-            base_model_id: ID of the model to use as base.
-            second_model_id: ID of the second model to use.
-            new_model_name: Name of the new model.
-        """
-        base_model_info = self.get_model_information(base_model_id)
-        second_model_info = self.get_model_information(second_model_id)
-
-        new_heights = merge_matrices(base_model_info["height_array"],
-                                     second_model_info["height_array"])
-
-        self.create_model_from_data_async(path_color_file,
-                                          base_model_info['coordinates_array'][0],
-                                          base_model_info['coordinates_array'][1],
-                                          new_heights,
-                                          new_model_name,
-                                          active_model_id,
-                                          1,
-                                          then)
 
     def create_new_polygon(self, point_list: list = None, parameters: dict = None,
                            priority_position: int = None) -> str:

@@ -18,13 +18,13 @@ src.engine.scene.transformation.FillNanTransformation -u-|> src.engine.scene.tra
 
 !startsub EXTERNAL
     src.engine.scene.transformation.Transformation <..> src.engine.scene.Scene
-    src.engine.scene.transformation.LinearTransformation ..> src.error.ModelTransformationError
-    src.engine.scene.transformation.Transformation ..> src.error.ModelTransformationError
+    src.engine.scene.transformation.LinearTransformation ..> src.error.TransformationError
+    src.engine.scene.transformation.Transformation ..> src.error.TransformationError
     src.engine.scene.transformation.LinearTransformation ..> src.engine.scene.geometrical_operations
     src.engine.scene.transformation.Transformation ..> src.engine.scene.filter.Filter
 
     src.engine.scene.transformation.FillNanTransformation ..> src.engine.scene.geometrical_operations
-    src.engine.scene.transformation.FillNanTransformation ..> src.error.ModelTransformationError
+    src.engine.scene.transformation.FillNanTransformation ..> src.error.TransformationError
 !endsub
 
 
