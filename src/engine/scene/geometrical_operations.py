@@ -193,7 +193,8 @@ def get_external_polygon_points(polygon_points: List[float],
     return polygon_exterior
 
 
-def interpolate_nan(array_2d: np.ndarray, nan_mask: np.ndarray,
+def interpolate_nan(array_2d: np.ndarray,
+                    nan_mask: np.ndarray,
                     interpolation_type: str = 'linear') -> np.ndarray:
     """
     Interpolate the missing values from the array2d using scipy interpolation method.
