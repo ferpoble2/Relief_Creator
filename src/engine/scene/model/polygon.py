@@ -105,7 +105,9 @@ class Polygon(Model):
 
             self.__point_model = Points(scene, points)
             self.__lines_model = Lines(scene, point_list=points)
-            self.update_last_line(False)
+
+            self.__update_planar_state()
+            self.update_last_line()
 
     def __check_intersection(self, points: list = None) -> bool:
         """
@@ -198,13 +200,8 @@ class Polygon(Model):
             self.__lines_model.add_line((point_list[-6], point_list[-5], point_list[-4]),
                                         (point_list[-3], point_list[-2], point_list[-1]))
 
-        # if there is 3 points, just add a new line connecting the polygon
-        if self.get_point_number() == 3:
-            self.update_last_line(False)
-
-        # if there is more than 3 points, then delete the line and add a new one
-        if self.get_point_number() > 3:
-            self.update_last_line()
+        # update the last line of the model
+        self.update_last_line()
 
     def delete_parameter(self, key: str) -> None:
         """
@@ -309,11 +306,7 @@ class Polygon(Model):
             self.__point_model.remove_last_added_point()
             self.__lines_model.remove_last_added_line()
 
-            if self.get_point_number() < 3:
-                self.__last_line_model.remove_last_added_line()
-            else:
-                self.update_last_line()
-
+            self.update_last_line()
             self.__update_planar_state()
 
     def set_dot_color(self, color: list) -> None:
@@ -379,22 +372,19 @@ class Polygon(Model):
         """
         self.__parameters[key] = value
 
-    def update_last_line(self, remove_last_line: bool = True) -> None:
+    def update_last_line(self) -> None:
         """
         Update the last line of the polygon.
 
-        Args:
-            remove_last_line: True to remove the last line from the line model, False to just add a new line to the
-                model.
-
         Returns: None
         """
-
-        # remove the last line if exist
+        # Remove the last line if exist
         point_list = self.get_point_list()
-        if remove_last_line:
-            self.__last_line_model.remove_last_added_line()
+        point_number = self.get_point_number()
 
-        # add a new line
-        self.__last_line_model.add_line((point_list[-3], point_list[-2], point_list[-1]),
-                                        (point_list[0], point_list[1], point_list[2]))
+        self.__last_line_model.remove_last_added_line()
+
+        # Add a new line only if there is 3 or more points
+        if point_number >= 3:
+            self.__last_line_model.add_line((point_list[-3], point_list[-2], point_list[-1]),
+                                            (point_list[0], point_list[1], point_list[2]))

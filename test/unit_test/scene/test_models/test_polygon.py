@@ -14,6 +14,23 @@
 #      along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 #  END GPL LICENSE BLOCK
+
+#  BEGIN GPL LICENSE BLOCK
+#
+#      This program is free software: you can redistribute it and/or modify
+#      it under the terms of the GNU General Public License as published by
+#      the Free Software Foundation, either version 3 of the License, or
+#      (at your option) any later version.
+#
+#      This program is distributed in the hope that it will be useful,
+#      but WITHOUT ANY WARRANTY; without even the implied warranty of
+#      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#      GNU General Public License for more details.
+#
+#      You should have received a copy of the GNU General Public License
+#      along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+#  END GPL LICENSE BLOCK
 """
 File with tests related to the polygon class.
 """
@@ -85,9 +102,25 @@ class TestAddPoints(ProgramTestCase):
                          self.engine.get_points_from_polygon(pol))
 
 
-class TestPlanarity(ProgramTestCase):
+class TestPolygonPlanar(ProgramTestCase):
 
-    def test_planarity_polygon(self):
+    def test_polygon_not_planar_from_file(self):
+        self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
+                                           'resources/test_resources/netcdf/test_model_2.nc')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/polygon_not_planar.shp')
+
+        polygons_id = self.engine.get_polygon_id_list()
+        self.assertFalse(self.engine.is_polygon_planar(polygons_id[0]))
+
+    def test_polygon_planar_from_file(self):
+        self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
+                                           'resources/test_resources/netcdf/test_model_2.nc')
+        self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_one_polygon_1.shp')
+
+        polygons_id = self.engine.get_polygon_id_list()
+        self.assertTrue(self.engine.is_polygon_planar(polygons_id[0]))
+
+    def test_polygon_planar(self):
         self.engine.create_model_from_file('resources/test_resources/cpt/cpt_1.cpt',
                                            'resources/test_resources/netcdf/test_model_2.nc')
 

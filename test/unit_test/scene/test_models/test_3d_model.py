@@ -15,10 +15,8 @@
 #
 #  END GPL LICENSE BLOCK
 
-"""
-Module to tests the creation of models on the scene.
-"""
 import os
+import unittest
 
 import psutil
 
@@ -124,3 +122,7 @@ class Test3DModelCreationMemoryUsageOneModel(ProgramTestCase):
     def get_memory_usage_in_megabytes(self, process):
         """Get the memory used by the process on megabytes."""
         return process.memory_info().rss >> 20
+
+
+if __name__ == '__main__':
+    unittest.main()

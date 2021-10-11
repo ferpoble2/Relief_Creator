@@ -66,23 +66,20 @@ class Lines(Model):
         if point_list is not None:
             points_copy = point_list.copy()
 
-            # check points
+            # Check points
+            # ------------
             number_points = len(points_copy)
             assert number_points > 0, 'Trying to load points with an array with no data.'
 
-            # set the points
+            # Set the points
+            # --------------
+            points_copy = np.repeat(points_copy, 2, axis=0)[1:-1]
             self.__point_list = list(points_copy.reshape(-1))
             self.set_vertices(np.array(self.__point_list, dtype=np.float32))
 
-            # set the indices
-            range_a = np.arange(0, number_points - 1)
-            range_b = np.arange(1, number_points)
-
-            indices_array = np.empty((range_a.size + range_b.size))
-            indices_array[0::2] = range_a
-            indices_array[1::2] = range_b
-
-            self.__indices_list = list(indices_array)
+            # Set the indices
+            # ---------------
+            self.__indices_list = list(np.arange(0, (number_points - 1) * 2))
             self.set_indices(np.array(self.__indices_list, dtype=np.uint32))
 
     def _update_uniforms(self) -> None:

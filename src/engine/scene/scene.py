@@ -627,10 +627,14 @@ class Scene:
 
         Returns: id of the created polygon
         """
-
         # Generate a new id for the polygon
         # ---------------------------------
         new_polygon_id = f"Polygon {self.__polygon_id_count}"
+
+        # Create the polygon, add it to the scene and return its ID
+        # ---------------------------------------------------------
+        polygon = Polygon(self, new_polygon_id, point_list, parameters)
+        self.__polygon_hash[polygon.get_id()] = polygon
 
         # Add the id to the list of drawing polygons
         # ------------------------------------------
@@ -639,10 +643,6 @@ class Scene:
         else:
             self.__polygon_draw_priority.insert(priority_position, new_polygon_id)
 
-        # Create the polygon, add it to the scene and return its ID
-        # ---------------------------------------------------------
-        polygon = Polygon(self, new_polygon_id, point_list, parameters)
-        self.__polygon_hash[polygon.get_id()] = polygon
         self.__polygon_id_count += 1
 
         return new_polygon_id

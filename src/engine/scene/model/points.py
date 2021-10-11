@@ -44,6 +44,7 @@ class Points(Model):
 
         Args:
             point_list: List of points to use as initial value. This array will not be modified.
+                        Format of the array must be [[x, y, z], [x, y, z], ...]
         """
         super().__init__(scene)
 
