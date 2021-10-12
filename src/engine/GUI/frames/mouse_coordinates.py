@@ -66,6 +66,8 @@ class MouseCoordinates(Frame):
 
             # Set the transparency and configure the frame before rendering it
             imgui.set_next_window_bg_alpha(self.__alpha_value)
+            self.position = (self._GUI_manager.get_left_frame_width(),
+                             self._GUI_manager.get_window_height() - self.size[1])
             self._begin_frame(self.__frame_name, imgui.WINDOW_NO_TITLE_BAR)
 
             # Round the values obtained to show only two decimals
