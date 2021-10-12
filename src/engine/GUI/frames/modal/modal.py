@@ -93,7 +93,6 @@ class Modal(Frame):
 
         self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
         self._GUI_manager.set_controller_keyboard_callback_state(True)
-        self.should_show = False
 
     def open_modal(self) -> None:
         """
