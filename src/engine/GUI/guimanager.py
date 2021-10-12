@@ -30,7 +30,7 @@ work correctly.
 # noinspection PyPep8Naming
 from typing import Dict, List, TYPE_CHECKING, Union
 
-import OpenGL.constant as OGLConstant
+import OpenGL.constant as gl_constants
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
 
@@ -1330,7 +1330,7 @@ class GUIManager:
         raise AssertionError('There is not a frame from the Loading class on the list of frames '
                              'handled by the GUIManager.')
 
-    def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
+    def set_models_polygon_mode(self, polygon_mode: gl_constants.IntConstant) -> None:
         """
         Call the scene to change the polygon mode used by the models.
 

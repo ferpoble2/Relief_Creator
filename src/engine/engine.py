@@ -51,6 +51,7 @@ from src.utils import get_logger
 
 if TYPE_CHECKING:
     import numpy as np
+    import OpenGL.constant as gl_constants
     from src.program.program import Program
     from src.engine.scene.transformation.transformation import Transformation
     from src.engine.scene.interpolation.interpolation import Interpolation
@@ -1662,7 +1663,7 @@ class Engine:
         self.gui_manager.open_text_modal(title_modal, msg)
 
     # noinspection PyUnresolvedReferences
-    def set_models_polygon_mode(self, polygon_mode: 'OGLConstant.IntConstant') -> None:
+    def set_models_polygon_mode(self, polygon_mode: 'gl_constants.IntConstant') -> None:
         """
         Call the scene to change the polygon mode used by the models.
 
