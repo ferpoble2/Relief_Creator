@@ -234,6 +234,8 @@ def interpolate_nan(array_2d: np.ndarray,
     values = data[pivot_points_1d][:, 2]
 
     points_to_interpolate = data[nan_mask][:, 0:2]
+    if len(points_to_interpolate) == 0:
+        return array_2d  # Do nothing if there is no points to interpolate
 
     # Interpolate values
     # ------------------

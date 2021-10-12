@@ -201,13 +201,11 @@ class TestFillNanTransformation(ProgramTestCase):
 
 class TestInterpolateNanMapTransformation(ProgramTestCase):
 
-    def setUp(self) -> None:
-        """Logic executed before every test."""
-        super().setUp()
+
+    def test_cubic_transformation(self):
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                            'resources/test_resources/netcdf/test_data_nan_values.nc')
 
-    def test_cubic_transformation(self):
         # Apply transformation
         # --------------------
         map_transformation = InterpolateNanMapTransformation(self.engine.get_active_model_id(),
@@ -224,6 +222,9 @@ class TestInterpolateNanMapTransformation(ProgramTestCase):
         os.remove('resources/test_resources/temp/interpolate_nan_map_3.nc')
 
     def test_nearest_transformation(self):
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_data_nan_values.nc')
+
         # Apply transformation
         # --------------------
         map_transformation = InterpolateNanMapTransformation(self.engine.get_active_model_id(),
@@ -240,6 +241,9 @@ class TestInterpolateNanMapTransformation(ProgramTestCase):
         os.remove('resources/test_resources/temp/interpolate_nan_map_2.nc')
 
     def test_linear_transformation(self):
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_data_nan_values.nc')
+
         # Apply transformation
         # --------------------
         map_transformation = InterpolateNanMapTransformation(self.engine.get_active_model_id(),
@@ -254,6 +258,63 @@ class TestInterpolateNanMapTransformation(ProgramTestCase):
                               'resources/test_resources/expected_data/netcdf/expected_map_transformation_3.nc')
 
         os.remove('resources/test_resources/temp/interpolate_nan_map_1.nc')
+
+    def test_interpolate_linear_no_nan_values(self):
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_1.nc')
+
+        # Apply transformation
+        # --------------------
+        map_transformation = InterpolateNanMapTransformation(self.engine.get_active_model_id(),
+                                                             InterpolateNanMapTransformationType.linear)
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
+                                           'resources/test_resources/temp/interpolate_nan_map_4.nc')
+
+        # Check values
+        # ------------
+        self.check_map_values('resources/test_resources/temp/interpolate_nan_map_4.nc',
+                              'resources/test_resources/netcdf/test_file_1.nc')
+
+        os.remove('resources/test_resources/temp/interpolate_nan_map_4.nc')
+
+    def test_interpolate_cubic_no_nan_values(self):
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_1.nc')
+
+        # Apply transformation
+        # --------------------
+        map_transformation = InterpolateNanMapTransformation(self.engine.get_active_model_id(),
+                                                             InterpolateNanMapTransformationType.cubic)
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
+                                           'resources/test_resources/temp/interpolate_nan_map_5.nc')
+
+        # Check values
+        # ------------
+        self.check_map_values('resources/test_resources/temp/interpolate_nan_map_5.nc',
+                              'resources/test_resources/netcdf/test_file_1.nc')
+
+        os.remove('resources/test_resources/temp/interpolate_nan_map_5.nc')
+
+    def test_interpolate_nearest_no_nan_values(self):
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_1.nc')
+
+        # Apply transformation
+        # --------------------
+        map_transformation = InterpolateNanMapTransformation(self.engine.get_active_model_id(),
+                                                             InterpolateNanMapTransformationType.nearest)
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
+                                           'resources/test_resources/temp/interpolate_nan_map_6.nc')
+
+        # Check values
+        # ------------
+        self.check_map_values('resources/test_resources/temp/interpolate_nan_map_6.nc',
+                              'resources/test_resources/netcdf/test_file_1.nc')
+
+        os.remove('resources/test_resources/temp/interpolate_nan_map_6.nc')
 
     def check_map_values(self, generated_file: str, expected_data_file: str) -> None:
         """
