@@ -1061,7 +1061,7 @@ class GUIManager:
 
         Returns:  None
         """
-        self.__combine_map_modal.should_show = True
+        self.__combine_map_modal.open_modal()
 
     def open_interpolate_nan_map_modal(self) -> None:
         """
