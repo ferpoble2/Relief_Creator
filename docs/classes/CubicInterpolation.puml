@@ -1,7 +1,5 @@
 @startuml
 class CubicInterpolation {
-    - __polygon_points: List[float]
-    - __external_polygon_points: List[float]
-    - __model_vertices: array
+    + apply(): array
 }
 @enduml

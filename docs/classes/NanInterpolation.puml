@@ -1,0 +1,10 @@
+@startuml
+
+class NanInterpolation{
+
+    + initialize(scene)
+    + fill_interpolation_zone_with_nan(model_vertices, external_polygon_points, internal_polygon_points)
+    + get_bounding_box_indices(exterior_polygon): (int, int, int, int)
+}
+
+@enduml

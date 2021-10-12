@@ -12,11 +12,14 @@ package src.engine.scene.interpolation {
     class src.engine.scene.interpolation.NearestInterpolation
     class src.engine.scene.interpolation.CubicInterpolation
     class src.engine.scene.interpolation.SmoothInterpolation
+    class src.engine.scene.interpolation.NanInterpolation
 }
 
-src.engine.scene.interpolation.LinearInterpolation -u-|> src.engine.scene.interpolation.Interpolation
-src.engine.scene.interpolation.NearestInterpolation -u-|> src.engine.scene.interpolation.Interpolation
-src.engine.scene.interpolation.CubicInterpolation -u-|> src.engine.scene.interpolation.Interpolation
+src.engine.scene.interpolation.LinearInterpolation -u-|> src.engine.scene.interpolation.NanInterpolation
+src.engine.scene.interpolation.NearestInterpolation -u-|> src.engine.scene.interpolation.NanInterpolation
+src.engine.scene.interpolation.CubicInterpolation -u-|> src.engine.scene.interpolation.NanInterpolation
+
+src.engine.scene.interpolation.NanInterpolation -u-|> src.engine.scene.interpolation.Interpolation
 src.engine.scene.interpolation.SmoothInterpolation -u-|> src.engine.scene.interpolation.Interpolation
 
 !endsub
@@ -26,14 +29,13 @@ src.engine.scene.interpolation.SmoothInterpolation -u-|> src.engine.scene.interp
     src.engine.scene.interpolation.Interpolation <...> src.engine.scene.Scene
 
     src.engine.scene.interpolation.LinearInterpolation ..> src.engine.scene.geometrical_operations
-    src.engine.scene.interpolation.LinearInterpolation ..> src.utils
-    src.engine.scene.interpolation.LinearInterpolation ..> src.error.InterpolationError
     src.engine.scene.interpolation.NearestInterpolation ..> src.engine.scene.geometrical_operations
-    src.engine.scene.interpolation.NearestInterpolation ..> src.utils
-    src.engine.scene.interpolation.NearestInterpolation ..> src.error.InterpolationError
     src.engine.scene.interpolation.CubicInterpolation ..> src.engine.scene.geometrical_operations
-    src.engine.scene.interpolation.CubicInterpolation ..> src.utils
-    src.engine.scene.interpolation.CubicInterpolation ..> src.error.InterpolationError
+
+    src.engine.scene.interpolation.NanInterpolation ..> src.engine.scene.geometrical_operations
+    src.engine.scene.interpolation.NanInterpolation ..> src.utils
+    src.engine.scene.interpolation.NanInterpolation ..> src.error.InterpolationError
+
     src.engine.scene.interpolation.SmoothInterpolation ..> src.engine.scene.geometrical_operations
     src.engine.scene.interpolation.SmoothInterpolation ..> src.utils
     src.engine.scene.interpolation.SmoothInterpolation ..> src.error.InterpolationError

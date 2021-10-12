@@ -20,55 +20,17 @@ Module that defines the NearestInterpolation class. Class in charge of executing
 external to the specified polygon using the nearest algorithm.
 """
 
-from typing import List, TYPE_CHECKING
-
 import numpy as np
-from shapely.geometry.polygon import LinearRing
 
-from src.engine.scene.geometrical_operations import delete_z_axis, generate_mask, get_bounding_box_indexes, \
-    get_external_polygon_points, interpolate_nan
-from src.engine.scene.interpolation.interpolation import Interpolation
-from src.error.interpolation_error import InterpolationError
-from src.utils import is_clockwise
-
-if TYPE_CHECKING:
-    from src.engine.scene.scene import Scene
+from src.engine.scene.geometrical_operations import interpolate_nan
+from src.engine.scene.interpolation.nan_interpolation import NanInterpolation
 
 
-class NearestInterpolation(Interpolation):
+class NearestInterpolation(NanInterpolation):
     """
     Class in charge of interpolating the points external to the specified polygon using a nearest method of
     interpolation.
     """
-
-    def __init__(self, model_id: str, polygon_id: str, distance: float):
-        super().__init__(model_id, polygon_id, distance)
-
-        self.__polygon_points: List[float] = []
-        self.__external_polygon_points: List[float] = []
-        self.__model_vertices: np.ndarray = np.array([])
-
-    def initialize(self, scene: 'Scene') -> None:
-        """
-        Get the data to use for the interpolation of the points external to the polygon.
-
-        Args:
-            scene: Scene to use to get the data.
-
-        Returns: None
-        """
-        super().initialize(scene)
-
-        self.__model_vertices = scene.get_map2d_model_vertices_array(self.model_id)
-        self.__polygon_points = scene.get_polygon_points(self.polygon_id)
-
-        if not scene.is_polygon_planar(self.polygon_id):
-            raise InterpolationError(6)
-
-        if len(self.__polygon_points) < 9:
-            raise InterpolationError(1)
-
-        self.__external_polygon_points = get_external_polygon_points(self.__polygon_points, self.distance)
 
     def apply(self) -> np.ndarray:
         """
@@ -83,38 +45,19 @@ class NearestInterpolation(Interpolation):
         Returns: Array with the modified points.
         """
 
-        # Format the data of the external polygon
+        # Fill interpolation area with nan values
         # ---------------------------------------
-        external_points_no_z_axis = delete_z_axis(self.__external_polygon_points)
-
-        if is_clockwise(external_points_no_z_axis):
-            external_points_no_z_axis.reverse()
-
-        exterior_polygon = LinearRing(external_points_no_z_axis)
-
-        # Get the bounding box of the external polygon
-        # --------------------------------------------
-        min_x_index, max_x_index, min_y_index, max_y_index = get_bounding_box_indexes(self.__model_vertices,
-                                                                                      exterior_polygon)
-        min_x_index -= 1
-        max_x_index += 1
-        min_y_index -= 1
-        max_y_index += 1
-
-        heights = self.__model_vertices[:, :, 2]
-        points_cut = self.__model_vertices[min_y_index:max_y_index, min_x_index:max_x_index, :]
-        heights_cut = heights[min_y_index:max_y_index, min_x_index:max_x_index]
-
-        # Generate masks to filter the points
-        # -----------------------------------
-        mask_external = generate_mask(points_cut, self.__external_polygon_points)
-        mask_internal = generate_mask(points_cut, self.__polygon_points)
+        self.fill_interpolation_zone_with_nan(self._model_vertices,
+                                              self._external_polygon_points,
+                                              self._polygon_points)
+        max_x_index, max_y_index, min_x_index, min_y_index = self.get_bounding_box_indices(
+            self._external_polygon_points)
 
         # Modify the vertices height
         # --------------------------
-        in_between_mask = mask_external != mask_internal
-        heights_cut[in_between_mask == True] = np.nan  # noqa
-        heights_cut = interpolate_nan(heights_cut, in_between_mask, 'nearest')
-        heights[min_y_index:max_y_index, min_x_index:max_x_index] = heights_cut
+        heights = self._model_vertices[:, :, 2]
+        heights_cut = heights[min_y_index:max_y_index, min_x_index:max_x_index]
+        interpolated_heights = interpolate_nan(heights_cut, np.isnan(heights_cut), 'nearest')
+        heights[min_y_index:max_y_index, min_x_index:max_x_index] = interpolated_heights
 
-        return self.__model_vertices
+        return self._model_vertices
