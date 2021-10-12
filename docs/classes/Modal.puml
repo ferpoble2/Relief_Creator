@@ -1,0 +1,14 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Modal {
+    + should_show: bool
+
+    ~ begin_modal(modal_title)
+    ~ close_modal()
+    + open_modal()
+    + render()
+    + post_render()
+}
+
+@enduml

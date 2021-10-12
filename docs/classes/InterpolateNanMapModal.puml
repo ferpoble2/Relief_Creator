@@ -1,0 +1,15 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class InterpolateNanMapModal {
+
+    - __modal_title: str
+    - __button_width: float
+    - __interpolation_type_options: List[str]
+    - __interpolation_type_values: List[InterpolateNanMapTransformationType]
+    - __interpolation_selected: int
+
+    + post_render()
+}
+
+@enduml

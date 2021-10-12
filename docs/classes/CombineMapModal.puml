@@ -1,0 +1,16 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class CombineMapModal {
+    - __model_id_list: List[str]
+    - __model_name_list: List[str]
+    - __modal_title: str
+    - __button_width: float
+    - __selected_map_1: int
+    - __selected_map_2: int
+
+    + open_modal()
+    + post_render()
+}
+
+@enduml

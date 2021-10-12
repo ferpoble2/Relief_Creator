@@ -242,8 +242,12 @@ class Engine:
         Returns: None
         """
         try:
+            self.program.set_loading(True)
+            self.gui_manager.set_loading_message('Applying interpolation to the points.')
+
             interpolation.initialize(self.scene)
-            self.scene.apply_interpolation(interpolation)
+            self.scene.apply_interpolation(interpolation,
+                                           lambda: self.program.set_loading(False))
 
         except InterpolationError as e:
             if e.code == 1:
@@ -272,14 +276,9 @@ class Engine:
         Returns: None
         """
         try:
-            # Initialize the transformation
-            # -----------------------------
             map_transformation.initialize(self.scene)
-
-            # Run the transformation in a different thread
-            # --------------------------------------------
-            self.set_loading_message('Applying map transformation.')
-            self.set_task_with_loading_frame(lambda: self.scene.apply_map_transformation(map_transformation))
+            self.set_task_with_loading_frame(lambda: self.scene.apply_map_transformation(map_transformation),
+                                             'Applying map transformation.')
 
         except MapTransformationError as e:
             if e.code == 0:
@@ -308,8 +307,8 @@ class Engine:
 
             # Run the transformation in a different thread
             # --------------------------------------------
-            self.set_loading_message('Applying transformation.')
-            self.set_task_with_loading_frame(lambda: self.scene.apply_transformation(transformation))
+            self.set_task_with_loading_frame(lambda: self.scene.apply_transformation(transformation),
+                                             'Applying transformation.')
 
         except FilterError as e:
             if e.code == 0:
@@ -407,12 +406,24 @@ class Engine:
                     return_values[0] = None
                     return_values[1] = None
 
+                elif e.code == 5:
+                    self.set_modal_text('Error',
+                                        'Polygon not found in the program.')
+                    return_values[0] = None
+                    return_values[1] = None
+
+                elif e.code == 7:
+                    self.set_modal_text('Error',
+                                        'Model not found.')
+                    return_values[0] = None
+                    return_values[1] = None
+
                 else:
                     raise e
 
         # Set the message for the loading frame and set the task to be executed behind a loading frame
-        self.set_loading_message('Calculating heights...')
-        self.set_task_with_loading_frame(lambda: asynchronous_task(return_data))
+        self.set_task_with_loading_frame(lambda: asynchronous_task(return_data),
+                                         'Calculating heights...')
 
     def change_3D_model_height_unit(self, model_id: str, measure_unit: str) -> None:
         """
@@ -627,7 +638,7 @@ class Engine:
             then()
 
         self.program.set_loading(True)
-        self.set_loading_message("Please wait a moment...")
+        self.gui_manager.set_loading_message("Please wait a moment...")
 
         try:
             # Read the information for the new model
@@ -767,8 +778,8 @@ class Engine:
                     self.set_modal_text('Error', 'The polygon must have at least 3 vertices to load the '
                                                  'interpolation area.')
 
-        self.set_loading_message('Loading preview, this may take a while.')
-        self.set_task_with_loading_frame(load_preview_logic)
+        self.set_task_with_loading_frame(load_preview_logic,
+                                         'Loading preview, this may take a while.')
 
     def exit(self):
         """
@@ -1404,7 +1415,7 @@ class Engine:
         """
         log.debug("Optimizing gpu memory")
         self.program.set_loading(True)
-        self.set_loading_message("Deleting triangles from the memory")
+        self.gui_manager.set_loading_message("Deleting triangles from the memory")
 
         # noinspection PyMissingOrEmptyDocstring
         def then_routine():
@@ -1448,7 +1459,7 @@ class Engine:
         Returns: None
         """
         self.program.set_loading(True)
-        self.set_loading_message("Please wait a moment...")
+        self.gui_manager.set_loading_message("Please wait a moment...")
 
         # noinspection PyMissingOrEmptyDocstring
         def then_routine():
@@ -1638,17 +1649,6 @@ class Engine:
         """
         self.controller.set_keyboard_callback(new_state)
 
-    def set_loading_message(self, new_msg: str) -> None:
-        """
-        Change the loading message shown on the screen.
-
-        Args:
-            new_msg: New message to show
-
-        Returns: None
-        """
-        self.gui_manager.set_loading_message(new_msg)
-
     def set_modal_text(self, title_modal, msg) -> None:
         """
         Set a modal in the program.
@@ -1727,17 +1727,6 @@ class Engine:
                                                        then_task,
                                                        then_task_args)
 
-    def set_program_loading(self, new_state: bool = True) -> None:
-        """
-        Tell the program to set the loading state.
-
-        Args:
-            new_state: Boolean indicating the state of the program (if it is loading or not)
-
-        Returns: None
-        """
-        self.program.set_loading(new_state)
-
     def set_program_view_mode(self, mode: ViewMode = ViewMode.mode_2d) -> None:
         """
         Set the program view mode to the selected mode.
@@ -1757,23 +1746,29 @@ class Engine:
             self.program.set_view_mode_3D()
             self.render.enable_depth_buffer(True)
 
-            self.set_loading_message('Generating 3D model...')
             self.set_task_with_loading_frame(
-                lambda: self.scene.create_3D_model_if_not_exists(self.program.get_active_model()))
+                lambda: self.scene.create_3D_model_if_not_exists(self.program.get_active_model()),
+                'Generating 3D model...')
 
         else:
             raise ValueError(f'Can not change program view mode to {mode}.')
 
-    def set_task_with_loading_frame(self, task: callable) -> None:
+    def set_task_with_loading_frame(self, task: callable, message: Union[str, None] = None) -> None:
         """
         Set a task to be executed at the end of the next frame. Also configures the loading setting of
         the program to show the loading frame on the screen.
 
         Args:
             task: Task to be called in while showing a loading frame.
+            message: Message to show on the loading frame. If not specified, the previous message is displayed.
 
         Returns: None
         """
+        # Change the message if a new one was specified
+        if message is not None:
+            self.gui_manager.set_loading_message(message)
+
+            # Enable the loading frame and set the task to be executed after some frames
         if self.__wait_loading_frame_render:
             self.program.set_loading(True)
 
@@ -1843,8 +1838,8 @@ class Engine:
 
         Returns: None
         """
-        self.set_loading_message('Getting data from the map 2D...')
-        self.set_task_with_loading_frame(lambda: self.scene.update_3D_model(self.program.get_active_model()))
+        self.set_task_with_loading_frame(lambda: self.scene.update_3D_model(self.program.get_active_model()),
+                                         'Getting data from the map 2D...')
 
     def update_scene_models_colors(self):
         """

@@ -43,12 +43,10 @@ class Debug(Frame):
         Constructor of the class.
         """
         super().__init__(gui_manager)
-        self.___width = 300
-        self.__height = 500
-
-        self.change_position(
-            [self._GUI_manager.get_window_width() - self.___width - 200,
-             self._GUI_manager.get_window_height() - self.__height])
+        self.size = (300, 500)
+        self.position = (
+            self._GUI_manager.get_window_width() - self.size[0] - 200,
+            self._GUI_manager.get_window_height() - self.size[1])
 
     def render(self) -> None:
         """
@@ -65,7 +63,7 @@ class Debug(Frame):
         memory_usage_mb = (psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2)
         # cpu_percent = psutil.cpu_percent()
 
-        imgui.begin('Debug')
+        self._begin_frame('Debug')
         imgui.text(f"Zoom level: {zoom_level}")
         imgui.text(f"Map position: {position}")
         imgui.separator()
@@ -93,4 +91,4 @@ class Debug(Frame):
         #                           self.__height,
         #                           0)
 
-        imgui.end()
+        self._end_frame()

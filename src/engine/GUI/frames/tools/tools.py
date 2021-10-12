@@ -47,7 +47,8 @@ class Tools(Frame):
         Constructor of the class.
         """
         super().__init__(gui_manager)
-        self.change_position([0, self._GUI_manager.get_main_menu_bar_height()])
+        self.position = (0, self._GUI_manager.get_main_menu_bar_height())
+
         self.__double_button_margin_width = 13
         self.__button_margin_width = 17
         self.__slide_bar_quality = self._GUI_manager.get_quality()
@@ -127,14 +128,11 @@ class Tools(Frame):
         Returns: None
         """
 
-        if self._GUI_manager.get_frame_fixed_state():
-            imgui.begin('Tools', False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE)
-            imgui.set_window_position(self.get_position()[0], self.get_position()[1])
-            imgui.set_window_size(self._GUI_manager.get_left_frame_width(),
-                                  self._GUI_manager.get_window_height() - self._GUI_manager.get_main_menu_bar_height(),
-                                  0)
-        else:
-            imgui.begin('Tools')
+        # Create the frame with the correct size
+        # --------------------------------------
+        self.size = (self._GUI_manager.get_left_frame_width(),
+                     self._GUI_manager.get_window_height() - self._GUI_manager.get_main_menu_bar_height())
+        self._begin_frame('Tools')
 
         # Show the active tool on the application
         # ---------------------------------------
@@ -159,4 +157,4 @@ class Tools(Frame):
         imgui.separator()
         self.__map_tools.render()
 
-        imgui.end()
+        self._end_frame()

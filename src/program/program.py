@@ -285,8 +285,8 @@ class Program:
         def task_in_loading():
             self.__engine.create_polygon_from_file(path_to_shapefile)
 
-        self.__engine.set_loading_message('Loading polygon...')
-        self.__engine.set_task_with_loading_frame(task_in_loading)
+        self.__engine.set_task_with_loading_frame(task_in_loading,
+                                                  'Loading polygon...')
 
     # noinspection PyUnresolvedReferences
     def open_file_save_box_dialog(self, message: str, title: str, default_filename: str) -> str:

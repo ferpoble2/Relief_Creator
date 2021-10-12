@@ -1,0 +1,35 @@
+@startuml
+
+' Template file to use to create the diagrams od the packages.
+' Every file must have a sub part called INTERNAL with the internal connections of the package and
+' a sub part called EXTERNAL with the external parts.
+
+!startsub INTERNAL
+
+package src.engine.gui.frames.modal {
+    class src.engine.gui.frames.modal.Modal
+    class src.engine.gui.frames.modal.CombineMapModal
+    class src.engine.gui.frames.modal.ComfirmationModal
+    class src.engine.gui.frames.modal.InterpolateNanMapModal
+    class src.engine.gui.frames.modal.TextModal
+}
+
+src.engine.gui.frames.modal.CombineMapModal -u-|> src.engine.gui.frames.modal.Modal
+src.engine.gui.frames.modal.ComfirmationModal -u-|> src.engine.gui.frames.modal.Modal
+src.engine.gui.frames.modal.InterpolateNanMapModal -u-|> src.engine.gui.frames.modal.Modal
+src.engine.gui.frames.modal.TextModal -u-|> src.engine.gui.frames.modal.Modal
+!endsub
+
+!startsub EXTERNAL
+src.engine.gui.frames.modal.Modal -u-|> src.engine.gui.frames.Frame
+
+src.engine.gui.frames.modal.InterpolateNanMapModal ..> src.engine.scene.map_transformation.InterpolateNanMapTransformation
+src.engine.gui.frames.modal.CombineMapModal ..> src.engine.scene.map_transformation.MergeMapsTransformation
+!endsub
+
+
+' Code that will affect only the current diagram
+' can be messy since it will not be imported
+hide members
+
+@enduml

@@ -163,17 +163,9 @@ class ReliefTools:
 
         if imgui.button('Recalculate Information', -1):
             log.debug('Recalculate polygon information')
-
-            if active_model_id is None:
-                self.__gui_manager.open_text_modal('Error', 'You must load a model to try to calculate the '
-                                                            'height of the '
-                                                            'points inside it.')
-            else:
-                # Change the values of the max_min_data to waiting and execute the function to calculate the values.
-                # The method to calculate max_min_height is asynchronous, so it returns immediately.
-                self.__gui_manager.calculate_max_min_height(active_model_id,
-                                                            active_polygon_id,
-                                                            self.__return_array_values)
+            self.__gui_manager.calculate_max_min_height(active_model_id,
+                                                        active_polygon_id,
+                                                        self.__return_array_values)
 
     def filter_menu(self):
         """

@@ -41,22 +41,18 @@ class MouseCoordinates(Frame):
         Constructor of the class.
         """
         super().__init__(gui_manager)
-        self.__width = 300
-        self.__height = 35
+        self.size = (300, 35)
+        self.position = (
+            self._GUI_manager.get_left_frame_width(),
+            self._GUI_manager.get_window_height() - self.size[1])
+
         self.__alpha_value = 0.4
-
         self.__frame_name = 'Mouse Coordinates'
-        self.__frame_fixed_flags = imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE | \
-                                   imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_FOCUS_ON_APPEARING
-        self.__frame_unfixed_flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_FOCUS_ON_APPEARING
-
-        self.change_position(
-            [self._GUI_manager.get_left_frame_width(),
-             self._GUI_manager.get_window_height() - self.__height])
 
     def render(self) -> None:
         """
-        Render the main sample text.
+        Render the frame that shows the mouse coordinates.
+
         Returns: None
         """
 
@@ -70,15 +66,7 @@ class MouseCoordinates(Frame):
 
             # Set the transparency and configure the frame before rendering it
             imgui.set_next_window_bg_alpha(self.__alpha_value)
-            if self._GUI_manager.get_frame_fixed_state():
-                imgui.begin(self.__frame_name, False, self.__frame_fixed_flags)
-                imgui.set_window_position(self._GUI_manager.get_left_frame_width(),
-                                          self._GUI_manager.get_window_height() - self.__height)
-                imgui.set_window_size(self.__width,
-                                      self.__height,
-                                      0)
-            else:
-                imgui.begin(self.__frame_name, False, self.__frame_unfixed_flags)
+            self._begin_frame(self.__frame_name, imgui.WINDOW_NO_TITLE_BAR)
 
             # Round the values obtained to show only two decimals
             map_coordinates[0] = round(map_coordinates[0], 2)
@@ -93,4 +81,4 @@ class MouseCoordinates(Frame):
                 imgui.text(f'Mouse Coordinates: ({map_coordinates[0]}, {map_coordinates[1]})')
 
             # Close the frame
-            imgui.end()
+            self._end_frame()

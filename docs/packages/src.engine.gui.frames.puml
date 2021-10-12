@@ -3,18 +3,15 @@
 !startsub INTERNAL
 package src.engine.gui.frames {
     !includesub src.engine.gui.frames.tools.puml!INTERNAL
+    !includesub src.engine.gui.frames.modal.puml!INTERNAL
     class src.engine.gui.frames.Frame
     class src.engine.gui.frames.MainMenuBar
     class src.engine.gui.frames.Debug
     class src.engine.gui.frames.Loading
     class src.engine.gui.frames.TestWindow
-    class src.engine.gui.frames.TextModal
     class src.engine.gui.frames.PolygonInformation
-    class src.engine.gui.frames.ConfirmationModal
     class src.engine.gui.frames.Tools_3D
     class src.engine.gui.frames.MouseCoordinates
-    class src.engine.gui.frames.CombineMapModal
-    class src.engine.gui.frames.InterpolateNanMapModal
 }
 
 src.engine.gui.frames.Tools_3D -u-|> src.engine.gui.frames.Frame
@@ -22,22 +19,18 @@ src.engine.gui.frames.Debug -u-|> src.engine.gui.frames.Frame
 src.engine.gui.frames.Loading -u-|> src.engine.gui.frames.Frame
 src.engine.gui.frames.MainMenuBar -u-|> src.engine.gui.frames.Frame
 src.engine.gui.frames.TestWindow -u-|> src.engine.gui.frames.Frame
-src.engine.gui.frames.TextModal -u-|> src.engine.gui.frames.Frame
 src.engine.gui.frames.PolygonInformation -u-|> src.engine.gui.frames.Frame
 src.engine.gui.frames.Tools -u-|> src.engine.gui.frames.Frame
-src.engine.gui.frames.ConfirmationModal -u-|> src.engine.gui.frames.Frame
 src.engine.gui.frames.MouseCoordinates -u-|> src.engine.gui.frames.Frame
-src.engine.gui.frames.CombineMapModal -u-|> src.engine.gui.frames.Frame
-src.engine.gui.frames.InterpolateNanMapModal -u-|> src.engine.gui.frames.Frame
 !endsub
 
 !startsub EXTERNAL
     !includesub src.engine.gui.frames.tools.puml!EXTERNAL
+    !includesub src.engine.gui.frames.modal.puml!EXTERNAL
+
     src.engine.gui.frames.MainMenuBar ..> src.program.ViewMode
     src.engine.gui.GUIManager o--o src.engine.gui.frames.Frame
 
-    src.engine.gui.frames.InterpolateNanMapModal ..> src.engine.scene.map_transformation.InterpolateNanMapTransformation
-    src.engine.gui.frames.CombineMapModal ..> src.engine.scene.map_transformation.MergeMapsTransformation
     src.engine.gui.frames.MainMenuBar ..> src.engine.scene.map_transformation.FillNanMapTransformation
 !endsub
 

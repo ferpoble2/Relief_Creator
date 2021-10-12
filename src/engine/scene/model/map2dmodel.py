@@ -527,16 +527,12 @@ class Map2DModel(MapModel):
 
             # Set the vertices in the buffer
             log.debug("Loading buffers")
-            self.scene.set_loading_message("Loading vertices...")
             vertices = self.__generate_vertices_list(x, y, z)
 
             log.debug("Generating Indices")
-            self.scene.set_loading_message("Generating polygons...")
             scene_data = self.scene.get_scene_setting_data()
             indices = self.__generate_index_list(int(len(self.__x) / scene_data['SCENE_WIDTH_X']) + quality,
                                                  int(len(self.__y) / scene_data['SCENE_HEIGHT_Y']) + quality)
-
-            self.scene.set_loading_message("Drawing model on screen...")
             return vertices, indices
 
         def then_routine(vertices_indices):
@@ -615,8 +611,6 @@ class Map2DModel(MapModel):
 
             # Generate new list of triangles to add to the model
             # --------------------------------------------------
-            self.scene.set_loading_message("Generating new indices...")
-
             # check for the extra proportion to reload.
             extra_proportion = self.scene.get_extra_reload_proportion_setting()
             extra_x = (right_coordinate - left_coordinate) * (extra_proportion - 1)
@@ -631,7 +625,6 @@ class Map2DModel(MapModel):
 
             # Delete old triangles that are in the same place as the new ones
             # ---------------------------------------------------------------
-            self.scene.set_loading_message("Recalculating triangles...")
             self.__add_triangles_inside_zone_to_delete_list(
                 self.__x[self.__get_index_closest_value(self.__x, left_coordinate)],
                 self.__x[self.__get_index_closest_value(self.__x, right_coordinate)],

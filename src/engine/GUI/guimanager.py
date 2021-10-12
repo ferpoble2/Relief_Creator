@@ -34,16 +34,16 @@ import OpenGL.constant as OGLConstant
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
 
-from src.engine.GUI.frames.combine_map_modal import CombineMapModal
-from src.engine.GUI.frames.confirmation_modal import ConfirmationModal
 from src.engine.GUI.frames.debug import Debug
-from src.engine.GUI.frames.interpolate_nan_map_modal import InterpolateNanMapModal
 from src.engine.GUI.frames.loading import Loading
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar
+from src.engine.GUI.frames.modal.combine_map_modal import CombineMapModal
+from src.engine.GUI.frames.modal.confirmation_modal import ConfirmationModal
+from src.engine.GUI.frames.modal.interpolate_nan_map_modal import InterpolateNanMapModal
+from src.engine.GUI.frames.modal.text_modal import TextModal
 from src.engine.GUI.frames.mouse_coordinates import MouseCoordinates
 from src.engine.GUI.frames.polygon_information import PolygonInformation
 from src.engine.GUI.frames.test_window import TestWindow
-from src.engine.GUI.frames.text_modal import TextModal
 from src.engine.GUI.frames.tools.tools import Tools
 from src.engine.GUI.frames.tools_3D import Tools3D
 from src.engine.GUI.icon import Icon
@@ -1069,7 +1069,7 @@ class GUIManager:
 
         Returns: None
         """
-        self.__interpolate_nan_map_modal.should_show = True
+        self.__interpolate_nan_map_modal.open_modal()
 
     def open_confirmation_modal(self, modal_title: str, msg: str, yes_function: callable,
                                 no_function: callable) -> None:
@@ -1085,14 +1085,11 @@ class GUIManager:
 
         Returns: None
         """
-        log.debug('Setting confirmation modal')
-
-        for frame in self.__component_list_2D:
-            if isinstance(frame, ConfirmationModal):
-                frame.set_confirmation_text(modal_title, msg, yes_function, no_function)
-                return
-
-        raise AssertionError('There is not a frame of class ConfirmationModal in the program.')
+        self.__confirmation_modal.open_modal()
+        self.__confirmation_modal.set_confirmation_text(modal_title,
+                                                        msg,
+                                                        yes_function,
+                                                        no_function)
 
     def open_text_modal(self, modal_title: str, msg: str) -> None:
         """
@@ -1105,13 +1102,8 @@ class GUIManager:
             msg: message to show in the modal
         """
         log.debug("Setting modal text")
-
-        for frame in self.__component_list_2D:
-            if isinstance(frame, TextModal):
-                frame.set_modal_text(modal_title, msg)
-                return
-
-        raise AssertionError('There is not a frame from the TextModal class to set a modal message.')
+        self.__text_modal.open_modal()
+        self.__text_modal.set_modal_text(modal_title, msg)
 
     def process_input(self) -> None:
         """

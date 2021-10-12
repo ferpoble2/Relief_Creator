@@ -6,12 +6,10 @@ class ConfirmationModal {
         - __yes_func: function
         - __no_func: function
         - __button_width: int
-        - __should_show: boolean
         - __modal_title: str
         - __msg: str
-        - __tool_before_pop_up: str
 
-        + render()
+        + post_render()
         + set_confirmation_text(modal_title, msg, yes_func, no_func)
 
 }

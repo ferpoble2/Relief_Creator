@@ -18,18 +18,18 @@
 """
 Module in charge of the rendering of the modal that gives options to the user when merging two maps into one.
 """
-from typing import List, TYPE_CHECKING, Union
+from typing import List, TYPE_CHECKING
 
 import imgui
 
-from src.engine.GUI.frames.frame import Frame
+from src.engine.GUI.frames.modal.modal import Modal
 from src.engine.scene.map_transformation.merge_maps_transformation import MergeMapsTransformation
 
 if TYPE_CHECKING:
     from src.engine.GUI.guimanager import GUIManager
 
 
-class CombineMapModal(Frame):
+class CombineMapModal(Modal):
     """
     Class in charge of the rendering of the modal that gives options to the user when merging two maps into a new one.
     """
@@ -39,48 +39,31 @@ class CombineMapModal(Frame):
         Constructor of the class.
         """
         super().__init__(gui_manager)
-        self.__should_show_frame: bool = False
         self.__model_id_list: List[str] = []
         self.__model_name_list: List[str] = []
 
+        self.size = (400, -1)
         self.__modal_title: str = "Merge maps"
-        self.__modal_width: float = 400
-        self.__button_width: float = self.__modal_width / 2 - 12
-        self.__new_map_name = "Generated Map"
+        self.__button_width: float = self.size[0] / 2 - 12
 
-        self.__tool_before_opening_modal: Union[str, None] = None
         self.__selected_map_1: int = 0
         self.__selected_map_2: int = 0
 
-    @property
-    def should_show(self) -> bool:
+    def open_modal(self) -> None:
         """
-        Get a boolean indicating if the frame will show when rendering.
-
-        Returns: should_show property of the frame.
-        """
-        return self.__should_show_frame
-
-    @should_show.setter
-    def should_show(self, value: bool) -> None:
-        """
-        Setter for the should_show property.
+        Execute the logic to initialize the frame when opening it.
 
         Returns: None
         """
-        self.__should_show_frame = value
+        super().open_modal()
 
-        if value:
-            self.__selected_map_1 = 0
-            self.__selected_map_2 = 0
+        # Get the information of the maps
+        self.__model_id_list = list(self._GUI_manager.get_model_names_dict().keys())
+        self.__model_name_list = list(self._GUI_manager.get_model_names_dict().values())
 
-    def render(self) -> None:
-        """
-        Do nothing since the frame should not be rendered in each frame.
-
-        Returns: None
-        """
-        pass
+        # Configure the options selected in the frame
+        self.__selected_map_1 = 0
+        self.__selected_map_2 = 0
 
     def post_render(self) -> None:
         """
@@ -88,24 +71,7 @@ class CombineMapModal(Frame):
 
         Returns: None
         """
-
-        imgui.set_next_window_size(self.__modal_width, -1)
-        imgui.set_next_window_position(imgui.get_io().display_size.x * 0.5,
-                                       imgui.get_io().display_size.y * 0.5,
-                                       imgui.ALWAYS,
-                                       0.5,
-                                       0.5)
-        if self.__should_show_frame:
-            self.__tool_before_opening_modal = self._GUI_manager.get_active_tool()
-            self.__model_id_list = list(self._GUI_manager.get_model_names_dict().keys())
-            self.__model_name_list = list(self._GUI_manager.get_model_names_dict().values())
-            self._GUI_manager.set_active_tool(None)
-
-            imgui.open_popup(self.__modal_title)
-            self._GUI_manager.set_controller_keyboard_callback_state(False)
-            self.__should_show_frame = False
-
-        if imgui.begin_popup_modal(self.__modal_title)[0]:
+        if self._begin_modal(self.__modal_title):
             imgui.text("Select the maps to merge:")
             _, self.__selected_map_1 = imgui.combo("Base model", self.__selected_map_1, self.__model_name_list)
             _, self.__selected_map_2 = imgui.combo("Secondary model", self.__selected_map_2, self.__model_name_list)
@@ -115,12 +81,10 @@ class CombineMapModal(Frame):
                 imgui.close_current_popup()
 
             imgui.same_line()
-
             if imgui.button("Merge Maps", self.__button_width):
                 map_transformation = MergeMapsTransformation(self.__model_id_list[self.__selected_map_1],
                                                              self.__model_id_list[self.__selected_map_2])
                 self._GUI_manager.apply_map_transformation(map_transformation)
-                self._GUI_manager.set_controller_keyboard_callback_state(True)
-                imgui.close_current_popup()
+                self._close_modal()
 
             imgui.end_popup()

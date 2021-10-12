@@ -1,14 +1,10 @@
 @startuml
 class TextModal {
-    - __windows_width: int
-    - __windows_height: int
     - __margin_button: int
     - __button_height: int
-    - __should_show: boolean
     - __modal_title: str
     - __msg: str
 
-    + render()
     + post_render()
     + set_modal_text(modal_title, msg)
 }

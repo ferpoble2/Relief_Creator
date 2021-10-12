@@ -183,12 +183,19 @@ class Scene:
                                                                    allow_outside_scene=False)
             self.__polygon_hash[polygon_id].add_point(new_x, new_y)
 
-    def apply_interpolation(self, interpolation: Interpolation) -> None:
+    def apply_interpolation(self,
+                            interpolation: Interpolation,
+                            then: Callable = lambda: None) -> None:
         """
         Interpolate the points at the exterior of the polygon using the given interpolation.
 
+        Warnings:
+            This method is asynchronous, this is, the logic defined in this method runs in another thread parallel to
+            the main thread. This method returns immediately after being called.
+
         Args:
             interpolation: Interpolation to use to modify the models height values.
+            then: Logic to execute after the end of the task.
 
         Returns: None
         """
@@ -202,10 +209,8 @@ class Scene:
         def then_task():
             """Task to execute after the parallel routine."""
             self.__model_hash[interpolation.model_id].update_vertices()
-            self.__engine.set_program_loading(False)
+            then()
 
-        self.__engine.set_loading_message('Interpolating points, this may take a while.')
-        self.__engine.set_program_loading(True)
         self.__engine.set_thread_task(parallel_task, then_task)
 
     def apply_map_transformation(self, map_transformation: 'MapTransformation') -> None:
@@ -324,6 +329,10 @@ class Scene:
 
         Returns: Tuple with the maximum and minimum height of the vertices inside the polygon.
         """
+        if model_id not in self.__model_hash:
+            raise SceneError(7)
+        if polygon_id not in self.__polygon_hash:
+            raise SceneError(5)
 
         # get the important information.
         model = self.__model_hash[model_id]
@@ -1252,19 +1261,6 @@ class Scene:
         Returns: None
         """
         self.__camera.reset_values()
-
-    def set_loading_message(self, new_msg: str) -> None:
-        """
-        Change the loading message shown in the loading frame.
-
-        This method ask the engine to change the message showed on the loading frame.
-
-        Args:
-            new_msg: New message to show on the loading frame.
-
-        Returns: None
-        """
-        self.__engine.set_loading_message(new_msg)
 
     def set_models_polygon_mode(self, polygon_mode: OGLConstant.IntConstant) -> None:
         """

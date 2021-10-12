@@ -51,8 +51,7 @@ class PolygonInformation(Frame):
             gui_manager (src.engine.GUI.GUIManager):
         """
         super().__init__(gui_manager)
-        self.__height = 300
-        self.__width = 300
+        self.size = (300, 300)
 
         # auxiliary variables
         self.__key_string_value = 'Name of parameter'
@@ -82,18 +81,12 @@ class PolygonInformation(Frame):
         # Do not draw the screen if there is no active polygon.
         if self._GUI_manager.get_active_polygon_id() is not None:
 
-            # Open the window with the selected options depending on the state of the program
-            # -------------------------------------------------------------------------------
-            if self._GUI_manager.get_frame_fixed_state():
-                imgui.begin('Polygon Information', False, imgui.WINDOW_NO_MOVE | imgui.WINDOW_NO_COLLAPSE |
-                            imgui.WINDOW_NO_RESIZE | imgui.WINDOW_NO_FOCUS_ON_APPEARING)
-                self.change_position([self._GUI_manager.get_window_width() - self.__width,
-                                      self._GUI_manager.get_window_height() - self.__height])
-                imgui.set_window_position(self.get_position()[0], self.get_position()[1])
-                imgui.set_window_size(self.__width, self.__height, 0)
-
-            else:
-                imgui.begin('Polygon Information', False, imgui.WINDOW_NO_FOCUS_ON_APPEARING)
+            # -----------
+            # Begin frame
+            # -----------
+            self.position = (self._GUI_manager.get_window_width() - self.size[0],
+                             self._GUI_manager.get_window_height() - self.size[1])
+            self._begin_frame('Polygon Information')
 
             # --------------------------------------------
             # First row, show the data titles in bold font
@@ -157,7 +150,7 @@ class PolygonInformation(Frame):
             if imgui.button("Add New", -1):
                 self.__should_open_add_dialog = True
 
-            imgui.end()
+            self._end_frame()
 
     def post_render(self) -> None:
         """

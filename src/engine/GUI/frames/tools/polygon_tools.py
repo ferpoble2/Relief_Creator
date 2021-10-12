@@ -86,7 +86,7 @@ class PolygonTools:
 
         return clicked_selectable
 
-    def __color_button(self, polygon_id: str) -> None:
+    def __color_button_menu(self, polygon_id: str) -> None:
         """
         Define the modal to show if the color pick is selected.
 
@@ -264,7 +264,7 @@ class PolygonTools:
 
         return clicked_selectable
 
-    def __folder_popup_menu(self, folder_id: str) -> None:
+    def __folder_menu(self, folder_id: str) -> None:
         """
         Folder popup menu that shows the name of the folder and configure the actions that happens when a second
         click is pressed.
@@ -274,6 +274,10 @@ class PolygonTools:
 
         Returns: None
         """
+
+        # -------------------------------------------------------------------------------
+        # Draw the name of the folder and the option to add a new polygon into the folder
+        # -------------------------------------------------------------------------------
         imgui.text(self.__GUI_manager.get_polygon_folder_name(folder_id))
         if imgui.is_item_hovered() and imgui.is_mouse_clicked(1):
             imgui.open_popup(f'Second click options folder {folder_id}')
@@ -286,7 +290,9 @@ class PolygonTools:
             self.__create_new_polygon(folder_id)
         imgui.pop_id()
 
-        # menu option for second click on the folder
+        # ------------------------------------------
+        # Menu option for second click on the folder
+        # ------------------------------------------
         if imgui.begin_popup(f'Second click options folder {folder_id}'):
             imgui.text("Select an action")
 
@@ -335,7 +341,9 @@ class PolygonTools:
 
             imgui.end_popup()
 
-        # popup modal for renaming the folders
+        # -----------------------------------------------------------
+        # Definition of the logic for opening the rename folder modal
+        # -----------------------------------------------------------
         if self.__open_rename_folder_popup:
             # open the popup
             imgui.open_popup(f'Rename folder {folder_id}')
@@ -357,7 +365,6 @@ class PolygonTools:
             changed, self.__rename_folder_input_text_value = imgui.input_text('New name',
                                                                               self.__rename_folder_input_text_value,
                                                                               25)
-
             if imgui.button('Change name', self.__rename_size_x - self.__button_margin_width):
                 self.__GUI_manager.set_polygon_folder_name(folder_id, self.__rename_folder_input_text_value)
                 self.__GUI_manager.set_controller_keyboard_callback_state(True)
@@ -375,34 +382,37 @@ class PolygonTools:
         active_polygon = self.__GUI_manager.get_active_polygon_id()
 
         for folder_id in self.__GUI_manager.get_polygon_folder_id_list():
-            self.__folder_popup_menu(folder_id)
+            self.__folder_menu(folder_id)
 
             # list of polygons to render to each folder
             if folder_id in self.__GUI_manager.get_polygon_folder_id_list():
                 for polygon_id in self.__GUI_manager.get_polygons_id_from_polygon_folder(folder_id):
-                    # push id so the buttons doesnt have conflicts with names
                     imgui.push_id(polygon_id)
 
-                    # show a checkbox with the id of the polygon and show it market if the polygon is active
+                    # Show the polygon logic on the tool
+                    # ----------------------------------
                     clicked, current_state = imgui.checkbox(self.__GUI_manager.get_polygon_name(polygon_id),
                                                             True if polygon_id == active_polygon else False)
-                    self.__polygon_action_logic(active_polygon, polygon_id, folder_id)
+                    self.__polygon_second_click_popup_logic(active_polygon, polygon_id, folder_id)
 
+                    # Show the logic of the color button on the menu
+                    # ----------------------------------------------
                     imgui.same_line()
-                    self.__color_button(polygon_id)
+                    self.__color_button_menu(polygon_id)
 
+                    # Show tooltip if the polygon is not planar
+                    # -----------------------------------------
                     if not self.__GUI_manager.is_polygon_planar(polygon_id):
                         imgui.same_line()
                         imgui.image(self.__GUI_manager.get_icon('warning').get_texture_id(), 25, 25)
                         if imgui.is_item_hovered():
                             imgui.set_tooltip("Polygon is not planar!")
 
-                    # pop the id to continue rendering the others elements
                     imgui.pop_id()
 
+                    # Logic for when the polygon is clicked
+                    # -------------------------------------
                     if clicked:
-
-                        # change or deselect the active polygon.
                         if self.__GUI_manager.get_active_polygon_id() == polygon_id:
                             self.__GUI_manager.set_active_polygon(None)
                             self.__GUI_manager.set_active_tool(None)
@@ -410,7 +420,7 @@ class PolygonTools:
                             self.__GUI_manager.set_active_polygon(polygon_id)
                             self.__GUI_manager.set_active_tool(Tools.create_polygon)
 
-    def __polygon_action_logic(self, active_polygon, polygon_id, polygon_folder_id) -> None:
+    def __polygon_second_click_popup_logic(self, active_polygon, polygon_id, polygon_folder_id) -> None:
         """
         Generate the button [Actions] in the tools windows.
 
@@ -565,6 +575,7 @@ class PolygonTools:
         self.__GUI_manager.set_tool_title_font()
         imgui.text("Polygon Tools")
         self.__GUI_manager.set_regular_font()
+
         if imgui.button("Create Folder", width=imgui.get_window_width() - self.__button_margin_width):
             self.__create_new_polygon()
 
