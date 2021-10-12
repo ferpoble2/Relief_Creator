@@ -91,14 +91,14 @@ class PolygonInformation(Frame):
             # --------------------------------------------
             # First row, show the data titles in bold font
             # --------------------------------------------
-            self._GUI_manager.set_bold_font()
+            self._GUI_manager.set_font_bold()
             imgui.columns(2, 'Data List')
             imgui.separator()
             imgui.text("Field Name")
             imgui.next_column()
             imgui.text("Value")
             imgui.separator()
-            self._GUI_manager.set_regular_font()
+            self._GUI_manager.set_font_regular()
 
             # ---------------------------------------------------------------------------------------------------------
             # For each parameter defined in the polygon, show a new row on the frame with the name of the parameter and

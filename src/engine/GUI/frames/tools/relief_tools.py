@@ -148,9 +148,9 @@ class ReliefTools:
 
         # Render the menu
         # ---------------
-        self.__gui_manager.set_tool_sub_title_font()
+        self.__gui_manager.set_font_tool_sub_title()
         imgui.text('Polygon Information')
-        self.__gui_manager.set_regular_font()
+        self.__gui_manager.set_font_regular()
         imgui.columns(2, None, False)
         imgui.text(f'Max height:')
         imgui.next_column()
@@ -180,9 +180,9 @@ class ReliefTools:
 
         # Title of the section
         # --------------------
-        self.__gui_manager.set_tool_sub_title_font()
+        self.__gui_manager.set_font_tool_sub_title()
         imgui.text_wrapped('Filters')
-        self.__gui_manager.set_regular_font()
+        self.__gui_manager.set_font_regular()
 
         # Render the filters on the GUI
         # -----------------------------
@@ -251,9 +251,9 @@ class ReliefTools:
 
         # Title of the section
         # --------------------
-        self.__gui_manager.set_tool_sub_title_font()
+        self.__gui_manager.set_font_tool_sub_title()
         imgui.text('Transformation')
-        self.__gui_manager.set_regular_font()
+        self.__gui_manager.set_font_regular()
 
         # Type  of transformation
         # -----------------------
@@ -293,9 +293,9 @@ class ReliefTools:
         active_polygon_id = self.__gui_manager.get_active_polygon_id()
         active_model_id = self.__gui_manager.get_active_model_id()
 
-        self.__gui_manager.set_tool_title_font()
+        self.__gui_manager.set_font_tool_title()
         imgui.text('Relief Tools')
-        self.__gui_manager.set_regular_font()
+        self.__gui_manager.set_font_regular()
 
         # Current Height Information
         # --------------------------

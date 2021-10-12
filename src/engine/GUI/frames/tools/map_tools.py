@@ -58,9 +58,9 @@ class MapTools:
 
         # Render title of the tools
         # -------------------------
-        self.__gui_manager.set_tool_title_font()
+        self.__gui_manager.set_font_tool_title()
         imgui.text('Map Tools')
-        self.__gui_manager.set_regular_font()
+        self.__gui_manager.set_font_regular()
 
         # Render maps names
         # -----------------

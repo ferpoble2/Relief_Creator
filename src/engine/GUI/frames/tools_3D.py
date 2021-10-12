@@ -72,9 +72,9 @@ class Tools3D(Frame):
         # ------------
 
         # Add a title to the camera section
-        self._GUI_manager.set_tool_title_font()
+        self._GUI_manager.set_font_tool_title()
         imgui.text('Camera Information')
-        self._GUI_manager.set_regular_font()
+        self._GUI_manager.set_font_regular()
 
         # Get the camera data and show it in the frame
         camera_data = self._GUI_manager.get_camera_data()
@@ -92,9 +92,9 @@ class Tools3D(Frame):
         # ----------
 
         # Add a title to the view tools section
-        self._GUI_manager.set_tool_title_font()
+        self._GUI_manager.set_font_tool_title()
         imgui.text('View Tools')
-        self._GUI_manager.set_regular_font()
+        self._GUI_manager.set_font_regular()
 
         # Show the current exaggeration factor to the user and set an input section where the user can enter a new
         # value to use
@@ -124,9 +124,9 @@ class Tools3D(Frame):
         # ----------
 
         # Add a title to the unit tools section
-        self._GUI_manager.set_tool_title_font()
+        self._GUI_manager.set_font_tool_title()
         imgui.text('Unit Tools')
-        self._GUI_manager.set_regular_font()
+        self._GUI_manager.set_font_regular()
 
         # Render boxes where the user can select the measure unit of the maps and the heights
         imgui.text_wrapped('Height measure unit:')

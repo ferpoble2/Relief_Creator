@@ -572,9 +572,9 @@ class PolygonTools:
         """
         Show the polygon tools on the frame
         """
-        self.__GUI_manager.set_tool_title_font()
+        self.__GUI_manager.set_font_tool_title()
         imgui.text("Polygon Tools")
-        self.__GUI_manager.set_regular_font()
+        self.__GUI_manager.set_font_regular()
 
         if imgui.button("Create Folder", width=imgui.get_window_width() - self.__button_margin_width):
             self.__create_new_polygon()

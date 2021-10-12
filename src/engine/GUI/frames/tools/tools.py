@@ -69,17 +69,17 @@ class Tools(Frame):
         """
         Show the active tool in a formatted way to the user.
         """
-        self._GUI_manager.set_bold_font()
+        self._GUI_manager.set_font_bold()
         imgui.text(f"Active tool: {self.__tools_names_dict.get(self._GUI_manager.get_active_tool(), None)}")
-        self._GUI_manager.set_regular_font()
+        self._GUI_manager.set_font_regular()
 
     def __show_visualization_tools(self) -> None:
         """
         Show the visualization tools on the frame.
         """
-        self._GUI_manager.set_tool_title_font()
+        self._GUI_manager.set_font_tool_title()
         imgui.text("Visualization Tools")
-        self._GUI_manager.set_regular_font()
+        self._GUI_manager.set_font_regular()
 
         if imgui.button("Zoom In", width=imgui.get_window_width() / 2 - self.__double_button_margin_width):
             log.debug("Pressed button Zoom in")

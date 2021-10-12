@@ -1261,15 +1261,6 @@ class GUIManager:
         """
         self.__engine.set_active_tool(tool)
 
-    def set_bold_font(self) -> None:
-        """
-        Set a bold font to use in the render on the GUI.
-
-        Returns: Set the font to bold.
-        """
-        imgui.pop_font()
-        imgui.push_font(self.__font_bold)
-
     def set_controller_keyboard_callback_state(self, new_state: bool) -> None:
         """
         Enable/Disable the logic defined on the controller keyboard callback.
@@ -1283,6 +1274,44 @@ class GUIManager:
         Returns: None
         """
         self.__engine.set_controller_key_callback(new_state)
+
+    def set_font_bold(self) -> None:
+        """
+        Set a bold font to use in the render on the GUI.
+
+        Returns: Set the font to bold.
+        """
+        imgui.pop_font()
+        imgui.push_font(self.__font_bold)
+
+    def set_font_regular(self) -> None:
+        """
+        Set the regular font too use in the render.
+
+        Returns: Set the font to bold.
+        """
+        imgui.pop_font()
+        imgui.push_font(self.__font_regular)
+
+    def set_font_tool_sub_title(self) -> None:
+        """
+        Set the font to use of the type sub_title.
+
+        The font will be smaller than the title font but bigger than the regular text.
+
+        Returns: None
+        """
+        imgui.pop_font()
+        imgui.push_font(self.__font_tool_sub_title)
+
+    def set_font_tool_title(self) -> None:
+        """
+        Set the font to use for the tool titles.
+
+        Returns: None
+        """
+        imgui.pop_font()
+        imgui.push_font(self.__font_tool_title)
 
     def set_loading_message(self, new_msg: str) -> None:
         """
@@ -1364,35 +1393,6 @@ class GUIManager:
         Returns: None
         """
         self.__engine.set_program_view_mode(mode)
-
-    def set_regular_font(self) -> None:
-        """
-        Set the regular font too use in the render.
-
-        Returns: Set the font to bold.
-        """
-        imgui.pop_font()
-        imgui.push_font(self.__font_regular)
-
-    def set_tool_sub_title_font(self) -> None:
-        """
-        Set the font to use of the type sub_title.
-
-        The font will be smaller than the title font but bigger than the regular text.
-
-        Returns: None
-        """
-        imgui.pop_font()
-        imgui.push_font(self.__font_tool_sub_title)
-
-    def set_tool_title_font(self) -> None:
-        """
-        Set the font to use for the tool titles.
-
-        Returns: None
-        """
-        imgui.pop_font()
-        imgui.push_font(self.__font_tool_title)
 
     def undo_action(self) -> None:
         """
