@@ -3,6 +3,8 @@
 ' Template file to use to create the diagrams od the packages.
 ' Every file must have a sub part called INTERNAL with the internal connections of the package and
 ' a sub part called EXTERNAL with the external parts.
+skinparam linetype polyline
+skinparam linetype ortho
 
 !startsub INTERNAL
 package src.engine.scene {

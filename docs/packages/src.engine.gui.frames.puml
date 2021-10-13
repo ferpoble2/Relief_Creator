@@ -1,4 +1,6 @@
 @startuml
+skinparam linetype polyline
+skinparam linetype ortho
 
 !startsub INTERNAL
 package src.engine.gui.frames {
