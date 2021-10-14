@@ -39,6 +39,7 @@ from src.engine.GUI.frames.loading import Loading
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar
 from src.engine.GUI.frames.modal.combine_map_modal import CombineMapModal
 from src.engine.GUI.frames.modal.confirmation_modal import ConfirmationModal
+from src.engine.GUI.frames.modal.convolve_nan_modal import ConvolveNanModal
 from src.engine.GUI.frames.modal.interpolate_nan_map_modal import InterpolateNanMapModal
 from src.engine.GUI.frames.modal.text_modal import TextModal
 from src.engine.GUI.frames.mouse_coordinates import MouseCoordinates
@@ -130,6 +131,7 @@ class GUIManager:
         self.__mouse_coordinates = MouseCoordinates(self)
         self.__combine_map_modal = CombineMapModal(self)
         self.__interpolate_nan_map_modal = InterpolateNanMapModal(self)
+        self.__convolve_nan_modal = ConvolveNanModal(self)
 
         self.__component_list_2D = [
             self.__main_menu_bar,
@@ -140,7 +142,8 @@ class GUIManager:
             self.__polygon_information,
             self.__confirmation_modal,
             self.__combine_map_modal,
-            self.__interpolate_nan_map_modal
+            self.__interpolate_nan_map_modal,
+            self.__convolve_nan_modal
         ]
 
         self.__component_list_3D = [
@@ -1104,6 +1107,17 @@ class GUIManager:
         log.debug("Setting modal text")
         self.__text_modal.open_modal()
         self.__text_modal.set_modal_text(modal_title, msg)
+
+    def open_convolve_nan_modal(self) -> None:
+        """
+        Open the modal related to the application of the NanConvolutionMapTransformation.
+
+        The user can configure the parameters for the transformation in the modal and the apply it over the active
+        model.
+
+        Returns: None
+        """
+        self.__convolve_nan_modal.open_modal()
 
     def process_input(self) -> None:
         """

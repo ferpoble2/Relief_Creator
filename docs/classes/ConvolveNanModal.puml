@@ -1,0 +1,12 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class ConvolveNanModal {
+    - __button_width: float
+    - __nan_percentage_limit: float
+    - __kernel_size_selected: int
+
+    + post_render()
+}
+
+@enduml

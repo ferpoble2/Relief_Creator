@@ -29,6 +29,7 @@ from src.engine.scene.map_transformation.fill_nan_map_transformation import Fill
 from src.engine.scene.map_transformation.interpolate_nan_map_transformation import InterpolateNanMapTransformation, \
     InterpolateNanMapTransformationType
 from src.engine.scene.map_transformation.merge_maps_transformation import MergeMapsTransformation
+from src.engine.scene.map_transformation.nan_convolution import NanConvolutionMapTransformation
 from src.error.map_transformation_error import MapTransformationError
 from src.input.NetCDF import read_info
 from test.test_case import ProgramTestCase
@@ -201,7 +202,6 @@ class TestFillNanTransformation(ProgramTestCase):
 
 class TestInterpolateNanMapTransformation(ProgramTestCase):
 
-
     def test_cubic_transformation(self):
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                            'resources/test_resources/netcdf/test_data_nan_values.nc')
@@ -339,6 +339,39 @@ class TestInterpolateNanMapTransformation(ProgramTestCase):
         np.testing.assert_array_equal(expected_z,
                                       z,
                                       "heights stored are not equal to the expected.")
+
+
+class TestNanConvolutionMapTransformation(ProgramTestCase):
+
+    def test_simple_model(self):
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_nan_convolution.nc')
+
+        map_transformation = NanConvolutionMapTransformation(self.engine.get_active_model_id(),
+                                                             3,
+                                                             0.9)
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
+                                           'resources/test_resources/temp/nan_convolution_1.nc')
+        _, _, z = read_info('resources/test_resources/temp/nan_convolution_1.nc')
+        _, _, z_expected = read_info('resources/test_resources/expected_data/netcdf/expected_map_transformation_6.nc')
+
+        np.testing.assert_array_equal(z_expected, z, 'Array generated is not equal to the expected.')
+
+    def test_simple_model_2(self):
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_nan_convolution.nc')
+
+        map_transformation = NanConvolutionMapTransformation(self.engine.get_active_model_id(),
+                                                             3,
+                                                             0.8)
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
+                                           'resources/test_resources/temp/nan_convolution_2.nc')
+        _, _, z = read_info('resources/test_resources/temp/nan_convolution_2.nc')
+        _, _, z_expected = read_info('resources/test_resources/expected_data/netcdf/expected_map_transformation_7.nc')
+
+        np.testing.assert_array_equal(z_expected, z, 'Array generated is not equal to the expected.')
 
 
 if __name__ == '__main__':

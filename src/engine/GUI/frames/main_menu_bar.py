@@ -185,6 +185,10 @@ class MainMenuBar(Frame):
             if imgui.is_item_clicked() and model_loaded:
                 self._GUI_manager.open_interpolate_nan_map_modal()
 
+            imgui.menu_item('Eliminate values surrounded by NaN', None, False, model_loaded)
+            if imgui.is_item_clicked() and model_loaded:
+                self._GUI_manager.open_convolve_nan_modal()
+
             imgui.end_menu()
 
     def render(self) -> None:

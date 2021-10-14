@@ -101,6 +101,7 @@ class GUIManager{
     + open_combine_map_modal()
     + open_confirmation_modal(modal_title, msg, yes_function, no_function)
     + open_text_modal(modal_title, msg)
+    + open_convolve_nan_modal()
     + process_input()
     + reload_models()
     + remove_all_polygons_inside_folder(polygon_folder_id)
