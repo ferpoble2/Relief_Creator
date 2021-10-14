@@ -35,10 +35,9 @@ from src.engine.thread_manager import ThreadManager
 from src.error.export_error import ExportError
 from src.error.filter_error import FilterError
 from src.error.interpolation_error import InterpolationError
-from src.error.line_intersection_error import LineIntersectionError
 from src.error.map_transformation_error import MapTransformationError
 from src.error.netcdf_import_error import NetCDFImportError
-from src.error.repeated_point_error import RepeatedPointError
+from src.error.polygon_error import PolygonError
 from src.error.scene_error import SceneError
 from src.error.transformation_error import TransformationError
 from src.input.NetCDF import read_info
@@ -178,13 +177,14 @@ class Engine:
             self.scene.add_new_vertex_to_polygon_using_map_coords(position_x,
                                                                   position_y,
                                                                   self.program.get_active_polygon_id())
-        except RepeatedPointError:
-            log.info('Handling repeated point.')
-            self.set_modal_text('Error', 'Point already exist in polygon.')
+        except PolygonError as e:
+            if e.code == 0:
+                log.info('Handling line intersection.')
+                self.set_modal_text('Error', 'New line intersect another one already in the polygon.')
 
-        except LineIntersectionError:
-            log.info('Handling line intersection.')
-            self.set_modal_text('Error', 'Line intersect another one already in the polygon.')
+            elif e.code == 1:
+                log.info('Handling repeated point.')
+                self.set_modal_text('Error', 'Point already exist in polygon.')
 
     def add_new_vertex_to_active_polygon_using_window_coords(self, position_x: int, position_y: int) -> None:
         """
@@ -216,13 +216,14 @@ class Engine:
                                                                      self.get_scene_setting_data(),
                                                                      self.get_window_setting_data())
 
-        except RepeatedPointError:
-            log.info('Handling repeated point.')
-            self.set_modal_text('Error', 'Point already exist in polygon.')
+        except PolygonError as e:
+            if e.code == 0:
+                log.info('Handling line intersection.')
+                self.set_modal_text('Error', 'New line intersect another one already in the polygon.')
 
-        except LineIntersectionError:
-            log.info('Handling line intersection.')
-            self.set_modal_text('Error', 'Line intersect another one already in the polygon.')
+            elif e.code == 1:
+                log.info('Handling repeated point.')
+                self.set_modal_text('Error', 'Point already exist in polygon.')
 
     def add_zoom(self) -> None:
         """
@@ -750,11 +751,12 @@ class Engine:
                 self.gui_manager.add_imported_polygon(polygon_id)
                 self.set_active_polygon(polygon_id)
 
-        except LineIntersectionError:
-            self.set_modal_text('Error', 'One of the polygon loaded intersect itself.')
+        except PolygonError as e:
+            if e.code == 0:
+                self.set_modal_text('Error', 'One of the polygon loaded intersect itself.')
 
-        except RepeatedPointError:
-            self.set_modal_text('Error', 'One of the polygon loaded has repeated points.')
+            elif e.code == 1:
+                self.set_modal_text('Error', 'One of the polygon loaded has repeated points.')
 
     def create_preview_interpolation_area(self, distance: float) -> None:
         """

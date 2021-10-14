@@ -48,7 +48,7 @@ class BaseError(Exception):
         """
         Returns: Message showed in the console.
         """
-        return self.get_code_message()
+        return f"{self.get_code_message()} Data: {self.data}"
 
     def get_code_message(self) -> str:
         """

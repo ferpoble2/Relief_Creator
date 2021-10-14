@@ -28,8 +28,7 @@ from src.engine.scene.model.dashed_lines import DashedLines
 from src.engine.scene.model.lines import Lines
 from src.engine.scene.model.model import Model
 from src.engine.scene.model.points import Points
-from src.error.line_intersection_error import LineIntersectionError
-from src.error.repeated_point_error import RepeatedPointError
+from src.error.polygon_error import PolygonError
 from src.utils import get_logger
 
 log = get_logger(module="POLYGON")
@@ -89,10 +88,10 @@ class Polygon(Model):
             # check for consistency on the data
             test_line = LineString(point_list)
             if not test_line.is_simple:
-                raise LineIntersectionError()
+                raise PolygonError(0)
 
             if len(point_list) != len(set(point_list)):
-                raise RepeatedPointError()
+                raise PolygonError(1, {'point_list': point_list})
 
             # prepare the data
             point_array = np.array(point_list)
@@ -173,7 +172,7 @@ class Polygon(Model):
 
         # check if point is already on the polygon
         if self.__check_repeated_point(x, y, z):
-            raise RepeatedPointError()
+            raise PolygonError(1, {'repeated_point': (x, y, z)})
 
         # check if lines intersect
         if self.get_point_number() > 2:
@@ -181,7 +180,7 @@ class Polygon(Model):
 
             # do not let the creation of lines that intersect
             if self.__check_intersection(point_list + [x, y, z]):
-                raise LineIntersectionError()
+                raise PolygonError(0)
 
             # if the completion line intersect, then change the state of the polygon.
             if self.__check_intersection(point_list + [x, y, z, point_list[0], point_list[1], point_list[2]]):

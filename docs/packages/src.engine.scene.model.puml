@@ -37,6 +37,8 @@ src.engine.scene.model.DashedLines -r--o src.engine.scene.model.Polygon
     src.engine.scene.model.Model o-u--o src.engine.scene.Scene
     src.engine.scene.model.Map2DModel -u..> src.input.CTP
     src.engine.scene.model.Map3DModel -u..> src.engine.scene.UnitConverter
+
+    src.engine.scene.model.Polygon -u..> src.error.PolygonError
 !endsub
 
 

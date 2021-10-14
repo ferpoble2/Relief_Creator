@@ -18,6 +18,8 @@
 """
 File that contains all the exceptions related to the polygons.
 """
+from typing import Dict
+
 from src.error.base_error import BaseError
 
 
@@ -25,4 +27,14 @@ class PolygonError(BaseError):
     """
     Class used to represent the polygon related exceptions.
     """
-    pass
+
+    def __init__(self, code: int = 0, data: Dict[str, any] = None):
+        """
+        Constructor of the class.
+        """
+        super().__init__(code, data)
+
+        self.codes = {
+            0: 'Line intersect another one already on the polygon.',
+            1: 'Point already exist on the polygon.'
+        }

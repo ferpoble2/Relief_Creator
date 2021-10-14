@@ -10,11 +10,9 @@ package src.error {
     class src.error.ExportError
     class src.error.GUIError
     class src.error.InterpolationError
-    class src.error.LineIntersectionError
     class src.error.TransformationError
     class src.error.NetcdfImportError
     class src.error.PolygonError
-    class src.error.RepeatedPointError
     class src.error.SceneError
     class src.error.FilterError
     class src.error.PolygonFolderError
@@ -29,8 +27,6 @@ src.error.BaseError <|-- src.error.GUIError
 src.error.BaseError <|-- src.error.NetcdfImportError
 src.error.BaseError <|-- src.error.FilterError
 
-src.error.PolygonError <|-- src.error.RepeatedPointError
-src.error.PolygonError <|-- src.error.LineIntersectionError
 src.error.SceneError <|-- src.error.TransformationError
 src.error.SceneError <|-- src.error.InterpolationError
 src.error.SceneError <|-- src.error.MapTransformationError
