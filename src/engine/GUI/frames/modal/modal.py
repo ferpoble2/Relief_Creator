@@ -35,7 +35,7 @@ class Modal(Frame):
 
     def __init__(self, gui_manager: 'GUIManager'):
         super().__init__(gui_manager)
-        self.__should_show = False
+        self.__should_show = True
         self.__tool_before_pop_up: Union[str, None] = None
 
     def _begin_modal(self, modal_title: str) -> bool:
@@ -94,14 +94,6 @@ class Modal(Frame):
         self._GUI_manager.close_modal(self)
         self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
         self._GUI_manager.set_controller_keyboard_callback_state(True)
-
-    def open_modal(self) -> None:
-        """
-        Open the modal on the program.
-
-        Returns: None
-        """
-        self.__should_show = True
 
     def render(self) -> None:
         """

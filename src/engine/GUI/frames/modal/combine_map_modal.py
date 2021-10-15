@@ -49,14 +49,6 @@ class CombineMapModal(Modal):
         self.__selected_map_1: int = 0
         self.__selected_map_2: int = 0
 
-    def open_modal(self) -> None:
-        """
-        Execute the logic to initialize the frame when opening it.
-
-        Returns: None
-        """
-        super().open_modal()
-
         # Get the information of the maps
         self.__model_id_list = list(self._GUI_manager.get_model_names_dict().keys())
         self.__model_name_list = list(self._GUI_manager.get_model_names_dict().values())
