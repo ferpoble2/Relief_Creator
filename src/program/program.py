@@ -148,7 +148,7 @@ class Program:
         """
         shutil.copy(reference_file, self.get_model_temp_file())
 
-    def get_active_model(self) -> str:
+    def get_active_model(self) -> Union[str, None]:
         """
         Get the current model being used by the program.
 

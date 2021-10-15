@@ -551,7 +551,7 @@ class GUIManager:
         """
         return self.__engine.get_3d_model_list()
 
-    def get_active_model_id(self) -> str:
+    def get_active_model_id(self) -> Union[str, None]:
         """
         Get the active model being used in the program
 
