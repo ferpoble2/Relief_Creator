@@ -19,7 +19,7 @@
 File with the definition of the ConvolveNanModal, modal in charge of setting the parameters and apply a
 NanConvolutionMapTransformation.
 """
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import imgui
 
@@ -35,13 +35,15 @@ class ConvolveNanModal(Modal):
     Class in charge of setting the parameters and apply a NanConvolutionMapTransformation over the active model.
     """
 
-    def __init__(self, gui_manager: 'GUIManager'):
+    def __init__(self, gui_manager: 'GUIManager', model_id: Union[str, None]):
         """Constructor of the class."""
         super().__init__(gui_manager)
         self.__button_width = self.size[0] / 2 - 12
 
         self.__nan_percentage_limit = 0
         self.__kernel_size_selected = 3
+
+        self.__model_to_modify = model_id
 
     def post_render(self) -> None:
         """
@@ -76,7 +78,7 @@ class ConvolveNanModal(Modal):
 
             imgui.same_line()
             if imgui.button('Interpolate', self.__button_width):
-                map_transformation = NanConvolutionMapTransformation(self._GUI_manager.get_active_model_id(),
+                map_transformation = NanConvolutionMapTransformation(self.__model_to_modify,
                                                                      self.__kernel_size_selected,
                                                                      float(self.__nan_percentage_limit) / 100)
                 self._GUI_manager.apply_map_transformation(map_transformation)

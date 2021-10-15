@@ -177,7 +177,9 @@ class MainMenuBar(Frame):
             # --------------------------------
             imgui.menu_item('Merge maps', None, False, model_loaded)
             if imgui.is_item_clicked() and model_loaded:
-                combine_map_modal = CombineMapModal(self._GUI_manager)
+                combine_map_modal = CombineMapModal(self._GUI_manager,
+                                                    list(self._GUI_manager.get_model_names_dict().keys()),
+                                                    list(self._GUI_manager.get_model_names_dict().values()))
                 self._GUI_manager.open_modal(combine_map_modal)
 
             imgui.menu_item('Fill all polygons with NaN', None, False, should_execute_logic)
@@ -187,12 +189,14 @@ class MainMenuBar(Frame):
 
             imgui.menu_item('Interpolate NaN values', None, False, model_loaded)
             if imgui.is_item_clicked() and model_loaded:
-                interpolate_nan_map_modal = InterpolateNanMapModal(self._GUI_manager)
+                interpolate_nan_map_modal = InterpolateNanMapModal(self._GUI_manager,
+                                                                   self._GUI_manager.get_active_model_id())
                 self._GUI_manager.open_modal(interpolate_nan_map_modal)
 
             imgui.menu_item('Eliminate values surrounded by NaN', None, False, model_loaded)
             if imgui.is_item_clicked() and model_loaded:
-                self._GUI_manager.open_modal(ConvolveNanModal(self._GUI_manager))
+                self._GUI_manager.open_modal(ConvolveNanModal(self._GUI_manager,
+                                                              self._GUI_manager.get_active_model_id()))
 
             imgui.end_menu()
 

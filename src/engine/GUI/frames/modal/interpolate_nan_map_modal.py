@@ -18,7 +18,7 @@
 """
 Module in charge of the rendering of the modal that gives options to interpolate the nan values of the full map.
 """
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import imgui
 
@@ -35,7 +35,7 @@ class InterpolateNanMapModal(Modal):
     Class in charge of the rendering of the modal that gives options to interpolate the nan values of all the map.
     """
 
-    def __init__(self, gui_manager: 'GUIManager'):
+    def __init__(self, gui_manager: 'GUIManager', model_id: Union[str, None]):
         """
         Constructor of the class.
         """
@@ -43,6 +43,8 @@ class InterpolateNanMapModal(Modal):
         self.__modal_title: str = "Interpolate NaN values"
         self.size = (400, -1)
         self.__button_width: float = self.size[0] / 2 - 12
+
+        self.__model_to_modify = model_id
 
         # Types of interpolation
         # ----------------------
@@ -72,7 +74,7 @@ class InterpolateNanMapModal(Modal):
             imgui.same_line()
             if imgui.button("Interpolate", self.__button_width):
                 map_transformation = InterpolateNanMapTransformation(
-                    self._GUI_manager.get_active_model_id(),
+                    self.__model_to_modify,
                     self.__interpolation_type_values[self.__interpolation_selected])
 
                 self._GUI_manager.apply_map_transformation(map_transformation)
