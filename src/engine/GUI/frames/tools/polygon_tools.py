@@ -24,6 +24,7 @@ from typing import TYPE_CHECKING
 import imgui
 
 from src.engine.GUI.font import Font
+from src.engine.GUI.frames.modal.confirmation_modal import ConfirmationModal
 from src.program.tools import Tools
 from src.utils import get_logger
 
@@ -235,12 +236,14 @@ class PolygonTools:
                 if active_polygon == polygon_id:
                     self.__GUI_manager.set_active_polygon(None)
 
-            self.__GUI_manager.open_confirmation_modal(
+            confirmation_modal = ConfirmationModal(self.__GUI_manager)
+            confirmation_modal.set_confirmation_text(
                 'Confirmation',
                 f'Do you want to delete the polygon {self.__GUI_manager.get_polygon_name(polygon_id)}?',
                 yes_function,
                 lambda: None
             )
+            self.__GUI_manager.open_modal(confirmation_modal)
 
         return clicked_selectable
 
@@ -333,12 +336,14 @@ class PolygonTools:
                     self.__GUI_manager.remove_polygon_folder(folder_id)
 
                 # ask for the confirmation of the action
-                self.__GUI_manager.open_confirmation_modal(
+                confirmation_modal = ConfirmationModal(self.__GUI_manager)
+                confirmation_modal.set_confirmation_text(
                     'Confirmation',
                     f'Do you want to delete the folder {self.__GUI_manager.get_polygon_folder_name(folder_id)}?',
                     yes_function,
                     lambda: None
                 )
+                self.__GUI_manager.open_modal(confirmation_modal)
 
             imgui.end_popup()
 

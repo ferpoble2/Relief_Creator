@@ -91,6 +91,7 @@ class Modal(Frame):
         """
         imgui.close_current_popup()
 
+        self._GUI_manager.close_modal(self)
         self._GUI_manager.set_active_tool(self.__tool_before_pop_up)
         self._GUI_manager.set_controller_keyboard_callback_state(True)
 

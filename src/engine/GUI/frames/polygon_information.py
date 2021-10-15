@@ -28,6 +28,7 @@ import imgui
 
 from src.engine.GUI.font import Font
 from src.engine.GUI.frames.frame import Frame
+from src.engine.GUI.frames.modal.confirmation_modal import ConfirmationModal
 from src.utils import get_logger
 
 if TYPE_CHECKING:
@@ -135,13 +136,15 @@ class PolygonInformation(Frame):
                     if imgui.is_item_clicked():
                         # Set a confirmation modal before deleting the parameter
                         # ------------------------------------------------------
-                        self._GUI_manager.open_confirmation_modal(
+                        confirmation_modal = ConfirmationModal(self._GUI_manager)
+                        confirmation_modal.set_confirmation_text(
                             'Delete parameter',
                             f'Are you sure you want to delete {parameter[0]}?',
                             lambda: self._GUI_manager.remove_polygon_parameter(
                                 self._GUI_manager.get_active_polygon_id(),
                                 parameter[0]),
                             lambda: None)
+                        self._GUI_manager.open_modal(confirmation_modal)
 
                     imgui.end_popup()
 

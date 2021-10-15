@@ -24,6 +24,9 @@ import OpenGL.GL as GL
 import imgui
 
 from src.engine.GUI.frames.frame import Frame
+from src.engine.GUI.frames.modal.combine_map_modal import CombineMapModal
+from src.engine.GUI.frames.modal.convolve_nan_modal import ConvolveNanModal
+from src.engine.GUI.frames.modal.interpolate_nan_map_modal import InterpolateNanMapModal
 from src.engine.scene.map_transformation.fill_nan_map_transformation import FillNanMapTransformation
 from src.program.view_mode import ViewMode
 from src.utils import get_logger
@@ -174,7 +177,8 @@ class MainMenuBar(Frame):
             # --------------------------------
             imgui.menu_item('Merge maps', None, False, model_loaded)
             if imgui.is_item_clicked() and model_loaded:
-                self._GUI_manager.open_combine_map_modal()
+                combine_map_modal = CombineMapModal(self._GUI_manager)
+                self._GUI_manager.open_modal(combine_map_modal)
 
             imgui.menu_item('Fill all polygons with NaN', None, False, should_execute_logic)
             if imgui.is_item_clicked() and should_execute_logic:
@@ -183,11 +187,12 @@ class MainMenuBar(Frame):
 
             imgui.menu_item('Interpolate NaN values', None, False, model_loaded)
             if imgui.is_item_clicked() and model_loaded:
-                self._GUI_manager.open_interpolate_nan_map_modal()
+                interpolate_nan_map_modal = InterpolateNanMapModal(self._GUI_manager)
+                self._GUI_manager.open_modal(interpolate_nan_map_modal)
 
             imgui.menu_item('Eliminate values surrounded by NaN', None, False, model_loaded)
             if imgui.is_item_clicked() and model_loaded:
-                self._GUI_manager.open_convolve_nan_modal()
+                self._GUI_manager.open_modal(ConvolveNanModal(self._GUI_manager))
 
             imgui.end_menu()
 

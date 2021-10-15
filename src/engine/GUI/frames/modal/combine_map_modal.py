@@ -77,8 +77,7 @@ class CombineMapModal(Modal):
             _, self.__selected_map_2 = imgui.combo("Secondary model", self.__selected_map_2, self.__model_name_list)
 
             if imgui.button("Close", self.__button_width):
-                self._GUI_manager.set_controller_keyboard_callback_state(True)
-                imgui.close_current_popup()
+                self._close_modal()
 
             imgui.same_line()
             if imgui.button("Merge Maps", self.__button_width):
