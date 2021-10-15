@@ -75,8 +75,14 @@ class Transformation:
         if self.model_id is None:
             raise TransformationError(10)
 
+        if self.model_id not in scene.get_model_list():
+            raise TransformationError(12)
+
         if self.polygon_id is None:
             raise TransformationError(11)
+
+        if self.polygon_id not in scene.get_polygon_id_list():
+            raise TransformationError(13)
 
     def apply_filters(self, model_vertices: np.ndarray) -> np.ndarray:
         """

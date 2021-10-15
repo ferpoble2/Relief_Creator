@@ -44,5 +44,7 @@ class TransformationError(SceneError):
             8: 'Polygon used in filter is not simple/planar',
             9: 'Max height selected is lower than the min height selected',
             10: 'Model not specified.',
-            11: 'Polygon not specified.'
+            11: 'Polygon not specified.',
+            12: 'Model not found in program.',
+            13: 'Polygon not found in program.'
         }

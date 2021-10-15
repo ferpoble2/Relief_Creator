@@ -67,7 +67,16 @@ class IsIn(Filter):
         if self.polygon_id is None:
             raise FilterError(0)
 
+        if self.polygon_id not in scene.get_polygon_id_list():
+            raise FilterError(3)
+
+        if not scene.is_polygon_planar(self.polygon_id):
+            raise FilterError(2)
+
         self.__polygon_points = scene.get_polygon_points(self.__polygon_id)
+
+        if len(self.__polygon_points) < 9:
+            raise FilterError(1)
 
     def get_mask(self, model_vertices: 'np.ndarray', mask: 'np.ndarray') -> 'np.ndarray':
         """

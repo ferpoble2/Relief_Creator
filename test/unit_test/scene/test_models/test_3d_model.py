@@ -79,7 +79,7 @@ class Test3DModelCreationMemoryUsageOneModel(ProgramTestCase):
         self.remove_all_models()
         model_usage_in_megabytes = self.get_memory_usage_of_load_3d_model(process)
         self.assertLess(model_usage_in_megabytes,
-                        550,
+                        600,
                         "Memory usage is not less than 550 Megabytes when loading a 3D model.")
 
         # Second model loaded
@@ -87,7 +87,7 @@ class Test3DModelCreationMemoryUsageOneModel(ProgramTestCase):
         self.remove_all_models()
         model_usage_in_megabytes = self.get_memory_usage_of_load_3d_model(process)
         self.assertLess(model_usage_in_megabytes,
-                        550,
+                        600,
                         "Memory usage is not less than 550 Megabytes when loading a second 3D model.")
 
         # Third model loaded
@@ -95,7 +95,7 @@ class Test3DModelCreationMemoryUsageOneModel(ProgramTestCase):
         self.remove_all_models()
         model_usage_in_megabytes = self.get_memory_usage_of_load_3d_model(process)
         self.assertLess(model_usage_in_megabytes,
-                        550,
+                        600,
                         "Memory usage is not less than 550 Megabytes when loading a third 3D model.")
 
         # Fourth model loaded
@@ -103,7 +103,7 @@ class Test3DModelCreationMemoryUsageOneModel(ProgramTestCase):
         self.remove_all_models()
         model_usage_in_megabytes = self.get_memory_usage_of_load_3d_model(process)
         self.assertLess(model_usage_in_megabytes,
-                        550,
+                        600,
                         "Memory usage is not less than 550 Megabytes when loading a fourth 3D model.")
 
     def get_memory_usage_of_load_3d_model(self, process):

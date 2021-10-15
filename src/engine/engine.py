@@ -313,20 +313,31 @@ class Engine:
             if e.code == 0:
                 self.set_modal_text('Error',
                                     'Polygon in filter can not be None.')
+            elif e.code == 1:
+                self.set_modal_text('Error',
+                                    'Polygons used in filters must have at least 3 vertices.')
+            elif e.code == 2:
+                self.set_modal_text('Error',
+                                    'One of the polygons used in a filter is not simple/planar.')
+            elif e.code == 3:
+                self.set_modal_text('Error',
+                                    'Polygon not selected or invalid in filter.')
+            else:
+                raise NotImplementedError(f'FilterError with code {e.code} not handled.')
 
         except TransformationError as e:
-            if e.code == 4:
-                self.set_modal_text('Error',
-                                    'The current model is not supported to use to update the '
-                                    'height of the vertices, try using another type of '
-                                    'model.')
-            elif e.code == 2:
+            if e.code == 2:
                 self.set_modal_text('Error',
                                     'The polygon must have at least 3 points to be able to '
                                     'modify the heights.')
             elif e.code == 3:
                 self.set_modal_text('Error',
                                     'The polygon is not planar. Try using a planar polygon.')
+            elif e.code == 4:
+                self.set_modal_text('Error',
+                                    'The current model is not supported to use to update the '
+                                    'height of the vertices, try using another type of '
+                                    'model.')
             elif e.code == 6:
                 self.set_modal_text('Error',
                                     'Polygon not selected or invalid in filter.')
@@ -343,6 +354,10 @@ class Engine:
                 self.set_modal_text('Error', 'Model not selected.')
             elif e.code == 11:
                 self.set_modal_text('Error', 'Polygon not selected.')
+            elif e.code == 12:
+                self.set_modal_text('Error', 'Model selected not found in the program.')
+            elif e.code == 13:
+                self.set_modal_text('Error', 'Polygon selected not found in the program.')
             else:
                 raise NotImplementedError(f'TransformationError with code {e.code} not handled.')
 

@@ -237,6 +237,9 @@ def interpolate_nan(array_2d: np.ndarray,
     if len(points_to_interpolate) == 0:
         return array_2d  # Do nothing if there is no points to interpolate
 
+    if len(points) == 0:
+        return array_2d  # Do nothing if there is no points to use as pivot
+
     # Interpolate values
     # ------------------
     # noinspection PyShadowingNames

@@ -38,5 +38,8 @@ class FilterError(BaseError):
         super().__init__(code, data)
 
         self.codes: Dict[int, str] = {
-            0: 'Polygon can not be None'
+            0: 'Polygon can not be None',
+            1: 'Polygon does not have at least 3 points.',
+            2: 'Polygon is not planar',
+            3: 'Polygon not found in the program'
         }

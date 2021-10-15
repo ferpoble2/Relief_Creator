@@ -39,9 +39,9 @@ class TestMergeMapsTransformation(ProgramTestCase):
 
     def test_merge_maps(self):
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                           'resources/test_resources/netcdf/test_model_3.nc')
+                                           'resources/test_resources/netcdf/test_data_nan_values.nc')
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                           'resources/test_resources/netcdf/test_model_4.nc')
+                                           'resources/test_resources/netcdf/test_file_2.nc')
 
         map_transformation = MergeMapsTransformation('0', '1')
         self.engine.apply_map_transformation(map_transformation)
@@ -63,9 +63,33 @@ class TestMergeMapsTransformation(ProgramTestCase):
 
         os.remove('resources/test_resources/temp/combined_model_test.nc')
 
+    def test_same_map(self):
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
+
+        map_transformation = MergeMapsTransformation('0', '0')
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf('0', 'resources/test_resources/temp/combined_same_map.nc')
+
+        x, y, z = read_info('resources/test_resources/temp/combined_same_map.nc')
+        expected_x, expected_y, expected_z = read_info(
+            'resources/test_resources/netcdf/test_file_50_50.nc')
+
+        np.testing.assert_array_equal(expected_x,
+                                      x,
+                                      "x array stored is not the same as the expected.")
+        np.testing.assert_array_equal(expected_y,
+                                      y,
+                                      "y array stored is not the same as the expected.")
+        np.testing.assert_array_equal(expected_z,
+                                      z,
+                                      "heights stored are not equal to the expected.")
+
+        os.remove('resources/test_resources/temp/combined_same_map.nc')
+
     def test_bad_map_arguments(self):
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
-                                           'resources/test_resources/netcdf/test_model_3.nc')
+                                           'resources/test_resources/netcdf/test_data_nan_values.nc')
 
         map_transformation_secondary_error = MergeMapsTransformation('0', '1')
         with self.assertRaises(MapTransformationError) as e:
@@ -113,7 +137,78 @@ class TestFillNanTransformation(ProgramTestCase):
 
         os.remove('resources/test_resources/temp/fill_nan_one_polygon.nc')
 
-    def test_fill_nan_multiple_polygon(self):
+    def test_polygon_no_points(self):
+        # Initialize the test
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
+        self.engine.create_new_polygon()
+        self.engine.create_new_polygon()
+        self.engine.create_new_polygon()
+
+        # Apply logic
+        map_transformation = FillNanMapTransformation(self.engine.get_active_model_id())
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
+                                           'resources/test_resources/temp/polygon_no_points.nc')
+
+        # Check values
+        x, y, z = read_info('resources/test_resources/temp/polygon_no_points.nc')
+        expected_x, expected_y, expected_z = read_info('resources/test_resources/netcdf/test_file_50_50.nc')
+
+        np.testing.assert_array_equal(expected_x,
+                                      x,
+                                      "x array stored is not the same as the expected.")
+        np.testing.assert_array_equal(expected_y,
+                                      y,
+                                      "y array stored is not the same as the expected.")
+        np.testing.assert_array_equal(expected_z,
+                                      z,
+                                      "heights stored are not equal to the expected.")
+
+        os.remove('resources/test_resources/temp/polygon_no_points.nc')
+
+    def test_polygon_not_well_defined(self):
+        # Initialize the test
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
+        pol_no_points = self.engine.create_new_polygon()
+        pol_one_point = self.engine.create_new_polygon()
+        self.engine.set_active_polygon(pol_one_point)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(25, 25)
+        pol_two_points = self.engine.create_new_polygon()
+        self.engine.set_active_polygon(pol_two_points)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(20, 20)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(30, 30)
+        pol_not_planar = self.engine.create_new_polygon()
+        self.engine.set_active_polygon(pol_not_planar)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(10, 10)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(10, 20)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(20, 10)
+        self.engine.add_new_vertex_to_active_polygon_using_real_coords(20, 20)
+
+        # Apply logic
+        map_transformation = FillNanMapTransformation(self.engine.get_active_model_id())
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
+                                           'resources/test_resources/temp/polygon_no_points.nc')
+
+        # Check values
+        x, y, z = read_info('resources/test_resources/temp/polygon_no_points.nc')
+        expected_x, expected_y, expected_z = read_info('resources/test_resources/netcdf/test_file_50_50.nc')
+
+        np.testing.assert_array_equal(expected_x,
+                                      x,
+                                      "x array stored is not the same as the expected.")
+        np.testing.assert_array_equal(expected_y,
+                                      y,
+                                      "y array stored is not the same as the expected.")
+        np.testing.assert_array_equal(expected_z,
+                                      z,
+                                      "heights stored are not equal to the expected.")
+
+        os.remove('resources/test_resources/temp/polygon_no_points.nc')
+
+    def test_multiple_polygons(self):
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                            'resources/test_resources/netcdf/test_file_1.nc')
         self.engine.create_polygon_from_file('resources/test_resources/polygons/shape_many_polygons.shp')
@@ -139,7 +234,7 @@ class TestFillNanTransformation(ProgramTestCase):
 
         os.remove('resources/test_resources/temp/fill_nan_multiple_polygon.nc')
 
-    def test_fill_nan_polygon_outside(self):
+    def test_polygon_outside(self):
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                            'resources/test_resources/netcdf/test_file_1.nc')
 
@@ -316,6 +411,30 @@ class TestInterpolateNanMapTransformation(ProgramTestCase):
 
         os.remove('resources/test_resources/temp/interpolate_nan_map_6.nc')
 
+    def test_bad_arguments(self):
+        map_transformation = InterpolateNanMapTransformation('NonExistentModel',
+                                                             InterpolateNanMapTransformationType.linear)
+        with self.assertRaises(MapTransformationError) as e:
+            map_transformation.initialize(self.engine.scene)
+            map_transformation.apply()
+        self.assertEqual(1, e.exception.code, 'Code exception is not 1')
+
+    def test_only_nan_values(self):
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_data_nan_only.nc')
+        # Apply transformation
+        # --------------------
+        map_transformation = InterpolateNanMapTransformation(self.engine.get_active_model_id(),
+                                                             InterpolateNanMapTransformationType.linear)
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
+                                           'resources/test_resources/temp/interpolate_nan_map_7.nc')
+        # Check values
+        # ------------
+        self.check_map_values('resources/test_resources/temp/interpolate_nan_map_7.nc',
+                              'resources/test_resources/netcdf/test_data_nan_only.nc')
+        os.remove('resources/test_resources/temp/interpolate_nan_map_7.nc')
+
     def check_map_values(self, generated_file: str, expected_data_file: str) -> None:
         """
         Check the data from a generated netcdf file and the data in the expected_data_file.
@@ -358,6 +477,8 @@ class TestNanConvolutionMapTransformation(ProgramTestCase):
 
         np.testing.assert_array_equal(z_expected, z, 'Array generated is not equal to the expected.')
 
+        os.remove('resources/test_resources/temp/nan_convolution_1.nc')
+
     def test_simple_model_2(self):
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                            'resources/test_resources/netcdf/test_nan_convolution.nc')
@@ -372,6 +493,61 @@ class TestNanConvolutionMapTransformation(ProgramTestCase):
         _, _, z_expected = read_info('resources/test_resources/expected_data/netcdf/expected_map_transformation_7.nc')
 
         np.testing.assert_array_equal(z_expected, z, 'Array generated is not equal to the expected.')
+
+        os.remove('resources/test_resources/temp/nan_convolution_2.nc')
+
+    def test_no_nan_values(self):
+        # Initialize data
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_1.nc')
+
+        # Apply changes
+        map_transformation = NanConvolutionMapTransformation(self.engine.get_active_model_id(),
+                                                             5,
+                                                             1)
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
+                                           'resources/test_resources/temp/nan_convolution_4.nc')
+
+        # Check data validity
+        _, _, z = read_info('resources/test_resources/temp/nan_convolution_4.nc')
+        _, _, z_expected = read_info('resources/test_resources/netcdf/test_file_1.nc')
+
+        np.testing.assert_array_equal(z_expected, z,
+                                      'Heights were modified when no nan values were present on the map.')
+
+        os.remove('resources/test_resources/temp/nan_convolution_4.nc')
+
+    def test_only_nan_values(self):
+        # Initialize data
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_data_nan_only.nc')
+
+        # Apply changes
+        map_transformation = NanConvolutionMapTransformation(self.engine.get_active_model_id(),
+                                                             5,
+                                                             1)
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(self.engine.get_active_model_id(),
+                                           'resources/test_resources/temp/nan_convolution_3.nc')
+
+        # Check data validity
+        _, _, z = read_info('resources/test_resources/temp/nan_convolution_3.nc')
+        _, _, z_expected = read_info('resources/test_resources/netcdf/test_data_nan_only.nc')
+
+        np.testing.assert_array_equal(z_expected, z, 'Heights were modified when there were only nans on the map '
+                                                     '(where did the method got the pivot information?).')
+
+        os.remove('resources/test_resources/temp/nan_convolution_3.nc')
+
+    def test_bad_arguments(self):
+        map_transformation = NanConvolutionMapTransformation('NonExistentModel',
+                                                             5,
+                                                             0.5)
+        with self.assertRaises(MapTransformationError) as e:
+            map_transformation.initialize(self.engine.scene)
+            map_transformation.apply()
+        self.assertEqual(1, e.exception.code, 'Code exception is not 1.')
 
 
 if __name__ == '__main__':
