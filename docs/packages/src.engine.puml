@@ -51,6 +51,7 @@ skinparam linetype ortho
     src.engine.Engine ..> src.error.PolygonError
     src.engine.Engine ..> src.error.SceneError
     src.engine.Engine ..> src.error.MapTransformationError
+    src.engine.Engine ..> src.engine.gui.frames.modal.TextModal
 !endsub
 
 ' Code that will affect only the current diagramde
