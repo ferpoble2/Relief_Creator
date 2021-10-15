@@ -22,8 +22,8 @@
         + create_3D_model_if_not_exists(model_id)
         + create_model_from_data_async(path_color_file, path_model, model_id)
         + create_new_polygon(): str
-        + delete_polygon_by_id(polygon_id)
-        + delete_polygon_param(polygon_id, key)
+        + remove_polygon_by_id(polygon_id)
+        + remove_polygon_param(polygon_id, key)
         + draw(active_model_id, active_polygon_id, program_view_mode)
         + get_3d_model_list(): List[str]
         + get_active_model_projection_matrix(): array

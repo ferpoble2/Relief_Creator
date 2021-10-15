@@ -14,7 +14,7 @@
                     - __update_planar_state()
                     + add_point(x, y, z)
                     + draw(active_polygon)
-                    + delete_parameter(key)
+                    + remove_parameter(key)
                     + get_id(): str
                     + get_name(): str
                     + get_parameter(key): any

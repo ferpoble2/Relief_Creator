@@ -202,9 +202,9 @@ class Polygon(Model):
         # update the last line of the model
         self.update_last_line()
 
-    def delete_parameter(self, key: str) -> None:
+    def remove_parameter(self, key: str) -> None:
         """
-        Delete a parameter from the dictionary of parameters.
+        Remove a parameter from the dictionary of parameters.
 
         Args:
             key: Key to be deleted.
