@@ -63,14 +63,10 @@ class Settings:
     SCENE_BEGIN_Y = BOTTOM_FRAME_HEIGHT
     SCENE_WIDTH_X = WIDTH - LEFT_FRAME_WIDTH
     SCENE_HEIGHT_Y = HEIGHT - MAIN_MENU_BAR_HEIGHT - TOP_FRAME_HEIGHT
+    CLEAR_COLOR = [0.15, 0.15, 0.15, 1]  # clear color of the screen
 
     # GUI settings
-    FONT_SIZE = 18
-    TOOL_SUB_TITLE_FONT_SIZE = 22
-    TOOL_TITLE_FONT_SIZE = 25
     FIXED_FRAMES = True
-
-    CLEAR_COLOR = [0.15, 0.15, 0.15, 1]  # clear color of the screen
 
     # Type settings
     FLOAT_BYTES = 4  # float will be represented by 4 bytes.

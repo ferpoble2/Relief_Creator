@@ -8,6 +8,7 @@ package src.engine.gui{
     class src.engine.gui.Icon
     class src.engine.gui.PolygonFolder
     class src.engine.gui.PolygonFolderManager
+    class src.engine.gui.Font
 
     !includesub src.engine.gui.frames.puml!INTERNAL
 }
@@ -15,6 +16,7 @@ package src.engine.gui{
 src.engine.gui.PolygonFolderManager o-- src.engine.gui.PolygonFolder
 src.engine.gui.GUIManager o-- src.engine.gui.PolygonFolderManager
 src.engine.gui.GUIManager o-- src.engine.gui.Icon
+src.engine.gui.GUIManager ..> src.engine.gui.Font
 !endsub
 
 !startsub EXTERNAL

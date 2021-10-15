@@ -34,6 +34,7 @@ import OpenGL.constant as gl_constants
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
 
+from src.engine.GUI.font import Font
 from src.engine.GUI.frames.debug import Debug
 from src.engine.GUI.frames.loading import Loading
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar
@@ -81,9 +82,6 @@ class GUIManager:
     def __init__(self,
                  engine: 'Engine',
                  window: '_GLFWwindow',
-                 regular_font_size: int,
-                 tool_title_font_size: int,
-                 tool_sub_title_font_size: int,
                  debug_mode: bool = False):
         """
         Constructor of the class.
@@ -93,9 +91,6 @@ class GUIManager:
         Args:
             engine: Engine to use to execute the logic of the class.
             debug_mode: Boolean indicating if the GUI should render debug frames.
-            tool_sub_title_font_size: Font size to use for the sub_title text.
-            tool_title_font_size: Font size to use for the tool_tile text.
-            regular_font_size: Font size to use for the regular font.
             window: Window to use to draw the GUI.
         """
 
@@ -103,10 +98,7 @@ class GUIManager:
         # ----------------
         self.__implementation = None
         self.__io = None
-        self.__font_regular = None
-        self.__font_bold = None
-        self.__font_tool_title = None
-        self.__font_tool_sub_title = None
+        self.__loaded_fonts = {}
 
         # GLFW parameters
         # ---------------
@@ -159,9 +151,6 @@ class GUIManager:
         self.__is_mouse_inside_frame = False
 
         self.__initialize_variables(window,
-                                    regular_font_size,
-                                    tool_title_font_size,
-                                    tool_sub_title_font_size,
                                     debug_mode)
 
     def __add_polygon_to_polygon_folder(self, folder_id: str, polygon_id: str) -> None:
@@ -189,18 +178,12 @@ class GUIManager:
 
     def __initialize_variables(self,
                                window,
-                               regular_font_size: int,
-                               tool_title_font_size: int,
-                               tool_sub_title_font_size: int,
                                debug_mode: bool = False) -> None:
         """
         Set the initial configurations of the GUI.
 
         Args:
             debug_mode: Boolean indicating if the GUI should render debug frames.
-            tool_sub_title_font_size: Font size to use for the sub_title text.
-            tool_title_font_size: Font size to use for the tool_tile text.
-            regular_font_size: Font size to use for the regular font.
             window: Window to use to draw the GUI
 
         Returns: None
@@ -212,28 +195,23 @@ class GUIManager:
         self.__glfw_window = window
 
         # Style options
+        # -------------
         style = imgui.get_style()
         style.frame_rounding = 5
         imgui.style_colors_light(style)
 
-        # Font options
+        # Initialize fonts on the GUI
+        # ---------------------------
         self.__io = imgui.get_io()
-        self.__font_regular = self.__io.fonts.add_font_from_file_ttf(
-            'resources/fonts/open_sans/OpenSans-Regular.ttf', regular_font_size
-        )
-        self.__font_bold = self.__io.fonts.add_font_from_file_ttf(
-            'resources/fonts/open_sans/OpenSans-Bold.ttf', regular_font_size
-        )
-        self.__font_tool_title = self.__io.fonts.add_font_from_file_ttf(
-            'resources/fonts/open_sans/OpenSans-Regular.ttf', tool_title_font_size
-        )
-        self.__font_tool_sub_title = self.__io.fonts.add_font_from_file_ttf(
-            'resources/fonts/open_sans/OpenSans-Regular.ttf', tool_sub_title_font_size
-        )
-
+        for font in Font:
+            self.__loaded_fonts[font] = self.__io.fonts.add_font_from_file_ttf(
+                font.value[0],
+                font.value[1]
+            )
         self.__implementation.refresh_font_texture()
 
-        # load the icons on the GUI
+        # Load the icons on the GUI
+        # -------------------------
         self.__load_icons()
 
         if debug_mode:
@@ -513,7 +491,7 @@ class GUIManager:
             raise NotImplementedError('ViewMode not implemented on the GUI.')
 
         imgui.new_frame()
-        with imgui.font(self.__font_regular):
+        with imgui.font(self.__loaded_fonts[Font.REGULAR]):
             for frame in components_to_draw:
                 frame.render()
             for frame in components_to_draw:
@@ -1289,43 +1267,17 @@ class GUIManager:
         """
         self.__engine.set_controller_key_callback(new_state)
 
-    def set_font_bold(self) -> None:
+    def set_font(self, font: Font) -> None:
         """
-        Set a bold font to use in the render on the GUI.
+        Change the font used in the drawing process.
 
-        Returns: Set the font to bold.
-        """
-        imgui.pop_font()
-        imgui.push_font(self.__font_bold)
-
-    def set_font_regular(self) -> None:
-        """
-        Set the regular font too use in the render.
-
-        Returns: Set the font to bold.
-        """
-        imgui.pop_font()
-        imgui.push_font(self.__font_regular)
-
-    def set_font_tool_sub_title(self) -> None:
-        """
-        Set the font to use of the type sub_title.
-
-        The font will be smaller than the title font but bigger than the regular text.
+        Args:
+            font: Font to use in the following drawing of the render.
 
         Returns: None
         """
         imgui.pop_font()
-        imgui.push_font(self.__font_tool_sub_title)
-
-    def set_font_tool_title(self) -> None:
-        """
-        Set the font to use for the tool titles.
-
-        Returns: None
-        """
-        imgui.pop_font()
-        imgui.push_font(self.__font_tool_title)
+        imgui.push_font(self.__loaded_fonts[font])
 
     def set_loading_message(self, new_msg: str) -> None:
         """

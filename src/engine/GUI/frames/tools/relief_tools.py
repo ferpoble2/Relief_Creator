@@ -23,6 +23,7 @@ from typing import List, TYPE_CHECKING, Union
 
 import imgui
 
+from src.engine.GUI.font import Font
 from src.engine.scene.filter.filter import Filter
 from src.engine.scene.filter.height_greater_than import HeightGreaterThan
 from src.engine.scene.filter.height_less_than import HeightLessThan
@@ -148,9 +149,9 @@ class ReliefTools:
 
         # Render the menu
         # ---------------
-        self.__gui_manager.set_font_tool_sub_title()
+        self.__gui_manager.set_font(Font.TOOL_SUB_TITLE)
         imgui.text('Polygon Information')
-        self.__gui_manager.set_font_regular()
+        self.__gui_manager.set_font(Font.REGULAR)
         imgui.columns(2, None, False)
         imgui.text(f'Max height:')
         imgui.next_column()
@@ -180,9 +181,9 @@ class ReliefTools:
 
         # Title of the section
         # --------------------
-        self.__gui_manager.set_font_tool_sub_title()
+        self.__gui_manager.set_font(Font.TOOL_SUB_TITLE)
         imgui.text_wrapped('Filters')
-        self.__gui_manager.set_font_regular()
+        self.__gui_manager.set_font(Font.REGULAR)
 
         # Render the filters on the GUI
         # -----------------------------
@@ -251,9 +252,9 @@ class ReliefTools:
 
         # Title of the section
         # --------------------
-        self.__gui_manager.set_font_tool_sub_title()
+        self.__gui_manager.set_font(Font.TOOL_SUB_TITLE)
         imgui.text('Transformation')
-        self.__gui_manager.set_font_regular()
+        self.__gui_manager.set_font(Font.REGULAR)
 
         # Type  of transformation
         # -----------------------
@@ -293,9 +294,9 @@ class ReliefTools:
         active_polygon_id = self.__gui_manager.get_active_polygon_id()
         active_model_id = self.__gui_manager.get_active_model_id()
 
-        self.__gui_manager.set_font_tool_title()
+        self.__gui_manager.set_font(Font.TOOL_TITLE)
         imgui.text('Relief Tools')
-        self.__gui_manager.set_font_regular()
+        self.__gui_manager.set_font(Font.REGULAR)
 
         # Current Height Information
         # --------------------------

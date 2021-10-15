@@ -34,6 +34,9 @@ src.engine.gui.frames.MouseCoordinates -u-|> src.engine.gui.frames.Frame
     src.engine.gui.GUIManager o--o src.engine.gui.frames.Frame
 
     src.engine.gui.frames.MainMenuBar ..> src.engine.scene.map_transformation.FillNanMapTransformation
+
+    src.engine.gui.frames.PolygonInformation ..> src.engine.gui.Font
+    src.engine.gui.frames.Tools_3D ..> src.engine.gui.Font
 !endsub
 
 hide members

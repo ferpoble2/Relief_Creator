@@ -13,11 +13,13 @@ package src.engine.gui.frames.tools {
     class src.engine.gui.frames.tools.ReliefTools
     class src.engine.gui.frames.tools.PolygonTools
     class src.engine.gui.frames.tools.InterpolationTools
+    class src.engine.gui.frames.tools.MapTools
 }
 
 src.engine.gui.frames.tools.Tools *-- src.engine.gui.frames.tools.ReliefTools
 src.engine.gui.frames.tools.Tools *-- src.engine.gui.frames.tools.PolygonTools
 src.engine.gui.frames.tools.Tools *-- src.engine.gui.frames.tools.InterpolationTools
+src.engine.gui.frames.tools.Tools *-- src.engine.gui.frames.tools.MapTools
 !endsub
 
 
@@ -39,6 +41,12 @@ src.engine.gui.frames.tools.Tools *-- src.engine.gui.frames.tools.InterpolationT
     src.engine.gui.frames.tools.InterpolationTools ..> src.engine.scene.interpolation.NearestInterpolation
     src.engine.gui.frames.tools.InterpolationTools ..> src.engine.scene.interpolation.LinearInterpolation
     src.engine.gui.frames.tools.InterpolationTools ..> src.engine.scene.interpolation.SmoothInterpolation
+
+    src.engine.gui.frames.tools.InterpolationTools ..> src.engine.gui.Font
+    src.engine.gui.frames.tools.MapTools ..> src.engine.gui.Font
+    src.engine.gui.frames.tools.PolygonTools ..> src.engine.gui.Font
+    src.engine.gui.frames.tools.ReliefTools ..> src.engine.gui.Font
+    src.engine.gui.frames.tools.Tools ..> src.engine.gui.Font
 !endsub
 
 hide members

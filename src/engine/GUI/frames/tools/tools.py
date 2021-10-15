@@ -22,6 +22,7 @@ from typing import TYPE_CHECKING
 
 import imgui
 
+from src.engine.GUI.font import Font
 from src.engine.GUI.frames.frame import Frame
 from src.engine.GUI.frames.tools.interpolation_tools import InterpolationTools
 from src.engine.GUI.frames.tools.map_tools import MapTools
@@ -69,17 +70,17 @@ class Tools(Frame):
         """
         Show the active tool in a formatted way to the user.
         """
-        self._GUI_manager.set_font_bold()
+        self._GUI_manager.set_font(Font.BOLD)
         imgui.text(f"Active tool: {self.__tools_names_dict.get(self._GUI_manager.get_active_tool(), None)}")
-        self._GUI_manager.set_font_regular()
+        self._GUI_manager.set_font(Font.REGULAR)
 
     def __show_visualization_tools(self) -> None:
         """
         Show the visualization tools on the frame.
         """
-        self._GUI_manager.set_font_tool_title()
+        self._GUI_manager.set_font(Font.TOOL_TITLE)
         imgui.text("Visualization Tools")
-        self._GUI_manager.set_font_regular()
+        self._GUI_manager.set_font(Font.REGULAR)
 
         if imgui.button("Zoom In", width=imgui.get_window_width() / 2 - self.__double_button_margin_width):
             log.debug("Pressed button Zoom in")

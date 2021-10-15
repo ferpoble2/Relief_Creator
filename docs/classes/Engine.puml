@@ -51,7 +51,6 @@ class Engine {
     + get_extra_reload_proportion_setting(): float
     + get_float_bytes()
     + get_float_bytes(): int
-    + get_font_size(): int
     + get_gui_key_callback(): function
     + get_gui_scroll_callback(): function
     + get_gui_setting_data(): dict
@@ -68,8 +67,6 @@ class Engine {
     + get_quality(): int
     + get_render_settings()
     + get_scene_setting_data(): dict
-    + get_tool_sub_title_font_size(): int
-    + get_tool_title_font_size(): int
     + get_window_setting_data(): dict
     + get_zoom_level(): float
     + is_mouse_hovering_frame()

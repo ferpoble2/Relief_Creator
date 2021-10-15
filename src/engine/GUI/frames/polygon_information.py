@@ -26,6 +26,7 @@ from typing import TYPE_CHECKING
 
 import imgui
 
+from src.engine.GUI.font import Font
 from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
 
@@ -91,14 +92,14 @@ class PolygonInformation(Frame):
             # --------------------------------------------
             # First row, show the data titles in bold font
             # --------------------------------------------
-            self._GUI_manager.set_font_bold()
+            self._GUI_manager.set_font(Font.BOLD)
             imgui.columns(2, 'Data List')
             imgui.separator()
             imgui.text("Field Name")
             imgui.next_column()
             imgui.text("Value")
             imgui.separator()
-            self._GUI_manager.set_font_regular()
+            self._GUI_manager.set_font(Font.REGULAR)
 
             # ---------------------------------------------------------------------------------------------------------
             # For each parameter defined in the polygon, show a new row on the frame with the name of the parameter and

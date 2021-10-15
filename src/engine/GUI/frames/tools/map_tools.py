@@ -22,6 +22,8 @@ from typing import TYPE_CHECKING
 
 import imgui
 
+from src.engine.GUI.font import Font
+
 if TYPE_CHECKING:
     from src.engine.GUI.guimanager import GUIManager
 
@@ -58,9 +60,9 @@ class MapTools:
 
         # Render title of the tools
         # -------------------------
-        self.__gui_manager.set_font_tool_title()
+        self.__gui_manager.set_font(Font.TOOL_TITLE)
         imgui.text('Map Tools')
-        self.__gui_manager.set_font_regular()
+        self.__gui_manager.set_font(Font.REGULAR)
 
         # Render maps names
         # -----------------

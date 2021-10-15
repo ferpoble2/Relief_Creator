@@ -84,9 +84,6 @@ class Engine:
                              self.get_clear_color())
         self.gui_manager = GUIManager(self,
                                       self.render.window,
-                                      Settings.FONT_SIZE,
-                                      Settings.TOOL_TITLE_FONT_SIZE,
-                                      Settings.TOOL_SUB_TITLE_FONT_SIZE,
                                       debug_mode)
         self.window = self.render.window
         self.scene = Scene(self)
@@ -1032,14 +1029,6 @@ class Engine:
         """
         return Settings.FLOAT_BYTES
 
-    def get_font_size(self) -> int:
-        """
-        Get the font size to use in the program.
-
-        Returns: Font size used by the program.
-        """
-        return Settings.FONT_SIZE
-
     def get_gui_key_callback(self) -> callable:
         """
         Get the key callback used by the gui
@@ -1246,22 +1235,6 @@ class Engine:
             'SCENE_BEGIN_X': Settings.SCENE_BEGIN_X, 'SCENE_BEGIN_Y': Settings.SCENE_BEGIN_Y,
             'SCENE_WIDTH_X': Settings.SCENE_WIDTH_X, 'SCENE_HEIGHT_Y': Settings.SCENE_HEIGHT_Y
         }
-
-    def get_tool_sub_title_font_size(self) -> int:
-        """
-        Get the font size to use for the tool titles.
-
-        Returns: Int with the font size to use.
-        """
-        return Settings.TOOL_SUB_TITLE_FONT_SIZE
-
-    def get_tool_title_font_size(self) -> int:
-        """
-        Get the font size to use for the tool titles.
-
-        Returns: Int with the font size to use.
-        """
-        return Settings.TOOL_TITLE_FONT_SIZE
 
     def get_window_setting_data(self) -> dict:
         """

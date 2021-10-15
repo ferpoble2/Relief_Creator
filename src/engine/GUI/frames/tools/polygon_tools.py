@@ -23,6 +23,7 @@ from typing import TYPE_CHECKING
 
 import imgui
 
+from src.engine.GUI.font import Font
 from src.program.tools import Tools
 from src.utils import get_logger
 
@@ -572,9 +573,9 @@ class PolygonTools:
         """
         Show the polygon tools on the frame
         """
-        self.__GUI_manager.set_font_tool_title()
+        self.__GUI_manager.set_font(Font.TOOL_TITLE)
         imgui.text("Polygon Tools")
-        self.__GUI_manager.set_font_regular()
+        self.__GUI_manager.set_font(Font.REGULAR)
 
         if imgui.button("Create Folder", width=imgui.get_window_width() - self.__button_margin_width):
             self.__create_new_polygon()

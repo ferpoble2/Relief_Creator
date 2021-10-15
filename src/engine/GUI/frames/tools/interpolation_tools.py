@@ -23,6 +23,7 @@ from typing import TYPE_CHECKING
 
 import imgui
 
+from src.engine.GUI.font import Font
 from src.engine.scene.interpolation.cubic_interpolation import CubicInterpolation
 from src.engine.scene.interpolation.linear_interpolation import LinearInterpolation
 from src.engine.scene.interpolation.nearest_interpolation import NearestInterpolation
@@ -30,7 +31,7 @@ from src.engine.scene.interpolation.smooth_interpolation import SmoothInterpolat
 from src.utils import get_logger
 
 if TYPE_CHECKING:
-    from engine.GUI.guimanager import GUIManager
+    from src.engine.GUI.guimanager import GUIManager
 
 log = get_logger(module="INTERPOLATION_TOOLS")
 
@@ -57,9 +58,9 @@ class InterpolationTools:
         Render the interpolation tools to modify the borders of the polygons modifications.
         Returns: None
         """
-        self.__gui_manager.set_font_tool_title()
+        self.__gui_manager.set_font(Font.TOOL_TITLE)
         imgui.text('Interpolation Tools')
-        self.__gui_manager.set_font_regular()
+        self.__gui_manager.set_font(Font.REGULAR)
 
         clicked, self.__current_combo_option = imgui.combo(
             "Type", self.__current_combo_option, self.__combo_options

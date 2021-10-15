@@ -23,6 +23,7 @@ from typing import TYPE_CHECKING
 
 import imgui
 
+from src.engine.GUI.font import Font
 from src.engine.GUI.frames.frame import Frame
 
 if TYPE_CHECKING:
@@ -72,9 +73,9 @@ class Tools3D(Frame):
         # ------------
 
         # Add a title to the camera section
-        self._GUI_manager.set_font_tool_title()
+        self._GUI_manager.set_font(Font.TOOL_SUB_TITLE)
         imgui.text('Camera Information')
-        self._GUI_manager.set_font_regular()
+        self._GUI_manager.set_font(Font.REGULAR)
 
         # Get the camera data and show it in the frame
         camera_data = self._GUI_manager.get_camera_data()
@@ -92,9 +93,9 @@ class Tools3D(Frame):
         # ----------
 
         # Add a title to the view tools section
-        self._GUI_manager.set_font_tool_title()
+        self._GUI_manager.set_font(Font.TOOL_SUB_TITLE)
         imgui.text('View Tools')
-        self._GUI_manager.set_font_regular()
+        self._GUI_manager.set_font(Font.REGULAR)
 
         # Show the current exaggeration factor to the user and set an input section where the user can enter a new
         # value to use
@@ -124,9 +125,9 @@ class Tools3D(Frame):
         # ----------
 
         # Add a title to the unit tools section
-        self._GUI_manager.set_font_tool_title()
+        self._GUI_manager.set_font(Font.TOOL_SUB_TITLE)
         imgui.text('Unit Tools')
-        self._GUI_manager.set_font_regular()
+        self._GUI_manager.set_font(Font.REGULAR)
 
         # Render boxes where the user can select the measure unit of the maps and the heights
         imgui.text_wrapped('Height measure unit:')
