@@ -27,9 +27,9 @@ src.error.BaseError <|-- src.error.GUIError
 src.error.BaseError <|-- src.error.NetcdfImportError
 src.error.BaseError <|-- src.error.FilterError
 
-src.error.SceneError <|-- src.error.TransformationError
-src.error.SceneError <|-- src.error.InterpolationError
-src.error.SceneError <|-- src.error.MapTransformationError
+src.error.BaseError <|-- src.error.TransformationError
+src.error.BaseError <|-- src.error.InterpolationError
+src.error.BaseError <|-- src.error.MapTransformationError
 !endsub
 
 !startsub EXTERNAL

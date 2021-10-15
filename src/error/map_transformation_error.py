@@ -19,10 +19,10 @@
 Module that defines the class MapTransformationError, class to use when errors related to the map_transformation
 module occur.
 """
-from src.error.scene_error import SceneError
+from src.error.base_error import BaseError
 
 
-class MapTransformationError(SceneError):
+class MapTransformationError(BaseError):
     """
     Class to use when there is an error in the transformation process of a model.
     """

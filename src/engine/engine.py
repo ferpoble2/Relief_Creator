@@ -287,7 +287,7 @@ class Engine:
             elif e.code == 2:
                 self.set_modal_text('Error', 'One polygon used for the transformation is not planar.')
             else:
-                raise NotImplementedError(f'MapTransformationError with code {e.code} not handled.')
+                raise e
 
     def apply_transformation(self, transformation: 'Transformation') -> None:
         """
@@ -323,7 +323,7 @@ class Engine:
                 self.set_modal_text('Error',
                                     'Polygon not selected or invalid in filter.')
             else:
-                raise NotImplementedError(f'FilterError with code {e.code} not handled.')
+                raise e
 
         except TransformationError as e:
             if e.code == 2:
@@ -359,7 +359,7 @@ class Engine:
             elif e.code == 13:
                 self.set_modal_text('Error', 'Polygon selected not found in the program.')
             else:
-                raise NotImplementedError(f'TransformationError with code {e.code} not handled.')
+                raise e
 
     def are_frames_fixed(self) -> bool:
         """
@@ -683,18 +683,20 @@ class Engine:
                                     'model in the application.\n'
                                     f'Current model x-axis: {e.data.get("expected", None)}\n'
                                     f'Loaded model x-axis: {e.data.get("actual", None)}')
-            if e.code == 10:
+            elif e.code == 10:
                 self.set_modal_text('Error',
                                     'The model loaded does not use the same values for the y-axis as the active '
                                     'model in the application.\n'
                                     f'Current model y-axis: {e.data.get("expected", None)}\n'
                                     f'Loaded model y-axis: {e.data.get("actual", None)}')
-            if e.code == 11:
+            elif e.code == 11:
                 self.set_modal_text('Error',
                                     'The resolution of the model loaded is no the same as the active model.\n'
                                     f'Current model shape: {e.data.get("expected", None)}\n'
                                     f'Loaded model shape: {e.data.get("actual", None)}'
                                     )
+            else:
+                raise e
 
         except NetCDFImportError as e:
             self.program.set_loading(False)
@@ -706,20 +708,22 @@ class Engine:
                                     f'Keys accepted by the program for latitude are: {list(e.data["accepted_keys"])}'
                                     f'\n\nTry adding a key to the latitude_keys.json file located in the resources '
                                     f'folder and restarting the application.')
-            if e.code == 3:
+            elif e.code == 3:
                 self.set_modal_text('Error',
                                     f'{e.get_code_message()}\n\n'
                                     f'Current keys on the file are: {list(e.data["file_keys"])}\n\n'
                                     f'Keys accepted by the program for longitude are: {list(e.data["accepted_keys"])}'
                                     f'\n\nTry adding a key to the longitude_keys.json file located in the resources '
                                     f'folder and restarting the application.')
-            if e.code == 4:
+            elif e.code == 4:
                 self.set_modal_text('Error',
                                     f'{e.get_code_message()}\n\n'
                                     f'Current keys on the file are: {list(e.data["file_keys"])}\n\n'
                                     f'Keys accepted by the program for height are: {list(e.data["accepted_keys"])}'
                                     f'\n\nTry adding a key to the height_keys.json file located in the resources folder'
                                     f' and restarting the application.')
+            else:
+                raise e
 
         except KeyError:
             self.program.set_loading(False)
@@ -792,6 +796,8 @@ class Engine:
                 if e.code == 2:
                     self.set_modal_text('Error', 'The polygon must have at least 3 vertices to load the '
                                                  'interpolation area.')
+                else:
+                    raise e
 
         self.set_task_with_loading_frame(load_preview_logic,
                                          'Loading preview, this may take a while.')

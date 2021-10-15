@@ -18,10 +18,10 @@
 """
 File with the class TransformationError, class to raise when there is an error in the transformation process.
 """
-from src.error.scene_error import SceneError
+from src.error.base_error import BaseError
 
 
-class TransformationError(SceneError):
+class TransformationError(BaseError):
     """
     Class to use when there is an error in the transformation process of a model.
     """

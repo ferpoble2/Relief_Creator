@@ -18,10 +18,10 @@
 """
 File with the InterpolationError class, class to use when raising exceptions related to the interpolation process.
 """
-from src.error.scene_error import SceneError
+from src.error.base_error import BaseError
 
 
-class InterpolationError(SceneError):
+class InterpolationError(BaseError):
     """
     Class to use when there is an error in the transformation process of a model.
     """
