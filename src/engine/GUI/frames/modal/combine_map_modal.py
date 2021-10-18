@@ -18,7 +18,7 @@
 """
 Module in charge of the rendering of the modal that gives options to the user when merging two maps into one.
 """
-from typing import List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Union
 
 import imgui
 
@@ -34,11 +34,19 @@ class CombineMapModal(Modal):
     Class in charge of the rendering of the modal that gives options to the user when merging two maps into a new one.
     """
 
-    def __init__(self, gui_manager: 'GUIManager'):
+    def __init__(self, gui_manager: 'GUIManager',
+                 model_id_list: Union[None, List[str]] = None,
+                 model_name_list: Union[None, List[str]] = None):
         """
         Constructor of the class.
         """
         super().__init__(gui_manager)
+
+        if model_id_list is None:
+            model_id_list = []
+        if model_name_list is None:
+            model_name_list = []
+
         self.__model_id_list: List[str] = []
         self.__model_name_list: List[str] = []
 
@@ -49,17 +57,9 @@ class CombineMapModal(Modal):
         self.__selected_map_1: int = 0
         self.__selected_map_2: int = 0
 
-    def open_modal(self) -> None:
-        """
-        Execute the logic to initialize the frame when opening it.
-
-        Returns: None
-        """
-        super().open_modal()
-
         # Get the information of the maps
-        self.__model_id_list = list(self._GUI_manager.get_model_names_dict().keys())
-        self.__model_name_list = list(self._GUI_manager.get_model_names_dict().values())
+        self.__model_id_list = model_id_list
+        self.__model_name_list = model_name_list
 
         # Configure the options selected in the frame
         self.__selected_map_1 = 0
@@ -77,8 +77,7 @@ class CombineMapModal(Modal):
             _, self.__selected_map_2 = imgui.combo("Secondary model", self.__selected_map_2, self.__model_name_list)
 
             if imgui.button("Close", self.__button_width):
-                self._GUI_manager.set_controller_keyboard_callback_state(True)
-                imgui.close_current_popup()
+                self._close_modal()
 
             imgui.same_line()
             if imgui.button("Merge Maps", self.__button_width):

@@ -6,7 +6,6 @@ class Modal {
 
     ~ begin_modal(modal_title)
     ~ close_modal()
-    + open_modal()
     + render()
     + post_render()
 }

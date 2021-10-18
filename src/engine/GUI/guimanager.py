@@ -38,11 +38,7 @@ from src.engine.GUI.font import Font
 from src.engine.GUI.frames.debug import Debug
 from src.engine.GUI.frames.loading import Loading
 from src.engine.GUI.frames.main_menu_bar import MainMenuBar
-from src.engine.GUI.frames.modal.combine_map_modal import CombineMapModal
-from src.engine.GUI.frames.modal.confirmation_modal import ConfirmationModal
-from src.engine.GUI.frames.modal.convolve_nan_modal import ConvolveNanModal
-from src.engine.GUI.frames.modal.interpolate_nan_map_modal import InterpolateNanMapModal
-from src.engine.GUI.frames.modal.text_modal import TextModal
+from src.engine.GUI.frames.modal.modal import Modal
 from src.engine.GUI.frames.mouse_coordinates import MouseCoordinates
 from src.engine.GUI.frames.polygon_information import PolygonInformation
 from src.engine.GUI.frames.test_window import TestWindow
@@ -114,37 +110,27 @@ class GUIManager:
         # Frames used by the GUI
         # ----------------------
         self.__main_menu_bar = MainMenuBar(self)
-        self.__text_modal = TextModal(self)
         self.__tools = Tools(self)
         self.__loading = Loading(self)
         self.__polygon_information = PolygonInformation(self)
-        self.__confirmation_modal = ConfirmationModal(self)
         self.__tools_3d = Tools3D(self)
         self.__mouse_coordinates = MouseCoordinates(self)
-        self.__combine_map_modal = CombineMapModal(self)
-        self.__interpolate_nan_map_modal = InterpolateNanMapModal(self)
-        self.__convolve_nan_modal = ConvolveNanModal(self)
 
         self.__component_list_2D = [
             self.__main_menu_bar,
             self.__mouse_coordinates,
-            self.__text_modal,
             self.__tools,
             self.__loading,
             self.__polygon_information,
-            self.__confirmation_modal,
-            self.__combine_map_modal,
-            self.__interpolate_nan_map_modal,
-            self.__convolve_nan_modal
         ]
 
         self.__component_list_3D = [
             self.__main_menu_bar,
             self.__loading,
-            self.__text_modal,
-            self.__confirmation_modal,
             self.__tools_3d
         ]
+
+        self.__modals = []
 
         # Auxiliary parameters
         # --------------------
@@ -496,6 +482,8 @@ class GUIManager:
                 frame.render()
             for frame in components_to_draw:
                 frame.post_render()
+            for modal in self.__modals:
+                modal.post_render()
         imgui.end_frame()
 
         # check for the mouse component
@@ -563,7 +551,7 @@ class GUIManager:
         """
         return self.__engine.get_3d_model_list()
 
-    def get_active_model_id(self) -> str:
+    def get_active_model_id(self) -> Union[str, None]:
         """
         Get the active model being used in the program
 
@@ -1036,66 +1024,30 @@ class GUIManager:
         self.__engine.change_polygon_draw_priority(polygon_id,
                                                    self.__polygon_folder_manager.get_polygon_position(polygon_id))
 
-    def open_combine_map_modal(self) -> None:
+    def open_modal(self, modal: Modal) -> None:
         """
-        Open the modal to merge two maps into one.
+        Open a new modal on the GUI, rendering it with the other components on the GUI.
 
-        Returns:  None
-        """
-        self.__combine_map_modal.open_modal()
-
-    def open_interpolate_nan_map_modal(self) -> None:
-        """
-        Open the modal to select the type of interpolation to fill the nan values of the map.
-
-        Returns: None
-        """
-        self.__interpolate_nan_map_modal.open_modal()
-
-    def open_confirmation_modal(self, modal_title: str, msg: str, yes_function: callable,
-                                no_function: callable) -> None:
-        """
-        Opens a confirmation modal in the screen with two options (yes and no), after clicking each one execute the
-        functions given.
+        To remove a modal from the GUI call the method close_modal.
 
         Args:
-            modal_title: Title of the modal.
-            msg: Message to use in the modal.
-            yes_function: Function to execute when pressed yes.
-            no_function: Function to execute when pressed no.
+            modal: Modal to open on the GUI.
 
         Returns: None
         """
-        self.__confirmation_modal.open_modal()
-        self.__confirmation_modal.set_confirmation_text(modal_title,
-                                                        msg,
-                                                        yes_function,
-                                                        no_function)
+        self.__modals.append(modal)
 
-    def open_text_modal(self, modal_title: str, msg: str) -> None:
+    def close_modal(self, modal: Modal) -> None:
         """
-        Set the text of the modal frame and set it to show in the next frame.
-
-        Returns: None
+        Removes a modal from the list of modals to draw on the GUI.
 
         Args:
-            modal_title:  title to use in the modal
-            msg: message to show in the modal
-        """
-        log.debug("Setting modal text")
-        self.__text_modal.open_modal()
-        self.__text_modal.set_modal_text(modal_title, msg)
-
-    def open_convolve_nan_modal(self) -> None:
-        """
-        Open the modal related to the application of the NanConvolutionMapTransformation.
-
-        The user can configure the parameters for the transformation in the modal and the apply it over the active
-        model.
+            modal: Modal to remove.
 
         Returns: None
         """
-        self.__convolve_nan_modal.open_modal()
+        if modal in self.__modals:
+            self.__modals.remove(modal)
 
     def process_input(self) -> None:
         """

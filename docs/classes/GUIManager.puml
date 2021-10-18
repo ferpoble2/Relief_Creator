@@ -11,24 +11,15 @@ class GUIManager{
     - __polygon_folder_manager: PolygonFolderManager
     - __scene: Scene
 
-    FONTS
-    - __font_bold: IMGUI.font
-    - __font_regular: IMGUI.font
-    - __font_tool_title: IMGUI.font
-    - __font_tool_sub_title: IMGUI.font
-
     FRAMES
     - __component_list_2D: List[Frame]
     - __component_list_3D: List[Frame]
     - __main_menu_bar: Frame
-    - __text_modal: Frame
     - __tools: Frame
     - __loading: Frame
     - __polygon_information: Frame
-    - __confirmation_modal : Frame
     - __tools_3d: Frame
     - __mouse_coordinates: Frame
-    - __combine_map_modal: Frame
 
     - __load_icons()
     - __update_frames_with_new_polygon(polygon_id)
@@ -98,10 +89,8 @@ class GUIManager{
     + move_folder_position(polygon_folder_id, movement_offset)
     + move_polygon_position(polygon_id, polygon_folder_id, movement_offset)
     + move_polygon_to_polygon_folder(polygon_id, folder_id)
-    + open_combine_map_modal()
-    + open_confirmation_modal(modal_title, msg, yes_function, no_function)
-    + open_text_modal(modal_title, msg)
-    + open_convolve_nan_modal()
+    + open_modal(modal)
+    + close_modal(modal)
     + process_input()
     + reload_models()
     + remove_all_polygons_inside_folder(polygon_folder_id)

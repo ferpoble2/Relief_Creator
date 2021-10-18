@@ -9,7 +9,6 @@ class CombineMapModal {
     - __selected_map_1: int
     - __selected_map_2: int
 
-    + open_modal()
     + post_render()
 }
 

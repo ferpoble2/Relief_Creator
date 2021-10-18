@@ -24,6 +24,12 @@ src.engine.gui.frames.TestWindow -u-|> src.engine.gui.frames.Frame
 src.engine.gui.frames.PolygonInformation -u-|> src.engine.gui.frames.Frame
 src.engine.gui.frames.Tools -u-|> src.engine.gui.frames.Frame
 src.engine.gui.frames.MouseCoordinates -u-|> src.engine.gui.frames.Frame
+
+src.engine.gui.frames.MainMenuBar ..> src.engine.gui.frames.modal.CombineMapModal
+src.engine.gui.frames.MainMenuBar ..> src.engine.gui.frames.modal.ConvolveNanModal
+src.engine.gui.frames.MainMenuBar ..> src.engine.gui.frames.modal.InterpolateNanMapModal
+
+src.engine.gui.frames.PolygonInformation ..> src.engine.gui.frames.modal.ConfirmationModal
 !endsub
 
 !startsub EXTERNAL

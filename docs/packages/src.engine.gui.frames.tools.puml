@@ -47,6 +47,8 @@ src.engine.gui.frames.tools.Tools *-- src.engine.gui.frames.tools.MapTools
     src.engine.gui.frames.tools.PolygonTools ..> src.engine.gui.Font
     src.engine.gui.frames.tools.ReliefTools ..> src.engine.gui.Font
     src.engine.gui.frames.tools.Tools ..> src.engine.gui.Font
+
+    src.engine.gui.frames.tools.PolygonTools ..> src.engine.gui.frames.modal.ConfirmationModal
 !endsub
 
 hide members

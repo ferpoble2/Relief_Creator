@@ -24,6 +24,7 @@ from typing import List, TYPE_CHECKING, Union
 import glfw
 from PIL import Image
 
+from engine.GUI.frames.modal.text_modal import TextModal
 from src.engine.GUI.guimanager import GUIManager
 from src.engine.controller.controller import Controller
 from src.engine.process_manager import ProcessManager
@@ -964,7 +965,7 @@ class Engine:
         """
         return self.scene.get_3d_model_list()
 
-    def get_active_model_id(self) -> str:
+    def get_active_model_id(self) -> Union[str, None]:
         """
         Returns the active model being used by the program.
 
@@ -1656,7 +1657,9 @@ class Engine:
 
         Returns: None
         """
-        self.gui_manager.open_text_modal(title_modal, msg)
+        text_modal = TextModal(self.gui_manager)
+        text_modal.set_modal_text(title_modal, msg)
+        self.gui_manager.open_modal(text_modal)
 
     # noinspection PyUnresolvedReferences
     def set_models_polygon_mode(self, polygon_mode: 'gl_constants.IntConstant') -> None:
