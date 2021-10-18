@@ -42,6 +42,7 @@ src.engine.gui.frames.PolygonInformation ..> src.engine.gui.frames.modal.Confirm
     src.engine.gui.frames.MainMenuBar ..> src.engine.scene.map_transformation.FillNanMapTransformation
 
     src.engine.gui.frames.PolygonInformation ..> src.engine.gui.Font
+    src.engine.gui.frames.PolygonInformation ..> src.engine.gui.frames.modal.PolygonParameterModal
     src.engine.gui.frames.Tools_3D ..> src.engine.gui.Font
 !endsub
 

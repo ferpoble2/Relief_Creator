@@ -1,21 +1,5 @@
 @startuml
 class PolygonInformation {
-
-    - __key_string_value: str
-    - __parameter_to_edit: str
-    - __should_open_add_dialog: boolean
-    - __should_open_edit_dialog: boolean
-    - __value_string_value: str
-    - __parameters_type_list: list
-    - __current_variable_type: int
-    - __current_bool_selected: int
-
-    - __add_parameter_popup()
-    - __edit_parameter_popup()
-    - __check_numeric(value): boolean
-    - __render_parameter_value_input(): bool
-    - __convert_value_to_exportable_variable_type(value_to_convert): any
-
     + render()
 }
 

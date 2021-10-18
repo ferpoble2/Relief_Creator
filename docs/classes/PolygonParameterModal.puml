@@ -1,0 +1,18 @@
+@startuml
+class PolygonParameterModal {
+    - __key_string_value: str
+    - __value_string_value: str
+    - __parameters_type_list: List[str]
+    - __current_variable_type: int
+    - __current_bool_selected: int
+    - __input_text_maximum_character_number: int
+    - __polygon_to_edit: None | str
+    - __parameter_to_edit: None | str
+    - __title: str
+
+    - __render_parameter_value_input(): bool
+    - __convert_value_to_exportable_variable_type(value_to_convert, variable_type): any
+    - __check_numeric(value): bool
+    + post_render()
+    }
+@enduml

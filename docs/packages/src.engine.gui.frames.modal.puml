@@ -11,15 +11,20 @@ skinparam linetype ortho
 package src.engine.gui.frames.modal {
     class src.engine.gui.frames.modal.Modal
     class src.engine.gui.frames.modal.CombineMapModal
-    class src.engine.gui.frames.modal.ComfirmationModal
+    class src.engine.gui.frames.modal.ConfirmationModal
     class src.engine.gui.frames.modal.InterpolateNanMapModal
     class src.engine.gui.frames.modal.TextModal
+    class src.engine.gui.frames.modal.ConvolveNanModal
+    class src.engine.gui.frames.modal.ConfirmationModal
+    class src.engine.gui.frames.modal.PolygonParameterModal
 }
 
 src.engine.gui.frames.modal.CombineMapModal -u-|> src.engine.gui.frames.modal.Modal
-src.engine.gui.frames.modal.ComfirmationModal -u-|> src.engine.gui.frames.modal.Modal
+src.engine.gui.frames.modal.ConfirmationModal -u-|> src.engine.gui.frames.modal.Modal
 src.engine.gui.frames.modal.InterpolateNanMapModal -u-|> src.engine.gui.frames.modal.Modal
 src.engine.gui.frames.modal.TextModal -u-|> src.engine.gui.frames.modal.Modal
+src.engine.gui.frames.modal.ConvolveNanModal -u-|> src.engine.gui.frames.modal.Modal
+src.engine.gui.frames.modal.PolygonParameterModal -u-|> src.engine.gui.frames.modal.Modal
 !endsub
 
 !startsub EXTERNAL
