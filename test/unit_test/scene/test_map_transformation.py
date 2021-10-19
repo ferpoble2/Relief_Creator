@@ -173,7 +173,7 @@ class TestFillNanTransformation(ProgramTestCase):
         # Initialize the test
         self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
                                            'resources/test_resources/netcdf/test_file_50_50.nc')
-        pol_no_points = self.engine.create_new_polygon()
+        self.engine.create_new_polygon()
         pol_one_point = self.engine.create_new_polygon()
         self.engine.set_active_polygon(pol_one_point)
         self.engine.add_new_vertex_to_active_polygon_using_real_coords(25, 25)
@@ -241,6 +241,7 @@ class TestFillNanTransformation(ProgramTestCase):
                                            'resources/test_resources/netcdf/test_file_1.nc')
 
         polygon_id = self.engine.create_new_polygon()
+        self.engine.set_active_polygon(polygon_id)
         self.engine.add_new_vertex_to_active_polygon_using_real_coords(-5000, -5000)
         self.engine.add_new_vertex_to_active_polygon_using_real_coords(-5000, -4000)
         self.engine.add_new_vertex_to_active_polygon_using_real_coords(-4000, -4000)
