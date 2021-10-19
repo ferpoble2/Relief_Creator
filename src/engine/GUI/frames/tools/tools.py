@@ -32,7 +32,7 @@ from src.program.tools import Tools as ProgramTools
 from src.utils import get_logger
 
 if TYPE_CHECKING:
-    from engine.GUI.guimanager import GUIManager
+    from src.engine.GUI.guimanager import GUIManager
 
 log = get_logger(module="TOOLS")
 

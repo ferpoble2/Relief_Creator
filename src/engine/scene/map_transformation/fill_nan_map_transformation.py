@@ -24,7 +24,7 @@ from typing import Dict, List, TYPE_CHECKING
 import numpy as np
 from shapely.geometry import LinearRing
 
-from engine.scene.geometrical_operations import delete_z_axis, generate_mask, get_bounding_box_indexes
+from src.engine.scene.geometrical_operations import delete_z_axis, generate_mask, get_bounding_box_indexes
 from src.engine.scene.map_transformation.map_transformation import MapTransformation
 from src.error.map_transformation_error import MapTransformationError
 

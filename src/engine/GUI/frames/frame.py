@@ -24,7 +24,7 @@ from typing import TYPE_CHECKING
 import imgui
 
 if TYPE_CHECKING:
-    from engine.GUI.guimanager import GUIManager
+    from src.engine.GUI.guimanager import GUIManager
 
 
 class Frame:

@@ -33,7 +33,7 @@ from src.program.view_mode import ViewMode
 from src.utils import get_logger
 
 if TYPE_CHECKING:
-    from engine.GUI.guimanager import GUIManager
+    from src.engine.GUI.guimanager import GUIManager
 
 log = get_logger(module="MAIN_MENU_BAR")
 

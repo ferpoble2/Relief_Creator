@@ -26,14 +26,14 @@ from typing import TYPE_CHECKING
 
 import imgui
 
-from engine.GUI.frames.modal.polygon_parameter_modal import PolygonParameterModal
 from src.engine.GUI.font import Font
 from src.engine.GUI.frames.frame import Frame
 from src.engine.GUI.frames.modal.confirmation_modal import ConfirmationModal
+from src.engine.GUI.frames.modal.polygon_parameter_modal import PolygonParameterModal
 from src.utils import get_logger
 
 if TYPE_CHECKING:
-    from engine.GUI.guimanager import GUIManager
+    from src.engine.GUI.guimanager import GUIManager
 log = get_logger(module="Polygon Information")
 
 

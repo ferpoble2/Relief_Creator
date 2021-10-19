@@ -26,7 +26,7 @@ from src.engine.GUI.frames.frame import Frame
 from src.utils import get_logger
 
 if TYPE_CHECKING:
-    from engine.GUI.guimanager import GUIManager
+    from src.engine.GUI.guimanager import GUIManager
 
 log = get_logger(module="DEBUG_FRAME")
 
