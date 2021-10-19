@@ -1,0 +1,14 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class SubtractMapModal {
+    - __button_width: float
+    - __model_id_list: List[str]
+    - __model_name_list: List[str]
+    - __selected_model_primary: int
+    - __selected_model_secondary: int
+
+    + post_render()
+}
+
+@enduml

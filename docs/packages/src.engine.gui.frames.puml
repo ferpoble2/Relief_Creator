@@ -28,6 +28,7 @@ src.engine.gui.frames.MouseCoordinates -u-|> src.engine.gui.frames.Frame
 src.engine.gui.frames.MainMenuBar ..> src.engine.gui.frames.modal.CombineMapModal
 src.engine.gui.frames.MainMenuBar ..> src.engine.gui.frames.modal.ConvolveNanModal
 src.engine.gui.frames.MainMenuBar ..> src.engine.gui.frames.modal.InterpolateNanMapModal
+src.engine.gui.frames.MainMenuBar ..> src.engine.gui.frames.modal.SubtractMapModal
 
 src.engine.gui.frames.PolygonInformation ..> src.engine.gui.frames.modal.ConfirmationModal
 !endsub

@@ -17,6 +17,7 @@ package src.engine.gui.frames.modal {
     class src.engine.gui.frames.modal.ConvolveNanModal
     class src.engine.gui.frames.modal.ConfirmationModal
     class src.engine.gui.frames.modal.PolygonParameterModal
+    class src.engine.gui.frames.modal.SubtractMapModal
 }
 
 src.engine.gui.frames.modal.CombineMapModal -u-|> src.engine.gui.frames.modal.Modal
@@ -25,6 +26,7 @@ src.engine.gui.frames.modal.InterpolateNanMapModal -u-|> src.engine.gui.frames.m
 src.engine.gui.frames.modal.TextModal -u-|> src.engine.gui.frames.modal.Modal
 src.engine.gui.frames.modal.ConvolveNanModal -u-|> src.engine.gui.frames.modal.Modal
 src.engine.gui.frames.modal.PolygonParameterModal -u-|> src.engine.gui.frames.modal.Modal
+src.engine.gui.frames.modal.SubtractMapModal -u-|> src.engine.gui.frames.modal.Modal
 !endsub
 
 !startsub EXTERNAL

@@ -121,7 +121,8 @@ class NetcdfExporter:
 
         Returns: None
         """
-        root_grp = Dataset(f'{filename}.nc', "w", format="NETCDF4")
+        new_filename = f'{filename}.nc' if filename[-3:] != '.nc' else filename
+        root_grp = Dataset(new_filename, "w", format="NETCDF4")
         root_grp.createDimension('lon', len(vertices[0]))
         root_grp.createDimension('lat', len(vertices))
 

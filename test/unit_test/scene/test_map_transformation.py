@@ -30,8 +30,10 @@ from src.engine.scene.map_transformation.interpolate_nan_map_transformation impo
     InterpolateNanMapTransformationType
 from src.engine.scene.map_transformation.merge_maps_transformation import MergeMapsTransformation
 from src.engine.scene.map_transformation.nan_convolution import NanConvolutionMapTransformation
+from src.engine.scene.map_transformation.subtract_map import SubtractMap
 from src.error.map_transformation_error import MapTransformationError
 from src.input.NetCDF import read_info
+from src.output.netcdf_exporter import NetcdfExporter
 from test.test_case import ProgramTestCase
 
 
@@ -548,6 +550,167 @@ class TestNanConvolutionMapTransformation(ProgramTestCase):
             map_transformation.initialize(self.engine.scene)
             map_transformation.apply()
         self.assertEqual(1, e.exception.code, 'Code exception is not 1.')
+
+
+class TestSubtractMapTransformation(ProgramTestCase):
+
+    def test_same_model(self):
+        # Initialize the engine with the necessary data
+        # ---------------------------------------------
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_1.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_1.nc')
+        model_list = self.engine.get_model_list()
+
+        # Apply the transformation
+        # ------------------------
+        map_transformation = SubtractMap(model_list[0], model_list[1])
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(model_list[0],
+                                           'resources/test_resources/temp/subtract_map_1.nc')
+
+        # Test values
+        # -----------
+        _, _, z = read_info('resources/test_resources/temp/subtract_map_1.nc')
+        np.testing.assert_array_equal(np.zeros(z.shape), z, 'Array generated is not equal to the expected.')
+
+        os.remove('resources/test_resources/temp/subtract_map_1.nc')
+
+    def test_different_model(self):
+        # Initialize the engine with the necessary data
+        # ---------------------------------------------
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_2.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_3.nc')
+
+        # Apply the transformation
+        # ------------------------
+        model_list = self.engine.get_model_list()
+        map_transformation = SubtractMap(model_list[0], model_list[1])
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(model_list[0],
+                                           'resources/test_resources/temp/subtract_map_2.nc')
+
+        # Test values
+        # -----------
+        _, _, z = read_info('resources/test_resources/temp/subtract_map_2.nc')
+        _, _, expected_z = read_info('resources/test_resources/expected_data/netcdf/expected_map_transformation_8.nc')
+        np.testing.assert_array_equal(expected_z, z, 'Array generated is not equal to the expected.')
+
+        os.remove('resources/test_resources/temp/subtract_map_2.nc')
+
+    def test_secondary_model_nan_values(self):
+        # Initialize the engine with the necessary data
+        # ---------------------------------------------
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_2.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_data_nan_values.nc')
+
+        # Apply the transformation
+        # ------------------------
+        model_list = self.engine.get_model_list()
+        map_transformation = SubtractMap(model_list[0], model_list[1])
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(model_list[0], 'resources/test_resources/temp/subtract_map_3.nc')
+
+        # Test values
+        # -----------
+        _, _, z = read_info('resources/test_resources/temp/subtract_map_3.nc')
+        _, _, expected_z = read_info('resources/test_resources/expected_data/netcdf/expected_map_transformation_9.nc')
+        np.testing.assert_array_equal(expected_z, z, 'Array generated is not equal to the expected.')
+
+        os.remove('resources/test_resources/temp/subtract_map_3.nc')
+
+    def test_main_model_nan_values(self):
+        # Initialize the engine with the necessary data
+        # ---------------------------------------------
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_data_nan_values.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_2.nc')
+
+        # Apply the transformation
+        # ------------------------
+        model_list = self.engine.get_model_list()
+        map_transformation = SubtractMap(model_list[0], model_list[1])
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(model_list[0], 'resources/test_resources/temp/subtract_map_4.nc')
+
+        # Test values
+        # -----------
+        _, _, z = read_info('resources/test_resources/temp/subtract_map_4.nc')
+        _, _, expected_z = read_info('resources/test_resources/expected_data/netcdf/expected_map_transformation_10.nc')
+        np.testing.assert_array_equal(expected_z, z, 'Array generated is not equal to the expected.')
+
+        os.remove('resources/test_resources/temp/subtract_map_4.nc')
+
+    def test_secondary_model_only_nan(self):
+        # Initialize the engine with the necessary data
+        # ---------------------------------------------
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
+        x, y, z = read_info('resources/test_resources/netcdf/test_file_50_50.nc')
+
+        nan_model = np.empty((len(y), len(x), 3))
+        nan_model[:, :, 0] = np.tile(x, (len(y), 1))
+        nan_model[:, :, 1] = np.tile(y, (len(x), 1)).transpose()
+        nan_model[:, :, 2] = np.nan
+        NetcdfExporter().export_model_vertices_to_netcdf_file(nan_model,
+                                                              'resources/test_resources/temp/subtract_map_5.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/temp/subtract_map_5.nc')
+
+        # Apply the transformation
+        # ------------------------
+        model_list = self.engine.get_model_list()
+        map_transformation = SubtractMap(model_list[0], model_list[1])
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(model_list[0], 'resources/test_resources/temp/subtract_map_6.nc')
+
+        # Test values
+        # -----------
+        _, _, z = read_info('resources/test_resources/temp/subtract_map_6.nc')
+        _, _, expected_z = read_info('resources/test_resources/netcdf/test_file_50_50.nc')
+        np.testing.assert_array_equal(expected_z, z, 'Array generated is not equal to the expected.')
+
+        os.remove('resources/test_resources/temp/subtract_map_5.nc')
+        os.remove('resources/test_resources/temp/subtract_map_6.nc')
+
+    def test_main_model_only_nan(self):
+        # Initialize the engine with the necessary data
+        # ---------------------------------------------
+        x, y, z = read_info('resources/test_resources/netcdf/test_file_50_50.nc')
+
+        nan_model = np.empty((len(y), len(x), 3))
+        nan_model[:, :, 0] = np.tile(x, (len(y), 1))
+        nan_model[:, :, 1] = np.tile(y, (len(x), 1)).transpose()
+        nan_model[:, :, 2] = np.nan
+        NetcdfExporter().export_model_vertices_to_netcdf_file(nan_model,
+                                                              'resources/test_resources/temp/subtract_map_7.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/temp/subtract_map_7.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
+
+        # Apply the transformation
+        # ------------------------
+        model_list = self.engine.get_model_list()
+        map_transformation = SubtractMap(model_list[0], model_list[1])
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(model_list[0], 'resources/test_resources/temp/subtract_map_8.nc')
+
+        # Test values
+        # -----------
+        _, _, z = read_info('resources/test_resources/temp/subtract_map_8.nc')
+        expected_z = np.empty(z.shape)
+        expected_z.fill(np.nan)
+        np.testing.assert_array_equal(expected_z, z, 'Array generated is not equal to the expected.')
+
+        os.remove('resources/test_resources/temp/subtract_map_7.nc')
+        os.remove('resources/test_resources/temp/subtract_map_8.nc')
 
 
 if __name__ == '__main__':
