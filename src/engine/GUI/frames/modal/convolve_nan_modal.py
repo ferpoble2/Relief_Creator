@@ -57,7 +57,7 @@ class ConvolveNanModal(Modal):
             # Input for the percentage of nan that should be surrounding the value to delete it
             # ---------------------------------------------------------------------------------
             imgui.push_item_width(50)
-            _, self.__nan_percentage_limit = imgui.input_float('% of NaN surrounding the values.',
+            _, self.__nan_percentage_limit = imgui.input_float('Minimum % of NaN surrounding the data.',
                                                                self.__nan_percentage_limit)
             self.__nan_percentage_limit = 0 if self.__nan_percentage_limit < 0 else self.__nan_percentage_limit
             self.__nan_percentage_limit = 100 if self.__nan_percentage_limit > 100 else self.__nan_percentage_limit
@@ -77,7 +77,7 @@ class ConvolveNanModal(Modal):
                 self._close_modal()
 
             imgui.same_line()
-            if imgui.button('Interpolate', self.__button_width):
+            if imgui.button('Apply', self.__button_width):
                 map_transformation = NanConvolutionMapTransformation(self.__model_to_modify,
                                                                      self.__kernel_size_selected,
                                                                      float(self.__nan_percentage_limit) / 100)
