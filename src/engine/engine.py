@@ -762,18 +762,18 @@ class Engine:
             self.set_modal_text('Error', 'Please load a model before loading polygons.')
             return
 
-        try:
-            for polygon_points, params in zip(polygons_point_list, polygons_param_list):
+        for polygon_points, params in zip(polygons_point_list, polygons_param_list):
+            try:
                 polygon_id = self.scene.create_new_polygon(polygon_points, params)
                 self.gui_manager.add_imported_polygon(polygon_id)
                 self.set_active_polygon(polygon_id)
 
-        except PolygonError as e:
-            if e.code == 0:
-                self.set_modal_text('Error', 'One of the polygon loaded intersect itself.')
+            except PolygonError as e:
+                if e.code == 0:
+                    self.set_modal_text('Error', 'One of the polygon loaded intersect itself.')
 
-            elif e.code == 1:
-                self.set_modal_text('Error', 'One of the polygon loaded has repeated points.')
+                elif e.code == 1:
+                    self.set_modal_text('Error', 'One of the polygon loaded has repeated points.')
 
     def create_preview_interpolation_area(self, distance: float) -> None:
         """
