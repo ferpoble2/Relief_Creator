@@ -762,6 +762,10 @@ class Engine:
             self.set_modal_text('Error', 'Please load a model before loading polygons.')
             return
 
+        # Load the polygons in the platform
+        # ---------------------------------
+        error_polygons = []
+        error_polygons_filename = str(Path(Path.cwd(), 'error_polygons'))
         for polygon_points, params in zip(polygons_point_list, polygons_param_list):
             try:
                 polygon_id = self.scene.create_new_polygon(polygon_points, params)
@@ -770,10 +774,31 @@ class Engine:
 
             except PolygonError as e:
                 if e.code == 0:
-                    self.set_modal_text('Error', 'One of the polygon loaded intersect itself.')
+                    self.set_modal_text('Error', 'One of the polygon loaded intersect itself.\n\n'
+                                                 f'Check the shapefile file {error_polygons_filename} to see which '
+                                                 f'polygons had errors.')
 
                 elif e.code == 1:
-                    self.set_modal_text('Error', 'One of the polygon loaded has repeated points.')
+                    self.set_modal_text('Error', 'One of the polygon loaded has repeated points.\n\n'
+                                                 f'Check the shapefile file {error_polygons_filename} to see which '
+                                                 f'polygons had errors.')
+                error_polygons.append((polygon_points, params))
+
+        # Export the polygons with errors to a new file in the root directory
+        # -------------------------------------------------------------------
+        if len(error_polygons) != 0:
+            point_list = []
+            parameter_list = []
+            name_list = []
+            for points, parameters in error_polygons:
+                point_list.append([item for coordinate_tuple in points for item in coordinate_tuple])
+                parameter_list.append(parameters)
+                name_list.append('Error in polygon.')
+
+            ShapefileExporter().export_list_of_polygons(point_list,
+                                                        parameter_list,
+                                                        name_list,
+                                                        error_polygons_filename)
 
     def create_preview_interpolation_area(self, distance: float) -> None:
         """
