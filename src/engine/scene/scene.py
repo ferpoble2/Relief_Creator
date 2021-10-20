@@ -590,6 +590,15 @@ class Scene:
         # Generate the model and add it to the scene
         # ------------------------------------------
         log.debug("Generating model")
+
+        current_model_names = [model.get_name() for model in self.__model_hash.values()]
+        name_suffix = 1
+        while model_name in current_model_names:
+            if model_name[-2:] == f'_{name_suffix - 1}':
+                model_name = model_name[:-1] + str(name_suffix)
+            else:
+                model_name += f'_{name_suffix}'
+            name_suffix += 1
         model = Map2DModel(self, name=model_name)
 
         # noinspection PyMissingOrEmptyDocstring
