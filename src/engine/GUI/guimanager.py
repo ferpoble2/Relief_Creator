@@ -130,7 +130,7 @@ class GUIManager:
             self.__tools_3d
         ]
 
-        self.__modals = []
+        self.__modal = None
 
         # Auxiliary parameters
         # --------------------
@@ -482,8 +482,8 @@ class GUIManager:
                 frame.render()
             for frame in components_to_draw:
                 frame.post_render()
-            for modal in self.__modals:
-                modal.post_render()
+            if self.__modal is not None:
+                self.__modal.post_render()
         imgui.end_frame()
 
         # check for the mouse component
@@ -1035,7 +1035,7 @@ class GUIManager:
 
         Returns: None
         """
-        self.__modals.append(modal)
+        self.__modal = modal
 
     def close_modal(self, modal: Modal) -> None:
         """
@@ -1046,8 +1046,7 @@ class GUIManager:
 
         Returns: None
         """
-        if modal in self.__modals:
-            self.__modals.remove(modal)
+        self.__modal = None
 
     def process_input(self) -> None:
         """
