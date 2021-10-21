@@ -54,6 +54,11 @@ class NetcdfExporter:
 
         Returns: None
         """
+        # Check validity of the data to export
+        # ------------------------------------
+        if np.all(np.isnan(heights)):
+            raise ExportError(5)
+
         # Read the information of the file
         # --------------------------------
         root_grp = Dataset(filename, 'r+')

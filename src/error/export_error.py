@@ -39,5 +39,6 @@ class ExportError(BaseError):
             1: 'One or more polygon from the list does not have enough points',
             2: 'Not enough points to export this polygon',
             3: 'Can not find key containing height information in the loaded file.',
-            4: 'Can not read longitude or latitude values from file.'
+            4: 'Can not read longitude or latitude values from file.',
+            5: 'Model to export does not contain any height value to export.'
         }

@@ -53,10 +53,34 @@ class TestExportNetcdfFile(unittest.TestCase):
         exporter = NetcdfExporter()
 
         # Should not modify the file in any way
-        with self.assertRaises(ExportError):
-            exporter.modify_heights_existent_netcdf_file(np.array([]),
+        with self.assertRaises(ExportError) as e:
+            exporter.modify_heights_existent_netcdf_file(np.array([[1, 2, 3], [5, 6, 7], [8, 9, 10]]),
                                                          'resources/test_resources/netcdf/files_without_data/'
                                                          'file_no_keys.nc')
+
+        self.assertEqual(4, e.exception.code, 'Exception code is not 4')
+
+    def test_export_nan_values(self):
+        exporter = NetcdfExporter()
+
+        # Prepare the information
+        # -----------------------
+        _, _, z = read_info('resources/test_resources/netcdf/test_file_50_50.nc')
+        z.fill(np.nan)
+        shutil.copy('resources/test_resources/netcdf/test_file_50_50.nc',
+                    'resources/test_resources/temp/test_export_nan_values.nc')
+
+        # Apply export, should not modify the file in any way
+        # ---------------------------------------------------
+        with self.assertRaises(ExportError) as e:
+            exporter.modify_heights_existent_netcdf_file(z,
+                                                         'resources/test_resources/temp/test_export_nan_values.nc')
+
+        # Check information and remove created files
+        # ------------------------------------------
+        self.assertEqual(5, e.exception.code, 'Exception code is not 5')
+
+        os.remove('resources/test_resources/temp/test_export_nan_values.nc')
 
     def test_export_one_dimension_heights(self):
         exporter = NetcdfExporter()

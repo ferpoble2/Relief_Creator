@@ -852,34 +852,48 @@ class Engine:
         Returns: None
         """
         try:
-            # Select a directory to store the file.
+            # Select a directory to store the file. Add .nc at the end if the file does not specify it
+            # ----------------------------------------------------------------------------------------
             if directory_file is None:
                 directory_file = self.program.open_file_save_box_dialog(
                     'Select a directory and filename for the shapefile file.',
                     'Relief Creator',
                     'Model')
-
-            # Add the .nc extension if the selected directory does not have it.
             if directory_file[-3:] != '.nc':
                 directory_file += '.nc'
 
             # Ask the scene for information of the model
+            # ------------------------------------------
             vertices = self.scene.get_map2d_model_vertices_array(model_id)
 
             # Check if the temporary file exists, if it exists then store the new data on the file,
             # otherwise, show an error message.
+            # -------------------------------------------------------------------------------------
             if self.program.check_model_temp_file_exists():
-                NetcdfExporter().modify_heights_existent_netcdf_file(vertices[:, :, 2],
-                                                                     self.program.get_model_temp_file())
+                try:
+                    NetcdfExporter().modify_heights_existent_netcdf_file(vertices[:, :, 2],
+                                                                         self.program.get_model_temp_file())
+                except ExportError as e:
+                    if e.code == 4 or e.code == 3:
+                        self.set_modal_text('Error', 'Could not read the files containing the keys to use for the '
+                                                     'generation of the files.')
+                        return
+
+                    elif e.code == 5:
+                        self.set_modal_text('Error', 'The model does not contain any height to export.')
+                        return
+
             else:
                 self.set_modal_text('Error', 'Temporary file storing the original data not found, try loading the '
                                              'map again.')
                 return
 
             # Export temporary file to the directory selected
+            # -----------------------------------------------
             self.program.copy_model_temp_file(directory_file)
 
-            # Show success window  to the user
+            # Show modal to inform the user that the operation was successful
+            # ---------------------------------------------------------------
             self.set_modal_text('Information', 'Model exported successfully')
 
         except TypeError:
