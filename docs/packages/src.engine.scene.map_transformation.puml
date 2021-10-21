@@ -15,6 +15,7 @@ package src.engine.scene.map_transformation {
     class src.engine.scene.map_transformation.InterpolateNanMapTransformation
     class src.engine.scene.map_transformation.NanConvolutionMapTransformation
     class src.engine.scene.map_transformation.SubtractMap
+    class src.engine.scene.map_transformation.ReplaceNanValuesInMap
 }
 
 src.engine.scene.map_transformation.MergeMapsTransformation -u-|> src.engine.scene.map_transformation.MapTransformation
@@ -22,6 +23,7 @@ src.engine.scene.map_transformation.FillNanMapTransformation -u-|> src.engine.sc
 src.engine.scene.map_transformation.InterpolateNanMapTransformation -u-|> src.engine.scene.map_transformation.MapTransformation
 src.engine.scene.map_transformation.NanConvolutionMapTransformation -u-|> src.engine.scene.map_transformation.MapTransformation
 src.engine.scene.map_transformation.SubtractMap -u-|> src.engine.scene.map_transformation.MapTransformation
+src.engine.scene.map_transformation.ReplaceNanValuesInMap -u-|> src.engine.scene.map_transformation.MapTransformation
 !endsub
 
 !startsub EXTERNAL
@@ -41,6 +43,8 @@ src.engine.scene.map_transformation.SubtractMap -u-|> src.engine.scene.map_trans
     src.engine.scene.map_transformation.NanConvolutionMapTransformation ..> src.error.MapTransformationError
 
     src.engine.scene.map_transformation.SubtractMap ..> src.error.MapTransformationError
+
+    src.engine.scene.map_transformation.ReplaceNanValuesInMap ..> src.error.MapTransformationError
 !endsub
 
 

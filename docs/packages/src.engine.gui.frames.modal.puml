@@ -18,6 +18,7 @@ package src.engine.gui.frames.modal {
     class src.engine.gui.frames.modal.ConfirmationModal
     class src.engine.gui.frames.modal.PolygonParameterModal
     class src.engine.gui.frames.modal.SubtractMapModal
+    class src.engine.gui.frames.modal.ReplaceNanValuesInMap
 }
 
 src.engine.gui.frames.modal.CombineMapModal -u-|> src.engine.gui.frames.modal.Modal
@@ -27,6 +28,7 @@ src.engine.gui.frames.modal.TextModal -u-|> src.engine.gui.frames.modal.Modal
 src.engine.gui.frames.modal.ConvolveNanModal -u-|> src.engine.gui.frames.modal.Modal
 src.engine.gui.frames.modal.PolygonParameterModal -u-|> src.engine.gui.frames.modal.Modal
 src.engine.gui.frames.modal.SubtractMapModal -u-|> src.engine.gui.frames.modal.Modal
+src.engine.gui.frames.modal.ReplaceValuesWithNanModal -u-|> src.engine.gui.frames.modal.Modal
 !endsub
 
 !startsub EXTERNAL
@@ -34,6 +36,7 @@ src.engine.gui.frames.modal.Modal -u-|> src.engine.gui.frames.Frame
 
 src.engine.gui.frames.modal.InterpolateNanMapModal ..> src.engine.scene.map_transformation.InterpolateNanMapTransformation
 src.engine.gui.frames.modal.CombineMapModal ..> src.engine.scene.map_transformation.MergeMapsTransformation
+src.engine.gui.frames.modal.ReplaceValuesWithNanModal ..> src.engine.scene.map_transformation.ReplaceNanValuesInMap
 !endsub
 
 

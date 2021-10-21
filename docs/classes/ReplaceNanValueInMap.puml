@@ -1,0 +1,14 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class ReplaceNanValuesInMap{
+
+    - __secondary_model_id: str
+    - __main_model_vertices: array
+    - __secondary_model_vertices: array
+
+    + initialize(scene)
+    + apply(): array
+}
+
+@enduml
