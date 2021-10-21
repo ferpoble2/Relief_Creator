@@ -30,6 +30,7 @@ from src.engine.scene.map_transformation.interpolate_nan_map_transformation impo
     InterpolateNanMapTransformationType
 from src.engine.scene.map_transformation.merge_maps_transformation import MergeMapsTransformation
 from src.engine.scene.map_transformation.nan_convolution import NanConvolutionMapTransformation
+from src.engine.scene.map_transformation.replace_nan_values_in_map import ReplaceNanValuesInMap
 from src.engine.scene.map_transformation.subtract_map import SubtractMap
 from src.error.map_transformation_error import MapTransformationError
 from src.input.NetCDF import read_info
@@ -712,6 +713,110 @@ class TestSubtractMapTransformation(ProgramTestCase):
 
         os.remove('resources/test_resources/temp/subtract_map_7.nc')
         os.remove('resources/test_resources/temp/subtract_map_8.nc')
+
+
+class TestReplaceValuesWithNan(ProgramTestCase):
+
+    def test_same_model(self):
+        # Prepare the data
+        # ----------------
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_1.nc')
+        model_id = self.engine.get_model_list()[0]
+
+        # Apply transformation
+        # --------------------
+        map_transformation = ReplaceNanValuesInMap(model_id, model_id)
+        self.engine.apply_map_transformation(map_transformation)
+
+        # Check values
+        # ------------
+        z = self.engine.get_model_information(model_id)['height_array']
+        expected_z = np.empty(z.shape)
+        expected_z.fill(np.nan)
+        np.testing.assert_array_equal(expected_z, z, 'The matrix is not full of nan values.')
+
+    def test_different_model(self):
+        # Prepare the data
+        # ----------------
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_2.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_data_nan_values.nc')
+        base_model_id = self.engine.get_model_list()[0]
+        secondary_model_id = self.engine.get_model_list()[1]
+
+        # Apply transformation
+        # --------------------
+        map_transformation = ReplaceNanValuesInMap(base_model_id, secondary_model_id)
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(base_model_id,
+                                           'resources/test_resources/temp/ReplaceWithNan_2.nc')
+
+        # Check values
+        # ------------
+        _, _, z = read_info('resources/test_resources/temp/ReplaceWithNan_2.nc')
+        _, _, expected_z = read_info('resources/test_resources/expected_data/netcdf/expected_map_transformation_11.nc')
+        np.testing.assert_array_equal(expected_z, z, 'Values were not deleted correctly on the base map.')
+
+        os.remove('resources/test_resources/temp/ReplaceWithNan_2.nc')
+
+    def test_secondary_no_nan_values(self):
+        # Prepare the data
+        # ----------------
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_2.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_3.nc')
+        base_model_id = self.engine.get_model_list()[0]
+        secondary_model_id = self.engine.get_model_list()[1]
+
+        # Apply the transformation
+        # ------------------------
+        map_transformation = ReplaceNanValuesInMap(base_model_id, secondary_model_id)
+        self.engine.apply_map_transformation(map_transformation)
+
+        # Check values
+        # ------------
+        heights = self.engine.get_model_information(base_model_id)['height_array']
+        expected_z = np.empty(heights.shape)
+        expected_z.fill(np.nan)
+        np.testing.assert_array_equal(expected_z, heights, 'Not all values were deleted from the base model.')
+
+    def test_secondary_model_only_nan_values(self):
+        # Prepare the data
+        # ----------------
+        x, y, z = read_info('resources/test_resources/netcdf/test_file_50_50.nc')
+        z_model_only_nan = np.empty(z.shape)
+        z_model_only_nan.fill(np.nan)
+        only_nan_model_vertices = np.empty((len(y), len(x), 3))
+        only_nan_model_vertices[:, :, 0] = np.tile(x, (len(y), 1))
+        only_nan_model_vertices[:, :, 1] = np.tile(y, (len(x), 1)).transpose()
+        only_nan_model_vertices[:, :, 2] = np.nan
+        NetcdfExporter().export_model_vertices_to_netcdf_file(only_nan_model_vertices,
+                                                              'resources/test_resources/temp/ReplaceWithNan_4.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_50_50.nc')
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/temp/ReplaceWithNan_4.nc')
+        base_model_id = self.engine.get_model_list()[0]
+        secondary_model_id = self.engine.get_model_list()[1]
+
+        # Apply the transformation
+        # ------------------------
+        map_transformation = ReplaceNanValuesInMap(base_model_id, secondary_model_id)
+        self.engine.apply_map_transformation(map_transformation)
+        self.engine.export_model_as_netcdf(base_model_id,
+                                           'resources/test_resources/temp/ReplaceWithNan_5.nc')
+
+        # Check values
+        # ------------
+        _, _, generated_z = read_info('resources/test_resources/temp/ReplaceWithNan_5.nc')
+        np.testing.assert_array_equal(z, generated_z, 'A value from the model was modified (and that is not supposed '
+                                                      'to happen).')
+
+        os.remove('resources/test_resources/temp/ReplaceWithNan_4.nc')
+        os.remove('resources/test_resources/temp/ReplaceWithNan_5.nc')
 
 
 if __name__ == '__main__':
