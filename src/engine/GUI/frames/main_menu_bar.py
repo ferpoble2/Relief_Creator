@@ -27,6 +27,7 @@ from src.engine.GUI.frames.frame import Frame
 from src.engine.GUI.frames.modal.combine_map_modal import CombineMapModal
 from src.engine.GUI.frames.modal.convolve_nan_modal import ConvolveNanModal
 from src.engine.GUI.frames.modal.interpolate_nan_map_modal import InterpolateNanMapModal
+from src.engine.GUI.frames.modal.replace_values_with_nan_modal import ReplaceValuesWithNanModal
 from src.engine.GUI.frames.modal.subtract_map_modal import SubtractMapModal
 from src.engine.scene.map_transformation.fill_nan_map_transformation import FillNanMapTransformation
 from src.program.view_mode import ViewMode
@@ -204,6 +205,13 @@ class MainMenuBar(Frame):
                 self._GUI_manager.open_modal(SubtractMapModal(self._GUI_manager,
                                                               list(self._GUI_manager.get_model_names_dict().keys()),
                                                               list(self._GUI_manager.get_model_names_dict().values())))
+
+            imgui.menu_item('Replace values with Nan', None, False, model_loaded)
+            if imgui.is_item_clicked() and model_loaded:
+                self._GUI_manager.open_modal(ReplaceValuesWithNanModal(
+                    self._GUI_manager,
+                    list(self._GUI_manager.get_model_names_dict().keys()),
+                    list(self._GUI_manager.get_model_names_dict().values())))
 
             imgui.end_menu()
 
