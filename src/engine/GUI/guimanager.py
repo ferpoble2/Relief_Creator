@@ -813,6 +813,14 @@ class GUIManager:
         """
         return self.__engine.get_program_view_mode()
 
+    def get_hidden_models(self) -> List[str]:
+        """
+        Get the list of hidden models on the scene.
+
+        Returns: List with the ID of the models hidden on the program.
+        """
+        return self.__engine.get_hidden_map_models()
+
     def get_quality(self) -> int:
         """
         Get the render quality used in the engine.

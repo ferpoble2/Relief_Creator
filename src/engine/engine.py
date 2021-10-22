@@ -1132,6 +1132,16 @@ class Engine:
         except KeyError:
             return -1
 
+    def get_hidden_map_models(self) -> List[str]:
+        """
+        Get the list of hidden models used by the scene to check if to draw a model or not.
+
+        Changes made to the list will be reflected on the scene itself.
+
+        Returns: Hidden models used by the scene.
+        """
+        return self.scene.hidden_models
+
     def get_map_coordinates_from_window_coordinates(self, x_coordinate: int, y_coordinate: int) -> (float, float):
         """
         Get the position of a point in the map given in screen coordinates.

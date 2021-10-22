@@ -77,6 +77,8 @@ class Scene:
         self.__polygon_hash: Dict[str, 'Polygon'] = {}
         self.__interpolation_area_hash: Dict[str, List['Model']] = {}
 
+        self.__hidden_models: List[str] = []  # List of models to not draw on the scene
+
         # Polygons can be draw in different orders, this list store the priority of each polygon so the polygon with
         # high priority can be draw over the polygons with less priority. Polygons that are not in the list will not
         # be draw.
@@ -119,6 +121,18 @@ class Scene:
         # Variables that count the amount of ID given to the models and polygons
         self.__polygon_id_count: int = 0
         self.__model_id_count: int = 0
+
+    @property
+    def hidden_models(self) -> List[str]:
+        """
+        Get the list that stores the ID of the models hidden in the scene.
+
+        To add hidden models, just append the ID of the models to the list. To remove hidden models, just remove them
+        from the list.
+
+        Returns: List with the id of the models hidden.
+        """
+        return self.__hidden_models
 
     def add_new_vertex_to_polygon_using_map_coords(self,
                                                    x_coord: float,
@@ -728,7 +742,8 @@ class Scene:
             # Draw all the Map2DModels
             for model_2d in reversed(self.__model_draw_priority):
                 # Change the height of the maps and draw them
-                self.__model_hash[model_2d].draw()
+                if model_2d not in self.__hidden_models:
+                    self.__model_hash[model_2d].draw()
 
             # Draw all the interpolation areas
             for area_models in self.__interpolation_area_hash.values():

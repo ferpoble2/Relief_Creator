@@ -68,12 +68,16 @@ class MapTools:
         # -----------------
         model_name_dict = self.__gui_manager.get_model_names_dict()
         active_model_id = self.__gui_manager.get_active_model_id()
+        hidden_models = self.__gui_manager.get_hidden_models()
 
         for key, value in model_name_dict.items():
 
             # Render the checkbox for the model
+            imgui.push_style_color(imgui.COLOR_TEXT, 0.5, 0.5, 0.5) if key in hidden_models else None
             clicked, current_state = imgui.checkbox(value,
                                                     True if active_model_id == key else False)
+            imgui.pop_style_color() if key in hidden_models else None
+
             if imgui.is_item_clicked(1):
                 imgui.open_popup(f'popup_model_{key}')
 
@@ -95,6 +99,7 @@ class MapTools:
         Returns: None
         """
         model_id_list = self.__gui_manager.get_model_list()
+        hidden_models = self.__gui_manager.get_hidden_models()
 
         for model_id in model_id_list:
             if imgui.begin_popup(f'popup_model_{model_id}'):
@@ -112,6 +117,18 @@ class MapTools:
                 imgui.selectable("Move down")
                 if imgui.is_item_clicked():
                     self.__gui_manager.move_model_position(str(model_id), 1)
+
+                # Hide/Show map
+                # -------------
+                imgui.separator()
+                if model_id in hidden_models:
+                    imgui.selectable("Show model")
+                    if imgui.is_item_clicked():
+                        hidden_models.remove(model_id)
+                else:
+                    imgui.selectable("Hide model")
+                    if imgui.is_item_clicked():
+                        hidden_models.append(model_id)
 
                 # Delete the map
                 # --------------

@@ -32,3 +32,4 @@ class Font(Enum):
     BOLD = ('resources/fonts/open_sans/OpenSans-Bold.ttf', 18)
     TOOL_TITLE = ('resources/fonts/open_sans/OpenSans-Regular.ttf', 25)
     TOOL_SUB_TITLE = ('resources/fonts/open_sans/OpenSans-Regular.ttf', 22)
+    LIGHT = ('resources/fonts/open_sans/OpenSans-Light.ttf', 18)
