@@ -22,6 +22,7 @@ Module with test related to the engine of the program.
 import time
 import unittest
 
+from src.program.program import Program
 from src.program.view_mode import ViewMode
 from src.utils import dict_to_serializable_dict, json_to_dict
 from test.test_case import ProgramTestCase
@@ -115,6 +116,76 @@ class TestSetActiveModel(ProgramTestCase):
         self.engine.set_active_model(None)
         self.assertIsNone(self.engine.get_active_model_id(),
                           "Model was not changed to None.")
+
+
+class TestProperties(unittest.TestCase):
+
+    def test_use_threads_default_value(self):
+        program = Program()
+        engine = program.engine
+
+        self.assertTrue(engine.use_threads, 'Use threads should be True by default')
+
+    def test_use_threads_setter(self):
+        program = Program()
+        engine = program.engine
+
+        engine.use_threads = False
+        self.assertFalse(engine.use_threads, 'Use threads was not changed to False.')
+
+    def test_wait_loading_frame_render_default_values(self):
+        program = Program()
+        engine = program.engine
+
+        self.assertTrue(engine.wait_loading_frame_render, 'wait_loading_frame_render property is not True by default.')
+
+    def test_wait_loading_frame_render_setter(self):
+        program = Program()
+        engine = program.engine
+
+        engine.wait_loading_frame_render = False
+        self.assertFalse(engine.wait_loading_frame_render,
+                         'wait_loading_frame_render property was not changed to False.')
+
+
+class TestZoom(ProgramTestCase):
+
+    def test_get_zoom_level(self):
+        default_level = self.engine.get_zoom_level()
+        self.assertEqual(1, default_level, 'Default zoom level of the engine is not 1.')
+
+    def test_add_zoom_level(self):
+        self.engine.add_zoom()
+        self.assertEqual(2,
+                         self.engine.get_zoom_level(),
+                         'Zoom level was not changed to 2 after calling add_zoom method.')
+        self.engine.add_zoom()
+        self.assertEqual(3,
+                         self.engine.get_zoom_level(),
+                         'Zoom level was not changed to 3 after calling add_zoom method.')
+
+    def test_less_zoom_level(self):
+        self.engine.less_zoom()
+        self.assertEqual(0.5,
+                         self.engine.get_zoom_level(),
+                         'Zoom level was not changed to 0.5 after calling less_zoom method.')
+        self.engine.less_zoom()
+        self.assertEqual(0.25,
+                         self.engine.get_zoom_level(),
+                         'Zoom level was not changed to 0.25 after calling less_zoom method.')
+
+    def test_reset_zoom_level(self):
+        self.engine.less_zoom()
+        self.engine.less_zoom()
+        self.engine.less_zoom()
+        self.assertEqual(0.125,
+                         self.engine.get_zoom_level(),
+                         'Zoom level was not changed after calling less_zoom method.')
+
+        self.engine.reset_zoom_level()
+        self.assertEqual(1,
+                         self.engine.get_zoom_level(),
+                         'Zoom level was not changed to 1 after calling reset_zoom_level method.')
 
 
 class TestSetThreadTask(ProgramTestCase):
