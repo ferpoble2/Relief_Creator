@@ -56,6 +56,11 @@ class SubtractMapModal(Modal):
         """
 
         if self._begin_modal('Subtract map heights'):
+            # noinspection SqlNoDataSourceInspection,SqlDialectInspection
+            imgui.text_wrapped("Select a base model to modify and a second model to use the values. The modified model"
+                               " will have the heights of the base model subtracted from the heights of the second "
+                               "model.\n\n")
+
             imgui.text("Select the maps to subtract:")
             _, self.__selected_model_primary = imgui.combo("Base model", self.__selected_model_primary,
                                                            self.__model_name_list)

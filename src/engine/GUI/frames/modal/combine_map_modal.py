@@ -72,6 +72,9 @@ class CombineMapModal(Modal):
         Returns: None
         """
         if self._begin_modal(self.__modal_title):
+            imgui.text_wrapped("Select a base model to modify and a second model to use the values. The values of the "
+                               "second model will be replaced in the places where the base model have NaN defined.\n\n")
+
             imgui.text("Select the maps to merge:")
             _, self.__selected_map_1 = imgui.combo("Base model", self.__selected_map_1, self.__model_name_list)
             _, self.__selected_map_2 = imgui.combo("Secondary model", self.__selected_map_2, self.__model_name_list)

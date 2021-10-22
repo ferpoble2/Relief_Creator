@@ -53,6 +53,14 @@ class ConvolveNanModal(Modal):
         """
 
         if self._begin_modal('Eliminate values surrounded by NaN'):
+            imgui.text_wrapped("Replace with NaN all the heights that have a percentage of NaN values surrounding "
+                               "them above the specified. Select a percentage of NaN surrounding the values to use "
+                               "and a distance to check for values.\n\n"
+                               "Example:\n\n"
+                               "Specifying 0% and a distance of 3 will replace all the heights that are surrounded by"
+                               " at least one NaN at a distance of 3.\n\n"
+                               "Specifying 100% and a distance of 3 will replace all the heights that are surrounded "
+                               "only by NaN at a distance of 3.\n\n")
 
             # Input for the percentage of nan that should be surrounding the value to delete it
             # ---------------------------------------------------------------------------------

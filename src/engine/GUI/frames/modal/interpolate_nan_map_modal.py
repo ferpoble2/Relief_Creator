@@ -63,6 +63,7 @@ class InterpolateNanMapModal(Modal):
         Returns: None
         """
         if self._begin_modal(self.__modal_title):
+            imgui.text_wrapped("Interpolate all the missing values of the active map. \n\n")
 
             _, self.__interpolation_selected = imgui.combo('Type of interpolation',
                                                            self.__interpolation_selected,
