@@ -45,6 +45,7 @@ class Engine {
     + get_active_polygon_id(): str
     + get_active_tool(): str
     + get_camera_settings(): dict
+    + get_hidden_map_models(): List[str]
     + get_clear_color(): list
     + get_controller_key_callback_state(): boolean
     + get_cpt_file(): str

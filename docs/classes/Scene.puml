@@ -1,6 +1,7 @@
 @startuml
     class Scene{
-        - __bilinear_interpolation(x, y, points): float
+        + hidden_models: List[str]
+
         + add_new_vertex_to_polygon_using_map_coords(x_coord, y_coord, polygon_id)
         + add_new_vertex_to_polygon_using_window_coords(position_x, position_y, polygon_id, model_id,
                                                         scene_settings_data, window_settings_data)

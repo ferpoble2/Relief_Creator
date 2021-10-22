@@ -65,6 +65,7 @@ class GUIManager{
     + get_map_coordinates_from_window_coordinates(x_coordinate, y_coordinate): (float, float)
     + get_map_height_on_coordinates(x_coordinate, y_coordinate): float
     + get_map_position(): list
+    + get_hidden_models(): List[str]
     + get_model_list(): List[str]
     + get_model_names_dict(): dict
     + get_polygon_folder_id_list(): list
