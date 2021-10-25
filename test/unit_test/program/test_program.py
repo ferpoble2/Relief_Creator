@@ -164,5 +164,25 @@ class TestParser(ProgramTestCase):
             sys.argv = saved_argv
 
 
+class TestSetCPT(unittest.TestCase):
+
+    def test_not_cpt_file(self):
+        program = Program()
+
+        with self.assertRaises(IOError):
+            program.set_cpt_file('Non_Existent_File.something')
+
+    def test_default_value(self):
+        program = Program()
+        self.assertEqual(os.path.join(os.getcwd(), 'resources', 'colors', 'default.cpt'),
+                         program.get_cpt_file(),
+                         'Default CPT value is not equal to the expected.')
+
+    def test_normal_assignation(self):
+        program = Program()
+        program.set_cpt_file('colors.cpt')  # This file does not exists.
+        self.assertEqual('colors.cpt', program.get_cpt_file())
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -814,6 +814,32 @@ class TestReplaceValuesWithNan(ProgramTestCase):
         os.remove('resources/test_resources/temp/ReplaceWithNan_4.nc')
         os.remove('resources/test_resources/temp/ReplaceWithNan_5.nc')
 
+    def test_incorrect_model_argument(self):
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_2.nc')
+        model_id = self.engine.get_model_list()[0]
+
+        map_transformation = ReplaceNanValuesInMap('non_existent_model_id', model_id)
+
+        with self.assertRaises(MapTransformationError) as e:
+            map_transformation.initialize(self.engine.scene)
+        self.assertEqual(1,
+                         e.exception.code,
+                         'Exception code is not 1.')
+
+    def test_incorrect_secondary_model_argument(self):
+        self.engine.create_model_from_file('resources/test_resources/cpt/colors_0_100_200.cpt',
+                                           'resources/test_resources/netcdf/test_file_2.nc')
+        model_id = self.engine.get_model_list()[0]
+
+        map_transformation = ReplaceNanValuesInMap(model_id, 'non_existent_model_id')
+
+        with self.assertRaises(MapTransformationError) as e:
+            map_transformation.initialize(self.engine.scene)
+        self.assertEqual(1,
+                         e.exception.code,
+                         'Exception code is not 1.')
+
 
 if __name__ == '__main__':
     unittest.main()
