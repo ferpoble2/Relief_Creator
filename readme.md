@@ -397,11 +397,3 @@ class Scene:
 
     ...
 ```
-
-# Code Guidelines
-
-- Indentation must be of four spaces.
-- Docstring must follow the Google docstring format.
-- Lines must be shorter or equal than 100 characters when possible.
-- All files, classes, methods and functions must be documented.
-- Method and function definitions must have the type of the parameters and the output documented using type hints.
