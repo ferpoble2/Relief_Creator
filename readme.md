@@ -1,14 +1,6 @@
 # Relief Creator
 
-Simple application to modify digital elevation maps (in NetCDF format) using polygons.
-
-# Context of the application
-
-This project is developed as a thesis project for the Computer Science department of the University of Chile and consist
-of a program that can modify the height of geographical data using interactive controls to draw polygons on the screen.
-
-The goal of the project is to make easier to modify the height of maps, without the necessity of using software or tools
-not developed for that purpose and without any knowledge of GIS software.
+This software presents a multiplatform and open-source software with an intuitive GUI to combine different paleoDEMs (Paleo Digital Elevation Models) and change elevations helping scientists to create and modify DEMs, maps that are critical for the understanding of the Earth System. While the program's focus is to modify DEM in the context of the study of palaeogeography, other disciplines that need to modify DEMs can also benefit. The software is written in Python, using OpenGl and multiple Python libraries.
 
 # Usage
 
