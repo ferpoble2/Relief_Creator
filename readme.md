@@ -34,7 +34,7 @@ NOTE: shortcuts does not work when there is a popup in the program.
 
 To install the dependencies of the program run the following command in the root folder of the project:
 
-    pip install -r requeriments.txt
+    pip3 install -r requeriments.txt
 
 To execute the program, first you need to add the root directory to the PYTHONPATH variable, in windows, in a console CMD run the following command in the root directory of the project:
 
@@ -50,7 +50,7 @@ If you use a mac, run the following command:
 
 Then, to execute the program run the following command:
 
-    python src/main.py
+    python3 src/main.py
 
 It is recommended to use a virtual environment to install the dependencies: https://docs.python.org/3/tutorial/venv.html
 
