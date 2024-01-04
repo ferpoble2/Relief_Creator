@@ -1,6 +1,6 @@
 # Relief Creator
 
-This repository presents a multiplatform and open-source software with an intuitive GUI to combine different paleoDEMs (Paleo Digital Elevation Models) and change elevations helping scientists to create and modify DEMs, maps that are critical for the understanding of the Earth System. While the program's focus is to modify DEM in the context of the study of palaeogeography, other disciplines that need to modify DEMs can also benefit. The software is written in Python, using OpenGl and multiple Python libraries.
+This repository presents a Windows and open-source software with an intuitive GUI to combine different paleoDEMs (Paleo Digital Elevation Models) and change elevations helping scientists to create and modify DEMs, maps that are critical for the understanding of the Earth System. While the program's focus is to modify DEM in the context of the study of palaeogeography, other disciplines that need to modify DEMs can also benefit. The software is written in Python, using OpenGl and multiple Python libraries.
 
 # Usage
 
@@ -57,7 +57,7 @@ It is recommended to use a virtual environment to install the dependencies: http
 (If you use windows and use a virtual environment called *venv* then running the command `make run-windows` will run the
 project, it is necessary to have make for windows installed)
 
-For mac users you may need to install python-tk (for instance as `brew install python-tk`)
+For mac users you may need to install python-tk (for instance as `brew install python-tk@3.9`)
 
 # How to build
 
