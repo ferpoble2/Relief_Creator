@@ -57,6 +57,8 @@ It is recommended to use a virtual environment to install the dependencies: http
 (If you use windows and use a virtual environment called *venv* then running the command `make run-windows` will run the
 project, it is necessary to have make for windows installed)
 
+For mac users you may need to install python-tk (for instance as `brew install python-tk`)
+
 # How to build
 
 The application can be built using the command `auto-py-to-exe` (or the equivalent `make build-executable-windows`) and then importing the file `build_conf.json` located on the root of the project. Make sure to create a virtual environment with python and install all the dependencies from the file `requeriments.txt` before launching the program.
