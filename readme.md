@@ -30,6 +30,11 @@ In 3D mode:
 
 NOTE: shortcuts does not work when there is a popup in the program.
 
+# Requirements
+
+- Python>=3.9
+- Microsoft Visual C++ >= 14.0 (Windows)
+
 # Instructions for developers
 
 To install the dependencies of the program run the following command in the root folder of the project:
@@ -50,7 +55,12 @@ If you use a mac, run the following command:
 
 Then, to execute the program run the following command:
 
-    python3 src/main.py
+    python src/main.py
+
+or the following if the previous doesn't work:
+
+    python -m src.main
+
 
 It is recommended to use a virtual environment to install the dependencies: https://docs.python.org/3/tutorial/venv.html
 
